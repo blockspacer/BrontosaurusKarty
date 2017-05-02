@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="AnimationComponent.cpp" />
+    <ClCompile Include="AudioSourceComponent.cpp" />
+    <ClCompile Include="AudioSourceComponentManager.cpp" />
+    <ClCompile Include="BoxColliderComponent.cpp" />
+    <ClCompile Include="CameraComponent.cpp" />
+    <ClCompile Include="CameraManager.cpp" />
+    <ClCompile Include="CapsuleColliderComponent.cpp" />
+    <ClCompile Include="CharacterControllerComponent.cpp" />
+    <ClCompile Include="ColliderComponent.cpp" />
+    <ClCompile Include="ColliderComponentManager.cpp" />
+    <ClCompile Include="ComponentMessageTypeToLua.cpp" />
+    <ClCompile Include="FireComponent.cpp" />
+    <ClCompile Include="MeshColliderComponent.cpp" />
+    <ClCompile Include="PointLightComponent.cpp" />
+    <ClCompile Include="PointLightComponentManager.cpp" />
+    <ClCompile Include="RigidBodyComponent.cpp" />
+    <ClCompile Include="ScriptComponent.cpp" />
+    <ClCompile Include="ScriptComponentManager.cpp" />
+    <ClCompile Include="Component.cpp" />
+    <ClCompile Include="ComponentManager.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="ModelComponent.cpp" />
+    <ClCompile Include="ModelComponentManager.cpp" />
+    <ClCompile Include="GameObjectManager.cpp" />
+    <ClCompile Include="ParticleEmitterComponent.cpp" />
+    <ClCompile Include="ParticleEmitterComponentManager.cpp" />
+    <ClCompile Include="SphereColliderComponent.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="StreakEmitterComponent.cpp" />
+    <ClCompile Include="AnimationComponentLoader.cpp" />
+    <ClCompile Include="ShowTitleComponent.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AnimationComponent.h" />
+    <ClInclude Include="AudioSourceComponent.h" />
+    <ClInclude Include="AudioSourceComponentManager.h" />
+    <ClInclude Include="BoxColliderComponent.h" />
+    <ClInclude Include="CameraComponent.h" />
+    <ClInclude Include="CameraManager.h" />
+    <ClInclude Include="CapsuleColliderComponent.h" />
+    <ClInclude Include="CharacterControllerComponent.h" />
+    <ClInclude Include="ColliderComponent.h" />
+    <ClInclude Include="ColliderComponentManager.h" />
+    <ClInclude Include="ComponentAnswer.h" />
+    <ClInclude Include="ComponentMessageCallback.h" />
+    <ClInclude Include="ComponentMessageTypeToLua.h" />
+    <ClInclude Include="MeshColliderComponent.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="RigidBodyComponent.h" />
+    <ClInclude Include="SphereColliderComponent.h" />
+    <ClInclude Include="FireComponent.h" />
+    <ClInclude Include="PlayerControls.h" />
+    <ClInclude Include="PointLightComponent.h" />
+    <ClInclude Include="PointLightComponentManager.h" />
+    <ClInclude Include="ScriptComponent.h" />
+    <ClInclude Include="ScriptComponentManager.h" />
+    <ClInclude Include="Component.h" />
+    <ClInclude Include="ComponentManager.h" />
+    <ClInclude Include="ComponentMessage.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="ModelComponent.h" />
+    <ClInclude Include="ModelComponentManager.h" />
+    <ClInclude Include="GameObjectManager.h" />
+    <ClInclude Include="ParticleEmitterComponent.h" />
+    <ClInclude Include="ParticleEmitterComponentManager.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StreakEmitterComponent.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="AnimationComponentLoader.h" />
+    <ClInclude Include="ShowTitleComponent.h" />
+  </ItemGroup>
+</Project>

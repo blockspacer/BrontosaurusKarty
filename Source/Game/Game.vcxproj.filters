@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="LoadState.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptLoader.cpp">
+      <Filter>ScriptLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="GlobalLuaFunctions.cpp">
+      <Filter>ScriptLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptHelperFunctions.cpp">
+      <Filter>ScriptLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEventMessenger.cpp">
+      <Filter>GameEventMessager</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayState.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleEffectManager.cpp">
+      <Filter>ParticleEffectManager</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadingAnimation.cpp">
+      <Filter>Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="BackgroundLoadingManager.cpp">
+      <Filter>Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Precompiled</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="LoadState.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptLoader.h">
+      <Filter>ScriptLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalLuaFunctions.h">
+      <Filter>ScriptLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptHelperFunctions.h">
+      <Filter>ScriptLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEventMessenger.h">
+      <Filter>GameEventMessager</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayState.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleEffectManager.h">
+      <Filter>ParticleEffectManager</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingAnimation.h">
+      <Filter>Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="BackgroundLoadingManager.h">
+      <Filter>Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Precompiled</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Precompiled</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="States">
+      <UniqueIdentifier>{e6c7f4ba-4ba3-4114-b270-6b080d89cadd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ScriptLoader">
+      <UniqueIdentifier>{45fcaf0e-06d6-4dc1-a35e-d4ea40dfcbb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ParticleEffectManager">
+      <UniqueIdentifier>{3f3a576b-896e-4f22-b6f5-349ab51bbd89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameEventMessager">
+      <UniqueIdentifier>{23f0c3e6-776a-4bc1-895e-49779b355a5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Loading">
+      <UniqueIdentifier>{7cfc3396-df0f-428b-8d0e-7254177f5ebf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Precompiled">
+      <UniqueIdentifier>{baa7496d-d8de-4d76-809e-14d5c5b72ae5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
