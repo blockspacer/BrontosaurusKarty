@@ -60,10 +60,10 @@ void CLoadState::Init()
 		myPlayState = bLM.GetPlaystate();
 	}
 
-	Audio::CAudioInterface::GetInstance()->PostEvent("Stop_Music");
-	std::string BGMusic;
-	BGMusic = "Music_Level" + std::to_string(myLevelIndex + 1);
-	Audio::CAudioInterface::GetInstance()->PostEvent(BGMusic.c_str());
+	//Audio::CAudioInterface::GetInstance()->PostEvent("Stop_Music");
+	//std::string BGMusic;
+	//BGMusic = "Music_Level" + std::to_string(myLevelIndex + 1);
+	//Audio::CAudioInterface::GetInstance()->PostEvent(BGMusic.c_str());
 }
 
 eStateStatus CLoadState::Update(const CU::Time& aDeltaTime)

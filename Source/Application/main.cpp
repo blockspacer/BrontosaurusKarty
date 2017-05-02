@@ -49,7 +49,7 @@ void Init(int argc, char* argv[])
 
 
 	DL_Debug::Debug::CreateInstance();
-	InitAudio();
+	//InitAudio();
 	PostMaster::CreateInstance();
 
 	{
@@ -115,8 +115,8 @@ void Init(int argc, char* argv[])
 
 		CEngine::GetInstance()->Init(engineParams);
 
-		CParticleEmitterManager::Create();
-		CParticleEmitterManager::GetInstance().LoadParticleLibrary("Json/Particles.json");
+		//CParticleEmitterManager::Create();
+	//	CParticleEmitterManager::GetInstance().LoadParticleLibrary("Json/Particles.json");
 		//CParticleEmitterManager::GetInstance().Run();
 		//Physics::CPhysXManager::Create();
 		CEngine::GetInstance()->Start();

@@ -42,7 +42,7 @@ CScene::~CScene()
 
 void CScene::Update(const CU::Time aDeltaTime)
 {
-	CParticleEmitterManager::GetInstance().Update(aDeltaTime);
+	//CParticleEmitterManager::GetInstance().Update(aDeltaTime);
 	for (CModelInstance* model : myModels)
 	{
 		model->Update(aDeltaTime);
@@ -159,7 +159,7 @@ void CScene::Render()
 
 		myParticleEmitters[i]->Render(PlayerOneCamera);
 	}*/
-	CParticleEmitterManager::GetInstance().Render(PlayerOneCamera);
+	//CParticleEmitterManager::GetInstance().Render(PlayerOneCamera);
 	
 	PlayerOneCamera.Render();
 
