@@ -35,7 +35,7 @@ void CCameraComponent::Receive(const eComponentMessageType aMessageType, const S
 		{
 			const CU::Matrix44f transformation = GetParent()->GetToWorldTransform();
 			myCamera->SetTransformation(transformation);
-			Audio::CAudioInterface::GetInstance()->SetListenerPosition(transformation);
+			//Audio::CAudioInterface::GetInstance()->SetListenerPosition(transformation); hast la xp vista bebe
 		}
 		break;
 	}

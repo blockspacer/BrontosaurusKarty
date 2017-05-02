@@ -172,6 +172,8 @@ void CPlayState::Load()
 	CRenderCamera& playerCamera = myScene->GetRenderCamera(CScene::eCameraType::ePlayerOneCamera);
 	playerCamera.InitPerspective(90, WINDOW_SIZE_F.x, WINDOW_SIZE_F.y, 0.1f, 500.f);
 
+
+	SpawnPlayer(playerCamera.GetCamera());
 	myScene->SetSkybox("default_cubemap.dds");
 	myScene->SetCubemap("purpleCubemap.dds");
 
@@ -271,4 +273,17 @@ void CPlayState::CreateManagersAndFactories()
 	myColliderComponentManager->InitControllerManager();
 
 	myScriptComponentManager = new CScriptComponentManager();
+}
+
+void CPlayState::SpawnPlayer(CU::Camera& aCamera)
+{
+	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
+	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_NavigationArrow.fbx");
+	CCameraComponent* cameraComponent = myCameraComponent;
+	cameraComponent = new CCameraComponent();
+	CComponentManager::GetInstance().RegisterComponent(cameraComponent);
+	cameraComponent->SetCamera(aCamera);
+	myCameraComponent = cameraComponent;
+
+	playerObject->AddComponent(cameraComponent);
 }
