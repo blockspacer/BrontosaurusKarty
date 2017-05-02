@@ -10,6 +10,7 @@
 #include "LoadFireComponent.h"
 #include "LoadPointLightComponent.h"
 #include "LoadCollider.h"
+#include "LoadKartSpawnPoint.h"
 
 #include "LoadParticleEmitterComponent.h"
 #include "LoadHighlightComponent.h"
@@ -52,6 +53,7 @@ void LoadManager::RegisterFunctions()
 
 	loader.RegisterComponentLoadFunction("MeshFilter", LoadMeshFilter);
 	loader.RegisterComponentLoadFunction("Camera", LoadCamera);
+	loader.RegisterComponentLoadFunction("KartSpawn", LoadKartSpawnPoint);
 	loader.RegisterComponentLoadFunction("ParticleEmitterComponent", LoadParticleEmitterComponent);
 	loader.RegisterComponentLoadFunction("BoxCollider", LoadBoxCollider);
 	loader.RegisterComponentLoadFunction("SphereCollider", LoadSphereCollider);

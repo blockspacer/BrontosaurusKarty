@@ -42,6 +42,9 @@
     <ClInclude Include="LoadHighlightComponent.h">
       <Filter>LoadThings\LoadHighlightComponent</Filter>
     </ClInclude>
+    <ClInclude Include="LoadKartSpawnPoint.h">
+      <Filter>LoadThings\LoadKartSpawn</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -81,6 +84,9 @@
     <ClCompile Include="LoadCollider.cpp" />
     <ClCompile Include="LoadHighlightComponent.cpp">
       <Filter>LoadThings\LoadHighlightComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadKartSpawnPoint.cpp">
+      <Filter>LoadThings\LoadKartSpawn</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +128,9 @@
     </Filter>
     <Filter Include="LoadThings\LoadHighlightComponent">
       <UniqueIdentifier>{c4fdf0d2-994a-48be-9599-b8a9dac8c980}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LoadThings\LoadKartSpawn">
+      <UniqueIdentifier>{be719607-b147-4145-8664-bb74de6e9d6b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

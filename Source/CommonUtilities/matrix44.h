@@ -562,6 +562,15 @@ namespace CU
 			return *this;
 		}
 
+		Matrix44<TYPE>& Rotate(CU::Vector3f aRotation)
+		{
+			Rotate(aRotation.x, Axees::X);
+			Rotate(aRotation.y, Axees::Y);
+			Rotate(aRotation.z, Axees::Z);
+
+			return *this;
+		}
+
 		/* rotates x,y then z*/
 		Matrix44<TYPE>& RotateAroundAxes(const float x, const float y, const float z)
 		{

@@ -32,6 +32,10 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Precompiled</Filter>
     </ClCompile>
+    <ClCompile Include="KartSpawnPoint.cpp">
+      <Filter>KartSpawnPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="KartSpawnPointManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -68,6 +72,10 @@
     <ClInclude Include="stdafx.h">
       <Filter>Precompiled</Filter>
     </ClInclude>
+    <ClInclude Include="KartSpawnPoint.h">
+      <Filter>KartSpawnPoint</Filter>
+    </ClInclude>
+    <ClInclude Include="KartSpawnPointManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="States">
@@ -87,6 +95,9 @@
     </Filter>
     <Filter Include="Precompiled">
       <UniqueIdentifier>{baa7496d-d8de-4d76-809e-14d5c5b72ae5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KartSpawnPoint">
+      <UniqueIdentifier>{9a24e5d1-ee05-461d-bb44-22f7b68fa5a4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
