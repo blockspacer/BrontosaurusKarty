@@ -28,8 +28,9 @@
     <ClCompile Include="SphereColliderComponent.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="StreakEmitterComponent.cpp" />
-     <ClCompile Include="KartComponent.cpp" />
+    <ClCompile Include="KartComponent.cpp" />
     <ClCompile Include="KartComponentManager.cpp" />
+    <ClCompile Include="KeyboardControllerComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -64,7 +65,8 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StreakEmitterComponent.h" />
     <ClInclude Include="targetver.h" />
-      <ClInclude Include="KartComponent.h" />
+    <ClInclude Include="KartComponent.h" />
     <ClInclude Include="KartComponentManager.h" />
+    <ClInclude Include="KeyboardControllerComponent.h" />
   </ItemGroup>
 </Project>
