@@ -67,7 +67,9 @@ enum class eComponentMessageType
 	eSetLastHitNormal,
 	eSetLastHitPosition,
 	eAccelerate,
-	eStopAccelerate,
+	eStopAcceleration,
+	eDecelerate,
+	eStopDeceleration,
 	eLength,
 };
 
