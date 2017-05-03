@@ -11,5 +11,9 @@ public:
 
 	virtual CU::eInputReturn TakeInput(const CU::SInputMessage& aInputMessage) override;
 
+private:
+	void PressedKey(const CU::SInputMessage& aInputMessage);
+	void ReleasedKey(const CU::SInputMessage& aInputMessage);
+
 };
 
