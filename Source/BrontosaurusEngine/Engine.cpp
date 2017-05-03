@@ -8,25 +8,18 @@
 #include "ShaderManager.h"
 #include "LightManager.h"
 #include "TextureManager.h"
-#include <Camera.h>
-#include <CommonUtilities.h>
 #include <TimerManager.h>
 #include <ThreadPool.h>
-#include <DL_Debug.h>
-#include "Skybox.h"
-#include "DDSTextureLoader.h"
 #include "LineDrawer.h"
 #include "Renderer.h"
 #include "DebugInfoDrawer.h"
 #include "ThreadNamer.h"
-#include "ParticleEmitterManager.h"
 #include "FireEmitterManager.h"
+#include "Console.h"
 #include "../Audio/AudioInterface.h"
 #include "../FontEngine/FontEngineFacade.h"
-#include "Console.h"
 #include "../ThreadedPostmaster/Postmaster.h"
 #include "../ThreadedPostmaster/PostOffice.h"
-#include "../Components/ParticleEmitterComponentManager.h"
 
 CEngine* CEngine::myInstance = nullptr;
 

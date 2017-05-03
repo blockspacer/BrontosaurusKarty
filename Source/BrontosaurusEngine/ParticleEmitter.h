@@ -1,13 +1,6 @@
 #pragma once
-#include <mutex>
 #include "Texture.h"
-#include "../CommonUtilities/GrowingArray.h"
-#include "../CommonUtilities/StaticArray.h"
-#include "../CommonUtilities/vector3.h"
-#include "../CommonUtilities/vector4.h"
-#include "binary_tree.h"
 #include "EmitterData.h"
-#include "../CommonUtilities/matrix44.h"
 #include "../LuaWrapper/file_watcher.h"
 
 

@@ -1,11 +1,5 @@
 #pragma once
 
-//#include <GrowingArray.h>
-//#include <StaticArray.h>
-#include <mutex>
-#include <cstdint>
-
-
 #define BUFFER_SIZE 512
 
 template<typename type, typename sizeType = std::uint32_t>

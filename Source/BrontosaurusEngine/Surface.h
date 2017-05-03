@@ -1,5 +1,4 @@
 #pragma once
-//#include <GrowingArray.h>
 
 class CDXFramework;
 class CTexture;

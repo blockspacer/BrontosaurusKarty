@@ -13,3 +13,6 @@
 
 #include "EMouseButtons.h"
 #include "CommandLineManager.h"
+
+#include "CUTime.h"
+#include "TimerManager.h"
