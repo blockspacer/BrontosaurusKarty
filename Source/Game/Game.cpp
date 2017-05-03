@@ -1,16 +1,14 @@
 #include "stdafx.h"
 #include "Game.h" 
 
-//STATES
-#include "CommonUtilities/CommandLineManager.h"
 #include "LuaWrapper/SSlua/SSlua.h"
 #include "ScriptLoader.h"
+
 #include "KevinLoader/KevinLoader.h"
 #include "BackgroundLoadingManager.h"
 #include "ThreadedPostmaster/Postmaster.h"
+#include "ThreadedPostmaster/PostOffice.h"
 
-
-#include "../CommonUtilities/WindowsHelper.h"
 #include "LoadState.h"
 
 CGame::CGame()
@@ -34,10 +32,6 @@ void CGame::Init()
 	myClient.StartClient();
 
 	myStateStack.PushState(new CLoadState(myStateStack, 0));
-
-
-
-	//myStateStack.PushState(new CTempLobbyState(myStateStack));
 }
 
 bool CGame::Update(const CU::Time& aDeltaTime)

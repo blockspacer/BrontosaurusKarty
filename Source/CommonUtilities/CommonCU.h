@@ -12,3 +12,4 @@
 #include "matrix.h"
 
 #include "EMouseButtons.h"
+#include "CommandLineManager.h"

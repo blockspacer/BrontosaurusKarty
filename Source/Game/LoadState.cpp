@@ -8,19 +8,21 @@
 
 #include "Renderer.h"
 #include "BackgroundLoadingManager.h"
-#include "Game/Game.h"
+//#include "Game/Game.h"
+
 #include "TShared/NetworkMessage_ClientReady.h"
 #include "TClient/ClientMessageManager.h"
 #include "ThreadedPostmaster/Postmaster.h"
+#include "ThreadedPostmaster/PostOffice.h"
 #include "ThreadedPostmaster/SendNetowrkMessageMessage.h"
 #include "TClient/ServerReadyMessage.h"
 #include "../Audio/AudioInterface.h"
 
+//#include "LoadingAnimation.h"
+
 CLoadState::CLoadState(StateStack& aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::eLoadState)
 	, myLevelIndex(aLevelIndex)
-	, myGotOkFromServer(false)
-	, myNumberOfPlayersToSpawnBeforeStarting(1)
 {
 	myPlayState = nullptr;
 }
@@ -31,7 +33,6 @@ CLoadState::~CLoadState()
 
 void CLoadState::Init()
 {
-	//RENDERER.ClearRenderQueue();
 	CBackgroundLoadingManager &bLM = CBackgroundLoadingManager::GetInstance();
 
 	myControlSchemeSprite = new CSpriteInstance("Sprites/Menu/Main/Loading/default.dds");

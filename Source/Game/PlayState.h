@@ -1,7 +1,5 @@
 #pragma once
 #include "../StateStack/State.h"
-#include "../PostMaster/Subscriber.h"
-#include <atomic>
 #include "../ThreadedPostmaster/Subscriber.h"
 
 namespace CU

@@ -2,41 +2,43 @@
 #include "PlayState.h"
 
 #include <Engine.h>
+#include <Renderer.h>
 #include <CommonUtilities.h>
 #include <StopWatch.h>
 #include <EInputReturn.h>
 #include <Lights.h>
 #include <Scene.h>
 
-#include "Skybox.h"
+#include "StateStack/StateStack.h"
+
+//#include "Skybox.h"
 #include "../Audio/AudioInterface.h"
 
 #include "LoadState.h"
 #include "ThreadedPostmaster/LoadLevelMessage.h"
 
-//Managers
+//Managers and components
 
-#include "Components/GameObject.h"
-#include "Components/GameObjectManager.h"
-#include "Components/ComponentManager.h"
+#include "ModelComponentManager.h"
 #include "Components/ScriptComponentManager.h"
-//#include "../GUI/GUIManager.h"
 
 #include "LoadManager/LoadManager.h"
 #include "KevinLoader/KevinLoader.h"
 
 #include "CameraComponent.h"
-#include <thread>
-#include "ModelComponentManager.h"
 
-#include "ComponentMessage.h"
+
+//Networking
 #include "TClient/Client.h"
 #include "TShared/NetworkMessage_ClientReady.h"
 #include "TClient/ClientMessageManager.h"
 #include "PostMaster/SendNetworkMessage.h"
+#include "PostMaster/MessageType.h"
 #include "ThreadedPostmaster/Postmaster.h"
+#include "ThreadedPostmaster/PostOffice.h"
 #include "ThreadedPostmaster/SendNetowrkMessageMessage.h"
-#include "StateStack/StateStack.h"
+
+
 #include "CommonUtilities/InputMessage.h"
 #include <CommonUtilities/EKeyboardKeys.h>
 
@@ -54,13 +56,8 @@
 #include "../Components/ParticleEmitterComponentManager.h"
 
 //Other stuff I dunno
-#include "TextInstance.h"
-#include "GameObject.h"
-#include "ComponentAnswer.h"
-#include "AnimationComponent.h"
 #include "PointLightComponentManager.h"
 #include "BrontosaurusEngine/SpriteInstance.h"
-#include "Renderer.h"
 #include "ThreadedPostmaster/GameEventMessage.h"
 #include <LuaWrapper/SSlua/SSlua.h>
 
@@ -191,7 +188,6 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 {
 	CParticleEmitterComponentManager::GetInstance().UpdateEmitters(aDeltaTime);
 
-	CAnimationComponent::UpdateAnimations(aDeltaTime);
 	myScene->Update(aDeltaTime);
 	if (myPhysicsScene->Simulate(aDeltaTime) == true)
 	{
