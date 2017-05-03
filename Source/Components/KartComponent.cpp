@@ -50,5 +50,6 @@ void CKartComponent::Update(float aDeltaTime)
 	{
 		mySpeed -= aDeltaTime * myDecceleration;
 	}
-	//myAcceleration = 0.0f;
+
+	GetParent()->GetLocalTransform().Move(CU::Vector3f(0.0f, 0.0f, mySpeed * aDeltaTime));
 }
