@@ -375,6 +375,8 @@
     <ClInclude Include="ComponentAnswer.h" />
     <ClInclude Include="ComponentMessageCallback.h" />
     <ClInclude Include="ComponentMessageTypeToLua.h" />
+    <ClInclude Include="KartComponent.h" />
+    <ClInclude Include="KartComponentManager.h" />
     <ClInclude Include="MeshColliderComponent.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RigidBodyComponent.h" />
@@ -412,6 +414,8 @@
     <ClCompile Include="ColliderComponentManager.cpp" />
     <ClCompile Include="ComponentMessageTypeToLua.cpp" />
     <ClCompile Include="FireComponent.cpp" />
+    <ClCompile Include="KartComponent.cpp" />
+    <ClCompile Include="KartComponentManager.cpp" />
     <ClCompile Include="MeshColliderComponent.cpp" />
     <ClCompile Include="PointLightComponent.cpp" />
     <ClCompile Include="PointLightComponentManager.cpp" />

@@ -26,7 +26,7 @@
 #include "KevinLoader/KevinLoader.h"
 
 #include "CameraComponent.h"
-
+#include "KartComponentManager.h"
 
 //Networking
 #include "TClient/Client.h"
@@ -61,6 +61,9 @@
 #include "ThreadedPostmaster/GameEventMessage.h"
 #include <LuaWrapper/SSlua/SSlua.h>
 
+// player creationSpeciifcIncludes
+#include "KartComponent.h"
+
 CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
 	, myPhysicsScene(nullptr)
@@ -91,6 +94,7 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myColliderComponentManager);
 	SAFE_DELETE(myPhysicsScene);
 	SAFE_DELETE(myGameObjectManager);
+	SAFE_DELETE(myKartComponentManager);
 }
 
 void CPlayState::Load()
@@ -194,6 +198,7 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 		myColliderComponentManager->Update();
 	}
 
+	myKartComponentManager->Update(aDeltaTime.GetSeconds());
 	return myStatus;
 }
 
@@ -254,6 +259,7 @@ void CPlayState::CreateManagersAndFactories()
 	myColliderComponentManager->InitControllerManager();
 
 	myScriptComponentManager = new CScriptComponentManager();
+	myKartComponentManager = new CKartComponentManager();
 }
 
 void CPlayState::CreatePlayer(CU::Camera& aCamera)
@@ -265,6 +271,8 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	CComponentManager::GetInstance().RegisterComponent(cameraComponent);
 	cameraComponent->SetCamera(aCamera);
 	myCameraComponent = cameraComponent;
+	CKartComponent* kartComponent = myKartComponentManager->CreateComponent();
+	
 
 	playerObject->AddComponent(cameraComponent);
 }

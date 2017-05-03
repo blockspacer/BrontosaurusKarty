@@ -31,6 +31,8 @@
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="StreakEmitterComponent.cpp" />
     <ClCompile Include="AnimationComponentLoader.cpp" />
+    <ClCompile Include="KartComponent.cpp" />
+    <ClCompile Include="KartComponentManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h" />
@@ -69,5 +71,7 @@
     <ClInclude Include="StreakEmitterComponent.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="AnimationComponentLoader.h" />
+    <ClInclude Include="KartComponent.h" />
+    <ClInclude Include="KartComponentManager.h" />
   </ItemGroup>
 </Project>
