@@ -50,7 +50,6 @@ void Init(int argc, char* argv[])
 
 	DL_Debug::Debug::CreateInstance();
 	//InitAudio();
-	PostMaster::CreateInstance();
 
 	{
 		CGame game;
@@ -126,7 +125,6 @@ void Init(int argc, char* argv[])
 	CEngine::DestroyInstance();
 
 	CParticleEmitterManager::Destroy();
-	PostMaster::DestroyInstance();
 	DL_Debug::Debug::DestroyInstance();
 	CommandLineManager::DestroyInstance();
 

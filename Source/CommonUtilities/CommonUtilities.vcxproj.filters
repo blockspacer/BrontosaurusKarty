@@ -46,17 +46,11 @@
     <Filter Include="ThreadPool">
       <UniqueIdentifier>{b8127164-0ed7-4c7d-b4a0-bbfa1814d20b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PostMaster">
-      <UniqueIdentifier>{9255239d-6be5-4cef-8510-66ee1c46f8e1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Input">
       <UniqueIdentifier>{8f61341e-4991-40d9-99bd-8b559417bfdd}</UniqueIdentifier>
     </Filter>
     <Filter Include="String">
       <UniqueIdentifier>{cf369f14-7b71-40e1-8e8e-4b27d36b1950}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="CountDown">
-      <UniqueIdentifier>{fe3f9e2c-80e6-43a6-8447-7c89ca05e5ed}</UniqueIdentifier>
     </Filter>
     <Filter Include="Queue">
       <UniqueIdentifier>{973577ba-0a9b-4a54-b7f7-e7c748ea347c}</UniqueIdentifier>
@@ -286,15 +280,6 @@
     <ClInclude Include="Work.h">
       <Filter>ThreadPool</Filter>
     </ClInclude>
-    <ClInclude Include="PostMasterKyle.h">
-      <Filter>PostMaster</Filter>
-    </ClInclude>
-    <ClInclude Include="SubscriberKyle.h">
-      <Filter>PostMaster</Filter>
-    </ClInclude>
-    <ClInclude Include="MessageKyle.h">
-      <Filter>PostMaster</Filter>
-    </ClInclude>
     <ClInclude Include="CUTime.h">
       <Filter>Timer</Filter>
     </ClInclude>
@@ -303,9 +288,6 @@
     </ClInclude>
     <ClInclude Include="StringHelper.h">
       <Filter>String</Filter>
-    </ClInclude>
-    <ClInclude Include="CountDown.h">
-      <Filter>CountDown</Filter>
     </ClInclude>
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Queue.h">
@@ -420,6 +402,14 @@
     <ClInclude Include="growingvector.h">
       <Filter>Containers</Filter>
     </ClInclude>
+    <ClInclude Include="CommonSTL.h" />
+    <ClInclude Include="CommonCU.h" />
+    <ClInclude Include="IQueue.h">
+      <Filter>Queue</Filter>
+    </ClInclude>
+    <ClInclude Include="LocklessQueue.h">
+      <Filter>Queue</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -453,17 +443,8 @@
     <ClCompile Include="Worker.cpp">
       <Filter>ThreadPool</Filter>
     </ClCompile>
-    <ClCompile Include="example_postMastercpp.h">
-      <Filter>PostMaster</Filter>
-    </ClCompile>
-    <ClCompile Include="PostMasterKyle.cpp">
-      <Filter>PostMaster</Filter>
-    </ClCompile>
     <ClCompile Include="CUTime.cpp">
       <Filter>Timer</Filter>
-    </ClCompile>
-    <ClCompile Include="CountDown.cpp">
-      <Filter>CountDown</Filter>
     </ClCompile>
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="Frustum.cpp">

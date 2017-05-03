@@ -7,9 +7,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Precompiled</Filter>
     </ClCompile>
-    <ClCompile Include="PostMaster.cpp">
-      <Filter>PostMaster</Filter>
-    </ClCompile>
     <ClCompile Include="DrawCallsCount.cpp">
       <Filter>Events\DrawCallsCount</Filter>
     </ClCompile>
@@ -67,9 +64,6 @@
     </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Precompiled</Filter>
-    </ClInclude>
-    <ClInclude Include="PostMaster.h">
-      <Filter>PostMaster</Filter>
     </ClInclude>
     <ClInclude Include="Event.h">
       <Filter>Events</Filter>
@@ -204,6 +198,7 @@
     <ClInclude Include="PopCurrentState.h" />
     <ClInclude Include="PostMaster.h" />
     <ClInclude Include="QuitGame.h" />
+    <ClInclude Include="PopCurrentState.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Events">
@@ -214,9 +209,6 @@
     </Filter>
     <Filter Include="Subscriber">
       <UniqueIdentifier>{88b0f828-6ee8-4ed8-a472-a4c90bbee1cd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="PostMaster">
-      <UniqueIdentifier>{815c9789-bd50-4df0-a54e-735261334aaa}</UniqueIdentifier>
     </Filter>
     <Filter Include="Message">
       <UniqueIdentifier>{8f4329db-8f16-4cb4-bd77-03111a6190d1}</UniqueIdentifier>

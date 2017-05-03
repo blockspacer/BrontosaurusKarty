@@ -7,7 +7,6 @@
 
 #include "../CommonUtilities/BitSet.h"
 #include "../CommonUtilities/TimerManager.h"
-#include "../CommonUtilities/CountDown.h"
 #include "../CommonUtilities/EKeyboardKeys.h"
 #include "../CommonUtilities/InputMessage.h"
 #include "../CommonUtilities/InputMessenger.h"
@@ -21,7 +20,6 @@
 CDebugInfoDrawer::CDebugInfoDrawer(unsigned int aDebugFlags)
 	: CInputMessenger(eInputMessengerType::eDebugInfoDrawer, 20)
 	, myOutputTexts(nullptr)
-	, myCountDown(nullptr)
 	, myLogicThreadTimers(nullptr)
 	, myLogicFPSTimer(0)
 	, myUpdateTextTimer(0)
@@ -59,8 +57,6 @@ CDebugInfoDrawer::CDebugInfoDrawer(unsigned int aDebugFlags)
 	myOutputTexts[eDebugText_DataAmmountSent]->Init();
 	myOutputTexts[eDebugText_DataAmmountSent]->SetText(L"DATA SENT (MB): ");
 
-	myCountDown = new CU::CountDown();
-
 	myLogicThreadTimers = new CU::TimerManager();
 	myRenderThreadTimers = new CU::TimerManager();
 
@@ -79,7 +75,6 @@ CDebugInfoDrawer::~CDebugInfoDrawer()
 #ifndef _RETAIL_BUILD
 	SAFE_DELETE(myLogicThreadTimers);
 	SAFE_DELETE(myRenderThreadTimers);
-	SAFE_DELETE(myCountDown);
 
 	Postmaster::Threaded::CPostmaster::GetInstance().Unsubscribe(this);
 
@@ -106,8 +101,6 @@ void CDebugInfoDrawer::Render(const CU::Vector2ui aTargetWindowSize)
 		}
 	}
 
-	myCountDown->Render();
-
 #endif // !_RETAIL_BUILD
 }
 
@@ -120,8 +113,6 @@ void CDebugInfoDrawer::Update()
 	UpdateDrawCallsCounter();
 	UpdateMemoryUsage();
 	UpdateNetworkDebug();
-
-	myCountDown->Update();
 
 #endif // !_RETAIL_BUILD
 }

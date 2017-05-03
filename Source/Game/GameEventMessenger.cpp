@@ -2,7 +2,6 @@
 #include "GameEventMessenger.h"
 #include "PostMaster/Message.h"
 #include "PostMaster/Event.h"
-#include "PostMaster/PostMaster.h"
 #include "ThreadedPostmaster/Postmaster.h"
 #include "ThreadedPostmaster/GameEventMessage.h"
 

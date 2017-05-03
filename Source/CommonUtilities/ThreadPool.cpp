@@ -176,7 +176,7 @@ namespace CU
 
 	}
 
-	void ThreadPool::LogName(const std::string& aThreadName)
+	void ThreadPool::LogName(const std::string& /*aThreadName*/)
 	{
 
 	}

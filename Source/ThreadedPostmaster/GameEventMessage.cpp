@@ -1,4 +1,5 @@
-﻿#include "GameEventMessage.h"
+﻿#include "stdafx.h"
+#include "GameEventMessage.h"
 #include "../PostMaster/MessageType.h"
 #include "../ThreadedPostmaster/Subscriber.h"
 

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ParticleLibrary.h"
 #include "JsonValue.h"
 #include "DL_Debug.h"

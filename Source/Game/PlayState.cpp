@@ -60,27 +60,23 @@
 #include "AnimationComponent.h"
 #include "PointLightComponentManager.h"
 #include "BrontosaurusEngine/SpriteInstance.h"
-#include "ShowTitleComponent.h"
 #include "Renderer.h"
 #include "ThreadedPostmaster/GameEventMessage.h"
 #include <LuaWrapper/SSlua/SSlua.h>
 
 CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
-	, myLevelIndex(aLevelIndex)
+	, myPhysicsScene(nullptr)
+	, myPhysics(nullptr)
 	, myGameObjectManager(nullptr)
 	, myScene(nullptr)
 	, myModelComponentManager(nullptr)
-	, myCameraComponent(nullptr)
-	, myIsInfocus(false)
+	, myColliderComponentManager(nullptr)
 	, myScriptComponentManager(nullptr)
+	, myCameraComponent(nullptr)
+	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
-	, myPressedAnyKey(false)
-	, mode(0)
 {
-	myPhysicsScene = nullptr;
-	myPhysics = nullptr;
-	myColliderComponentManager = nullptr;
 }
 
 CPlayState::~CPlayState()
@@ -98,8 +94,6 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myColliderComponentManager);
 	SAFE_DELETE(myPhysicsScene);
 	SAFE_DELETE(myGameObjectManager);
-	//SAFE_DELETE(myPhysics); // kanske? nope foundation förstör den
-	//Physics::CFoundation::Destroy(); desstroy this lator
 }
 
 void CPlayState::Load()
@@ -214,34 +208,25 @@ void CPlayState::Render()
 
 void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
 {
-	myIsInfocus = true;
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eChangeLevel);
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eNetworkMessage);
 }
 
 void CPlayState::OnExit(const bool /*aLetThroughRender*/)
 {
-	myIsInfocus = false;
 	Postmaster::Threaded::CPostmaster::GetInstance().Unsubscribe(this);
 	RENDERER.ClearGui();
 }
+
 CU::eInputReturn CPlayState::RecieveInput(const CU::SInputMessage& aInputMessage)
 {
-	if (myIsInfocus == false)
-	{
-		return CU::eInputReturn::ePassOn;
-	}
-	if (aInputMessage.myType == CU::eInputType::eKeyboardPressed)
-	{
-		myPressedAnyKey = true;
-	}
-
 	if (aInputMessage.myType == CU::eInputType::eKeyboardPressed && aInputMessage.myKey == CU::eKeys::ESCAPE)
 	{
-		CU::CInputMessenger::RecieveInput(aInputMessage);
+		//myStateStack.PushState(new CPauseMenuState(myStateStack));
+		return CU::eInputReturn::eKeepSecret;
 	}
 
-	return CU::eInputReturn::eKeepSecret;
+	return CU::CInputMessenger::RecieveInput(aInputMessage);
 }
 
 CGameObjectManager* CPlayState::GetGameObjectManager()
@@ -286,4 +271,9 @@ void CPlayState::SpawnPlayer(CU::Camera& aCamera)
 	myCameraComponent = cameraComponent;
 
 	playerObject->AddComponent(cameraComponent);
+}
+
+void CPlayState::SetCameraComponent(CCameraComponent* aCameraComponent)
+{
+	myCameraComponent = aCameraComponent;
 }

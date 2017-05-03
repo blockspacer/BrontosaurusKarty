@@ -19,11 +19,9 @@
 #include <Camera.h>
 
 #include "ModelInstance.h"
-#include "../PostMaster/PostMaster.h"
 #include "../PostMaster/Message.h"
 #include "../PostMaster/DrawCallsCount.h"
 
-#include "../GUI/GUIPixelConstantBuffer.h"
 #include "LineDrawer.h"
 #include "../ThreadedPostmaster/Postmaster.h"
 #include "../ThreadedPostmaster/PostOffice.h"
@@ -1101,29 +1099,6 @@ bool CRenderer::HandleRenderMessage(SRenderMessage * aRenderMesage, int & aDrawC
 	{
 		myDeferredRenderer.AddRenderMessage(aRenderMesage);
 		aDrawCallCount += myDeferredRenderer.myBatchedModelIds.Size();
-		break;
-	}
-	case SRenderMessage::eRenderMessageType::eRenderGUIModel:
-	{
-		myGUIRenderer.GetCurrentPackage().Activate();
-		SRenderGUIModelMessage* msg = static_cast<SRenderGUIModelMessage*>(aRenderMesage);
-		CModelManager* modelManager = CEngine::GetInstance()->GetModelManager();
-		CModel* model = modelManager->GetModel(msg->myModelID);
-
-		if (model == nullptr) break;
-
-		SForwardRenderModelParams params;
-		params.myTransform = msg->myToWorld;
-		params.myTransformLastFrame = msg->myToWorld; //don't blur  GUI, atm fullösning deluxe.
-		params.myRenderToDepth = false;
-
-		model->Render(params);
-
-		++aDrawCallCount;
-
-		if (mySettings.Motionblur == true) renderTo->Activate(myMotionBlurData.velocityPackage);
-		else renderTo->Activate();
-
 		break;
 	}
 	case SRenderMessage::eRenderMessageType::eRenderSprite:

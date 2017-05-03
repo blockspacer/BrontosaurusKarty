@@ -5,7 +5,6 @@
 #include "../CommonUtilities/Camera.h"
 #include "../CommonUtilities/GrowingArray.h"
 
-#include "../GUI/GUIPixelConstantBuffer.h"
 #include "RenderPackage.h"
 #include "FullScreenHelper.h"
 #include "BufferStructs.h"
@@ -13,8 +12,8 @@
 #include "ParticleEmitter.h"
 #include "CascadeBuffer.h"
 #include "Colour.h"
-#include "../GUI/GUIElement.h"
 #include "RenderCamera.h"
+#include "GUIElement.h"
 
 struct ID3D11RenderTargetView;
 
@@ -262,18 +261,6 @@ struct SSetShadowBuffer : SRenderMessage
 	CRenderPackage myShadowBuffer;
 	//CU::Matrix44f myCameraTransformation;
 	//CU::Matrix44f myCameraProjection;
-};
-
-
-
-struct SRenderGUIModelMessage : SRenderMessage
-{
-	SRenderGUIModelMessage();
-
-	CU::Matrix44f myToWorld;
-	SPixelConstantBuffer myPixelConstantBufferStruct;
-	int myModelID;
-
 };
 
 struct SRenderParticlesMessage : SRenderMessage

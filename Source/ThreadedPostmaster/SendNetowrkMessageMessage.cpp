@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "SendNetowrkMessageMessage.h"
 #include "../PostMaster/MessageType.h"
 #include "../TClient/Client.h"

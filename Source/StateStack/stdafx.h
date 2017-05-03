@@ -9,21 +9,15 @@
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 
-#define SAFE_DELETE(ptr) delete ptr; ptr = nullptr
+#include "../CommonUtilities/CommonSTL.h"
+#include "../CommonUtilities/CommonCU.h"
 
-#include <utility>
-
-#include "../CommonUtilities/DL_Debug.h"
-#include "../CommonUtilities/GrowingArray.h"
-#include "../CommonUtilities/StaticArray.h"
-#include "../CommonUtilities/VectorOnStack.h"
-#include "../CommonUtilities/CUTime.h"
-//#include "../CommonUtilities/MemoryLeekLogger.h"
-
-#include "../PostMaster/PostMaster.h"
 #include "../PostMaster/Event.h"
 #include "../PostMaster/Message.h"
 
+//#include "../CommonUtilities/MemoryLeekLogger.h"
 #include "State.h"
 
-// TODO: reference additional headers your program requires here
+#ifndef SAFE_DELETE
+#define SAFE_DELETE(ptr) delete ptr; ptr = nullptr
+#endif // SAFE_DELETE

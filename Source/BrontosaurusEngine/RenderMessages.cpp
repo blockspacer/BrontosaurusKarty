@@ -19,11 +19,6 @@ SRenderModelMessage::SRenderModelMessage()
 {
 }
 
-SRenderGUIModelMessage::SRenderGUIModelMessage()
-	: SRenderMessage(eRenderMessageType::eRenderGUIModel)
-{
-}
-
 SRenderParticlesMessage::SRenderParticlesMessage()
 	: SRenderMessage(eRenderMessageType::eRenderParticles)
 {
@@ -73,7 +68,6 @@ SSetCameraMessage::SSetCameraMessage()
 SChangeStatesMessage::SChangeStatesMessage()
 	: SRenderMessage(eRenderMessageType::eChangeStates)
 {
-	//mySamplerState = eSamplerState::eSize;
 }
 
 SRenderTextMessage::SRenderTextMessage()

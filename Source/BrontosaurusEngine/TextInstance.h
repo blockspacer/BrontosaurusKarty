@@ -116,7 +116,7 @@ inline std::wstring CTextInstance::GetText() const
 		if (i != 0)
 		{
 			DL_PRINT_WARNING("Warning slow! please consider just getting a separete line");
-			string += L'/n';
+			string += L'\n';
 		}
 		string += myStrings[i];
 	}

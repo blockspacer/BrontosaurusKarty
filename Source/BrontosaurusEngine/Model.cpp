@@ -14,7 +14,7 @@
 #include "ModelInstance.h"
 #include "Lights.h"
 #include "../CommonUtilities/matrix44.h"
-#include "../Collision/Intersection.h"
+#include "../CommonUtilities/Intersection.h"
 #include <CUTime.h>
 #include <StringHelper.h>
 #include "Renderer.h"

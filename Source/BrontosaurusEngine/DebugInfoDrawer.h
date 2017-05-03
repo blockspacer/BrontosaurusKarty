@@ -9,8 +9,6 @@
 
 namespace CU
 {
-	class CountDown;
-
 	template <typename T>
 	class Vector2;
 	using Vector2ui = Vector2<unsigned int>;
@@ -63,8 +61,6 @@ private:
 	};
 
 	CU::StaticArray<CTextInstance*, eDebugText_Length> myOutputTexts;
-
-	CU::CountDown* myCountDown;
 
 	CU::TimerManager* myLogicThreadTimers;
 	CU::TimerManager* myRenderThreadTimers;

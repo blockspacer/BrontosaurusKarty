@@ -1,6 +1,5 @@
 #pragma once
-#include "../CommonUtilities/vector4.h"
-#include "../CommonUtilities/vector2.h"
+
 #include "../CommonUtilities/BitSet.h"
 
 enum class eAnchors
@@ -8,7 +7,7 @@ enum class eAnchors
 	eTop,
 	eBottom,
 	eLeft,
-	eRight 
+	eRight
 };
 
 struct SGUIElement

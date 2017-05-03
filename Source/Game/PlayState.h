@@ -55,36 +55,26 @@ public:
 
 	eMessageReturn DoEvent(const CLoadLevelMessage& aLoadLevelMessage) override;
 	CU::eInputReturn RecieveInput(const CU::SInputMessage& aInputMessage) override;
-	inline void SetCameraComponent(CCameraComponent* aCameraComponent);
+	void SetCameraComponent(CCameraComponent* aCameraComponent);
+
 private:
 	void SpawnPlayer(CU::Camera& aCamera);
+
 private:
 	Physics::CPhysicsScene* myPhysicsScene;
 	Physics::CPhysics* myPhysics;
-
-
-
-	CColliderComponentManager* myColliderComponentManager;
 
 	CGameObjectManager* myGameObjectManager;
 	CScene* myScene;
 
 	CModelComponentManager* myModelComponentManager;
-
+	CColliderComponentManager* myColliderComponentManager;
 	CScriptComponentManager* myScriptComponentManager;
 
-	class CCameraComponent* myCameraComponent;
-	bool myIsInfocus;
+	CCameraComponent* myCameraComponent;
 
 	int myLevelIndex;
 	std::atomic_bool myIsLoaded;
-
-	bool myPressedAnyKey;
-	int mode;
-	//Super temp ta bort när guit börjar ta form
-	//CTextInstance* myPlayerHealthText;
-	//CTextInstance* myPlayerArmorText;
-
 };
 
 inline bool CPlayState::IsLoaded() const
@@ -100,9 +90,4 @@ inline CColliderComponentManager* CPlayState::GetColliderComponentManager()
 inline CScriptComponentManager* CPlayState::GetScriptComponentManager()
 {
 	return myScriptComponentManager;
-}
-
-void CPlayState::SetCameraComponent(CCameraComponent* aCameraComponent)
-{
-	myCameraComponent = aCameraComponent;
 }

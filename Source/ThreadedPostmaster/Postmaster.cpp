@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Postmaster.h"
 #include "Message.h"
 #include "PostOffice.h"

@@ -389,6 +389,7 @@
     <ClInclude Include="DeferredRenderer.h" />
     <ClInclude Include="ELUTType.h" />
     <ClInclude Include="GeometryBuffer.h" />
+    <ClInclude Include="GUIElement.h" />
     <ClInclude Include="HighlightComponent.h" />
     <ClInclude Include="LightModel.h" />
     <ClInclude Include="ParticleRenderer.h" />

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ParticleRotationSpawner.h"
 #include "JsonValue.h"
 #include "../Components/ParticleEmitterComponentManager.h"

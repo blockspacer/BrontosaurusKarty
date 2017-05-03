@@ -52,7 +52,6 @@
     <ClCompile Include="KeyCharPressed.cpp" />
     <ClCompile Include="NetworkPosMessageEvent.cpp" />
     <ClCompile Include="PopCurrentState.cpp" />
-    <ClCompile Include="PostMaster.cpp" />
     <ClCompile Include="PushState.cpp" />
     <ClCompile Include="QuitGame.cpp" />
     <ClCompile Include="SendNetworkMessage.cpp" />
@@ -79,10 +78,8 @@
     <ClInclude Include="Message.h" />
     <ClInclude Include="MessageType.h" />
     <ClInclude Include="NetworkPosMessageEvent.h" />
-    <ClInclude Include="PostMaster.h" />
     <ClInclude Include="PopCurrentState.h" />
     <ClInclude Include="PopCurrentState.h" />
-    <ClInclude Include="PostMaster.h" />
     <ClInclude Include="PushState.h" />
     <ClInclude Include="QuitGame.h" />
     <ClInclude Include="SendNetworkMessage.h" />

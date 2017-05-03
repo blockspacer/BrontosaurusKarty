@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "LoadLevelMessage.h"
 #include "../PostMaster/MessageType.h"
 #include "../ThreadedPostmaster/Subscriber.h"

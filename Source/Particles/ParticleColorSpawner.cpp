@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ParticleColorSpawner.h"
 #include "JsonValue.h"
 #include <cstdlib>

@@ -5,10 +5,6 @@
 #include <map>
 #include <unordered_map>
 
-#ifdef _WIN32
-	#include <Windows.h>
-#endif
-
 #define MIN(A,B) ((A) < (B)) ? A : B
 #define MAX(A,B) ((A) > (B)) ? A : B
 #define SWAP(A,B) A^=B^=A^=B

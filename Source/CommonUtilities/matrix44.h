@@ -1,16 +1,8 @@
 #pragma once
-#define _USE_MATH_DEFINES
 
-#include <math.h>
-#include <cmath>
 #include <intrin.h>
 
-#include "vector4.h"
-#include "vector3.h"
-#include "StaticArray.h"
-
 #include "InvertMatrix.h"
-#include "matrix33.h"
 
 namespace CU
 {
@@ -20,6 +12,12 @@ namespace CU
 		Y,
 		Z
 	};
+
+	template<typename TYPE>
+	class Vector3;
+
+	template<typename TYPE>
+	class Vector4;
 
 	template<typename TYPE>
 	class Matrix33;
@@ -255,7 +253,7 @@ namespace CU
 
 			//float AspectRatioX = aWidth / aHeight;
 			float AspectRatioY = aHeight / aWidth;
-			float FovX = aFov * (static_cast<float>(M_PI) / 180.0f);
+			float FovX = aFov * (3.141592f / 180.0f);
 			float TanFovX = tan(FovX / 2.0f);
 			float FovY = 2.0f * atan(TanFovX * AspectRatioY);
 
@@ -332,7 +330,6 @@ namespace CU
 
 			//return temp;
 		}
-
 
 		static Matrix44 CreateOrthogonalProjectionMatrixLH(TYPE aNear, TYPE aFar, TYPE aWidth, TYPE aHeight)
 		{
@@ -522,6 +519,7 @@ namespace CU
 
 			return *this;
 		}
+		
 		Matrix44<TYPE>& RotateAroundAxis(float anAngle, Axees anAxis)
 		{
 			Matrix44<TYPE> temp;
@@ -552,7 +550,7 @@ namespace CU
 			return *this;
 		}
 
-		/* rotates x,y then z*/
+		//rotates x, y then z
 		Matrix44<TYPE>& Rotate(const float x, const float y, const float z)
 		{
 			Rotate(x, Axees::X);
@@ -571,7 +569,7 @@ namespace CU
 			return *this;
 		}
 
-		/* rotates x,y then z*/
+		//rotates x, y then z
 		Matrix44<TYPE>& RotateAroundAxes(const float x, const float y, const float z)
 		{
 			RotateAroundAxis(x, Axees::X);
@@ -589,6 +587,7 @@ namespace CU
 
 			return *this;
 		}
+		
 		Matrix44<TYPE>& SetScale(const Vector3<TYPE>& aScaleVector)
 		{
 			myRightVector.Normalize();
@@ -602,8 +601,7 @@ namespace CU
 
 			return *this;
 		}
-
-
+		
 		void Move(const Vector3<TYPE>& aDisplacement)
 		{
 			SetPosition(aDisplacement * GetRotation() + GetPosition());
@@ -707,9 +705,10 @@ namespace CU
 			InvertMatrix(&m11);
 		}
 
-		void Invert()
+		Matrix44& Invert()
 		{
 			InvertMatrix(&m11);
+			return *this;
 		}
 
 		Matrix44<TYPE> GetInverted() const
@@ -737,10 +736,10 @@ namespace CU
 
 			struct
 			{
-				Vector3<TYPE> myRightVector;	TYPE ms14;
-				Vector3<TYPE> myUpVector;		TYPE ms24;
-				Vector3<TYPE> myForwardVector;	TYPE ms34;
-				Vector3<TYPE> myPosition;		TYPE ms44;
+				Vector3<TYPE> myRightVector;	TYPE _m14;
+				Vector3<TYPE> myUpVector;		TYPE _m24;
+				Vector3<TYPE> myForwardVector;	TYPE _m34;
+				Vector3<TYPE> myPosition;		TYPE _m44;
 			};
 
 			struct

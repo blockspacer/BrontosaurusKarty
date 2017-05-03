@@ -9,16 +9,11 @@
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 
-#include <utility>
-#include <map>
+#include "../CommonUtilities/CommonSTL.h"
+#include "../CommonUtilities/CommonCU.h"
 
 #include "MessageType.h"
 #include "EMessageReturn.h"
-
-#include "../CommonUtilities/GrowingArray.h"
-#include "../CommonUtilities/StaticArray.h"
-#include "../CommonUtilities/DL_Debug.h"
-#include "../CommonUtilities/vector2.h"
 
 #define IntCast(eMsg) static_cast<unsigned int>(eMsg)
 

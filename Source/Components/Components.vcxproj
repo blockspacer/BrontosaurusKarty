@@ -378,7 +378,6 @@
     <ClInclude Include="MeshColliderComponent.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RigidBodyComponent.h" />
-    <ClInclude Include="ShowTitleComponent.h" />
     <ClInclude Include="SphereColliderComponent.h" />
     <ClInclude Include="FireComponent.h" />
     <ClInclude Include="PlayerControls.h" />
@@ -427,7 +426,6 @@
     <ClCompile Include="GameObjectManager.cpp" />
     <ClCompile Include="ParticleEmitterComponent.cpp" />
     <ClCompile Include="ParticleEmitterComponentManager.cpp" />
-    <ClCompile Include="ShowTitleComponent.cpp" />
     <ClCompile Include="SphereColliderComponent.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

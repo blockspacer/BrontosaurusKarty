@@ -1,9 +1,7 @@
 #pragma once
-#include "stdafx.h"
 
 #include "ft2build.h"
 #include FT_FREETYPE_H
-#include <map>
 #include "FT_FontFacade.h"
 
 #define FONT_PATH "Fonts/Fonts.json"

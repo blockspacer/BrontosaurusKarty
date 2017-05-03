@@ -341,17 +341,11 @@
     <ProjectReference Include="..\BrontosaurusEngine\Brontosaurus.vcxproj">
       <Project>{c5ac5f58-5b84-4a09-8e0a-0ffba117fade}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Collision\Collision.vcxproj">
-      <Project>{e5342654-71e1-4cc7-83d8-daf4f7145ce7}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\CommonUtilities\CommonUtilities.vcxproj">
       <Project>{a854f9ca-5390-4ca1-be0c-ec400f972d27}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Components\Components.vcxproj">
       <Project>{acc2e4bb-bf6d-41f6-8f14-de1a07f97d69}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\GUI\GUI.vcxproj">
-      <Project>{43c29576-475c-49d6-a039-6f4fe38ad1a4}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Physics\Physics.vcxproj">
       <Project>{eace5a51-158e-4e6b-9d38-1a4597e76a67}</Project>

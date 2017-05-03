@@ -7,10 +7,5 @@
 
 #include "targetver.h"
 
-#include <stdio.h>
-#include <tchar.h>
-
-
-
-// TODO: reference additional headers your program requires here
-#include "../CommonUtilities/GrowingArray.h"
+#include "../CommonUtilities/CommonSTL.h"
+#include "../CommonUtilities/CommonCU.h"

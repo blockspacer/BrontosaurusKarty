@@ -16,11 +16,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LuaSource", "LuaSource\LuaS
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Components", "Components\Components.vcxproj", "{ACC2E4BB-BF6D-41F6-8F14-DE1A07F97D69}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Collision", "Collision\Collision.vcxproj", "{E5342654-71E1-4CC7-83D8-DAF4F7145CE7}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PostMaster", "PostMaster\PostMaster.vcxproj", "{FF997492-8A34-4E1C-B403-48CABD258797}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GUI", "GUI\GUI.vcxproj", "{43C29576-475C-49D6-A039-6F4FE38AD1A4}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LoadManager", "LoadManager\LoadManager.vcxproj", "{3993F760-8DA4-4813-A704-CE28766FD630}"
 EndProject
@@ -102,8 +98,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TServer_Applictaion", "TSer
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ThreadedPostmaster", "ThreadedPostmaster\ThreadedPostmaster.vcxproj", "{2E206E26-7C71-4D89-9A90-2A3D0C132C9D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Container", "Container\Container.vcxproj", "{45C9B825-ABBD-43CB-A8F7-F44FA5C890A0}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deferred", "Deferred", "{B6224D03-7AF6-4A48-8A12-FD98FFD3BB42}"
 	ProjectSection(SolutionItems) = preProject
 		..\Bin\Shaders\Deferred\deferred_ambient.fx = ..\Bin\Shaders\Deferred\deferred_ambient.fx
@@ -165,24 +159,12 @@ Global
 		{ACC2E4BB-BF6D-41F6-8F14-DE1A07F97D69}.Release|x64.Build.0 = Release|x64
 		{ACC2E4BB-BF6D-41F6-8F14-DE1A07F97D69}.Retail|x64.ActiveCfg = Retail|x64
 		{ACC2E4BB-BF6D-41F6-8F14-DE1A07F97D69}.Retail|x64.Build.0 = Retail|x64
-		{E5342654-71E1-4CC7-83D8-DAF4F7145CE7}.Debug|x64.ActiveCfg = Debug|x64
-		{E5342654-71E1-4CC7-83D8-DAF4F7145CE7}.Debug|x64.Build.0 = Debug|x64
-		{E5342654-71E1-4CC7-83D8-DAF4F7145CE7}.Release|x64.ActiveCfg = Release|x64
-		{E5342654-71E1-4CC7-83D8-DAF4F7145CE7}.Release|x64.Build.0 = Release|x64
-		{E5342654-71E1-4CC7-83D8-DAF4F7145CE7}.Retail|x64.ActiveCfg = Retail|x64
-		{E5342654-71E1-4CC7-83D8-DAF4F7145CE7}.Retail|x64.Build.0 = Retail|x64
 		{FF997492-8A34-4E1C-B403-48CABD258797}.Debug|x64.ActiveCfg = Debug|x64
 		{FF997492-8A34-4E1C-B403-48CABD258797}.Debug|x64.Build.0 = Debug|x64
 		{FF997492-8A34-4E1C-B403-48CABD258797}.Release|x64.ActiveCfg = Release|x64
 		{FF997492-8A34-4E1C-B403-48CABD258797}.Release|x64.Build.0 = Release|x64
 		{FF997492-8A34-4E1C-B403-48CABD258797}.Retail|x64.ActiveCfg = Retail|x64
 		{FF997492-8A34-4E1C-B403-48CABD258797}.Retail|x64.Build.0 = Retail|x64
-		{43C29576-475C-49D6-A039-6F4FE38AD1A4}.Debug|x64.ActiveCfg = Debug|x64
-		{43C29576-475C-49D6-A039-6F4FE38AD1A4}.Debug|x64.Build.0 = Debug|x64
-		{43C29576-475C-49D6-A039-6F4FE38AD1A4}.Release|x64.ActiveCfg = Release|x64
-		{43C29576-475C-49D6-A039-6F4FE38AD1A4}.Release|x64.Build.0 = Release|x64
-		{43C29576-475C-49D6-A039-6F4FE38AD1A4}.Retail|x64.ActiveCfg = Retail|x64
-		{43C29576-475C-49D6-A039-6F4FE38AD1A4}.Retail|x64.Build.0 = Retail|x64
 		{3993F760-8DA4-4813-A704-CE28766FD630}.Debug|x64.ActiveCfg = Debug|x64
 		{3993F760-8DA4-4813-A704-CE28766FD630}.Debug|x64.Build.0 = Debug|x64
 		{3993F760-8DA4-4813-A704-CE28766FD630}.Release|x64.ActiveCfg = Release|x64
@@ -265,12 +247,6 @@ Global
 		{2E206E26-7C71-4D89-9A90-2A3D0C132C9D}.Release|x64.Build.0 = Release|x64
 		{2E206E26-7C71-4D89-9A90-2A3D0C132C9D}.Retail|x64.ActiveCfg = Retail|x64
 		{2E206E26-7C71-4D89-9A90-2A3D0C132C9D}.Retail|x64.Build.0 = Retail|x64
-		{45C9B825-ABBD-43CB-A8F7-F44FA5C890A0}.Debug|x64.ActiveCfg = Debug|x64
-		{45C9B825-ABBD-43CB-A8F7-F44FA5C890A0}.Debug|x64.Build.0 = Debug|x64
-		{45C9B825-ABBD-43CB-A8F7-F44FA5C890A0}.Release|x64.ActiveCfg = Release|x64
-		{45C9B825-ABBD-43CB-A8F7-F44FA5C890A0}.Release|x64.Build.0 = Release|x64
-		{45C9B825-ABBD-43CB-A8F7-F44FA5C890A0}.Retail|x64.ActiveCfg = Retail|x64
-		{45C9B825-ABBD-43CB-A8F7-F44FA5C890A0}.Retail|x64.Build.0 = Retail|x64
 		{97047827-BF3D-478D-8467-686F75536A01}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{97047827-BF3D-478D-8467-686F75536A01}.Debug|x64.Build.0 = Debug|Any CPU
 		{97047827-BF3D-478D-8467-686F75536A01}.Release|x64.ActiveCfg = Release|Any CPU
