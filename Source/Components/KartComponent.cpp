@@ -12,7 +12,10 @@ CKartComponent::CKartComponent()
 	myMaxAcceleration = 100.f;
 	myMinAcceleration = -100.f;
 
-	myFriction = 50.f;
+	myFriction = 5.f;
+
+	mySteering = 0.f;
+	myAngularAcceleration = 1.f;
 }
 
 
@@ -36,18 +39,30 @@ void CKartComponent::Receive(const eComponentMessageType aMessageType, const SCo
 	case eComponentMessageType::eStopDeceleration:
 		myAcceleration = 0.f;
 		break;
+	case eComponentMessageType::eTurnKart:
+		mySteering += aMessageData.myFloat;
+		break;
+	}
+
+	if (mySteering > 1.f)
+	{
+		mySteering = 1.f;
+	}
+	else if (mySteering < -1.f)
+	{
+		mySteering = -1.f;
 	}
 }
 
 void CKartComponent::Update(float aDeltaTime)
 {
 	float way = 1.f;
-	if (myAcceleration > 0.f)
+	if (myFowrardSpeed > 0.f)
 	{
 		way = -1.f;
 	}
 
-	myAcceleration += myFriction * way * aDeltaTime;
+	myFowrardSpeed += myFriction * way * aDeltaTime;
 
 	myFowrardSpeed += myAcceleration * aDeltaTime;
 	if (myFowrardSpeed > myMaxSpeed)
@@ -58,6 +73,10 @@ void CKartComponent::Update(float aDeltaTime)
 	{
 		myFowrardSpeed = myMinSpeed;
 	}
+	
+	float steerAngle = mySteering * myAngularAcceleration;
+	CU::Matrix44f& parentTransform = GetParent()->GetLocalTransform();
+	parentTransform.RotateAroundAxis(steerAngle * aDeltaTime, CU::Axees::Y);
 
 	GetParent()->GetLocalTransform().Move(CU::Vector3f(0.0f, 0.0f, myFowrardSpeed * aDeltaTime));
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, SComponentMessageData());

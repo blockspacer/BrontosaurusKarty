@@ -19,6 +19,9 @@ private:
 
 	float myFriction;
 
+	float mySteering;
+	float myAngularAcceleration;
+	
 	//CU::Vector2f myAcceleration;
 	//CU::Vector2f myJerk;
 	//float myAccelerationInput; //-1.f to 1.f

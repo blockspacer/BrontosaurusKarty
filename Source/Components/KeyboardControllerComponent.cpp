@@ -34,23 +34,27 @@ void CKeyboardControllerComponent::PressedKey(const CU::SInputMessage& aInputMes
 		return;
 	}
 
-	static const SComponentMessageData nullData;
+	SComponentMessageData moveData;
 
 	switch (aInputMessage.myKey)
 	{
 	case CU::eKeys::UP:
 	case CU::eKeys::W:
-		parent->NotifyComponents(eComponentMessageType::eAccelerate, nullData);
+		parent->NotifyComponents(eComponentMessageType::eAccelerate, moveData);
 		break;
 	case CU::eKeys::DOWN:
 	case CU::eKeys::S:
-		parent->NotifyComponents(eComponentMessageType::eDecelerate, nullData);
+		parent->NotifyComponents(eComponentMessageType::eDecelerate, moveData);
 		break;
 	case CU::eKeys::LEFT:
 	case CU::eKeys::A:
+		moveData.myFloat = -1.f;
+		parent->NotifyComponents(eComponentMessageType::eTurnKart, moveData);
 		break;
 	case CU::eKeys::RIGHT:
 	case CU::eKeys::D:
+		moveData.myFloat = 1.f;
+		parent->NotifyComponents(eComponentMessageType::eTurnKart, moveData);
 		break;
 	}
 }
@@ -63,23 +67,27 @@ void CKeyboardControllerComponent::ReleasedKey(const CU::SInputMessage& aInputMe
 		return;
 	}
 
-	static const SComponentMessageData nullData;
+	SComponentMessageData moveData;
 
 	switch (aInputMessage.myKey)
 	{
 	case CU::eKeys::UP:
 	case CU::eKeys::W:
-		parent->NotifyComponents(eComponentMessageType::eStopAcceleration, nullData);
+		parent->NotifyComponents(eComponentMessageType::eStopAcceleration, moveData);
 		break;
 	case CU::eKeys::DOWN:
 	case CU::eKeys::S:
-		parent->NotifyComponents(eComponentMessageType::eStopDeceleration, nullData);
+		parent->NotifyComponents(eComponentMessageType::eStopDeceleration, moveData);
 		break;
 	case CU::eKeys::LEFT:
 	case CU::eKeys::A:
+		moveData.myFloat = 1.f;
+		parent->NotifyComponents(eComponentMessageType::eTurnKart, moveData);
 		break;
 	case CU::eKeys::RIGHT:
 	case CU::eKeys::D:
+		moveData.myFloat = -1.f;
+		parent->NotifyComponents(eComponentMessageType::eTurnKart, moveData);
 		break;
 	}
 }

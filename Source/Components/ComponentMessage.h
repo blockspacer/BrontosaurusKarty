@@ -70,6 +70,7 @@ enum class eComponentMessageType
 	eStopAcceleration,
 	eDecelerate,
 	eStopDeceleration,
+	eTurnKart,
 	eLength,
 };
 
