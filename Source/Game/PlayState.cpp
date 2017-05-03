@@ -9,14 +9,12 @@
 
 #include "StateStack/StateStack.h"
 
-//#include "Skybox.h"
 #include "../Audio/AudioInterface.h"
 
 #include "LoadState.h"
 #include "ThreadedPostmaster/LoadLevelMessage.h"
 
 //Managers and components
-
 #include "ModelComponentManager.h"
 #include "Components/ScriptComponentManager.h"
 
@@ -166,10 +164,10 @@ void CPlayState::Load()
 	CRenderCamera& playerCamera = myScene->GetRenderCamera(CScene::eCameraType::ePlayerOneCamera);
 	playerCamera.InitPerspective(90, WINDOW_SIZE_F.x, WINDOW_SIZE_F.y, 0.1f, 500.f);
 
-
 	CreatePlayer(playerCamera.GetCamera());
+	
 	myScene->SetSkybox("default_cubemap.dds");
-	myScene->SetCubemap("purpleCubemap.dds");
+	myScene->SetCubemap("default_cubemap.dds");
 
 
 	myIsLoaded = true;
@@ -179,7 +177,6 @@ void CPlayState::Load()
 	float time = loadPlaystateTimer.GetDeltaTime().GetMilliseconds();
 	GAMEPLAY_LOG("Game Inited in %f ms", time);
 	Postmaster::Threaded::CPostmaster::GetInstance().GetThreadOffice().HandleMessages();
-
 }
 
 void CPlayState::Init()
@@ -264,20 +261,22 @@ void CPlayState::CreateManagersAndFactories()
 void CPlayState::CreatePlayer(CU::Camera& aCamera)
 {
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
+
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
-	CCameraComponent* cameraComponent = myCameraComponent;
-	cameraComponent = new CCameraComponent();
-	CComponentManager::GetInstance().RegisterComponent(cameraComponent);
-	cameraComponent->SetCamera(aCamera);
-	myCameraComponent = cameraComponent;
+
+	myCameraComponent = new CCameraComponent();
+	CComponentManager::GetInstance().RegisterComponent(myCameraComponent);
+	myCameraComponent->SetCamera(aCamera);
+
 	CKartComponent* kartComponent = myKartComponentManager->CreateComponent();
+
 	CKeyboardControllerComponent* keyBoardInput = new CKeyboardControllerComponent();
 	Subscribe(*keyBoardInput);
+
 	playerObject->AddComponent(playerModel);
 	playerObject->AddComponent(kartComponent);
 	playerObject->AddComponent(keyBoardInput);
-
-	playerObject->AddComponent(cameraComponent);
+	playerObject->AddComponent(myCameraComponent);
 
 	CGameObject* bystanderObject = myGameObjectManager->CreateGameObject();
 	CModelComponent* bystanderModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");

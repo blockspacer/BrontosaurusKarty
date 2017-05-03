@@ -59,6 +59,7 @@ namespace CU
 
 		void SetTransformation(const Matrix44f & aTransformation);
 		const Matrix44f& GetTransformation() const;
+		Matrix44f& GetTransformation();
 		inline float GetFar();
 		inline float GetNear();
 		inline const CU::CFrustum& GetFrustum();

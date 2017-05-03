@@ -9,10 +9,23 @@ public:
 	void Update(float aDeltaTime);
 
 private:
-	float myAcceleration;
-	float mySpeed;
+	float myFowrardSpeed;
 	float myMaxSpeed;
 	float myMinSpeed;
-	float myDeceleration;
+
+	float myAcceleration;
+	float myMaxAcceleration;
+	float myMinAcceleration;
+
+	float myFriction;
+
+	//CU::Vector2f myAcceleration;
+	//CU::Vector2f myJerk;
+	//float myAccelerationInput; //-1.f to 1.f
+
+	//float mySteerAngle;
+	//float mySteerInput;
+	//float mySteerLerpFactor;
+
 };
 

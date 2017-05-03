@@ -4,11 +4,15 @@
 
 CKartComponent::CKartComponent()
 {
-	mySpeed = 0.0f;
+	myFowrardSpeed = 0.0f;
 	myMaxSpeed = 10.0f;
 	myMinSpeed = -5.0f;
 	myAcceleration = 0.0f;
-	myDeceleration = 0.0f;
+
+	myMaxAcceleration = 100.f;
+	myMinAcceleration = -100.f;
+
+	myFriction = 50.f;
 }
 
 
@@ -21,36 +25,40 @@ void CKartComponent::Receive(const eComponentMessageType aMessageType, const SCo
 	switch (aMessageType)
 	{
 	case eComponentMessageType::eAccelerate:
-		myAcceleration = aMessageData.myFloat;
+		myAcceleration = myMaxAcceleration;
 		break;
 	case eComponentMessageType::eStopAcceleration:
 		myAcceleration = 0.f;
 		break;
 	case eComponentMessageType::eDecelerate:
-		myDeceleration = aMessageData.myFloat;
+		myAcceleration = myMinAcceleration;
 		break;
 	case eComponentMessageType::eStopDeceleration:
-		myDeceleration = 0.f;
+		myAcceleration = 0.f;
 		break;
 	}
 }
 
 void CKartComponent::Update(float aDeltaTime)
 {
-	DL_PRINT("kart speed %f", mySpeed);
-	if (myAcceleration > 0.0f)
+	float way = 1.f;
+	if (myAcceleration > 0.f)
 	{
-		mySpeed += myAcceleration * aDeltaTime;
-		if (mySpeed > myMaxSpeed)
-		{
-			mySpeed = myMaxSpeed;
-		}
-	}
-	else
-	{
-		mySpeed -= aDeltaTime * myDeceleration;
+		way = -1.f;
 	}
 
-	GetParent()->GetLocalTransform().Move(CU::Vector3f(0.0f, 0.0f, mySpeed * aDeltaTime));
+	myAcceleration += myFriction * way * aDeltaTime;
+
+	myFowrardSpeed += myAcceleration * aDeltaTime;
+	if (myFowrardSpeed > myMaxSpeed)
+	{
+		myFowrardSpeed = myMaxSpeed;
+	}
+	if (myFowrardSpeed < myMinSpeed)
+	{
+		myFowrardSpeed = myMinSpeed;
+	}
+
+	GetParent()->GetLocalTransform().Move(CU::Vector3f(0.0f, 0.0f, myFowrardSpeed * aDeltaTime));
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, SComponentMessageData());
 }

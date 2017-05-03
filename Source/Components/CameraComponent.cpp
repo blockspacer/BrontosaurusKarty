@@ -8,6 +8,9 @@ CCameraComponent::CCameraComponent()
 	, myUnlocked(false)
 {
 	myType = eComponentType::eCamera;
+
+	myKartOffset.RotateAroundAxis(0.75f, CU::Axees::X);
+	myKartOffset.Move(CU::Vector3f(0.0f, 0.0f, -10.0f));
 }
 
 CCameraComponent::~CCameraComponent()
@@ -33,9 +36,8 @@ void CCameraComponent::Receive(const eComponentMessageType aMessageType, const S
 	case eComponentMessageType::eMoving:
 		if (myUnlocked == false)
 		{
-			CU::Matrix44f transformation = GetParent()->GetToWorldTransform();
-			transformation.Move(CU::Vector3f(0.0f, 0.0f, -10.0f));
-			myCamera->SetTransformation(transformation);
+			myCamera->SetTransformation(myKartOffset * GetParent()->GetToWorldTransform());
+			
 			//Audio::CAudioInterface::GetInstance()->SetListenerPosition(transformation); hasta la xp vista bebe
 		}
 		break;
@@ -53,12 +55,6 @@ bool CCameraComponent::Answer(const eComponentQuestionType aQuestionType, SCompo
 		return GetLookat(aQuestionData.myVector3f);
 	case eComponentQuestionType::eGetCameraPosition:
 		return GetPosition(aQuestionData.myVector3f);
-	case eComponentQuestionType::eGetCameraObject:
-	{
-		aQuestionData.myGameObject = GetParent();
-		return true;
-		break;
-	}
 	}
 
 	return false;
