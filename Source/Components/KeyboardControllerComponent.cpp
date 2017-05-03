@@ -4,8 +4,6 @@
 #include "..\CommonUtilities\InputMessage.h"
 #include "..\CommonUtilities\EKeyboardKeys.h"
 
-const float ForwardAcceleration = 2.f;
-
 CKeyboardControllerComponent::CKeyboardControllerComponent()
 {
 }
@@ -36,19 +34,17 @@ void CKeyboardControllerComponent::PressedKey(const CU::SInputMessage& aInputMes
 		return;
 	}
 
-	SComponentMessageData moveData;
+	static const SComponentMessageData nullData;
 
 	switch (aInputMessage.myKey)
 	{
 	case CU::eKeys::UP:
 	case CU::eKeys::W:
-		moveData.myFloat = ForwardAcceleration;
-		parent->NotifyComponents(eComponentMessageType::eAccelerate, moveData);
+		parent->NotifyComponents(eComponentMessageType::eAccelerate, nullData);
 		break;
 	case CU::eKeys::DOWN:
 	case CU::eKeys::S:
-		moveData.myFloat = -ForwardAcceleration;
-		parent->NotifyComponents(eComponentMessageType::eAccelerate, moveData);
+		parent->NotifyComponents(eComponentMessageType::eDecelerate, nullData);
 		break;
 	case CU::eKeys::LEFT:
 	case CU::eKeys::A:

@@ -7,10 +7,12 @@ public:
 	~CKartComponent();
 	void Receive(const eComponentMessageType, const SComponentMessageData&) override;
 	void Update(float aDeltaTime);
+
 private:
 	float myAcceleration;
 	float mySpeed;
 	float myMaxSpeed;
-	float myDecceleration;
+	float myMinSpeed;
+	float myDeceleration;
 };
 

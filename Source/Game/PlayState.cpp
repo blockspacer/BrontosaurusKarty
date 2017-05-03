@@ -272,6 +272,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	myCameraComponent = cameraComponent;
 	CKartComponent* kartComponent = myKartComponentManager->CreateComponent();
 	CKeyboardControllerComponent* keyBoardInput = new CKeyboardControllerComponent();
+	Subscribe(*keyBoardInput);
 	playerObject->AddComponent(kartComponent);
 	playerObject->AddComponent(keyBoardInput);
 
