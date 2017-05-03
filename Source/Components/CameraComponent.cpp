@@ -33,9 +33,10 @@ void CCameraComponent::Receive(const eComponentMessageType aMessageType, const S
 	case eComponentMessageType::eMoving:
 		if (myUnlocked == false)
 		{
-			const CU::Matrix44f transformation = GetParent()->GetToWorldTransform();
+			CU::Matrix44f transformation = GetParent()->GetToWorldTransform();
+			transformation.Move(CU::Vector3f(0.0f, 0.0f, -10.0f));
 			myCamera->SetTransformation(transformation);
-			//Audio::CAudioInterface::GetInstance()->SetListenerPosition(transformation); hast la xp vista bebe
+			//Audio::CAudioInterface::GetInstance()->SetListenerPosition(transformation); hasta la xp vista bebe
 		}
 		break;
 	}
