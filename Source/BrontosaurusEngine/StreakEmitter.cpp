@@ -7,8 +7,6 @@
 #include <d3d11.h>
 #include "DXFramework.h"
 #include "ConstBufferTemplate.h"
-#include <CommonUtilities.h>
-#include "../CommonUtilities/CUTime.h"
 #include <Camera.h>
 #include "TextureManager.h"
 

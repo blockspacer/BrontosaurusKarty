@@ -1,7 +1,4 @@
 #pragma once
-//#include <GrowingArray.h>
-#include <map>
-#include <mutex>
 
 class CSprite;
 

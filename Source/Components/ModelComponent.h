@@ -1,8 +1,8 @@
 #pragma once
 #include "Component.h"
 
-class CModelInstance;
 enum class eAnimationState;
+class CModelInstance;
 
 class CModelComponent : public CComponent
 {
@@ -30,8 +30,7 @@ public:
 	const std::string& GetFilePath() const;
 
 	float GetAnimationDuration(const eAnimationState aAnimationState) const;
-private:
-	void CreateAnimationComponent();
 
+private:
 	CModelInstance& myModel;
 };

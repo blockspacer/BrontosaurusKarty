@@ -1,10 +1,6 @@
 #pragma once
-#include <GrowingArray.h>
 #include "ObjLoader.h"
 #include "Model.h"
-#include "VectorOnStack.h"
-#include <unordered_map>
-#include <mutex>
 #include <plane.h>
 
 class CPath

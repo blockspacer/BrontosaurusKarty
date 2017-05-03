@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "ModelComponent.h"
-#include "AnimationComponent.h"
 
 #include "../BrontosaurusEngine/ModelInstance.h"
 #include "HighlightComponent.h"
@@ -50,11 +49,7 @@ void CModelComponent::Receive(const eComponentMessageType aType, const SComponen
 	switch (aType)
 	{
 	case eComponentMessageType::eAddComponent:
-		if (aData.myComponentTypeAdded == eComponentType::eModel)
-		{
-			CreateAnimationComponent();
-		}
-		else if(aData.myComponentTypeAdded == eComponentType::eArmorPickup || 
+		if(aData.myComponentTypeAdded == eComponentType::eArmorPickup || 
 			aData.myComponentTypeAdded == eComponentType::eAmmoPickup || 
 			aData.myComponentTypeAdded == eComponentType::eHealthPickupComponent ||
 				aData.myComponentTypeAdded == eComponentType::eKeyPickup)
@@ -86,19 +81,6 @@ void CModelComponent::Receive(const eComponentMessageType aType, const SComponen
 	case eComponentMessageType::eActivate:
 		myModel.SetVisibility(true);
 		break;
-	}
-}
-
-void CModelComponent::CreateAnimationComponent()
-{
-	if (myModel.myHasAnimations)
-	{
-		if (GetParent() && CComponentManager::GetInstancePtr() != nullptr)
-		{
-			CAnimationComponent* animationComponent = new CAnimationComponent(*this);
-			CComponentManager::GetInstance().RegisterComponent(animationComponent);
-			GetParent()->AddComponent(animationComponent);
-		}
 	}
 }
 

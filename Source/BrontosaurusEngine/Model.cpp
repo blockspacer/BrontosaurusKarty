@@ -1,23 +1,14 @@
 #include "stdafx.h"
-#include <assert.h>
 #include "Model.h"
 #include "Engine.h"
 #include "DXFramework.h"
 #include "Effect.h"
 #include "BufferStructs.h"
 #include "ConstBufferTemplate.h"
-#include <Camera.h>
 #include "Surface.h"
-#include "CommonUtilities.h"
 #include "PointLightInstance.h"
 #include "FBXLoader.h"
-#include "ModelInstance.h"
-#include "Lights.h"
-#include "../CommonUtilities/matrix44.h"
 #include "../CommonUtilities/Intersection.h"
-#include <CUTime.h>
-#include <StringHelper.h>
-#include "Renderer.h"
 
 #include "../TShared/AnimationState.h"
 DECLARE_ANIMATION_ENUM_AND_STRINGS;
@@ -109,13 +100,15 @@ bool CModel::Initialize(CEffect* aEffect, CSurface* aSurface, const CU::GrowingA
 		myLODModels.Add(SLodData());
 		myLODModels.GetLast().myLodLevel = aLoadedMeshList[i]->myLODLevel;
 
-
+#define SQUARE(nr) ((nr) * (nr))
 
 		float temp = SQUARE(aLoadedMeshList[i]->myLOD_DistStart);
 		myLODModels.GetLast().myDistances.LOD_DistStart2 = temp * 10;
 
 		temp = SQUARE(aLoadedMeshList[i]->myLOD_DistEnd);
 		myLODModels.GetLast().myDistances.LOD_DistEnd2 = temp * 10;
+
+#undef SQUARE
 
 		if (InitBuffers(aLoadedMeshList[i]) == false)
 		{

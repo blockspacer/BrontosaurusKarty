@@ -1,12 +1,6 @@
 #pragma once
-#include "../CommonUtilities/Stack.h"
-#include <map>
-#include <vector>
-#include "../CommonUtilities/GrowingArray.h"
 #include "../Particles/Typedefs.h"
 #include "RenderCamera.h"
-#include "../CommonUtilities/CUTime.h"
-#include "../CommonUtilities/TimerManager.h"
 #include "../Game/ParticleEffectManager.h"
 
 namespace Particles {

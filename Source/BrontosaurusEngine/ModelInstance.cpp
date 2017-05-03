@@ -9,10 +9,12 @@
 //Lights
 #include "PointLightInstance.h"
 #include "Intersection.h"
-#define HIGH_ENUF 2
+#define HIGH_ENUF 10
 
 #include "../TShared/AnimationState.h"
 DECLARE_ANIMATION_ENUM_AND_STRINGS;
+
+#include "../CommonUtilities/CommonUtilities.h"
 
 CModelInstance::CModelInstance(const std::string& aModelPath)
 {
@@ -306,6 +308,7 @@ void CModelInstance::SetAnimation(const eAnimationState aAnimationKey)
 void CModelInstance::SetAnimationLerpie(const float aLerpValue)
 {
 	myAnimationLerpie = aLerpValue;
+
 	CLAMP(myAnimationLerpie, 0.f, 1.f);
 }
 

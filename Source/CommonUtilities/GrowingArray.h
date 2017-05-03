@@ -1,11 +1,8 @@
 #pragma once
 #pragma message("Growing Array compiled")
-#include <assert.h>
-#include <string.h> // memcpy
 #include <initializer_list>
 #include "QuickSort.h"
 #include "StaticTypeTraits.h"
-#include "ReverseGrowingArray.h"
 #include "CopyArray.h"
 #include "MoveArray.h"
 

@@ -1,9 +1,6 @@
 #pragma once
 
-#include "../CommonUtilities/matrix44.h"
-#include "../CommonUtilities/Vector2.h"
 #include "../CommonUtilities/Camera.h"
-#include "../CommonUtilities/GrowingArray.h"
 
 #include "RenderPackage.h"
 #include "FullScreenHelper.h"

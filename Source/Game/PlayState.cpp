@@ -3,10 +3,8 @@
 
 #include <Engine.h>
 #include <Renderer.h>
-#include <CommonUtilities.h>
 #include <StopWatch.h>
 #include <EInputReturn.h>
-#include <Lights.h>
 #include <Scene.h>
 
 #include "StateStack/StateStack.h"

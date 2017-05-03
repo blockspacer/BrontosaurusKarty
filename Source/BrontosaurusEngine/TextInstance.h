@@ -1,11 +1,6 @@
 #pragma once
-#include "../CommonUtilities/vector4.h"
-#include "../CommonUtilities/vector2.h"
 #include "Text.h"
 #include "Allignment.h"
-#include <string>
-#include "../CommonUtilities/GrowingArray.h"
-#include "../CommonUtilities/DL_Debug.h"
 
 class CText;
 

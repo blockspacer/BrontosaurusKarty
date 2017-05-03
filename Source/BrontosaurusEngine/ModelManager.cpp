@@ -3,15 +3,8 @@
 #include "ModelManager.h"
 #include "ModelLoader.h"
 #include "ConstBufferTemplate.h"
-#include <CommonUtilities.h>
-#include <CommandLineManager.h>
-#include <matrix44.h>
-#include <StringHelper.h>
 #include <ThreadPool.h>
-
-#include "GUIModleHelper.h"
 #include "FBXLoader.h"
-
 
 #include "../TShared/AnimationState.h"
 DECLARE_ANIMATION_ENUM_AND_STRINGS;

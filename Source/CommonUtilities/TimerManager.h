@@ -3,7 +3,6 @@
 #include "Timer.h"
 #include <vector>
 //#include <iostream>
-#include <windows.h>
 
 
 namespace CU
@@ -29,7 +28,7 @@ namespace CU
 		size_t Size() const;
 	private:
 		std::vector<Timer> myTimers;
-		LARGE_INTEGER myLastTime;
+		std::int64_t myLastTime;
 		double myFrequence;
 	};
 }  
