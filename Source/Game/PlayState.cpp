@@ -61,6 +61,7 @@
 
 // player creationSpeciifcIncludes
 #include "KartComponent.h"
+#include "KeyboardControllerComponent.h"
 
 CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -270,7 +271,9 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	cameraComponent->SetCamera(aCamera);
 	myCameraComponent = cameraComponent;
 	CKartComponent* kartComponent = myKartComponentManager->CreateComponent();
-	
+	CKeyboardControllerComponent* keyBoardInput = new CKeyboardControllerComponent();
+	playerObject->AddComponent(kartComponent);
+	playerObject->AddComponent(keyBoardInput);
 
 	playerObject->AddComponent(cameraComponent);
 }

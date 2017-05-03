@@ -31,7 +31,7 @@ CU::eInputReturn CKeyboardControllerComponent::TakeInput(const CU::SInputMessage
 		case CU::eKeys::UP:
 		case CU::eKeys::W:
 			moveData.myFloat = ForwardAcceleration;
-			parent->NotifyComponents(eComponentMessageType::eActivate, moveData); //change eActivate to w/e marcus' has written
+			parent->NotifyComponents(eComponentMessageType::eAccelerate, moveData); //change eActivate to w/e marcus' has written
 			break;
 		case CU::eKeys::DOWN:
 		case CU::eKeys::S:
