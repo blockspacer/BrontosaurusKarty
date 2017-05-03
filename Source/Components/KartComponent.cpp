@@ -23,6 +23,10 @@ void CKartComponent::Receive(const eComponentMessageType aMessageType, const SCo
 	{
 		myAcceleration = aMessageData.myFloat;
 	}
+	case eComponentMessageType::eStopAccelerate:
+	{
+		myAcceleration = 0.0f;
+	}
 	default:
 		break;
 	}
@@ -42,5 +46,4 @@ void CKartComponent::Update(float aDeltaTime)
 	{
 		mySpeed -= aDeltaTime * myDecceleration;
 	}
-	myAcceleration = 0.0f;
 }
