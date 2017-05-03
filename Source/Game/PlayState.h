@@ -57,7 +57,7 @@ public:
 	CU::eInputReturn RecieveInput(const CU::SInputMessage& aInputMessage) override;
 	inline void SetCameraComponent(CCameraComponent* aCameraComponent);
 private:
-	void SpawnPlayer(CU::Camera& aCamera);
+	void CreatePlayer(CU::Camera& aCamera);
 private:
 	Physics::CPhysicsScene* myPhysicsScene;
 	Physics::CPhysics* myPhysics;
