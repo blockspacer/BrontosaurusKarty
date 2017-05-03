@@ -272,10 +272,17 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	myCameraComponent = cameraComponent;
 	CKartComponent* kartComponent = myKartComponentManager->CreateComponent();
 	CKeyboardControllerComponent* keyBoardInput = new CKeyboardControllerComponent();
+	playerObject->AddComponent(playerModel);
 	playerObject->AddComponent(kartComponent);
 	playerObject->AddComponent(keyBoardInput);
 
 	playerObject->AddComponent(cameraComponent);
+
+	CGameObject* bystanderObject = myGameObjectManager->CreateGameObject();
+	CModelComponent* bystanderModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
+	bystanderObject->AddComponent(bystanderModel);
+	bystanderObject->GetLocalTransform().Move(CU::Vector3f(2.0f, 0.0f, 10.0f));
+	bystanderObject->NotifyComponents(eComponentMessageType::eMoving, SComponentMessageData());
 }
 
 void CPlayState::SetCameraComponent(CCameraComponent* aCameraComponent)
