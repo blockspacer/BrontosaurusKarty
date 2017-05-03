@@ -2,6 +2,7 @@
 #include "CameraComponent.h"
 #include "../CommonUtilities/Camera.h"
 #include "../Audio/AudioInterface.h"
+#include "../CommonUtilities/PICarlApproved.h"
 
 CCameraComponent::CCameraComponent()
 	: myCamera(nullptr)
@@ -9,7 +10,8 @@ CCameraComponent::CCameraComponent()
 {
 	myType = eComponentType::eCamera;
 
-	myKartOffset.RotateAroundAxis(0.75f, CU::Axees::X);
+	float rotationAngle = PI / 6.0f;
+	myKartOffset.RotateAroundAxis(rotationAngle, CU::Axees::X);
 	myKartOffset.Move(CU::Vector3f(0.0f, 0.0f, -10.0f));
 }
 

@@ -410,6 +410,7 @@
     <ClInclude Include="LocklessQueue.h">
       <Filter>Queue</Filter>
     </ClInclude>
+    <ClInclude Include="PICarlApproved.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
