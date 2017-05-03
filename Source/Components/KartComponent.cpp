@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "KartComponent.h"
 
+#define MIN(A,B) ((A) < (B)) ? A : B
+#define MAX(A,B) ((A) > (B)) ? A : B
+#define RANGE(A,B,C) ((A) < (B)) ? B : ((A) > (C)) ? C : A
+#define CLAMP(V,A_MIN,A_MAX) RANGE(V,A_MIN,A_MAX)
 
 CKartComponent::CKartComponent()
 {
@@ -12,7 +16,7 @@ CKartComponent::CKartComponent()
 	myMaxAcceleration = 100.f;
 	myMinAcceleration = -100.f;
 
-	myFriction = 5.f;
+	myFriction = 10.f;
 
 	mySteering = 0.f;
 	myAngularAcceleration = 1.f;
@@ -44,14 +48,8 @@ void CKartComponent::Receive(const eComponentMessageType aMessageType, const SCo
 		break;
 	}
 
-	if (mySteering > 1.f)
-	{
-		mySteering = 1.f;
-	}
-	else if (mySteering < -1.f)
-	{
-		mySteering = -1.f;
-	}
+	//CLAMP(mySteering, -1.f, 1.f);
+	//CLAMP(myAcceleration, myMinAcceleration, myMaxAcceleration);
 }
 
 void CKartComponent::Update(float aDeltaTime)
@@ -74,7 +72,7 @@ void CKartComponent::Update(float aDeltaTime)
 		myFowrardSpeed = myMinSpeed;
 	}
 	
-	float steerAngle = mySteering * myAngularAcceleration;
+	float steerAngle = mySteering * myAngularAcceleration * -way;
 	CU::Matrix44f& parentTransform = GetParent()->GetLocalTransform();
 	parentTransform.RotateAroundAxis(steerAngle * aDeltaTime, CU::Axees::Y);
 
