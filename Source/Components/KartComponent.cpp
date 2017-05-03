@@ -46,6 +46,9 @@ void CKartComponent::Receive(const eComponentMessageType aMessageType, const SCo
 	case eComponentMessageType::eTurnKart:
 		mySteering += aMessageData.myFloat;
 		break;
+	case eComponentMessageType::eStopTurnKart:
+		mySteering = 0.f;
+		break;
 	}
 
 	//CLAMP(mySteering, -1.f, 1.f);
