@@ -32,6 +32,11 @@
     <ClCompile Include="StreakEmitterComponent.cpp" />
     <ClCompile Include="AnimationComponentLoader.cpp" />
     <ClCompile Include="ShowTitleComponent.cpp" />
+    <ClCompile Include="KartControllerComponent.cpp" />
+    <ClCompile Include="Controller.cpp" />
+    <ClCompile Include="PlayerController.cpp" />
+    <ClCompile Include="AIController.cpp" />
+    <ClCompile Include="PlayerControllerManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h" />
@@ -71,5 +76,10 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="AnimationComponentLoader.h" />
     <ClInclude Include="ShowTitleComponent.h" />
+    <ClInclude Include="KartControllerComponent.h" />
+    <ClInclude Include="Controller.h" />
+    <ClInclude Include="PlayerController.h" />
+    <ClInclude Include="AIController.h" />
+    <ClInclude Include="PlayerControllerManager.h" />
   </ItemGroup>
 </Project>

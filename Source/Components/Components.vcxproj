@@ -361,6 +361,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AIController.h" />
     <ClInclude Include="AnimationComponent.h" />
     <ClInclude Include="AnimationComponentLoader.h" />
     <ClInclude Include="AudioSourceComponent.h" />
@@ -375,7 +376,11 @@
     <ClInclude Include="ComponentAnswer.h" />
     <ClInclude Include="ComponentMessageCallback.h" />
     <ClInclude Include="ComponentMessageTypeToLua.h" />
+    <ClInclude Include="Controller.h" />
+    <ClInclude Include="KartControllerComponent.h" />
     <ClInclude Include="MeshColliderComponent.h" />
+    <ClInclude Include="PlayerController.h" />
+    <ClInclude Include="PlayerControllerManager.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RigidBodyComponent.h" />
     <ClInclude Include="ShowTitleComponent.h" />
@@ -400,6 +405,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AIController.cpp" />
     <ClCompile Include="AnimationComponent.cpp" />
     <ClCompile Include="AnimationComponentLoader.cpp" />
     <ClCompile Include="AudioSourceComponent.cpp" />
@@ -412,8 +418,12 @@
     <ClCompile Include="ColliderComponent.cpp" />
     <ClCompile Include="ColliderComponentManager.cpp" />
     <ClCompile Include="ComponentMessageTypeToLua.cpp" />
+    <ClCompile Include="Controller.cpp" />
     <ClCompile Include="FireComponent.cpp" />
+    <ClCompile Include="KartControllerComponent.cpp" />
     <ClCompile Include="MeshColliderComponent.cpp" />
+    <ClCompile Include="PlayerController.cpp" />
+    <ClCompile Include="PlayerControllerManager.cpp" />
     <ClCompile Include="PointLightComponent.cpp" />
     <ClCompile Include="PointLightComponentManager.cpp" />
     <ClCompile Include="RigidBodyComponent.cpp" />
