@@ -11,7 +11,7 @@ CAIController::~CAIController()
 {
 }
 
-void CAIController::Update()
+void CAIController::Update(const float aDeltaTime)
 {
 	//beteende för AIn sen kalla på myControllerComponents funktioner för att flytta objektet
 }

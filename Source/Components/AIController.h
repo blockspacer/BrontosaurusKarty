@@ -6,7 +6,7 @@ public:
 	CAIController(CKartControllerComponent& aKartComponent);
 	~CAIController();
 
-	void Update() override;
+	void Update(const float aDeltaTime) override;
 
 private:
 };
