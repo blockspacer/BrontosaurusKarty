@@ -4,8 +4,34 @@
 #include "../Audio/AudioInterface.h"
 #include "../CommonUtilities/PICarlApproved.h"
 
+float pascalTriangle(float a, float b);
+
+float generalSmoothStep(float N, float x)   //Generalized smoothstep
+{
+	//x must be between 0 and 1
+	float result = 0;
+	for (float n = 0; n <= N; n+=1.f)
+	{
+		result += (pascalTriangle(-N - 1, n) * pascalTriangle(2 * N + 1, N - n) * powf(x, N + n + 1));
+	}
+	return result;
+}
+
+float pascalTriangle(float a,float b)
+{
+	//Pascal triangle for replacement with binomial coefficient because a factorial can't be used with negative numbers
+	float result = 1;
+	for (float i = 0; i < b; i += 1.f)
+	{
+		result *= (a - i) / (i + 1);
+	}
+	return result;
+}
+
 CCameraComponent::CCameraComponent()
 	: myCamera(nullptr)
+	, myInterpolatingSpeed(35.1f)
+	, myAccumulatedRotation(0.f)
 	, myUnlocked(false)
 {
 	myType = eComponentType::eCamera;
@@ -14,7 +40,6 @@ CCameraComponent::CCameraComponent()
 	myKartOffset.RotateAroundAxis(rotationAngle, CU::Axees::X);
 	myKartOffset.Move(CU::Vector3f(0.0f, 0.0f, -4.2f));
 	myKartOffset.GetPosition() += CU::Vector3f(0.0f, 1.0f, .0f);
-	myInterpolatingSpeed = 35.1f;
 }
 
 CCameraComponent::~CCameraComponent()
@@ -37,12 +62,11 @@ void CCameraComponent::Receive(const eComponentMessageType aMessageType, const S
 		}
 		break;
 	case eComponentMessageType::eObjectDone:
+		myCamera->SetTransformation(GetParent()->GetToWorldTransform());
 	case eComponentMessageType::eMoving:
 		if (myUnlocked == false)
 		{
 			myCameraInterpolateTowardsMatrix = myKartOffset * GetParent()->GetToWorldTransform();
-			//myCamera->SetPosition(myCameraInterpolateTowardsMatrix.GetPosition());
-			//myCamera->SetTransformation(myKartOffset * GetParent()->GetToWorldTransform());
 			
 			//Audio::CAudioInterface::GetInstance()->SetListenerPosition(transformation); hasta la xp vista bebe
 		}
@@ -57,10 +81,6 @@ bool CCameraComponent::Answer(const eComponentQuestionType aQuestionType, SCompo
 	case eComponentQuestionType::eHasCameraComponent:
 		aQuestionData.myBool = true;
 		return true;
-	case eComponentQuestionType::eGetCameraLookat:
-		return GetLookat(aQuestionData.myVector3f);
-	case eComponentQuestionType::eGetCameraPosition:
-		return GetPosition(aQuestionData.myVector3f);
 	}
 
 	return false;
@@ -71,50 +91,10 @@ void CCameraComponent::SetCamera(CU::Camera& aCamera)
 	myCamera = &aCamera;
 }
 
-void CCameraComponent::Pitch(const float aPitch)
-{
-	const float PitchCap = 0.99f;
-
-	CU::Matrix44f& parentTransform = GetParent()->GetLocalTransform();
-	float lookAtHeight = parentTransform.myForwardVector.y;
-	if (lookAtHeight < PitchCap && lookAtHeight > -PitchCap)
-	{
-		parentTransform.Rotate(aPitch, CU::Axees::X);
-	}
-	else if (lookAtHeight > PitchCap && aPitch > 0.f)
-	{
-		parentTransform.Rotate(aPitch, CU::Axees::X);
-	}
-	else if (lookAtHeight < -PitchCap && aPitch < 0.f)
-	{
-		parentTransform.Rotate(aPitch, CU::Axees::X);
-	}
-}
-
-bool CCameraComponent::GetLookat(CU::Vector3f& aLookat)
-{
-	if (GetParent())
-	{
-		aLookat = GetParent()->GetToWorldTransform().myForwardVector.GetNormalized();
-		return true;
-	}
-
-	return false;
-}
-
-bool CCameraComponent::GetPosition(CU::Vector3f& aPosition)
-{
-	if (GetParent())
-	{
-		aPosition = GetParent()->GetToWorldTransform().myPosition;
-		return true;
-	}
-
-	return false;
-}
-
 void CCameraComponent::Update(float aDeltaTime)
 {
-	myCamera->GetTransformation().Lerp(myCameraInterpolateTowardsMatrix, myInterpolatingSpeed * aDeltaTime);
-	myCamera->SetPosition(myCameraInterpolateTowardsMatrix.GetPosition());
+	CU::Matrix44f& cameraTransform = myCamera->GetTransformation();
+
+	cameraTransform.Lerp(myCameraInterpolateTowardsMatrix, myInterpolatingSpeed * aDeltaTime);
+	cameraTransform.LerpPosition(myCameraInterpolateTowardsMatrix.myPosition, 0.5f * myInterpolatingSpeed * aDeltaTime);
 }

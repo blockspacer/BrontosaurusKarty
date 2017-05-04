@@ -12,8 +12,10 @@ namespace CU
 		eMousePressed,
 		eMouseReleased,
 		eScrollWheelChanged,
+		
 		eKeyboardPressed,
 		eKeyboardReleased,
+
 		eGamePadButtonPressed,
 		eGamePadButtonReleased,
 		eGamePadJoyStickPressed,
