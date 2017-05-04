@@ -10,9 +10,11 @@ CCameraComponent::CCameraComponent()
 {
 	myType = eComponentType::eCamera;
 
-	float rotationAngle = PI / 6.0f;
+	float rotationAngle = PI / 9.0f;
 	myKartOffset.RotateAroundAxis(rotationAngle, CU::Axees::X);
-	myKartOffset.Move(CU::Vector3f(0.0f, 0.0f, -10.0f));
+	myKartOffset.Move(CU::Vector3f(0.0f, 0.0f, -4.2f));
+	myKartOffset.GetPosition() += CU::Vector3f(0.0f, 1.0f, .0f);
+	myInterpolatingSpeed = 35.1f;
 }
 
 CCameraComponent::~CCameraComponent()
@@ -38,7 +40,9 @@ void CCameraComponent::Receive(const eComponentMessageType aMessageType, const S
 	case eComponentMessageType::eMoving:
 		if (myUnlocked == false)
 		{
-			myCamera->SetTransformation(myKartOffset * GetParent()->GetToWorldTransform());
+			myCameraInterpolateTowardsMatrix = myKartOffset * GetParent()->GetToWorldTransform();
+			//myCamera->SetPosition(myCameraInterpolateTowardsMatrix.GetPosition());
+			//myCamera->SetTransformation(myKartOffset * GetParent()->GetToWorldTransform());
 			
 			//Audio::CAudioInterface::GetInstance()->SetListenerPosition(transformation); hasta la xp vista bebe
 		}
@@ -107,4 +111,10 @@ bool CCameraComponent::GetPosition(CU::Vector3f& aPosition)
 	}
 
 	return false;
+}
+
+void CCameraComponent::Update(float aDeltaTime)
+{
+	myCamera->GetTransformation().Lerp(myCameraInterpolateTowardsMatrix, myInterpolatingSpeed * aDeltaTime);
+	myCamera->SetPosition(myCameraInterpolateTowardsMatrix.GetPosition());
 }

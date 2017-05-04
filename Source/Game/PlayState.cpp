@@ -198,6 +198,12 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	}
 
 	myKartComponentManager->Update(aDeltaTime.GetSeconds());
+	
+	if(myCameraComponent != nullptr)
+	{
+		myCameraComponent->Update(aDeltaTime.GetSeconds());
+	}
+
 	return myStatus;
 }
 
