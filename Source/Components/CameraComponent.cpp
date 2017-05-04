@@ -95,13 +95,6 @@ void CCameraComponent::Update(float aDeltaTime)
 {
 	CU::Matrix44f& cameraTransform = myCamera->GetTransformation();
 
-	if ((cameraTransform.GetEulerRotation() - myCameraInterpolateTowardsMatrix.GetEulerRotation()).Length2() >= 0.001f)
-	{
-		cameraTransform.Lerp(myCameraInterpolateTowardsMatrix, myInterpolatingSpeed * aDeltaTime);
-	}
-
-	if ((cameraTransform.myPosition - myCameraInterpolateTowardsMatrix.myPosition).Length2() >= 0.001f)
-	{
-		cameraTransform.LerpPosition(myCameraInterpolateTowardsMatrix.myPosition, myInterpolatingSpeed * aDeltaTime);
-	}
+	cameraTransform.Lerp(myCameraInterpolateTowardsMatrix, myInterpolatingSpeed * aDeltaTime);
+	cameraTransform.LerpPosition(myCameraInterpolateTowardsMatrix.myPosition, myInterpolatingSpeed * aDeltaTime);
 }
