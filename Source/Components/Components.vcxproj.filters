@@ -37,6 +37,7 @@
     <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="AIController.cpp" />
     <ClCompile Include="PlayerControllerManager.cpp" />
+    <ClCompile Include="KartControllerComponentManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -80,5 +81,6 @@
     <ClInclude Include="Controller.h" />
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="PlayerControllerManager.h" />
+    <ClInclude Include="KartControllerComponentManager.h" />
   </ItemGroup>
 </Project>
