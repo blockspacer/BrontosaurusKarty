@@ -54,7 +54,7 @@ void LoadManager::RegisterFunctions()
 
 	loader.RegisterComponentLoadFunction("MeshFilter", LoadMeshFilter);
 	loader.RegisterComponentLoadFunction("Camera", LoadCamera);
-	loader.RegisterComponentLoadFunction("KartSpawn", LoadKartSpawnPoint);
+	loader.RegisterComponentLoadFunction("KartSpawner", LoadKartSpawnPoint);
 	loader.RegisterComponentLoadFunction("ParticleEmitterComponent", LoadParticleEmitterComponent);
 	loader.RegisterComponentLoadFunction("BoxCollider", LoadBoxCollider);
 	loader.RegisterComponentLoadFunction("SphereCollider", LoadSphereCollider);

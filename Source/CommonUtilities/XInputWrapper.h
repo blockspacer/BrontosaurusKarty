@@ -56,12 +56,11 @@ namespace CU
 
 		void UpdateStates();
 
-		bool GetKeyStroke(const unsigned int aJoystickIndex, KeyStroke& aKeyStrokeOutput);
-		bool GetKeyPressed(const unsigned int aJoystickIndex, const unsigned short aButton);
-		bool GetKeyReleased(const unsigned int aJoystickIndex, const unsigned short aButton);
+		//bool GetKeyStroke(const unsigned int aJoystickIndex, KeyStroke& aKeyStrokeOutput);
+		//bool GetKeyPressed(const unsigned int aJoystickIndex, const unsigned short aButton);
+		//bool GetKeyReleased(const unsigned int aJoystickIndex, const unsigned short aButton);
 
 		bool GetKeyEvents(const unsigned int aJoystickIndex, CU::GrowingArray<KeyEvent>& aKeys);
-		//bool GetKeysReleased(const unsigned int aJoystickIndex, CU::GrowingArray<KeyEvent>& aKeys);
 
 		bool IsConnected(const unsigned int aJoystickIndex, unsigned int* aError = nullptr);
 
@@ -69,6 +68,8 @@ namespace CU
 		CU::Vector2f GetLeftStickPosition(const unsigned int aJoystickIndex);
 		bool LeftStickIsInDeadzone(const unsigned int aJoystickIndex);
 		bool RightStickIsInDeadzone(const unsigned int aJoystickIndex);
+		bool LeftStickWasInDeadzone(const unsigned int aJoystickIndex);
+		bool RightStickWasInDeadzone(const unsigned int aJoystickIndex);
 
 		float GetLeftTriggerDown(const unsigned int aJoystickIndex);
 		float GetRightTringgerDown(const unsigned int aJoystickIndex);
@@ -82,9 +83,9 @@ namespace CU
 
 	private:
 		bool UpdateState(const unsigned int aJoystickIndex);
-		void MoveDisconnectedJoysticks();
-
-		GrowingArray<XINPUT_STATE*> myJoysticks;
-		GrowingArray<XINPUT_STATE*> myDisconnectedJoysticks;
+		
+		GrowingArray<XINPUT_STATE> myJoysticks;
+		GrowingArray<unsigned short> myPreviousButtonState;
+		GrowingArray<struct SJoystickDead> myPreviousJoystickStates;
 	};
 }
