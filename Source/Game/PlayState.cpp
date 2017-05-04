@@ -283,6 +283,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	Subscribe(*keyBoardInput);
 	Subscribe(*xboxInput);
 
+	playerObject->AddComponent(playerModel);
 	playerObject->AddComponent(kartComponent);
 	playerObject->AddComponent(keyBoardInput);
 	playerObject->AddComponent(xboxInput);
