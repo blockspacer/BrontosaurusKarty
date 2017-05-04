@@ -6,10 +6,15 @@ public:
 	CKartControllerComponent();
 	~CKartControllerComponent();
 
-	void MoveRight();
-	void MoveLeft();
+	void TurnRight();
+	void TurnLeft();
+	void StopMoving();
 	void MoveFoward();
 	void MoveBackWards();
+	void StopTurning();
+
+
+	void Update(const float aDeltaTime);
 
 private:
 
@@ -20,6 +25,8 @@ private:
 	float myAcceleration;
 	float myMaxAcceleration;
 	float myMinAcceleration;
+
+	float myTurnRate;
 
 	float myFriction;
 
