@@ -39,6 +39,7 @@
 #include "StateStack/StateStack.h"
 #include "CommonUtilities/InputMessage.h"
 #include <CommonUtilities/EKeyboardKeys.h>
+#include "../CommonUtilities/XInputWrapper.h"
 
 
 
@@ -75,8 +76,6 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex)
 	, myIsInfocus(false)
 	, myScriptComponentManager(nullptr)
 	, myIsLoaded(false)
-	, myPressedAnyKey(false)
-	, mode(0)
 {
 	myPhysicsScene = nullptr;
 	myPhysics = nullptr;
@@ -229,9 +228,14 @@ CU::eInputReturn CPlayState::RecieveInput(const CU::SInputMessage& aInputMessage
 	{
 		return CU::eInputReturn::ePassOn;
 	}
-	if (aInputMessage.myType == CU::eInputType::eKeyboardPressed)
+
+	if (aInputMessage.myType == CU::eInputType::eGamePadButtonPressed)
 	{
-		myPressedAnyKey = true;
+		DL_PRINT("%i", (int)aInputMessage.myGamePad);
+	}
+	if (aInputMessage.myType == CU::eInputType::eGamePadButtonReleased)
+	{
+		DL_PRINT("%i", (int)aInputMessage.myGamePad);
 	}
 
 	if (aInputMessage.myType == CU::eInputType::eKeyboardPressed && aInputMessage.myKey == CU::eKeys::ESCAPE)
