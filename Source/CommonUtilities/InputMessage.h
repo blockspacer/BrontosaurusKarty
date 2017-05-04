@@ -4,6 +4,7 @@ namespace CU
 {
 	enum class eMouseButtons;
 	enum class eKeys;
+	enum class GAMEPAD;
 
 	enum class eInputType
 	{
@@ -12,7 +13,12 @@ namespace CU
 		eMouseReleased,
 		eScrollWheelChanged,
 		eKeyboardPressed,
-		eKeyboardReleased
+		eKeyboardReleased,
+		eGamePadButtonPressed,
+		eGamePadButtonReleased,
+		eGamePadJoyStickPressed,
+		eGamePadJoyStickReleased,
+		eGamePadJoyStickChanged
 	};
 
 	struct SInputMessage
@@ -23,12 +29,14 @@ namespace CU
 			Vector2f myMousePosition;
 			Vector2f myMouseDelta;
 			Vector2f myMouseWheelDelta;
+			Vector2f myJoyStickPosition;
 		};
 
 		union
 		{
 			eMouseButtons myMouseButton;
 			eKeys myKey;
+			GAMEPAD myGamePad;
 		};
 
 		eInputType myType;
