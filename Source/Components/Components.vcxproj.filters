@@ -1,12 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="AnimationComponent.cpp" />
     <ClCompile Include="AudioSourceComponent.cpp" />
     <ClCompile Include="AudioSourceComponentManager.cpp" />
     <ClCompile Include="BoxColliderComponent.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
-    <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="CapsuleColliderComponent.cpp" />
     <ClCompile Include="CharacterControllerComponent.cpp" />
     <ClCompile Include="ColliderComponent.cpp" />
@@ -34,8 +32,6 @@
     <ClCompile Include="KartComponentManager.cpp" />
     <ClCompile Include="KeyboardControllerComponent.cpp" />
     <ClCompile Include="XboxControllerComponent.cpp" />
-    <ClCompile Include="AnimationComponentLoader.cpp" />
-    <ClCompile Include="ShowTitleComponent.cpp" />
     <ClCompile Include="KartControllerComponent.cpp" />
     <ClCompile Include="Controller.cpp" />
     <ClCompile Include="PlayerController.cpp" />
@@ -43,12 +39,10 @@
     <ClCompile Include="PlayerControllerManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AnimationComponent.h" />
     <ClInclude Include="AudioSourceComponent.h" />
     <ClInclude Include="AudioSourceComponentManager.h" />
     <ClInclude Include="BoxColliderComponent.h" />
     <ClInclude Include="CameraComponent.h" />
-    <ClInclude Include="CameraManager.h" />
     <ClInclude Include="CapsuleColliderComponent.h" />
     <ClInclude Include="CharacterControllerComponent.h" />
     <ClInclude Include="ColliderComponent.h" />
@@ -82,12 +76,9 @@
     <ClInclude Include="KartComponentManager.h" />
     <ClInclude Include="KeyboardControllerComponent.h" />
     <ClInclude Include="XboxControllerComponent.h" />
-    <ClInclude Include="AnimationComponentLoader.h" />
-    <ClInclude Include="ShowTitleComponent.h" />
     <ClInclude Include="KartControllerComponent.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="PlayerController.h" />
-    <ClInclude Include="AIController.h" />
     <ClInclude Include="PlayerControllerManager.h" />
   </ItemGroup>
 </Project>

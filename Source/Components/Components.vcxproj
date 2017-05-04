@@ -361,8 +361,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AnimationComponent.h" />
-    <ClInclude Include="AnimationComponentLoader.h" />
     <ClInclude Include="AudioSourceComponent.h" />
     <ClInclude Include="AudioSourceComponentManager.h" />
     <ClInclude Include="BoxColliderComponent.h" />
@@ -384,7 +382,6 @@
     <ClInclude Include="PlayerControllerManager.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RigidBodyComponent.h" />
-    <ClInclude Include="ShowTitleComponent.h" />
     <ClInclude Include="SphereColliderComponent.h" />
     <ClInclude Include="FireComponent.h" />
     <ClInclude Include="PlayerControls.h" />
@@ -408,13 +405,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AIController.cpp" />
-    <ClCompile Include="AnimationComponent.cpp" />
-    <ClCompile Include="AnimationComponentLoader.cpp" />
     <ClCompile Include="AudioSourceComponent.cpp" />
     <ClCompile Include="AudioSourceComponentManager.cpp" />
     <ClCompile Include="BoxColliderComponent.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
-    <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="CapsuleColliderComponent.cpp" />
     <ClCompile Include="CharacterControllerComponent.cpp" />
     <ClCompile Include="ColliderComponent.cpp" />
@@ -442,7 +436,6 @@
     <ClCompile Include="GameObjectManager.cpp" />
     <ClCompile Include="ParticleEmitterComponent.cpp" />
     <ClCompile Include="ParticleEmitterComponentManager.cpp" />
-    <ClCompile Include="ShowTitleComponent.cpp" />
     <ClCompile Include="SphereColliderComponent.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
