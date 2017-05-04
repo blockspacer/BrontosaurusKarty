@@ -9,12 +9,14 @@
 
 #include "StateStack/StateStack.h"
 
+//#include "Skybox.h"
 #include "../Audio/AudioInterface.h"
 
 #include "LoadState.h"
 #include "ThreadedPostmaster/LoadLevelMessage.h"
 
 //Managers and components
+
 #include "ModelComponentManager.h"
 #include "Components/ScriptComponentManager.h"
 
@@ -37,7 +39,6 @@
 
 #include "CommonUtilities/InputMessage.h"
 #include <CommonUtilities/EKeyboardKeys.h>
-#include "../CommonUtilities/XInputWrapper.h"
 
 
 
@@ -165,10 +166,10 @@ void CPlayState::Load()
 	CRenderCamera& playerCamera = myScene->GetRenderCamera(CScene::eCameraType::ePlayerOneCamera);
 	playerCamera.InitPerspective(90, WINDOW_SIZE_F.x, WINDOW_SIZE_F.y, 0.1f, 500.f);
 
+
 	CreatePlayer(playerCamera.GetCamera());
-	
 	myScene->SetSkybox("default_cubemap.dds");
-	myScene->SetCubemap("default_cubemap.dds");
+	myScene->SetCubemap("purpleCubemap.dds");
 
 
 	myIsLoaded = true;
@@ -178,6 +179,7 @@ void CPlayState::Load()
 	float time = loadPlaystateTimer.GetDeltaTime().GetMilliseconds();
 	GAMEPLAY_LOG("Game Inited in %f ms", time);
 	Postmaster::Threaded::CPostmaster::GetInstance().GetThreadOffice().HandleMessages();
+
 }
 
 void CPlayState::Init()
@@ -218,23 +220,6 @@ void CPlayState::OnExit(const bool /*aLetThroughRender*/)
 
 CU::eInputReturn CPlayState::RecieveInput(const CU::SInputMessage& aInputMessage)
 {
-<<<<<<< HEAD
-	if (myIsInfocus == false)
-	{
-		return CU::eInputReturn::ePassOn;
-	}
-
-	if (aInputMessage.myType == CU::eInputType::eGamePadButtonPressed)
-	{
-		DL_PRINT("%i", (int)aInputMessage.myGamePad);
-	}
-	if (aInputMessage.myType == CU::eInputType::eGamePadButtonReleased)
-	{
-		DL_PRINT("%i", (int)aInputMessage.myGamePad);
-	}
-
-=======
->>>>>>> 2ec0ae51ec751323d15677f674f1e1763432c42d
 	if (aInputMessage.myType == CU::eInputType::eKeyboardPressed && aInputMessage.myKey == CU::eKeys::ESCAPE)
 	{
 		//myStateStack.PushState(new CPauseMenuState(myStateStack));
@@ -279,28 +264,19 @@ void CPlayState::CreateManagersAndFactories()
 void CPlayState::CreatePlayer(CU::Camera& aCamera)
 {
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
-
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
-
-	myCameraComponent = new CCameraComponent();
-	CComponentManager::GetInstance().RegisterComponent(myCameraComponent);
-	myCameraComponent->SetCamera(aCamera);
-
+	CCameraComponent* cameraComponent = myCameraComponent;
+	cameraComponent = new CCameraComponent();
+	CComponentManager::GetInstance().RegisterComponent(cameraComponent);
+	cameraComponent->SetCamera(aCamera);
+	myCameraComponent = cameraComponent;
 	CKartComponent* kartComponent = myKartComponentManager->CreateComponent();
-
 	CKeyboardControllerComponent* keyBoardInput = new CKeyboardControllerComponent();
 	Subscribe(*keyBoardInput);
-
-	playerObject->AddComponent(playerModel);
 	playerObject->AddComponent(kartComponent);
 	playerObject->AddComponent(keyBoardInput);
-	playerObject->AddComponent(myCameraComponent);
 
-	CGameObject* bystanderObject = myGameObjectManager->CreateGameObject();
-	CModelComponent* bystanderModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
-	bystanderObject->AddComponent(bystanderModel);
-	bystanderObject->GetLocalTransform().Move(CU::Vector3f(2.0f, 0.0f, 10.0f));
-	bystanderObject->NotifyComponents(eComponentMessageType::eMoving, SComponentMessageData());
+	playerObject->AddComponent(cameraComponent);
 }
 
 void CPlayState::SetCameraComponent(CCameraComponent* aCameraComponent)
