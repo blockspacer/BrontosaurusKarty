@@ -62,6 +62,7 @@
 // player creationSpeciifcIncludes
 #include "KartComponent.h"
 #include "KeyboardControllerComponent.h"
+#include "KartSpawnPointManager.h"
 
 CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -265,6 +266,7 @@ void CPlayState::CreateManagersAndFactories()
 
 	myScriptComponentManager = new CScriptComponentManager();
 	myKartComponentManager = new CKartComponentManager();
+	CKartSpawnPointManager::Create();
 }
 
 void CPlayState::CreatePlayer(CU::Camera& aCamera)
