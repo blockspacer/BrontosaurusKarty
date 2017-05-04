@@ -25,6 +25,7 @@ CInputManager* CInputManager::ourInstance = nullptr;
 CInputManager::CInputManager()
 	: myKeys(20)
 	, myMessengers(8u)
+	,myPadInputs(14)
 	, myDInputWrapper(nullptr)
 	, myXInputWrapper(nullptr)
 {
@@ -268,9 +269,42 @@ void CInputManager::UpdateGamePad()
 {
 	for (unsigned i = 0; i < myXInputWrapper->GetConnectedJoystickCount(); ++i)
 	{
-		if (myXInputWrapper->GetKeyPressed(0, CU::XInputWrapper::GAMEPAD::A) == true)
+		if (myXInputWrapper->GetKeyEvents(i, myPadInputs) == true)
 		{
-			DL_PRINT("'a' pressed!");
+			for (int j = 0; j < myPadInputs.Size(); j++)
+			{
+				CU::SInputMessage padInputsPressed;
+				padInputsPressed.myType = (myPadInputs[j].isReleased) ? CU:: eInputType::eGamePadButtonReleased : CU::eInputType::eGamePadButtonPressed;
+				padInputsPressed.myGamePad = myPadInputs[j].button;
+
+				for (CU::CInputMessenger* messenger : myMessengers)
+				{
+					if (messenger->RecieveInput(padInputsPressed) == CU::eInputReturn::eKeepSecret)
+					{
+						break;
+					}
+				}
+			}
 		}
+
+		//if (myXInputWrapper->GetKeysReleased(i, myPadInputs) == true)
+		//{
+		//	for (int j = 0; j < myPadInputs.Size(); j++)
+		//	{
+		//		CU::SInputMessage padInputsReleased;
+		//		padInputsReleased.myType = CU::eInputType::eGamePadButtonReleased;
+		//		padInputsReleased.myGamePad = myPadInputs[j];
+
+		//		for (CU::CInputMessenger* messenger : myMessengers)
+		//		{
+		//			if (messenger->RecieveInput(padInputsReleased) == CU::eInputReturn::eKeepSecret)
+		//			{
+		//				break;
+		//			}
+		//		}
+		//	}
+		//}
+
+		//DL_PRINT("%f, %f", myXInputWrapper->GetLeftStickPosition(0).x, myXInputWrapper->GetLeftStickPosition(0).y);
 	}
 }
