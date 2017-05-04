@@ -25,6 +25,7 @@
 
 #include "CameraComponent.h"
 #include "KartComponentManager.h"
+#include "SpeedHandlerManager.h"
 
 //Networking
 #include "TClient/Client.h"
@@ -100,6 +101,7 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myPhysicsScene);
 	SAFE_DELETE(myGameObjectManager);
 	SAFE_DELETE(myKartComponentManager);
+	CSpeedHandlerManager::Destroy();
 	SAFE_DELETE(myKartControllerComponentManager);
 	SAFE_DELETE(myPlayerControllerManager);
 }
@@ -193,6 +195,11 @@ void CPlayState::Load()
 void CPlayState::Init()
 {
 	myGameObjectManager->SendObjectsDoneMessage();
+
+	if(CSpeedHandlerManager::GetInstance() != nullptr)
+	{
+		CSpeedHandlerManager::GetInstance()->Init();
+	}
 }
 
 eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
@@ -211,6 +218,11 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	if(myCameraComponent != nullptr)
 	{
 		myCameraComponent->Update(aDeltaTime.GetSeconds());
+	}
+
+	if (CSpeedHandlerManager::GetInstance() != nullptr)
+	{
+		CSpeedHandlerManager::GetInstance()->Update(aDeltaTime.GetSeconds());
 	}
 
 	return myStatus;
@@ -274,6 +286,7 @@ void CPlayState::CreateManagersAndFactories()
 
 	myScriptComponentManager = new CScriptComponentManager();
 	myKartComponentManager = new CKartComponentManager();
+	CSpeedHandlerManager::CreateInstance();
 	myKartControllerComponentManager = new CKartControllerComponentManager;
 	myPlayerControllerManager = new CPlayerControllerManager;
 	CKartSpawnPointManager::GetInstance().Create();

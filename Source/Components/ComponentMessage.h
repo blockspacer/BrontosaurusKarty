@@ -5,6 +5,7 @@
 class ICollider;
 class CComponent;
 class CGameObject;
+struct SBoostData;
 enum class ePlayerControls;
 
 namespace std
@@ -72,6 +73,8 @@ enum class eComponentMessageType
 	eStopDeceleration,
 	eTurnKart,
 	eStopTurnKart,
+	eGiveBoost,
+	eSetBoost,
 	eLength,
 };
 
@@ -106,6 +109,7 @@ struct SComponentMessageData
 		CU::Vector4f myVector4f;
 
 		ICollider* myCollider;
+		const SBoostData* myBoostData;
 
 		const std::function<void(void)>* myVoidFunction;
 	};
