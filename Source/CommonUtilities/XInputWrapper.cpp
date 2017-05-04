@@ -27,183 +27,130 @@ const CU::GAMEPAD GamePadButtons[] = {
 
 namespace CU
 {
-	typedef GrowingArray<XINPUT_STATE*>::size_type size_g;
-
 #define THROW_AWAY_IF_LOW(LOW_VALUE, REAL_VALUE) ((std::abs(REAL_VALUE) - LOW_VALUE <= 0) ? REAL_VALUE : 0)
 
-	XInputWrapper::KeyStroke::eKeyState FlagsToKeyState(const WORD aFlag)
+	const unsigned int NullJoystick = static_cast<unsigned int>(-1);
+
+	struct SJoystickDead
 	{
-		DL_PRINT("%d", aFlag);
-		if (aFlag & XINPUT_KEYSTROKE_REPEAT)
-		{
-			return XInputWrapper::KeyStroke::eKeyState::eRepeat;
-		}
-		if (aFlag & XINPUT_KEYSTROKE_KEYUP)
-		{
-			return XInputWrapper::KeyStroke::eKeyState::eReleased;
-		}
-		if (aFlag & XINPUT_KEYSTROKE_KEYDOWN)
-		{
-			return XInputWrapper::KeyStroke::eKeyState::ePressed;
-		}
-	}
+		bool left = true;
+		bool right = true;
+	};
 
 	XInputWrapper::XInputWrapper()
-		: myJoysticks(2)
-		, myDisconnectedJoysticks(2)
+		: myJoysticks(4)
+		, myPreviousButtonState(4)
+		, myPreviousJoystickStates(4)
 	{
 	}
 
 	XInputWrapper::~XInputWrapper()
 	{
-		myJoysticks.DeleteAll();
-
-		if (myDisconnectedJoysticks.Size() > 0)
-		{
-			//post problem message?
-			myDisconnectedJoysticks.DeleteAll();
-		}
 	}
 
 	void XInputWrapper::Init(const unsigned int aJoystickCount)
 	{
-		for (size_g i = 0; i < aJoystickCount; ++i)
-		{
-			myJoysticks.Add(new XINPUT_STATE());
-		}
+		myJoysticks.Resize(aJoystickCount);
+		myPreviousButtonState.Resize(aJoystickCount);
+		myPreviousJoystickStates.Resize(aJoystickCount);
 	}
 
 	void XInputWrapper::UpdateStates()
 	{
-		for (size_g i = 0; i < myJoysticks.Size(); ++i)
+		for (unsigned int i = 0; i < myJoysticks.Size(); ++i)
 		{
-			if (UpdateState(i) == false)
+			if (myJoysticks[i].dwPacketNumber != NullJoystick)
 			{
-				myDisconnectedJoysticks.Add(myJoysticks[i]);
-			}
-		}
-
-		MoveDisconnectedJoysticks();
-	}
-
-	bool XInputWrapper::GetKeyStroke(const unsigned int aJoystickIndex, KeyStroke& aKeyStrokeOutput)
-	{
-		XINPUT_KEYSTROKE keyStroke = {};
-
-		unsigned int result = XInputGetKeystroke(aJoystickIndex, 0, &keyStroke);
-		if (result == ERROR_SUCCESS)
-		{
-			aKeyStrokeOutput.myKeyState = FlagsToKeyState(keyStroke.Flags);
-			aKeyStrokeOutput.myKeyCode = myJoysticks[aJoystickIndex]->Gamepad.wButtons;//keyStroke.VirtualKey;
-			return true;
-		}
-		else if (result == ERROR_DEVICE_NOT_CONNECTED)
-		{
-			myDisconnectedJoysticks.Add(myJoysticks[aJoystickIndex]);
-		}
-
-		return false;
-	}
-
-	bool XInputWrapper::GetKeyPressed(const unsigned int aJoystickIndex, const unsigned short aButton)
-	{
-		KeyStroke keyStroke = {};
-		if (GetKeyStroke(aJoystickIndex, keyStroke) == true)
-		{
-			DL_PRINT("%i", keyStroke.myKeyCode);
-			if (keyStroke.myKeyCode == aButton && keyStroke.myKeyState == KeyStroke::eKeyState::ePressed)
-			{
-				return true;
-			}
-
-			for (int i = 0; i < 14; ++i)
-			{
-				if (keyStroke.myKeyCode & static_cast<unsigned short>(GamePadButtons[i]) && keyStroke.myKeyState == KeyStroke::eKeyState::ePressed)
+				if (UpdateState(i) == false)
 				{
-					return true;
+					myJoysticks[i].dwPacketNumber = NullJoystick;
 				}
 			}
 		}
-
-		return false;
 	}
 
-	bool XInputWrapper::GetKeyReleased(const unsigned int aJoystickIndex, const unsigned short aButton)
-	{
-		KeyStroke keyStroke = {};
-		if (GetKeyStroke(aJoystickIndex, keyStroke) == true)
-		{
-			if (keyStroke.myKeyCode & aButton && keyStroke.myKeyState == KeyStroke::eKeyState::eReleased)
-			{
-				return true;
-			}
-		}
+	//bool XInputWrapper::GetKeyStroke(const unsigned int aJoystickIndex, KeyStroke& aKeyStrokeOutput)
+	//{
+	//	XINPUT_KEYSTROKE keyStroke = {};
 
-		return false;
-	}
+	//	unsigned int result = XInputGetKeystroke(aJoystickIndex, 0, &keyStroke);
+	//	if (result == ERROR_SUCCESS)
+	//	{
+	//		aKeyStrokeOutput.myKeyState = FlagsToKeyState(keyStroke.Flags);
+	//		aKeyStrokeOutput.myKeyCode = myJoysticks[aJoystickIndex].Gamepad.wButtons;//keyStroke.VirtualKey;
+	//		return true;
+	//	}
+	//	else if (result == ERROR_DEVICE_NOT_CONNECTED)
+	//	{
+	//		myDisconnectedJoysticks.Add(myJoysticks[aJoystickIndex]);
+	//	}
+
+	//	return false;
+	//}
+
+	//bool XInputWrapper::GetKeyPressed(const unsigned int aJoystickIndex, const unsigned short aButton)
+	//{
+	//	KeyStroke keyStroke = {};
+	//	if (GetKeyStroke(aJoystickIndex, keyStroke) == true)
+	//	{
+	//		DL_PRINT("%i", keyStroke.myKeyCode);
+	//		if (keyStroke.myKeyCode == aButton && keyStroke.myKeyState == KeyStroke::eKeyState::ePressed)
+	//		{
+	//			return true;
+	//		}
+
+	//		for (int i = 0; i < 14; ++i)
+	//		{
+	//			if (keyStroke.myKeyCode & static_cast<unsigned short>(GamePadButtons[i]) && keyStroke.myKeyState == KeyStroke::eKeyState::ePressed)
+	//			{
+	//				return true;
+	//			}
+	//		}
+	//	}
+
+	//	return false;
+	//}
+
+	//bool XInputWrapper::GetKeyReleased(const unsigned int aJoystickIndex, const unsigned short aButton)
+	//{
+	//	KeyStroke keyStroke = {};
+	//	if (GetKeyStroke(aJoystickIndex, keyStroke) == true)
+	//	{
+	//		if (keyStroke.myKeyCode & aButton && keyStroke.myKeyState == KeyStroke::eKeyState::eReleased)
+	//		{
+	//			return true;
+	//		}
+	//	}
+
+	//	return false;
+	//}
 
 	bool XInputWrapper::GetKeyEvents(const unsigned int aJoystickIndex, CU::GrowingArray<KeyEvent>& aKeys)
 	{
 		aKeys.RemoveAll();
 
-		KeyStroke keyStroke = {};
-		if (GetKeyStroke(aJoystickIndex, keyStroke) == true)
+		for (unsigned short i = 0; i < 14; ++i)
 		{
-			for (int i = 0; i < 14; ++i)
+			unsigned short downNow = (1 << i) & myJoysticks[aJoystickIndex].Gamepad.wButtons;
+			unsigned short downBefore = (1 << i) & myPreviousButtonState[aJoystickIndex];
+			if (downNow && !downBefore)
 			{
-				CU::GAMEPAD button = GamePadButtons[i];
-
-				if (keyStroke.myKeyCode & static_cast<unsigned short>(button))
-				{
-					if (keyStroke.myKeyState == KeyStroke::eKeyState::ePressed)
-					{
-						aKeys.Add({ button , false });
-					}
-					else if (keyStroke.myKeyState == KeyStroke::eKeyState::eReleased)
-					{
-						aKeys.Add({ button, true });
-					}
-				}
+				aKeys.Add({ /*GamePadButtons[i]*/static_cast<GAMEPAD>(downNow), false });
+			}
+			else if (!downNow && downBefore)
+			{
+				aKeys.Add({ /*GamePadButtons[i]*/static_cast<GAMEPAD>(downBefore), true });
 			}
 		}
-		//for (unsigned int i = 0; i < 14; ++i)
-		//{
-		//	CU::GAMEPAD button = GamePadButtons[i];
-		//	if (GetKeyPressed(aJoystickIndex, static_cast<unsigned short>(button)))
-		//	{
-		//		aKeys.Add(button);
-		//	}
-		//}
 
 		return aKeys.Empty() == false;
 	}
-
-	//bool XInputWrapper::GetKeysReleased(const unsigned int aJoystickIndex, CU::GrowingArray<KeyEvent>& aKeys)
-	//{
-	//	aKeys.RemoveAll();
-
-	//	KeyStroke keyStroke = {};
-	//	if (GetKeyStroke(aJoystickIndex, keyStroke) == true)
-	//	{
-	//		for (int i = 0; i < 14; ++i)
-	//		{
-	//			CU::GAMEPAD button = GamePadButtons[i];
-
-	//			if (keyStroke.myKeyCode & static_cast<unsigned short>(button) && keyStroke.myKeyState == KeyStroke::eKeyState::eReleased)
-	//			{
-	//				aKeys.Add(button);
-	//			}
-	//		}
-	//	}
-
-	//	return aKeys.Empty() == false;
-	//}
 
 	bool XInputWrapper::IsConnected(const unsigned int aJoystickIndex, unsigned int* aError)
 	{
 		ZeroMemory(&myJoysticks[aJoystickIndex], sizeof(XINPUT_STATE));
 
-		DWORD result = XInputGetState(aJoystickIndex, myJoysticks[aJoystickIndex]);
+		DWORD result = XInputGetState(aJoystickIndex, &myJoysticks[aJoystickIndex]);
 
 		if (aError != nullptr)
 		{
@@ -220,7 +167,7 @@ namespace CU
 
 	CU::Vector2f XInputWrapper::GetRightStickPosition(const unsigned int aJoystickIndex)
 	{
-		CU::Vector2f position(myJoysticks[aJoystickIndex]->Gamepad.sThumbRX, myJoysticks[aJoystickIndex]->Gamepad.sThumbRY);
+		CU::Vector2f position(myJoysticks[aJoystickIndex].Gamepad.sThumbRX, myJoysticks[aJoystickIndex].Gamepad.sThumbRY);
 
 		if (position.Length2() < XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE * XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)
 		{
@@ -232,7 +179,7 @@ namespace CU
 
 	CU::Vector2f XInputWrapper::GetLeftStickPosition(const unsigned int aJoystickIndex)
 	{
-		CU::Vector2f position(myJoysticks[aJoystickIndex]->Gamepad.sThumbLX, myJoysticks[aJoystickIndex]->Gamepad.sThumbLY);
+		CU::Vector2f position(myJoysticks[aJoystickIndex].Gamepad.sThumbLX, myJoysticks[aJoystickIndex].Gamepad.sThumbLY);
 
 		if (position.Length2() < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)
 		{
@@ -244,30 +191,44 @@ namespace CU
 
 	bool XInputWrapper::LeftStickIsInDeadzone(const unsigned int aJoystickIndex)
 	{
-		short x = myJoysticks[aJoystickIndex]->Gamepad.sThumbLX;
-		short y = myJoysticks[aJoystickIndex]->Gamepad.sThumbLY;
+		short x = myJoysticks[aJoystickIndex].Gamepad.sThumbLX;
+		short y = myJoysticks[aJoystickIndex].Gamepad.sThumbLY;
 
-		return THROW_AWAY_IF_LOW(XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, x) == 0 && THROW_AWAY_IF_LOW(XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, y) == 0;
+		bool isDead = std::abs(x) < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE && std::abs(y) < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE;
+		//return THROW_AWAY_IF_LOW(XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, x) == 0 && THROW_AWAY_IF_LOW(XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, y) == 0;
+		return isDead;
 	}
 
 	bool XInputWrapper::RightStickIsInDeadzone(const unsigned int aJoystickIndex)
 	{
-		short x = myJoysticks[aJoystickIndex]->Gamepad.sThumbRX;
-		short y = myJoysticks[aJoystickIndex]->Gamepad.sThumbRY;
+		short x = myJoysticks[aJoystickIndex].Gamepad.sThumbRX;
+		short y = myJoysticks[aJoystickIndex].Gamepad.sThumbRY;
 
-		return THROW_AWAY_IF_LOW(XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE, x) == 0 && THROW_AWAY_IF_LOW(XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE, y) == 0;
+		bool isDead = std::abs(x) < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE && std::abs(y) < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE;
+		//return THROW_AWAY_IF_LOW(XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE, x) == 0 && THROW_AWAY_IF_LOW(XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE, y) == 0;
+		return isDead;
+	}
+
+	bool XInputWrapper::LeftStickWasInDeadzone(const unsigned int aJoystickIndex)
+	{
+		return myPreviousJoystickStates[aJoystickIndex].left;
+	}
+
+	bool XInputWrapper::RightStickWasInDeadzone(const unsigned int aJoystickIndex)
+	{
+		return myPreviousJoystickStates[aJoystickIndex].right;
 	}
 
 	float XInputWrapper::GetLeftTriggerDown(const unsigned int aJoystickIndex)
 	{
-		unsigned char trigger = myJoysticks[aJoystickIndex]->Gamepad.bLeftTrigger;
+		unsigned char trigger = myJoysticks[aJoystickIndex].Gamepad.bLeftTrigger;
 
 		return static_cast<float>(THROW_AWAY_IF_LOW(XINPUT_GAMEPAD_TRIGGER_THRESHOLD, trigger)) / static_cast<float>(UCHAR_MAX);
 	}
 
 	float XInputWrapper::GetRightTringgerDown(const unsigned int aJoystickIndex)
 	{
-		unsigned char trigger = myJoysticks[aJoystickIndex]->Gamepad.bRightTrigger;
+		unsigned char trigger = myJoysticks[aJoystickIndex].Gamepad.bRightTrigger;
 
 		return static_cast<float>(THROW_AWAY_IF_LOW(XINPUT_GAMEPAD_TRIGGER_THRESHOLD, trigger)) / static_cast<float>(UCHAR_MAX);
 	}
@@ -314,28 +275,39 @@ namespace CU
 
 	unsigned int XInputWrapper::GetConnectedJoystickCount() const
 	{
-		return myJoysticks.Size();
+		unsigned int size = myJoysticks.Size();
+		for (unsigned int i = 0; i < size; ++i)
+		{
+			if (myJoysticks[i].dwPacketNumber == NullJoystick)
+			{
+				size--;
+			}
+		}
+		if (size == 0)
+		{
+			const_cast<XInputWrapper*>(this)->myJoysticks.RemoveAll();
+		}
+
+		return size;
 	}
 
 	bool XInputWrapper::UpdateState(const unsigned int aJoystickIndex)
 	{
-		ZeroMemory(myJoysticks[aJoystickIndex], sizeof(XINPUT_STATE));
+		myPreviousButtonState[aJoystickIndex] = myJoysticks[aJoystickIndex].Gamepad.wButtons;
+		myPreviousJoystickStates[aJoystickIndex].left = LeftStickIsInDeadzone(aJoystickIndex);
+		myPreviousJoystickStates[aJoystickIndex].right = RightStickIsInDeadzone(aJoystickIndex);
 
-		if (XInputGetState(aJoystickIndex, myJoysticks[aJoystickIndex]) == ERROR_SUCCESS)
+		ZeroMemory(&myJoysticks[aJoystickIndex], sizeof(XINPUT_STATE));
+
+		unsigned int result = XInputGetState(aJoystickIndex, &myJoysticks[aJoystickIndex]);
+		if (result == ERROR_SUCCESS)
 		{
 			return true;
 		}
-
-		return false;
-	}
-
-	void XInputWrapper::MoveDisconnectedJoysticks()
-	{
-		for (size_g i = 0; i < myDisconnectedJoysticks.Size(); ++i)
+		else if (result == ERROR_DEVICE_NOT_CONNECTED)
 		{
-			myJoysticks.Remove(myDisconnectedJoysticks[i]);
 		}
 
-		myDisconnectedJoysticks.DeleteAll();
+		return false;
 	}
 }

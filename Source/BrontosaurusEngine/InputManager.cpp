@@ -24,7 +24,7 @@ CInputManager* CInputManager::ourInstance = nullptr;
 CInputManager::CInputManager()
 	: myKeys(20)
 	, myMessengers(8u)
-	,myPadInputs(14)
+	, myPadInputs(14)
 	, myDInputWrapper(nullptr)
 	, myXInputWrapper(nullptr)
 {
@@ -39,7 +39,7 @@ CInputManager::CInputManager()
 	/*bool directInputSuccess =*/ myDInputWrapper->Init(hingsten, hunden);
 
 	myXInputWrapper = new CU::XInputWrapper();
-	myXInputWrapper->Init(4);
+	myXInputWrapper->Init(1);
 
 	myDInputWrapper->Init(hingsten, hunden);
 
@@ -285,25 +285,33 @@ void CInputManager::UpdateGamePad()
 				}
 			}
 		}
+		
+		bool leftIsDead = myXInputWrapper->LeftStickIsInDeadzone(i);
+		if (!leftIsDead)
+		{
+			CU::SInputMessage padJoyStick;
+			padJoyStick.myType = CU::eInputType::eGamePadLeftJoyStickChanged;
+			padJoyStick.myJoyStickPosition = myXInputWrapper->GetLeftStickPosition(i);
 
-		//if (myXInputWrapper->GetKeysReleased(i, myPadInputs) == true)
-		//{
-		//	for (int j = 0; j < myPadInputs.Size(); j++)
-		//	{
-		//		CU::SInputMessage padInputsReleased;
-		//		padInputsReleased.myType = CU::eInputType::eGamePadButtonReleased;
-		//		padInputsReleased.myGamePad = myPadInputs[j];
-
-		//		for (CU::CInputMessenger* messenger : myMessengers)
-		//		{
-		//			if (messenger->RecieveInput(padInputsReleased) == CU::eInputReturn::eKeepSecret)
-		//			{
-		//				break;
-		//			}
-		//		}
-		//	}
-		//}
-
-		//DL_PRINT("%f, %f", myXInputWrapper->GetLeftStickPosition(0).x, myXInputWrapper->GetLeftStickPosition(0).y);
+			for (CU::CInputMessenger* messenger : myMessengers)
+			{
+				if (messenger->RecieveInput(padJoyStick) == CU::eInputReturn::eKeepSecret)
+				{
+					break;
+				}
+			}
+		}
+		else if (!myXInputWrapper->LeftStickWasInDeadzone(i))
+		{
+			for (CU::CInputMessenger* messenger : myMessengers)
+			{
+				CU::SInputMessage padJoyStick;
+				padJoyStick.myType = CU::eInputType::eGamePadLeftJoyStickChanged;
+				if (messenger->RecieveInput(padJoyStick) == CU::eInputReturn::eKeepSecret)
+				{
+					break;
+				}
+			}
+		}
 	}
 }
