@@ -8,39 +8,43 @@
 
 #pragma comment (lib, "XInput.lib")
 
+const CU::GAMEPAD GamePadButtons[] = {
+	CU::GAMEPAD::DPAD_UP,
+	CU::GAMEPAD::DPAD_DOWN,
+	CU::GAMEPAD::DPAD_LEFT,
+	CU::GAMEPAD::DPAD_RIGHT,
+	CU::GAMEPAD::START,
+	CU::GAMEPAD::BACK,
+	CU::GAMEPAD::LEFT_THUMB,
+	CU::GAMEPAD::RIGHT_THUMB,
+	CU::GAMEPAD::LEFT_SHOULDER,
+	CU::GAMEPAD::RIGHT_SHOULDER,
+	CU::GAMEPAD::A ,
+	CU::GAMEPAD::B,
+	CU::GAMEPAD::X,
+	CU::GAMEPAD::Y
+};
+
 namespace CU
 {
 	typedef GrowingArray<XINPUT_STATE*>::size_type size_g;
-
-	const unsigned short XInputWrapper::GAMEPAD::DPAD_UP = XINPUT_GAMEPAD_DPAD_UP;
-	const unsigned short XInputWrapper::GAMEPAD::DPAD_DOWN = XINPUT_GAMEPAD_DPAD_DOWN;
-	const unsigned short XInputWrapper::GAMEPAD::DPAD_LEFT = XINPUT_GAMEPAD_DPAD_LEFT;
-	const unsigned short XInputWrapper::GAMEPAD::DPAD_RIGHT = XINPUT_GAMEPAD_DPAD_RIGHT;
-	const unsigned short XInputWrapper::GAMEPAD::START = XINPUT_GAMEPAD_START;
-	const unsigned short XInputWrapper::GAMEPAD::BACK = XINPUT_GAMEPAD_BACK;
-	const unsigned short XInputWrapper::GAMEPAD::LEFT_THUMB = XINPUT_GAMEPAD_LEFT_THUMB;
-	const unsigned short XInputWrapper::GAMEPAD::RIGHT_THUMB = XINPUT_GAMEPAD_RIGHT_THUMB;
-	const unsigned short XInputWrapper::GAMEPAD::LEFT_SHOULDER = XINPUT_GAMEPAD_LEFT_SHOULDER;
-	const unsigned short XInputWrapper::GAMEPAD::RIGHT_SHOULDER = XINPUT_GAMEPAD_RIGHT_SHOULDER;
-	const unsigned short XInputWrapper::GAMEPAD::A = XINPUT_GAMEPAD_A;
-	const unsigned short XInputWrapper::GAMEPAD::B = XINPUT_GAMEPAD_B;
-	const unsigned short XInputWrapper::GAMEPAD::X = XINPUT_GAMEPAD_X;
-	const unsigned short XInputWrapper::GAMEPAD::Y = XINPUT_GAMEPAD_Y;
 
 #define THROW_AWAY_IF_LOW(LOW_VALUE, REAL_VALUE) ((std::abs(REAL_VALUE) - LOW_VALUE <= 0) ? REAL_VALUE : 0)
 
 	XInputWrapper::KeyStroke::eKeyState FlagsToKeyState(const WORD aFlag)
 	{
-		switch (aFlag)
+		DL_PRINT("%d", aFlag);
+		if (aFlag & XINPUT_KEYSTROKE_REPEAT)
 		{
-		case XINPUT_KEYSTROKE_KEYDOWN:
-			return XInputWrapper::KeyStroke::eKeyState::ePressed;
-		case XINPUT_KEYSTROKE_KEYUP:
+			return XInputWrapper::KeyStroke::eKeyState::eRepeat;
+		}
+		if (aFlag & XINPUT_KEYSTROKE_KEYUP)
+		{
 			return XInputWrapper::KeyStroke::eKeyState::eReleased;
-		case XINPUT_KEYSTROKE_REPEAT:
-			return XInputWrapper::KeyStroke::eKeyState::eRepeat;
-		default:
-			return XInputWrapper::KeyStroke::eKeyState::eRepeat;
+		}
+		if (aFlag & XINPUT_KEYSTROKE_KEYDOWN)
+		{
+			return XInputWrapper::KeyStroke::eKeyState::ePressed;
 		}
 	}
 
@@ -106,9 +110,18 @@ namespace CU
 		KeyStroke keyStroke = {};
 		if (GetKeyStroke(aJoystickIndex, keyStroke) == true)
 		{
-			if (keyStroke.myKeyCode & aButton && keyStroke.myKeyState == KeyStroke::eKeyState::ePressed)
+			DL_PRINT("%i", keyStroke.myKeyCode);
+			if (keyStroke.myKeyCode == aButton && keyStroke.myKeyState == KeyStroke::eKeyState::ePressed)
 			{
 				return true;
+			}
+
+			for (int i = 0; i < 14; ++i)
+			{
+				if (keyStroke.myKeyCode & static_cast<unsigned short>(GamePadButtons[i]) && keyStroke.myKeyState == KeyStroke::eKeyState::ePressed)
+				{
+					return true;
+				}
 			}
 		}
 
@@ -128,6 +141,63 @@ namespace CU
 
 		return false;
 	}
+
+	bool XInputWrapper::GetKeyEvents(const unsigned int aJoystickIndex, CU::GrowingArray<KeyEvent>& aKeys)
+	{
+		aKeys.RemoveAll();
+
+		KeyStroke keyStroke = {};
+		if (GetKeyStroke(aJoystickIndex, keyStroke) == true)
+		{
+			for (int i = 0; i < 14; ++i)
+			{
+				CU::GAMEPAD button = GamePadButtons[i];
+
+				if (keyStroke.myKeyCode & static_cast<unsigned short>(button))
+				{
+					if (keyStroke.myKeyState == KeyStroke::eKeyState::ePressed)
+					{
+						aKeys.Add({ button , false });
+					}
+					else if (keyStroke.myKeyState == KeyStroke::eKeyState::eReleased)
+					{
+						aKeys.Add({ button, true });
+					}
+				}
+			}
+		}
+		//for (unsigned int i = 0; i < 14; ++i)
+		//{
+		//	CU::GAMEPAD button = GamePadButtons[i];
+		//	if (GetKeyPressed(aJoystickIndex, static_cast<unsigned short>(button)))
+		//	{
+		//		aKeys.Add(button);
+		//	}
+		//}
+
+		return aKeys.Empty() == false;
+	}
+
+	//bool XInputWrapper::GetKeysReleased(const unsigned int aJoystickIndex, CU::GrowingArray<KeyEvent>& aKeys)
+	//{
+	//	aKeys.RemoveAll();
+
+	//	KeyStroke keyStroke = {};
+	//	if (GetKeyStroke(aJoystickIndex, keyStroke) == true)
+	//	{
+	//		for (int i = 0; i < 14; ++i)
+	//		{
+	//			CU::GAMEPAD button = GamePadButtons[i];
+
+	//			if (keyStroke.myKeyCode & static_cast<unsigned short>(button) && keyStroke.myKeyState == KeyStroke::eKeyState::eReleased)
+	//			{
+	//				aKeys.Add(button);
+	//			}
+	//		}
+	//	}
+
+	//	return aKeys.Empty() == false;
+	//}
 
 	bool XInputWrapper::IsConnected(const unsigned int aJoystickIndex, unsigned int* aError)
 	{

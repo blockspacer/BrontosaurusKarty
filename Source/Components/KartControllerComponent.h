@@ -1,15 +1,18 @@
 #pragma once
 #include "Component.h"
-class CKartComponent : public CComponent
+class CKartControllerComponent : public CComponent
 {
 public:
-	CKartComponent();
-	~CKartComponent();
+	CKartControllerComponent();
+	~CKartControllerComponent();
 
-	void Receive(const eComponentMessageType, const SComponentMessageData&) override;
-	void Update(float aDeltaTime);
+	void MoveRight();
+	void MoveLeft();
+	void MoveFoward();
+	void MoveBackWards();
 
 private:
+
 	float myFowrardSpeed;
 	float myMaxSpeed;
 	float myMinSpeed;

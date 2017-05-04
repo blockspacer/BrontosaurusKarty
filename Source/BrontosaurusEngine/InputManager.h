@@ -15,6 +15,9 @@ namespace CU
 	using Vector2f = Vector2<float>;
 
 	enum class eKeys;
+	enum class GAMEPAD;
+
+	struct KeyEvent;
 }
 
 class CInputManager : public Postmaster::ISubscriber
@@ -40,6 +43,7 @@ private:
 
 
 	CU::GrowingArray<CU::eKeys> myKeys;
+	CU::GrowingArray<CU::KeyEvent> myPadInputs;
 	CU::GrowingArray<CU::CInputMessenger*> myMessengers;
 
 	CU::Vector2f myLastMousePosition;

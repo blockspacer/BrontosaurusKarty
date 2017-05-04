@@ -9,6 +9,30 @@ namespace CU
 	class Vector2;
 	using Vector2f = Vector2<float>;
 
+	enum class GAMEPAD
+	{
+		DPAD_UP = 0x0001,
+		DPAD_DOWN = 0x0002,
+		DPAD_LEFT = 0x0004,
+		DPAD_RIGHT = 0x0008,
+		START = 0x0010,
+		BACK = 0x0020,
+		LEFT_THUMB = 0x0040,
+		RIGHT_THUMB = 0x0080,
+		LEFT_SHOULDER = 0x0100,
+		RIGHT_SHOULDER = 0x0200,
+		A = 0x1000,
+		B = 0x2000,
+		X = 0x4000,
+		Y = 0x8000
+	};
+
+	struct KeyEvent
+	{
+		GAMEPAD button;
+		bool isReleased;
+	};
+
 	class XInputWrapper
 	{
 	public:
@@ -36,6 +60,9 @@ namespace CU
 		bool GetKeyPressed(const unsigned int aJoystickIndex, const unsigned short aButton);
 		bool GetKeyReleased(const unsigned int aJoystickIndex, const unsigned short aButton);
 
+		bool GetKeyEvents(const unsigned int aJoystickIndex, CU::GrowingArray<KeyEvent>& aKeys);
+		//bool GetKeysReleased(const unsigned int aJoystickIndex, CU::GrowingArray<KeyEvent>& aKeys);
+
 		bool IsConnected(const unsigned int aJoystickIndex, unsigned int* aError = nullptr);
 
 		CU::Vector2f GetRightStickPosition(const unsigned int aJoystickIndex);
@@ -59,25 +86,5 @@ namespace CU
 
 		GrowingArray<XINPUT_STATE*> myJoysticks;
 		GrowingArray<XINPUT_STATE*> myDisconnectedJoysticks;
-
-
-	public: //button constants
-		const struct GAMEPAD
-		{
-			static const unsigned short DPAD_UP;
-			static const unsigned short DPAD_DOWN;
-			static const unsigned short DPAD_LEFT;
-			static const unsigned short DPAD_RIGHT;
-			static const unsigned short START;
-			static const unsigned short BACK;
-			static const unsigned short LEFT_THUMB;
-			static const unsigned short RIGHT_THUMB;
-			static const unsigned short LEFT_SHOULDER;
-			static const unsigned short RIGHT_SHOULDER;
-			static const unsigned short A;
-			static const unsigned short B;
-			static const unsigned short X;
-			static const unsigned short Y;
-		};
 	};
 }
