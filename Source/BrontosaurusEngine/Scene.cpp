@@ -15,7 +15,7 @@
 
 #define Intify(A_ENUM_CLASS) static_cast<int>(A_ENUM_CLASS)
 #define PlayerOneCamera myRenderCameras[Intify(eCameraType::ePlayerOneCamera)]
-#define USE_SHADOWS
+//#define USE_SHADOWS
 
 CScene::CScene()
 {

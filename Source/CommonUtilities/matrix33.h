@@ -336,8 +336,8 @@ namespace CU
 	template <typename TYPE>
 	const CU::Vector3f Matrix33<TYPE>::GetEulerRotation() const
 	{
-		const float aX = atan2(m33, m23);
-		const float aY = sqrt(m11 * m11 + m21 * m21);
+		const float aX = atan2(m32, m33);
+		const float aY = atan2(-m31, sqrt(m32 * m32 + m33 * m33));
 		const float aZ = atan2(m21, m11);
 		return CU::Vector3f(aX, aY, aZ);
 	}

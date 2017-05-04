@@ -9,12 +9,12 @@
 CKartComponent::CKartComponent()
 {
 	myFowrardSpeed = 0.0f;
-	myMaxSpeed = 10.0f;
+	myMaxSpeed = 20.0f;
 	myMinSpeed = -5.0f;
 	myAcceleration = 0.0f;
 
 	myMaxAcceleration = 100.f;
-	myMinAcceleration = -100.f;
+	myMinAcceleration = -30.f;
 
 	myFriction = 10.f;
 
@@ -74,11 +74,18 @@ void CKartComponent::Update(float aDeltaTime)
 	{
 		myFowrardSpeed = myMinSpeed;
 	}
-	
-	float steerAngle = mySteering * myAngularAcceleration * -way;
-	CU::Matrix44f& parentTransform = GetParent()->GetLocalTransform();
-	parentTransform.RotateAroundAxis(steerAngle * aDeltaTime, CU::Axees::Y);
 
-	GetParent()->GetLocalTransform().Move(CU::Vector3f(0.0f, 0.0f, myFowrardSpeed * aDeltaTime));
-	GetParent()->NotifyComponents(eComponentMessageType::eMoving, SComponentMessageData());
+	CU::Matrix44f& parentTransform = GetParent()->GetLocalTransform();
+
+	if (mySteering != 0.f)
+	{
+		float steerAngle = mySteering * myAngularAcceleration * -way * aDeltaTime;
+		parentTransform.RotateAroundAxis(steerAngle, CU::Axees::Y);
+	}
+
+	if (myFowrardSpeed != 0.f)
+	{
+		parentTransform.Move(CU::Vector3f(0.0f, 0.0f, myFowrardSpeed * aDeltaTime));
+		GetParent()->NotifyComponents(eComponentMessageType::eMoving, SComponentMessageData());
+	}
 }
