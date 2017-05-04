@@ -382,6 +382,9 @@
     <ClInclude Include="PlayerControllerManager.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RigidBodyComponent.h" />
+    <ClInclude Include="SpeedHandlerManager.h" />
+    <ClInclude Include="BoostData.h" />
+    <ClInclude Include="SpeedHandlerComponent.h" />
     <ClInclude Include="SphereColliderComponent.h" />
     <ClInclude Include="FireComponent.h" />
     <ClInclude Include="PlayerControls.h" />
@@ -436,6 +439,8 @@
     <ClCompile Include="GameObjectManager.cpp" />
     <ClCompile Include="ParticleEmitterComponent.cpp" />
     <ClCompile Include="ParticleEmitterComponentManager.cpp" />
+    <ClCompile Include="SpeedHandlerManager.cpp" />
+    <ClCompile Include="SpeedHandlerComponent.cpp" />
     <ClCompile Include="SphereColliderComponent.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

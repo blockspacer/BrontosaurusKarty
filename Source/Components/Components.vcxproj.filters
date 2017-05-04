@@ -37,6 +37,12 @@
     <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="AIController.cpp" />
     <ClCompile Include="PlayerControllerManager.cpp" />
+    <ClCompile Include="SpeedHandlerManager.cpp">
+      <Filter>SpeedHandling</Filter>
+    </ClCompile>
+    <ClCompile Include="SpeedHandlerComponent.cpp">
+      <Filter>SpeedHandling</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -80,5 +86,19 @@
     <ClInclude Include="Controller.h" />
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="PlayerControllerManager.h" />
+    <ClInclude Include="BoostData.h">
+      <Filter>SpeedHandling</Filter>
+    </ClInclude>
+    <ClInclude Include="SpeedHandlerManager.h">
+      <Filter>SpeedHandling</Filter>
+    </ClInclude>
+    <ClInclude Include="SpeedHandlerComponent.h">
+      <Filter>SpeedHandling</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="SpeedHandling">
+      <UniqueIdentifier>{e9d9aa2f-72a4-44ad-865f-772e50fbcb82}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
