@@ -25,6 +25,7 @@ private:
 	bool GetLookat(CU::Vector3f& aLookat);
 	bool GetPosition(CU::Vector3f& aPosition);
 
+	CU::Matrix44f myKartOffset;
 	CU::Camera* myCamera;
 	bool myUnlocked;
 };

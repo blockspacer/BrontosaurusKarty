@@ -1,4 +1,4 @@
-﻿
+﻿#include "stdafx.h"
 
 #include "NetworkDebugInfo.h"
 #include "../PostMaster/MessageType.h"

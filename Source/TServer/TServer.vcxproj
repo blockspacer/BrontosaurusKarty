@@ -204,9 +204,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="GameServer.h" />
     <ClInclude Include="ServerMain.h" />
     <ClInclude Include="ServerMainInteface.h" />

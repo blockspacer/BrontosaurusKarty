@@ -11,10 +11,6 @@
       <Extensions>
       </Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="NetworkMessage">
       <UniqueIdentifier>{362cc34c-3f25-4810-963a-6b8924627a09}</UniqueIdentifier>
     </Filter>
@@ -48,9 +44,6 @@
     <Filter Include="NetworkMessage\AnimationStart">
       <UniqueIdentifier>{fee5141f-4e54-4115-9f79-0caf0bdd3d02}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

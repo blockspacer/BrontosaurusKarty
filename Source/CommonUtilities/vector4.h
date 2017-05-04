@@ -1,8 +1,6 @@
 #pragma once
 
-#include "vector2.h"
 #define self (*this)
-
 
 namespace CU
 {
@@ -17,7 +15,7 @@ namespace CU
 	{
 	public:
 		Vector4();
-		Vector4(const Vector4 &aOther);
+		Vector4(const Vector4& aOther);
 		Vector4(const TYPE aX, const TYPE aY, const TYPE aZ, const TYPE aW);
 
 		template<typename U> explicit Vector4(const Vector4<U> &aOther);

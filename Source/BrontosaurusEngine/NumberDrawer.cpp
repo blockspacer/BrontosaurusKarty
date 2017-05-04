@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "NumberDrawer.h"
 #include "Engine.h"
-#include "CommonUtilities.h"
 
 
 CNumberDrawer::CNumberDrawer() : myNumber(0)
@@ -105,7 +104,7 @@ void CNumberDrawer::Add(long aNumberToAdd)
 
 void CNumberDrawer::Update(int anIncreMentionSize)
 {
-	const int incrementationSize = MAX(anIncreMentionSize, 0);
+	const int incrementationSize = max(anIncreMentionSize, 0);
 
 	for (int i = 0; i < incrementationSize; ++i)
 	{

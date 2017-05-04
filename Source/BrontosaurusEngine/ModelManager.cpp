@@ -3,16 +3,8 @@
 #include "ModelManager.h"
 #include "ModelLoader.h"
 #include "ConstBufferTemplate.h"
-#include <CommonUtilities.h>
-#include <CommandLineManager.h>
-#include <matrix44.h>
-#include <StringHelper.h>
 #include <ThreadPool.h>
-
-#include "GUIModleHelper.h"
 #include "FBXLoader.h"
-#include "..\GUI\GUIPixelConstantBuffer.h"
-
 
 #include "../TShared/AnimationState.h"
 DECLARE_ANIMATION_ENUM_AND_STRINGS;
@@ -67,71 +59,6 @@ const CModelManager::ModelId CModelManager::LoadModel(const std::string& aModelP
 
 	myModelList[myModels[aModelPath]].AddRef();
 	return myModels[aModelPath];
-}
-
-const CModelManager::ModelId CModelManager::LoadGUIModel(const CLoaderMesh* aLoaderMesh, const char* aTexturePath)
-{
-	DL_MESSAGE_BOX("LoadGUIModel function is not compatible with engine updates in BrontosaurusGore");
-	return -1;
-#if 0
-	if (myModels.find(aLoaderMesh->myName) == myModels.end())
-	{
-		CEffect* effect = GUIModleHelper::CreateEffect(aLoaderMesh);
-		CSurface* surface = GUIModleHelper::CreateSurface(aTexturePath);
-
-		ModelId handle = -1;
-		if (myFreeModelIDs.Size() != 0)
-		{
-			handle = myFreeModelIDs.Pop();
-		}
-		else
-		{
-			handle = myModelList.Size();
-			myModelList.Add(CModel());
-		}
-
-
-		myModels[aLoaderMesh->myName] = handle;
-
-		myModelList[handle].Initialize(effect, surface, aLoaderMesh);
-
-		SPixelConstantBuffer bufferStruct = {};
-		ID3D11Buffer* pixelConstantBuffer = BSR::CreateCBuffer<SPixelConstantBuffer>(&bufferStruct);
-		myModelList[handle].AddConstantBuffer(CModel::eShaderStage::ePixel, pixelConstantBuffer);
-	}
-
-	return myModels[aLoaderMesh->myName];
-#endif
-}
-
-const CModelManager::ModelId CModelManager::LoadGUIModel(const CLoaderMesh* aLoaderMesh, const CU::GrowingArray<std::string>& aTexturePaths)
-{
-	if (myModels.find(aLoaderMesh->myName) == myModels.end())
-	{
-		CEffect* effect = GUIModleHelper::CreateEffect(aLoaderMesh);
-		CSurface* surface = GUIModleHelper::CreateSurface(aTexturePaths);
-
-		ModelId handle = -1;
-		if (myFreeModelIDs.Size() != 0)
-		{
-			handle = myFreeModelIDs.Pop();
-		}
-		else
-		{
-			handle = myModelList.Size();
-			myModelList.Add(CModel());
-		}
-
-		myModels[aLoaderMesh->myName] = handle;
-
-		//myModelList[handle].Initialize(effect, surface, aLoaderMesh);
-
-		SPixelConstantBuffer bufferStruct = {};
-		//ID3D11Buffer* pixelConstantBuffer = BSR::CreateCBuffer<SPixelConstantBuffer>(&bufferStruct);
-		//myModelList[handle].AddConstantBuffer(CModel::eShaderStage::ePixel, pixelConstantBuffer);
-	}
-
-	return myModels[aLoaderMesh->myName];
 }
 
 CModel* CModelManager::GetModel(const ModelId aModelID)

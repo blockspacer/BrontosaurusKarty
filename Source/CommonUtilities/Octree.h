@@ -1,7 +1,5 @@
 #pragma once
-#include "vector3.h"
 #include "Intersection.h"
-#include "GrowingArray.h"
 
 class CTreeNode;
 

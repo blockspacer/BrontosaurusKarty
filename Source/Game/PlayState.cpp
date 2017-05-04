@@ -2,41 +2,39 @@
 #include "PlayState.h"
 
 #include <Engine.h>
-#include <CommonUtilities.h>
+#include <Renderer.h>
 #include <StopWatch.h>
 #include <EInputReturn.h>
-#include <Lights.h>
 #include <Scene.h>
 
-#include "Skybox.h"
+#include "StateStack/StateStack.h"
+
 #include "../Audio/AudioInterface.h"
 
 #include "LoadState.h"
 #include "ThreadedPostmaster/LoadLevelMessage.h"
 
-//Managers
-
-#include "Components/GameObject.h"
-#include "Components/GameObjectManager.h"
-#include "Components/ComponentManager.h"
+//Managers and components
+#include "ModelComponentManager.h"
 #include "Components/ScriptComponentManager.h"
-//#include "../GUI/GUIManager.h"
 
 #include "LoadManager/LoadManager.h"
 #include "KevinLoader/KevinLoader.h"
 
 #include "CameraComponent.h"
-#include <thread>
-#include "ModelComponentManager.h"
+#include "KartComponentManager.h"
 
-#include "ComponentMessage.h"
+//Networking
 #include "TClient/Client.h"
 #include "TShared/NetworkMessage_ClientReady.h"
 #include "TClient/ClientMessageManager.h"
 #include "PostMaster/SendNetworkMessage.h"
+#include "PostMaster/MessageType.h"
 #include "ThreadedPostmaster/Postmaster.h"
+#include "ThreadedPostmaster/PostOffice.h"
 #include "ThreadedPostmaster/SendNetowrkMessageMessage.h"
-#include "StateStack/StateStack.h"
+
+
 #include "CommonUtilities/InputMessage.h"
 #include <CommonUtilities/EKeyboardKeys.h>
 #include "../CommonUtilities/XInputWrapper.h"
@@ -55,31 +53,28 @@
 #include "../Components/ParticleEmitterComponentManager.h"
 
 //Other stuff I dunno
-#include "TextInstance.h"
-#include "GameObject.h"
-#include "ComponentAnswer.h"
-#include "AnimationComponent.h"
 #include "PointLightComponentManager.h"
 #include "BrontosaurusEngine/SpriteInstance.h"
-#include "ShowTitleComponent.h"
-#include "Renderer.h"
 #include "ThreadedPostmaster/GameEventMessage.h"
 #include <LuaWrapper/SSlua/SSlua.h>
 
+// player creationSpeciifcIncludes
+#include "KartComponent.h"
+#include "KeyboardControllerComponent.h"
+
 CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
-	, myLevelIndex(aLevelIndex)
+	, myPhysicsScene(nullptr)
+	, myPhysics(nullptr)
 	, myGameObjectManager(nullptr)
 	, myScene(nullptr)
 	, myModelComponentManager(nullptr)
-	, myCameraComponent(nullptr)
-	, myIsInfocus(false)
+	, myColliderComponentManager(nullptr)
 	, myScriptComponentManager(nullptr)
+	, myCameraComponent(nullptr)
+	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
 {
-	myPhysicsScene = nullptr;
-	myPhysics = nullptr;
-	myColliderComponentManager = nullptr;
 }
 
 CPlayState::~CPlayState()
@@ -97,8 +92,7 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myColliderComponentManager);
 	SAFE_DELETE(myPhysicsScene);
 	SAFE_DELETE(myGameObjectManager);
-	//SAFE_DELETE(myPhysics); // kanske? nope foundation förstör den
-	//Physics::CFoundation::Destroy(); desstroy this lator
+	SAFE_DELETE(myKartComponentManager);
 }
 
 void CPlayState::Load()
@@ -171,8 +165,10 @@ void CPlayState::Load()
 	CRenderCamera& playerCamera = myScene->GetRenderCamera(CScene::eCameraType::ePlayerOneCamera);
 	playerCamera.InitPerspective(90, WINDOW_SIZE_F.x, WINDOW_SIZE_F.y, 0.1f, 500.f);
 
+	CreatePlayer(playerCamera.GetCamera());
+	
 	myScene->SetSkybox("default_cubemap.dds");
-	myScene->SetCubemap("purpleCubemap.dds");
+	myScene->SetCubemap("default_cubemap.dds");
 
 
 	myIsLoaded = true;
@@ -182,7 +178,6 @@ void CPlayState::Load()
 	float time = loadPlaystateTimer.GetDeltaTime().GetMilliseconds();
 	GAMEPLAY_LOG("Game Inited in %f ms", time);
 	Postmaster::Threaded::CPostmaster::GetInstance().GetThreadOffice().HandleMessages();
-
 }
 
 void CPlayState::Init()
@@ -194,13 +189,13 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 {
 	CParticleEmitterComponentManager::GetInstance().UpdateEmitters(aDeltaTime);
 
-	CAnimationComponent::UpdateAnimations(aDeltaTime);
 	myScene->Update(aDeltaTime);
 	if (myPhysicsScene->Simulate(aDeltaTime) == true)
 	{
 		myColliderComponentManager->Update();
 	}
 
+	myKartComponentManager->Update(aDeltaTime.GetSeconds());
 	return myStatus;
 }
 
@@ -211,19 +206,19 @@ void CPlayState::Render()
 
 void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
 {
-	myIsInfocus = true;
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eChangeLevel);
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eNetworkMessage);
 }
 
 void CPlayState::OnExit(const bool /*aLetThroughRender*/)
 {
-	myIsInfocus = false;
 	Postmaster::Threaded::CPostmaster::GetInstance().Unsubscribe(this);
 	RENDERER.ClearGui();
 }
+
 CU::eInputReturn CPlayState::RecieveInput(const CU::SInputMessage& aInputMessage)
 {
+<<<<<<< HEAD
 	if (myIsInfocus == false)
 	{
 		return CU::eInputReturn::ePassOn;
@@ -238,12 +233,15 @@ CU::eInputReturn CPlayState::RecieveInput(const CU::SInputMessage& aInputMessage
 		DL_PRINT("%i", (int)aInputMessage.myGamePad);
 	}
 
+=======
+>>>>>>> 2ec0ae51ec751323d15677f674f1e1763432c42d
 	if (aInputMessage.myType == CU::eInputType::eKeyboardPressed && aInputMessage.myKey == CU::eKeys::ESCAPE)
 	{
-		CU::CInputMessenger::RecieveInput(aInputMessage);
+		//myStateStack.PushState(new CPauseMenuState(myStateStack));
+		return CU::eInputReturn::eKeepSecret;
 	}
 
-	return CU::eInputReturn::eKeepSecret;
+	return CU::CInputMessenger::RecieveInput(aInputMessage);
 }
 
 CGameObjectManager* CPlayState::GetGameObjectManager()
@@ -275,4 +273,37 @@ void CPlayState::CreateManagersAndFactories()
 	myColliderComponentManager->InitControllerManager();
 
 	myScriptComponentManager = new CScriptComponentManager();
+	myKartComponentManager = new CKartComponentManager();
+}
+
+void CPlayState::CreatePlayer(CU::Camera& aCamera)
+{
+	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
+
+	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
+
+	myCameraComponent = new CCameraComponent();
+	CComponentManager::GetInstance().RegisterComponent(myCameraComponent);
+	myCameraComponent->SetCamera(aCamera);
+
+	CKartComponent* kartComponent = myKartComponentManager->CreateComponent();
+
+	CKeyboardControllerComponent* keyBoardInput = new CKeyboardControllerComponent();
+	Subscribe(*keyBoardInput);
+
+	playerObject->AddComponent(playerModel);
+	playerObject->AddComponent(kartComponent);
+	playerObject->AddComponent(keyBoardInput);
+	playerObject->AddComponent(myCameraComponent);
+
+	CGameObject* bystanderObject = myGameObjectManager->CreateGameObject();
+	CModelComponent* bystanderModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
+	bystanderObject->AddComponent(bystanderModel);
+	bystanderObject->GetLocalTransform().Move(CU::Vector3f(2.0f, 0.0f, 10.0f));
+	bystanderObject->NotifyComponents(eComponentMessageType::eMoving, SComponentMessageData());
+}
+
+void CPlayState::SetCameraComponent(CCameraComponent* aCameraComponent)
+{
+	myCameraComponent = aCameraComponent;
 }

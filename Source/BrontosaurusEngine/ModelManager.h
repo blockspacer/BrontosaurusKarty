@@ -26,8 +26,6 @@ public:
 	~CModelManager();
 
 	const ModelId LoadModel(const std::string& aModelPath);
-	const ModelId LoadGUIModel(const CLoaderMesh* aLoaderMesh, const char* aTexturePath);
-	const ModelId LoadGUIModel(const CLoaderMesh* aLoaderMesh, const CU::GrowingArray<std::string>& aTexturePaths);
 	CModel* GetModel(const ModelId aModelID);
 	void RemoveModel(const ModelId aModelID);
 	int GetModelRefCount(const ModelId aModelID) const;

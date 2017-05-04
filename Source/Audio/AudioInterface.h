@@ -1,10 +1,15 @@
 #pragma once
-#include <functional>   // std::bind
-#include "../CommonUtilities/matrix.h"
 
-#ifndef assert
-#include <assert.h>
-#endif
+namespace CU
+{
+	template <typename T>
+	class Vector3;
+	using Vector3f = Vector3<float>;
+
+	template <typename T>
+	class Matrix44;
+	using Matrix44f = Matrix44<float>;
+}
 
 class CWwiseManager;
 
@@ -16,7 +21,7 @@ namespace Audio
 	{
 	public:
 		static CAudioInterface* GetInstance(){ return myInstance; }
-		static void CreateInstance() { assert(myInstance == nullptr && "Audio interface already created"); myInstance = new CAudioInterface(); }
+		static void CreateInstance();
 		static void Destroy(){ delete myInstance; myInstance = nullptr; }
 
 		bool Init(const char* aInitBank);

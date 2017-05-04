@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "SetClientIDMessage.h"
 #include "../ThreadedPostmaster/Message.h"
 #include "../PostMaster/MessageType.h"

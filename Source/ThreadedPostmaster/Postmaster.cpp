@@ -1,7 +1,7 @@
+#include "stdafx.h"
 #include "Postmaster.h"
 #include "Message.h"
 #include "PostOffice.h"
-#include "../CommonUtilities/GrowingArray.h"
 #include "Subscriber.h"
 
 Postmaster::Threaded::CPostmaster* Postmaster::Threaded::CPostmaster::ourInstance = nullptr;

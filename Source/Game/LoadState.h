@@ -1,5 +1,4 @@
 #pragma once
-#include "LoadingAnimation.h"
 #include "../StateStack/State.h"
 #include "../ThreadedPostmaster/Subscriber.h"
 

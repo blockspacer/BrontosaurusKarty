@@ -1,8 +1,6 @@
 #pragma once
 #include "CommonNetworkIncludes.h"
-#include <functional>
 #include "ImportantNetworkMessage.h"
-#include <map>
 
 #define DEFAULT_PORT 27015
 #define SERVER_PORT "27015"

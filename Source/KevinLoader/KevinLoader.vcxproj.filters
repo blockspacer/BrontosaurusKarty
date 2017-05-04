@@ -6,10 +6,6 @@
       <Extensions>
       </Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="KevinLoader">
       <UniqueIdentifier>{ec03f35c-16de-4efa-b2f9-1158a4c25c36}</UniqueIdentifier>
       <Extensions>
@@ -21,9 +17,6 @@
     <Filter Include="Error">
       <UniqueIdentifier>{1695b3ad-babb-4ca4-b0a6-e68756a8eb79}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

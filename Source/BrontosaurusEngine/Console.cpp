@@ -7,7 +7,6 @@
 
 #include "../PostMaster/Event.h"
 #include "../PostMaster/Message.h"
-#include "../PostMaster/PostMaster.h"
 #include "../PostMaster/ConsoleCalledUpon.h"
 #include "../PostMaster/KeyCharPressed.h"
 #include "../ThreadedPostmaster/Postmaster.h"

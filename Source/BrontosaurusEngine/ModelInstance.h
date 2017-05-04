@@ -1,8 +1,5 @@
 #pragma once
-#include "../CommonUtilities/matrix44.h"
-#include "../CommonUtilities/VectorOnStack.h"
 #include "../CommonUtilities/Sphere.h"
-#include <map>
 
 enum class eAnimationState;
 

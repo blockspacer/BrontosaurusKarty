@@ -280,6 +280,9 @@
     <ClInclude Include="GeometryBuffer.h" />
     <ClInclude Include="ColorGrader.h" />
     <ClInclude Include="ELUTType.h" />
+    <ClInclude Include="GUIElement.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

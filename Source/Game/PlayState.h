@@ -1,7 +1,5 @@
 #pragma once
 #include "../StateStack/State.h"
-#include "../PostMaster/Subscriber.h"
-#include <atomic>
 #include "../ThreadedPostmaster/Subscriber.h"
 
 namespace CU
@@ -27,6 +25,7 @@ class CTextInstance;
 class CSpriteInstance;
 class CGameObject;
 class CCameraComponent;
+class CKartComponentManager;
 
 class CPlayState : public State , public Postmaster::ISubscriber
 {
@@ -55,31 +54,26 @@ public:
 
 	eMessageReturn DoEvent(const CLoadLevelMessage& aLoadLevelMessage) override;
 	CU::eInputReturn RecieveInput(const CU::SInputMessage& aInputMessage) override;
-	inline void SetCameraComponent(CCameraComponent* aCameraComponent);
+	void SetCameraComponent(CCameraComponent* aCameraComponent);
+
+private:
+	void CreatePlayer(CU::Camera& aCamera);
 private:
 	Physics::CPhysicsScene* myPhysicsScene;
 	Physics::CPhysics* myPhysics;
-
-
-
-	CColliderComponentManager* myColliderComponentManager;
 
 	CGameObjectManager* myGameObjectManager;
 	CScene* myScene;
 
 	CModelComponentManager* myModelComponentManager;
-
+	CColliderComponentManager* myColliderComponentManager;
 	CScriptComponentManager* myScriptComponentManager;
+	CKartComponentManager* myKartComponentManager;
 
-	class CCameraComponent* myCameraComponent;
-	bool myIsInfocus;
+	CCameraComponent* myCameraComponent;
 
 	int myLevelIndex;
 	std::atomic_bool myIsLoaded;
-	//Super temp ta bort när guit börjar ta form
-	//CTextInstance* myPlayerHealthText;
-	//CTextInstance* myPlayerArmorText;
-
 };
 
 inline bool CPlayState::IsLoaded() const
@@ -95,9 +89,4 @@ inline CColliderComponentManager* CPlayState::GetColliderComponentManager()
 inline CScriptComponentManager* CPlayState::GetScriptComponentManager()
 {
 	return myScriptComponentManager;
-}
-
-void CPlayState::SetCameraComponent(CCameraComponent* aCameraComponent)
-{
-	myCameraComponent = aCameraComponent;
 }

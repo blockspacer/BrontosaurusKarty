@@ -1,8 +1,6 @@
 #pragma once
-#include "../CommonUtilities/matrix44.h"
 #include "InstanceID.h"
 #include "EmitterData.h"
-#include "../CommonUtilities/GrowingArray.h"
 
 namespace CU
 {

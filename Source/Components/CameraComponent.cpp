@@ -2,12 +2,17 @@
 #include "CameraComponent.h"
 #include "../CommonUtilities/Camera.h"
 #include "../Audio/AudioInterface.h"
+#include "../CommonUtilities/PICarlApproved.h"
 
 CCameraComponent::CCameraComponent()
 	: myCamera(nullptr)
 	, myUnlocked(false)
 {
 	myType = eComponentType::eCamera;
+
+	float rotationAngle = PI / 6.0f;
+	myKartOffset.RotateAroundAxis(rotationAngle, CU::Axees::X);
+	myKartOffset.Move(CU::Vector3f(0.0f, 0.0f, -10.0f));
 }
 
 CCameraComponent::~CCameraComponent()
@@ -33,9 +38,9 @@ void CCameraComponent::Receive(const eComponentMessageType aMessageType, const S
 	case eComponentMessageType::eMoving:
 		if (myUnlocked == false)
 		{
-			const CU::Matrix44f transformation = GetParent()->GetToWorldTransform();
-			myCamera->SetTransformation(transformation);
-			Audio::CAudioInterface::GetInstance()->SetListenerPosition(transformation);
+			myCamera->SetTransformation(myKartOffset * GetParent()->GetToWorldTransform());
+			
+			//Audio::CAudioInterface::GetInstance()->SetListenerPosition(transformation); hasta la xp vista bebe
 		}
 		break;
 	}
@@ -52,12 +57,6 @@ bool CCameraComponent::Answer(const eComponentQuestionType aQuestionType, SCompo
 		return GetLookat(aQuestionData.myVector3f);
 	case eComponentQuestionType::eGetCameraPosition:
 		return GetPosition(aQuestionData.myVector3f);
-	case eComponentQuestionType::eGetCameraObject:
-	{
-		aQuestionData.myGameObject = GetParent();
-		return true;
-		break;
-	}
 	}
 
 	return false;

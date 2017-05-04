@@ -326,9 +326,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="ComponentData.h" />
     <ClInclude Include="KevinLoader.h" />
     <ClInclude Include="KLoaderError.h" />

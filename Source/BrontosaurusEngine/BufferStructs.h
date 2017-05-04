@@ -1,12 +1,5 @@
 #pragma once
-#include "../CommonUtilities/vector2.h"
-#include "../CommonUtilities/matrix44.h"
-#include "../CommonUtilities/vector4.h"
-#include "../CommonUtilities/VectorOnStack.h"
 #include "Lights.h"
-//#include <vector2.h>
-//#include <vector4.h>
-//#include <matrix44.h>
 
 //Legacy ?
 //Size of a vertex can be found in the FBX loader model, along with all data and number of vertices. 

@@ -1,11 +1,6 @@
 #pragma once
-#include "../CommonUtilities/vector4.h"
-#include "../CommonUtilities/vector2.h"
 #include "Text.h"
 #include "Allignment.h"
-#include <string>
-#include "../CommonUtilities/GrowingArray.h"
-#include "../CommonUtilities/DL_Debug.h"
 
 class CText;
 
@@ -116,7 +111,7 @@ inline std::wstring CTextInstance::GetText() const
 		if (i != 0)
 		{
 			DL_PRINT_WARNING("Warning slow! please consider just getting a separete line");
-			string += L'/n';
+			string += L'\n';
 		}
 		string += myStrings[i];
 	}

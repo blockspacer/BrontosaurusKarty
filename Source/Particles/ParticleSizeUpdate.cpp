@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ParticleSizeUpdate.h"
 #include "JsonValue.h"
 #include "../Components/ParticleEmitterComponentManager.h"

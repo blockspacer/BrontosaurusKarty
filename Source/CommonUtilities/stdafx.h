@@ -13,21 +13,8 @@
 
 #define SAFE_DELETE(ptr) delete ptr; ptr = nullptr
 
-#include <utility>
-#include <string>
-#include <string.h>
-#include <cstdint>
-#include <stdlib.h>
-#include <fstream>
-
-#include "DL_Debug.h"
-#include "EMouseButtons.h"
-#include "GrowingArray.h"
-
-#include "vector2.h"
-#include "vector3.h"
-#include "vector4.h"
-#include "matrix.h"
+#include "CommonSTL.h"
+#include "CommonCU.h"
 
 #include "MemoryLeekLogger.h"
 

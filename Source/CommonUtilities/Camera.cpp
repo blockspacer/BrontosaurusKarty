@@ -192,6 +192,11 @@ namespace CU
 		return myTransformation;
 	}
 
+	Matrix44f& Camera::GetTransformation()
+	{
+		return myTransformation;
+	}
+
 
 	bool Camera::IsInside(const CU::Sphere& aSphere)
 	{

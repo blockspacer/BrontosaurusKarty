@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ConectedMessage.h"
 #include "../PostMaster/MessageType.h"
 #include "Subscriber.h"

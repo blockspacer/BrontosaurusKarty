@@ -1,14 +1,15 @@
 #pragma once
-#include <math.h>
-
-#include "vector3.h"
-#include "vector2.h"
-#include "StaticArray.h"
 
 #define self (*this)
 
 namespace CU
 {
+	template<typename TYPE>
+	class Vector2;
+	
+	template<typename TYPE>
+	class Vector3;
+
 	template<typename TYPE>
 	class Matrix44;
 
@@ -306,9 +307,10 @@ namespace CU
 			return tempMatrix;
 		}
 
-#pragma warning( disable : 4201 ) // remove warning namless struct
 		union
 		{
+#pragma warning( disable : 4201 ) // remove warning namless struct
+
 			struct
 			{
 				TYPE	m11, m12, m13,
@@ -321,6 +323,7 @@ namespace CU
 				Vector3<TYPE> myUpVector;
 				Vector3<TYPE> myForwardVector;
 			};
+
 #pragma warning( default : 4201 )
 
 			CU::StaticArray<TYPE, NumElements> myMatrix;

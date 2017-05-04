@@ -5,6 +5,8 @@
 #include "ThreadNamer.h"
 #include "../ThreadedPostmaster/Postmaster.h"
 
+#include <windows.h>
+
 namespace CU
 {
 	Worker::Worker()

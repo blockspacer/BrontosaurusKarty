@@ -9,15 +9,9 @@
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 
-#define SAFE_DELETE(ptr) delete ptr; ptr = nullptr
 
-#include <utility>
-
-#include "../CommonUtilities/GrowingArray.h"
-#include "../CommonUtilities/DL_Debug.h"
-#include "../CommonUtilities/vector2.h"
-#include "../CommonUtilities/vector3.h"
-#include "../CommonUtilities/vector4.h"
+#include "../CommonUtilities/CommonSTL.h"
+#include "../CommonUtilities/CommonCU.h"
 
 #include "../BrontosaurusEngine/Scene.h"
 #include "../Game/PlayState.h"
@@ -28,5 +22,8 @@
 #include "LoadManager.h"
 #include "ServerLoadManager.h"
 
+#ifndef SAFE_DELETE
+#define SAFE_DELETE(ptr) delete ptr; ptr = nullptr
+#endif // !SAFE_DELETE
+
 //#include "../CommonUtilities/MemoryLeekLogger.h"
-// TODO: reference additional headers your program requires here

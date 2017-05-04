@@ -359,7 +359,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions> _RETAIL_BUILD;WIN32;NDEBUG; _RETAIL_BUILD;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions> _RETAIL_BUILD;WIN32;NDEBUG; _LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
@@ -379,10 +379,11 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Colour.h" />
     <ClInclude Include="CommandLineManager.h" />
+    <ClInclude Include="CommonCU.h" />
+    <ClInclude Include="CommonSTL.h" />
     <ClInclude Include="CommonUtilities.h" />
     <ClInclude Include="ConsolePrinter.h" />
     <ClInclude Include="CopyArray.h" />
-    <ClInclude Include="CountDown.h" />
     <ClInclude Include="dbtweener.h" />
     <ClInclude Include="DL_Assert.h" />
     <ClInclude Include="DL_Debug.h" />
@@ -405,28 +406,29 @@
     <ClInclude Include="InputWrapper.h" />
     <ClInclude Include="Intersection.h" />
     <ClInclude Include="InvertMatrix.h" />
+    <ClInclude Include="IQueue.h" />
     <ClInclude Include="JsonValue.h" />
     <ClInclude Include="line.h" />
     <ClInclude Include="Line3D.h" />
     <ClInclude Include="line_volume.h" />
+    <ClInclude Include="LocklessQueue.h" />
     <ClInclude Include="matrix.h" />
     <ClInclude Include="matrix33.h" />
     <ClInclude Include="matrix44.h" />
     <ClInclude Include="MemoryLeekLogger.h" />
     <ClInclude Include="MoveArray.h" />
     <ClInclude Include="Octree.h" />
+    <ClInclude Include="PICarlApproved.h" />
     <ClInclude Include="ReverseGrowingArray.h" />
     <ClInclude Include="Serializer.h" />
     <ClInclude Include="SerializerLoader.h" />
     <ClInclude Include="SerializerSaver.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="StaticMemoryPool.h" />
-    <ClInclude Include="MessageKyle.h" />
     <ClInclude Include="picojson.h" />
     <ClInclude Include="PJWrapper.h" />
     <ClInclude Include="plane.h" />
     <ClInclude Include="plane_volume.h" />
-    <ClInclude Include="PostMasterKyle.h" />
     <ClInclude Include="Queue.h" />
     <ClInclude Include="rapidjson\allocators.h" />
     <ClInclude Include="rapidjson\document.h" />
@@ -470,7 +472,6 @@
     <ClInclude Include="CUstring.h" />
     <ClInclude Include="StopWatch.h" />
     <ClInclude Include="StringHelper.h" />
-    <ClInclude Include="SubscriberKyle.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ThreadNamer.h" />
     <ClInclude Include="ThreadPool.h" />
@@ -492,11 +493,9 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CommandLineManager.cpp" />
     <ClCompile Include="ConsolePrinter.cpp" />
-    <ClCompile Include="CountDown.cpp" />
     <ClCompile Include="dbtweener.cpp" />
     <ClCompile Include="DL_Debug.cpp" />
     <ClCompile Include="DL_StackWalker.cpp" />
-    <ClCompile Include="example_postMastercpp.h" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="InputListener.cpp" />
     <ClCompile Include="InputMessenger.cpp" />
@@ -507,7 +506,6 @@
     <ClCompile Include="MemoryLeekLogger.cpp" />
     <ClCompile Include="Octree.cpp" />
     <ClCompile Include="PJWrapper.cpp" />
-    <ClCompile Include="PostMasterKyle.cpp" />
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="Serializer.cpp" />
     <ClCompile Include="SerializerLoader.cpp" />

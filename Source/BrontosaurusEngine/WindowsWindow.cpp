@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "WindowsWindow.h"
 #include "Engine.h"
-#include "../PostMaster/PostMaster.h"
 #include "../PostMaster/Message.h"
 #include "../PostMaster/FocusChange.h"
 #include "../PostMaster/KeyCharPressed.h"

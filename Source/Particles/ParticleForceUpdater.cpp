@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ParticleForceUpdater.h"
 #include "vector3.h"
 #include "JsonValue.h"

@@ -1,10 +1,14 @@
 #include "AudioInterface.h"
 #include "WwiseManager.h"
+
+#include <assert.h>
+#include "../CommonUtilities/CUvector.h"
+#include "../CommonUtilities/matrix.h"
+
 #define SAFE_DELETE(ptr) delete ptr; ptr = nullptr
 
 namespace Audio
 {
-
 	CAudioInterface* CAudioInterface::myInstance = nullptr;
 	CAudioInterface::CAudioInterface()
 		:myWwiseManager(new CWwiseManager()), myGameObjectCounter(0)
@@ -14,6 +18,12 @@ namespace Audio
 	CAudioInterface::~CAudioInterface()
 	{
 		SAFE_DELETE(myWwiseManager);
+	}
+
+	void CAudioInterface::CreateInstance()
+	{
+		assert(myInstance == nullptr && "Audio interface already created");
+		myInstance = new CAudioInterface();
 	}
 
 	bool CAudioInterface::Init(const char* aInitBank)

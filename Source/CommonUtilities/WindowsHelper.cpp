@@ -55,7 +55,7 @@ namespace WindowsHelper
 		{
 			do
 			{
-				if (!wcsicmp(entry.szExeFile, aExePath.c_str()))
+				if (!_wcsicmp(entry.szExeFile, aExePath.c_str()))
 				{
 					exists = true;
 					break;
@@ -106,6 +106,7 @@ namespace WindowsHelper
 		if (it != locStartedProcesses.end())
 		{
 			BOOL threadResult = TerminateThread(it->second.hThread, 0);
+			threadResult; //check this if problems
 			BOOL result = TerminateProcess(it->second.hProcess, 0);
 			DL_PRINT("%s", (result) ? "true" : "false");
 			CloseHandle(it->second.hProcess);

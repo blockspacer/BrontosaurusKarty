@@ -1,10 +1,6 @@
 #pragma once
-#include <fstream>
 #include <d3dcompiler.h>
-#include <vector>
-#include <string>
 #include "DXFramework.h"
-//#include <GrowingArray.h>
 
 namespace EffectHelper
 {

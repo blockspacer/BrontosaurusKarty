@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Subscriber.h"
 
-#include "PostMaster.h"
 #include "ThreadedPostmaster/Postmaster.h"
 
 //Subscriber::Subscriber()

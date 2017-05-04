@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Subscriber.h"
 #include "Postmaster.h"
 #include "../CommonUtilities/DL_Debug.h"

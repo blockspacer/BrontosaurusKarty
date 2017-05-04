@@ -66,6 +66,12 @@ enum class eComponentMessageType
 	eAddForce,
 	eSetLastHitNormal,
 	eSetLastHitPosition,
+	eAccelerate,
+	eStopAcceleration,
+	eDecelerate,
+	eStopDeceleration,
+	eTurnKart,
+	eStopTurnKart,
 	eLength,
 };
 
@@ -76,13 +82,13 @@ struct SComponentMessageData
 	union
 	{
 		void* myVoidPointer;
-		struct
+		struct //don't do this please name structs
 		{
 			CComponent* myComponent;
 			eComponentType myComponentTypeAdded;
 		};
 		
-		struct  
+		struct //don't do this please name structs 
 		{
 			bool myPhysicsUpdated;
 			bool myBool;

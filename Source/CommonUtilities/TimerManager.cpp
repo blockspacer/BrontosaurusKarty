@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include "TimerManager.h"
-#include <assert.h>
 #include <iostream>
-
+#include <windows.h>
 
 namespace CU
 {
@@ -15,7 +14,7 @@ namespace CU
 
 		LARGE_INTEGER time;
 		QueryPerformanceCounter(&time);
-		myLastTime = time;
+		myLastTime = time.QuadPart;
 	}
 
 	TimerManager::~TimerManager()
@@ -41,10 +40,10 @@ namespace CU
 
 		for (std::vector<Timer>::size_type i = 0; i < myTimers.size(); ++i)
 		{
-			myTimers[i].AddTime(static_cast<TimeUnit>((time.QuadPart - myLastTime.QuadPart) / myFrequence));
+			myTimers[i].AddTime(static_cast<TimeUnit>((time.QuadPart - myLastTime) / myFrequence));
 		}
 
-		myLastTime = time;
+		myLastTime = time.QuadPart;
 	}
 
 	void TimerManager::StartAllTimers()

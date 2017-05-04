@@ -1,11 +1,8 @@
 #pragma once
 #include "../TShared/CommonNetworkIncludes.h"
 #include "../TShared/TShared_NetworkWrapper.h"
-#include <map>
 #include "../CommonUtilities/Timer.h"
 #include "../CommonUtilities/TimerManager.h"
-#include "../CommonUtilities/GrowingArray.h"
-#include <string>
 #include "../TShared/MessageManager.h"
 #include "../TShared/NetworkMessage_ChatMessage.h"
 #include "../TShared/NetworkMessageHolder.h"

@@ -1,9 +1,6 @@
 #include "stdafx.h"
 #include "Frustum.h"
-#include "vector3.h"
-#include "matrix44.h"
 #include "Sphere.h"
-#include "..\Components\ComponentMessage.h"
 
 namespace
 {

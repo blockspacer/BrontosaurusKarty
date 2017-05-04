@@ -13,6 +13,6 @@ namespace Physics
 
 	};
 
-	static const unsigned int CollideEverything = ~0;
+	static const unsigned int CollideEverything = ~0u;
 
 }

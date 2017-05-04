@@ -3,6 +3,10 @@
 #undef new
 #endif // new
 
+#include <malloc.h>
+#include <memory.h>
+#include <tchar.h>
+
 #include "FBXLoader.h"
 
 #include <FbxLoader\AssImp\cimport.h>
@@ -11,13 +15,8 @@
 
 #include "Engine.h"
 
-#include <map>
-#include <string>
-#include <windows.h>
-#include <fstream>
 #include "Model.h"
 
-#include <memory.h>
 
 // Change to your path
 #ifdef _DEBUG

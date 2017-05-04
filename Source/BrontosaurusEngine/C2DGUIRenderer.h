@@ -2,7 +2,7 @@
 #include "RenderPackage.h"
 #include "../ThreadedPostmaster/Subscriber.h"
 #include <unordered_map>
-#include "../GUI/GUIElement.h"
+#include "GUIElement.h"
 #include "Queue.h"
 #include "Colour.h"
 #include <atomic>

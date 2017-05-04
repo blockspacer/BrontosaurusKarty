@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ParticleSizeSpawner.h"
 #include "../BrontosaurusEngine/EmitterData.h"
 #include "JsonValue.h"
