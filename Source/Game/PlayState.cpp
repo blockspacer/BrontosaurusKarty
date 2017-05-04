@@ -62,8 +62,6 @@
 // player creationSpeciifcIncludes
 #include "KartComponent.h"
 #include "KeyboardControllerComponent.h"
-#include "XboxControllerComponent.h"
-#include "KartSpawnPointManager.h"
 
 CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
