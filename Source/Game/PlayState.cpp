@@ -201,7 +201,7 @@ void CPlayState::Init()
 eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 {
 	CParticleEmitterComponentManager::GetInstance().UpdateEmitters(aDeltaTime);
-
+	CParticleEmitterManager::GetInstance().Update(aDeltaTime);
 	myScene->Update(aDeltaTime);
 	if (myPhysicsScene->Simulate(aDeltaTime) == true)
 	{
