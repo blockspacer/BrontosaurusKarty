@@ -11,6 +11,7 @@
 #include "LoadPointLightComponent.h"
 #include "LoadCollider.h"
 #include "LoadKartSpawnPoint.h"
+#include "LoadManager/LoadWeaponCrate.h"
 
 #include "LoadParticleEmitterComponent.h"
 #include "LoadHighlightComponent.h"
@@ -66,6 +67,7 @@ void LoadManager::RegisterFunctions()
 	//loader.RegisterComponentLoadFunction("ScriptComponent", LoadScriptComponent);
 	loader.RegisterComponentLoadFunction("HighlightComponent",LoadHighlightComponent);
 	loader.RegisterComponentLoadFunction("Light", LoadPointLightComponent);
+	loader.RegisterComponentLoadFunction("WeaponCrateComponent", LoadWeapoCrateComponent);
 
 	//loader.RegisterComponentLoadFunction("CircleCollider", LoadCircleCollider);
 	//loader.RegisterComponentLoadFunction("SoundComponent", LoadSoundComponent);

@@ -32,12 +32,30 @@
     <ClCompile Include="KartComponentManager.cpp" />
     <ClCompile Include="KeyboardControllerComponent.cpp" />
     <ClCompile Include="XboxControllerComponent.cpp" />
+    <ClCompile Include="AIController.cpp" />
+    <ClCompile Include="Controller.cpp" />
     <ClCompile Include="KartControllerComponent.cpp" />
     <ClCompile Include="Controller.cpp" />
     <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="AIController.cpp" />
     <ClCompile Include="PlayerControllerManager.cpp" />
     <ClCompile Include="VertexStreamComponent.cpp" />
+    <ClCompile Include="PickupComponentManager.cpp">
+      <Filter>Pickups\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="WeaponCratePickupComponent.cpp">
+      <Filter>Pickups\CratePickup</Filter>
+    </ClCompile>
+    <ClCompile Include="IPickupComponent.cpp">
+      <Filter>Pickups\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="SpeedHandlerManager.cpp">
+      <Filter>SpeedHandling</Filter>
+    </ClCompile>
+    <ClCompile Include="SpeedHandlerComponent.cpp">
+      <Filter>SpeedHandling</Filter>
+    </ClCompile>
+    <ClCompile Include="KartControllerComponentManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -77,10 +95,50 @@
     <ClInclude Include="KartComponentManager.h" />
     <ClInclude Include="KeyboardControllerComponent.h" />
     <ClInclude Include="XboxControllerComponent.h" />
+    <ClInclude Include="Controller.h" />
     <ClInclude Include="KartControllerComponent.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="PlayerControllerManager.h" />
     <ClInclude Include="VertexStreamComponent.h" />
+    <ClInclude Include="PlayerControls.h" />
+    <ClInclude Include="PickupComponentManager.h">
+      <Filter>Pickups\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="WeaponCratePickupComponent.h">
+      <Filter>Pickups\CratePickup</Filter>
+    </ClInclude>
+    <ClInclude Include="IPickupComponent.h">
+      <Filter>Pickups\Base</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Pickups">
+      <UniqueIdentifier>{9c4c7667-d85e-485d-a73d-9b6a1b5837e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pickups\Manager">
+      <UniqueIdentifier>{e81aff97-566b-4f34-8c79-6eb532669109}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pickups\Base">
+      <UniqueIdentifier>{b945df91-6887-4723-baf0-7d5415d49857}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pickups\CratePickup">
+      <UniqueIdentifier>{2fca4c73-7675-4c33-a8e4-7317641908f6}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="BoostData.h">
+      <Filter>SpeedHandling</Filter>
+    </ClInclude>
+    <ClInclude Include="SpeedHandlerManager.h">
+      <Filter>SpeedHandling</Filter>
+    </ClInclude>
+    <ClInclude Include="SpeedHandlerComponent.h">
+      <Filter>SpeedHandling</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="SpeedHandling">
+      <UniqueIdentifier>{e9d9aa2f-72a4-44ad-865f-772e50fbcb82}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="KartControllerComponentManager.h" />
   </ItemGroup>
 </Project>

@@ -372,16 +372,22 @@
     <ClInclude Include="ComponentAnswer.h" />
     <ClInclude Include="ComponentMessageCallback.h" />
     <ClInclude Include="ComponentMessageTypeToLua.h" />
+    <ClInclude Include="IPickupComponent.h" />
     <ClInclude Include="KartComponent.h" />
     <ClInclude Include="KartComponentManager.h" />
+    <ClInclude Include="KartControllerComponentManager.h" />
     <ClInclude Include="KeyboardControllerComponent.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="KartControllerComponent.h" />
     <ClInclude Include="MeshColliderComponent.h" />
+    <ClInclude Include="PickupComponentManager.h" />
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="PlayerControllerManager.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RigidBodyComponent.h" />
+    <ClInclude Include="SpeedHandlerManager.h" />
+    <ClInclude Include="BoostData.h" />
+    <ClInclude Include="SpeedHandlerComponent.h" />
     <ClInclude Include="SphereColliderComponent.h" />
     <ClInclude Include="FireComponent.h" />
     <ClInclude Include="PlayerControls.h" />
@@ -402,6 +408,7 @@
     <ClInclude Include="StreakEmitterComponent.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="VertexStreamComponent.h" />
+    <ClInclude Include="WeaponCratePickupComponent.h" />
     <ClInclude Include="XboxControllerComponent.h" />
   </ItemGroup>
   <ItemGroup>
@@ -417,11 +424,14 @@
     <ClCompile Include="ComponentMessageTypeToLua.cpp" />
     <ClCompile Include="Controller.cpp" />
     <ClCompile Include="FireComponent.cpp" />
+    <ClCompile Include="IPickupComponent.cpp" />
     <ClCompile Include="KartComponent.cpp" />
     <ClCompile Include="KartComponentManager.cpp" />
+    <ClCompile Include="KartControllerComponentManager.cpp" />
     <ClCompile Include="KeyboardControllerComponent.cpp" />
     <ClCompile Include="KartControllerComponent.cpp" />
     <ClCompile Include="MeshColliderComponent.cpp" />
+    <ClCompile Include="PickupComponentManager.cpp" />
     <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="PlayerControllerManager.cpp" />
     <ClCompile Include="PointLightComponent.cpp" />
@@ -437,6 +447,8 @@
     <ClCompile Include="GameObjectManager.cpp" />
     <ClCompile Include="ParticleEmitterComponent.cpp" />
     <ClCompile Include="ParticleEmitterComponentManager.cpp" />
+    <ClCompile Include="SpeedHandlerManager.cpp" />
+    <ClCompile Include="SpeedHandlerComponent.cpp" />
     <ClCompile Include="SphereColliderComponent.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -452,6 +464,7 @@
     </ClCompile>
     <ClCompile Include="StreakEmitterComponent.cpp" />
     <ClCompile Include="VertexStreamComponent.cpp" />
+    <ClCompile Include="WeaponCratePickupComponent.cpp" />
     <ClCompile Include="XboxControllerComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
