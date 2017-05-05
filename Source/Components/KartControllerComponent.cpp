@@ -71,7 +71,7 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	myFowrardSpeed += myAcceleration * aDeltaTime * myAccelerationModifier;
 	if (myFowrardSpeed > myMaxSpeed * myMaxSpeedModifier)
 	{
-		myFowrardSpeed = myMaxSpeed + myMaxSpeedModifier;
+		myFowrardSpeed = myMaxSpeed * myMaxSpeedModifier;
 	}
 	if (myFowrardSpeed < myMinSpeed)
 	{
