@@ -48,6 +48,10 @@ CU::eInputReturn CPlayerController::TakeInput(const CU::SInputMessage & aInputMe
 	{
 		GamePadRightTrigger(aInputMessage);
 	}
+	else if (aInputMessage.myType == CU::eInputType::eGamePadLeftTriggerReleased)
+	{
+		GamePadLeftTriggerReleased(aInputMessage);
+	}
 	else if (aInputMessage.myType == CU::eInputType::eKeyboardReleased)
 	{
 		ReleasedKey(aInputMessage);
@@ -150,6 +154,9 @@ void CPlayerController::PressedKey(const CU::SInputMessage & aInputMessage)
 
 void CPlayerController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 {
+	SComponentMessageData boostMessageData;
+	SBoostData* boostData = new SBoostData();
+
 	switch (aInputMessage.myGamePad)
 	{
 	case CU::GAMEPAD::A:
@@ -161,14 +168,17 @@ void CPlayerController::GamePadPressedKey(const CU::SInputMessage & aInputMessag
 		myIsMovingBackwards = true;
 		break;
 	case CU::GAMEPAD::RIGHT_SHOULDER:
-		SComponentMessageData boostMessageData;
-		SBoostData* boostData = new SBoostData();
+		
+		
 		boostData->accerationBoost = 5;
 		boostData->duration = 4.0f;
 		boostData->maxSpeedBoost = 2.0f;
 		boostData->type = eBoostType::eDefault;
 		boostMessageData.myBoostData = boostData;
 		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+		break;
+	case CU::GAMEPAD::LEFT_SHOULDER:
+		myControllerComponent.Drift();
 		break;
 	}
 }
@@ -192,6 +202,9 @@ void CPlayerController::GamePadReleasedKey(const CU::SInputMessage & aInputMessa
 		{
 			myControllerComponent.MoveFoward();
 		}
+		break;
+	case CU::GAMEPAD::LEFT_SHOULDER:
+		myControllerComponent.StopDrifting();
 		break;
 	}
 }
@@ -217,7 +230,7 @@ void CPlayerController::MovedJoystick(const CU::SInputMessage & aInputMessage)
 
 void CPlayerController::GamePadLeftTrigger(const CU::SInputMessage & aInputMessage)
 {
-	
+	myControllerComponent.Drift();
 }
 
 void CPlayerController::GamePadRightTrigger(const CU::SInputMessage & aInputMessage)
@@ -230,6 +243,15 @@ void CPlayerController::GamePadRightTrigger(const CU::SInputMessage & aInputMess
 	boostData->type = eBoostType::eDefault;
 	boostMessageData.myBoostData = boostData;
 	myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+}
+
+void CPlayerController::GamePadLeftTriggerReleased(const CU::SInputMessage & aInputMessage)
+{
+	myControllerComponent.StopDrifting();
+}
+
+void CPlayerController::GamePadRightTriggerReleased(const CU::SInputMessage & aInputMessage)
+{
 }
 
 void CPlayerController::JoystickDeadzone()
