@@ -146,6 +146,16 @@ void CPlayerController::GamePadPressedKey(const CU::SInputMessage & aInputMessag
 		myControllerComponent.MoveBackWards();
 		myIsMovingBackwards = true;
 		break;
+	case CU::GAMEPAD::RIGHT_SHOULDER:
+		SComponentMessageData boostMessageData;
+		SBoostData* boostData = new SBoostData();
+		boostData->accerationBoost = 5;
+		boostData->duration = 4.0f;
+		boostData->maxSpeedBoost = 5.0f;
+		boostData->type = eBoostType::eDefault;
+		boostMessageData.myBoostData = boostData;
+		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+		break;
 	}
 }
 
