@@ -43,6 +43,7 @@ private:
 	float myDriftRate;
 	float myDriftTimer;
 	float myDriftSteerModifier;
+	float myBoostSpeedDecay;
 
 	int myLeftWheelDriftEmmiterHandle;
 	int myRightWheelDriftEmmiterHandle;

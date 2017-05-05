@@ -7,12 +7,12 @@
 CKartControllerComponent::CKartControllerComponent()
 {
 	myFowrardSpeed = 0.0f;
-	myMaxSpeed = 10.0f;
+	myMaxSpeed = 15.0f;
 	myMinSpeed = -5.0f;
 	myAcceleration = 0.0f;
 
-	myMaxAcceleration = 100.f;
-	myMinAcceleration = -100.f;
+	myMaxAcceleration = 25.f;
+	myMinAcceleration = -25.f;
 
 	myTurnRate = 1.f;
 
@@ -28,6 +28,7 @@ CKartControllerComponent::CKartControllerComponent()
 	myDriftRate = 0;
 	myDriftTimer = 0;
 	myDriftSteerModifier = 0;
+	myBoostSpeedDecay = myMaxAcceleration * myAccelerationModifier * 1.25f;
 
 	myLeftWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GatlingSmoke");
 	myRightWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GatlingSmoke");
@@ -110,12 +111,26 @@ void CKartControllerComponent::Drift()
 
 void CKartControllerComponent::StopDrifting()
 {
+	CParticleEmitterManager::GetInstance().Deactivate(myLeftWheelDriftEmmiterHandle);
+	CParticleEmitterManager::GetInstance().Deactivate(myRightWheelDriftEmmiterHandle);
+
+	if (myDriftTimer >= 2.0f)
+	{
+		SComponentMessageData boostMessageData;
+		SBoostData* boostData = new SBoostData();
+		boostData->accerationBoost = 5;
+		boostData->duration = 1.5f;
+		boostData->maxSpeedBoost = 1.0f;
+		boostData->type = eBoostType::eDefault;
+		boostMessageData.myBoostData = boostData;
+		GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+	}
+
 	myIsDrifting = false;
 	myDriftRate = 0;
 	mySteering = 0;
+	myDriftTimer = 0;
 	myDriftSteerModifier = 0;
-	CParticleEmitterManager::GetInstance().Deactivate(myLeftWheelDriftEmmiterHandle);
-	CParticleEmitterManager::GetInstance().Deactivate(myRightWheelDriftEmmiterHandle);
 }
 
 void CKartControllerComponent::Update(const float aDeltaTime)
@@ -131,7 +146,7 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	myFowrardSpeed += myAcceleration * aDeltaTime * myAccelerationModifier;
 	if (myFowrardSpeed > myMaxSpeed * myMaxSpeedModifier)
 	{
-		myFowrardSpeed = myMaxSpeed * myMaxSpeedModifier;
+		myFowrardSpeed -= myBoostSpeedDecay * aDeltaTime;
 	}
 	if (myFowrardSpeed < myMinSpeed)
 	{
@@ -178,8 +193,10 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 	{
 		myMaxSpeedModifier = 1.0f + aMessageData.myBoostData->maxSpeedBoost;
 		myAccelerationModifier = 1.0f + aMessageData.myBoostData->accerationBoost;
+		myBoostSpeedDecay = myMaxAcceleration * myAccelerationModifier * 1.25f;
 	}
 	default:
 		break;
 	}
+
 }
