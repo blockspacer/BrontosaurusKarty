@@ -40,6 +40,10 @@ CKartControllerComponent::CKartControllerComponent()
 	myDriftRate = 0;
 	myDriftTimer = 0;
 	myDriftSteerModifier = 0;
+	myDriftSteeringModifier = 1.3f;
+	myMaxDriftRate = 5.5f;
+	myTimeMultiplier = 2.5f;
+	myMaxDriftSteerAffection = 1.7f;
 	myBoostSpeedDecay = myMaxAcceleration * myAccelerationModifier * 1.25f;
 
 	myLeftWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("DriftParticle").GetString());
@@ -59,7 +63,7 @@ void CKartControllerComponent::TurnRight()
 	}
 	else
 	{
-		myDriftSteerModifier = 1.3f;
+		myDriftSteerModifier = myDriftSteeringModifier;
 	}
 }
 
@@ -71,7 +75,7 @@ void CKartControllerComponent::TurnLeft()
 	}
 	else
 	{
-		myDriftSteerModifier = -1.3f;
+		myDriftSteerModifier = -myDriftSteeringModifier;
 	}
 }
 
@@ -108,14 +112,14 @@ void CKartControllerComponent::Drift()
 	if (mySteering > 0)
 	{
 		myIsDrifting = true;
-		myDriftRate = -5.5f;
+		myDriftRate = -myMaxDriftRate;
 		CParticleEmitterManager::GetInstance().Activate(myLeftWheelDriftEmmiterHandle);
 		CParticleEmitterManager::GetInstance().Activate(myRightWheelDriftEmmiterHandle);
 	}
 	else if (mySteering < 0)
 	{
 		myIsDrifting = true;
-		myDriftRate = 5.5f;
+		myDriftRate = myMaxDriftRate;
 		CParticleEmitterManager::GetInstance().Activate(myLeftWheelDriftEmmiterHandle);
 		CParticleEmitterManager::GetInstance().Activate(myRightWheelDriftEmmiterHandle);
 	}
@@ -128,14 +132,28 @@ void CKartControllerComponent::StopDrifting()
 
 	if (myDriftTimer >= 2.0f)
 	{
-		SComponentMessageData boostMessageData;
-		SBoostData* boostData = new SBoostData();
-		boostData->accerationBoost = 5;
-		boostData->duration = 1.5f;
-		boostData->maxSpeedBoost = 1.0f;
-		boostData->type = eBoostType::eDefault;
-		boostMessageData.myBoostData = boostData;
-		GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+		if (myDriftTimer >= 5.0f)
+		{
+			SComponentMessageData boostMessageData;
+			SBoostData* boostData = new SBoostData();
+			boostData->accerationBoost = 5.5f;
+			boostData->duration = 2.0f;
+			boostData->maxSpeedBoost = 1.5f;
+			boostData->type = eBoostType::eDefault;
+			boostMessageData.myBoostData = boostData;
+			GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+		}
+		else
+		{
+			SComponentMessageData boostMessageData;
+			SBoostData* boostData = new SBoostData();
+			boostData->accerationBoost = 5;
+			boostData->duration = 1.5f;
+			boostData->maxSpeedBoost = 1.0f;
+			boostData->type = eBoostType::eDefault;
+			boostMessageData.myBoostData = boostData;
+			GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+		}
 	}
 
 	myIsDrifting = false;
@@ -175,16 +193,16 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 		myDriftTimer += aDeltaTime;
 		if (mySteering > 0)
 		{
-			if (mySteering <= 1.7f)
+			if (mySteering <= myMaxDriftSteerAffection)
 			{
-				mySteering += (aDeltaTime / 2.5f);
+				mySteering += (aDeltaTime / myTimeMultiplier);
 			}
 		}
 		else if (mySteering < 0)
 		{
-			if (mySteering >= -1.7f)
+			if (mySteering >= -myMaxDriftSteerAffection)
 			{
-				mySteering -= (aDeltaTime / 2.5f);
+				mySteering -= (aDeltaTime / myTimeMultiplier);
 			}
 		}
 		GetParent()->GetLocalTransform().Move(CU::Vector3f(myDriftRate * aDeltaTime, 0.0f, 0.0f));
