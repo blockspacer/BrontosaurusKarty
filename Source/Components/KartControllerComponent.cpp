@@ -21,6 +21,10 @@ CKartControllerComponent::CKartControllerComponent()
 
 	myMaxSpeedModifier = 1.0f;
 	myAccelerationModifier = 1.0f;
+
+	myIsDrifting = false;
+	myDriftRate = 0;
+	myDriftTimer = 0;
 }
 
 
@@ -58,6 +62,31 @@ void CKartControllerComponent::StopTurning()
 	mySteering = 0;
 }
 
+//Checks if the player is turning left or right and then sets the drift values accordingly
+void CKartControllerComponent::Drift()
+{
+	if (mySteering > 0)
+	{
+		//right
+		myIsDrifting = true;
+		mySteering = myTurnRate * 1.2f;// +myDriftTimer;
+		myDriftRate = -3.5f;
+	}
+	else if (mySteering < 0)
+	{
+		//left
+		myIsDrifting = true;
+		mySteering = -myTurnRate * 1.2f;// - myDriftTimer;
+		myDriftRate = 3.5f;
+	}
+}
+
+void CKartControllerComponent::StopDrifting()
+{
+	myIsDrifting = false;
+	myDriftRate = 0;
+}
+
 void CKartControllerComponent::Update(const float aDeltaTime)
 {
 	float way = 1.f;
@@ -83,6 +112,11 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	parentTransform.RotateAroundAxis(steerAngle * aDeltaTime, CU::Axees::Y);
 
 	GetParent()->GetLocalTransform().Move(CU::Vector3f(0.0f, 0.0f, myFowrardSpeed * aDeltaTime));
+	if (myIsDrifting == true)
+	{
+		myDriftTimer += aDeltaTime;
+		GetParent()->GetLocalTransform().Move(CU::Vector3f(myDriftRate * aDeltaTime, 0.0f, 0.0f));
+	}
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, SComponentMessageData());
 }
 
