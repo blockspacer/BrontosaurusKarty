@@ -401,6 +401,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StreakEmitterComponent.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="VertexStreamComponent.h" />
     <ClInclude Include="XboxControllerComponent.h" />
   </ItemGroup>
   <ItemGroup>
@@ -450,6 +451,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Retail|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="StreakEmitterComponent.cpp" />
+    <ClCompile Include="VertexStreamComponent.cpp" />
     <ClCompile Include="XboxControllerComponent.cpp" />
   </ItemGroup>
   <ItemGroup>

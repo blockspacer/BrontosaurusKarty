@@ -8,6 +8,7 @@
 #include "Engine.h"
 #include "ShaderManager.h"
 #include "Surface.h"
+#include "EffectsManager.h"
 
 constexpr const char* MODEL_TEXTURE_DIRECTORY = "Models/Textures/";
 
@@ -52,6 +53,10 @@ bool CModelLoader::LoadModel(const std::string& aPath, CModel& aNewModel) //TODO
 	int shaderType = scene.myMeshes[0]->myShaderType;
 
 	const std::string& shaderPath = scene.myMeshes[0]->myShaderFile;
+	if(shaderPath != "")
+	{
+		int i = 0;
+	}
 	std::wstring wShaderPath(shaderPath.begin(), shaderPath.end());
 
 	ID3D11VertexShader* vertexShader = SHADERMGR->LoadVertexShader(wShaderPath != L"" ? directory + wShaderPath + L".fx" : L"Shaders/vertex_shader.fx", shaderType);
@@ -65,7 +70,7 @@ bool CModelLoader::LoadModel(const std::string& aPath, CModel& aNewModel) //TODO
 		instancedInputLayout = SHADERMGR->LoadInputLayout(wShaderPath != L"" ? directory + wShaderPath + L".fx" : L"Shaders/vertex_shader.fx", shaderType | EModelBluePrint_Instance);
 		pixelInstancedShader = SHADERMGR->LoadPixelShader(wShaderPath != L"" ? directory + wShaderPath + L".fx" : L"Shaders/Deferred/deferred_pixel.fx", shaderType | EModelBluePrint_Instance);
 	}
-
+	
 	ID3D11PixelShader* forwardPixelShader = SHADERMGR->LoadPixelShader(wShaderPath != L"" ? directory + wShaderPath + L".fx" : L"Shaders/pixel_shader.fx", shaderType);
 	ID3D11PixelShader* deferredPixelShader = SHADERMGR->LoadPixelShader(wShaderPath != L"" ? directory + wShaderPath + L".fx" : L"Shaders/Deferred/deferred_pixel.fx", shaderType);
 
@@ -78,9 +83,12 @@ bool CModelLoader::LoadModel(const std::string& aPath, CModel& aNewModel) //TODO
 	CEffect* deferredEffect = new CEffect(vertexShader, deferredPixelShader, geometryShader, inputLayout, topology, vertexInstancedShader, instancedInputLayout, pixelInstancedShader);
 
 	CSurface* surface = new CSurface(MODEL_TEXTURE_DIRECTORY, scene.myTextures);
-
+	Render::SEffectData effectData;
+	effectData.vertexBlueprint = shaderType;
+	effectData.pixelBlueprint = shaderType;
+	aNewModel.SetEffectType(effectData);
 	aNewModel.Initialize(forwardEffect, surface, scene.myMeshes);
-	aNewModel.myDeferredEffect = deferredEffect;
+	//aNewModel.myDeferredEffect = deferredEffect;
 	aNewModel.SetScene(scene.myScene);
 
 	return true;

@@ -14,6 +14,7 @@
 
 #include "LoadParticleEmitterComponent.h"
 #include "LoadHighlightComponent.h"
+#include "LoadVertexInstanceStream.h"
 
 LoadManager* LoadManager::ourInstance = nullptr;
 
@@ -52,6 +53,7 @@ void LoadManager::RegisterFunctions()
 	loader.RegisterObjectLinkFunction(LinkObject);
 
 	loader.RegisterComponentLoadFunction("MeshFilter", LoadMeshFilter);
+	loader.RegisterComponentLoadFunction("VertexInstanceStream", LoadVertexStreamInstanceComponent);
 	loader.RegisterComponentLoadFunction("Camera", LoadCamera);
 	loader.RegisterComponentLoadFunction("KartSpawner", LoadKartSpawnPoint);
 	loader.RegisterComponentLoadFunction("ParticleEmitterComponent", LoadParticleEmitterComponent);
