@@ -44,7 +44,8 @@ private:
 	float myDriftTimer;
 	float myDriftSteerModifier;
 
-	int myDriftParticleEmitter;
+	int myLeftWheelDriftEmmiterHandle;
+	int myRightWheelDriftEmmiterHandle;
 
 	bool myIsDrifting;
 };

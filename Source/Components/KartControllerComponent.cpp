@@ -29,7 +29,8 @@ CKartControllerComponent::CKartControllerComponent()
 	myDriftTimer = 0;
 	myDriftSteerModifier = 0;
 
-	myDriftParticleEmitter = CParticleEmitterManager::GetInstance().GetEmitterInstance("GatlingSmoke");
+	myLeftWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GatlingSmoke");
+	myRightWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GatlingSmoke");
 }
 
 
@@ -95,13 +96,15 @@ void CKartControllerComponent::Drift()
 	{
 		myIsDrifting = true;
 		myDriftRate = -5.5f;
-		CParticleEmitterManager::GetInstance().Activate(myDriftParticleEmitter);
+		CParticleEmitterManager::GetInstance().Activate(myLeftWheelDriftEmmiterHandle);
+		CParticleEmitterManager::GetInstance().Activate(myRightWheelDriftEmmiterHandle);
 	}
 	else if (mySteering < 0)
 	{
 		myIsDrifting = true;
 		myDriftRate = 5.5f;
-		CParticleEmitterManager::GetInstance().Activate(myDriftParticleEmitter);
+		CParticleEmitterManager::GetInstance().Activate(myLeftWheelDriftEmmiterHandle);
+		CParticleEmitterManager::GetInstance().Activate(myRightWheelDriftEmmiterHandle);
 	}
 }
 
@@ -111,7 +114,8 @@ void CKartControllerComponent::StopDrifting()
 	myDriftRate = 0;
 	mySteering = 0;
 	myDriftSteerModifier = 0;
-	CParticleEmitterManager::GetInstance().Deactivate(myDriftParticleEmitter);
+	CParticleEmitterManager::GetInstance().Deactivate(myLeftWheelDriftEmmiterHandle);
+	CParticleEmitterManager::GetInstance().Deactivate(myRightWheelDriftEmmiterHandle);
 }
 
 void CKartControllerComponent::Update(const float aDeltaTime)
@@ -157,7 +161,11 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 			}
 		}
 		GetParent()->GetLocalTransform().Move(CU::Vector3f(myDriftRate * aDeltaTime, 0.0f, 0.0f));
-		CParticleEmitterManager::GetInstance().SetPosition(myDriftParticleEmitter, GetParent()->GetWorldPosition());
+		CU::Matrix44f particlePosition = GetParent()->GetLocalTransform();
+		particlePosition.Move(CU::Vector3f(-0.45f, 0, 0));
+		CParticleEmitterManager::GetInstance().SetPosition(myLeftWheelDriftEmmiterHandle, particlePosition.GetPosition());
+		particlePosition.Move(CU::Vector3f(0.9f, 0, 0));
+		CParticleEmitterManager::GetInstance().SetPosition(myRightWheelDriftEmmiterHandle, particlePosition.GetPosition());
 	}
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, SComponentMessageData());
 }
