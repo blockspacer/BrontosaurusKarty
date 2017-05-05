@@ -3,23 +3,35 @@
 #include "BoostData.h"
 #include "ParticleEmitterInstance.h"
 #include "ParticleEmitterManager.h"
+#include "../CommonUtilities/JsonValue.h"
 
 CKartControllerComponent::CKartControllerComponent()
 {
+
+	CU::CJsonValue levelsFile;
+	std::string errorString = levelsFile.Parse("Json/KartStats.json");
+	if (!errorString.empty()) DL_MESSAGE_BOX(errorString.c_str());
+
+	CU::CJsonValue levelsArray = levelsFile.at("Karts");
+
+	CU::CJsonValue Karts = levelsArray.at("BaseKart");
+
+
+
 	myFowrardSpeed = 0.0f;
-	myMaxSpeed = 15.0f;
-	myMinSpeed = -5.0f;
+	myMaxSpeed = Karts.at("MaxSpeed").GetFloat();
+	myMinSpeed = Karts.at("ReverseSpeed").GetFloat();
 	myAcceleration = 0.0f;
 
-	myMaxAcceleration = 25.f;
-	myMinAcceleration = -25.f;
+	myMaxAcceleration = Karts.at("MaxAcceleration").GetFloat();
+	myMinAcceleration = Karts.at("ReverseAcceleration").GetFloat();
 
-	myTurnRate = 1.f;
+	myTurnRate = Karts.at("TurnRate").GetFloat();
 
 	myFriction = 10.f;
 
 	mySteering = 0.f;
-	myAngularAcceleration = 1.f;
+	myAngularAcceleration = Karts.at("AngulareAcceleration").GetFloat();
 
 	myMaxSpeedModifier = 1.0f;
 	myAccelerationModifier = 1.0f;
@@ -30,8 +42,8 @@ CKartControllerComponent::CKartControllerComponent()
 	myDriftSteerModifier = 0;
 	myBoostSpeedDecay = myMaxAcceleration * myAccelerationModifier * 1.25f;
 
-	myLeftWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GatlingSmoke");
-	myRightWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GatlingSmoke");
+	myLeftWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("DriftParticle").GetString());
+	myRightWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("DriftParticle").GetString());
 }
 
 
