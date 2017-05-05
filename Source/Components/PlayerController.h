@@ -18,6 +18,10 @@ private:
 	void GamePadPressedKey(const CU::SInputMessage& aInputMessage);
 	void GamePadReleasedKey(const CU::SInputMessage& aInputMessage);
 	void MovedJoystick(const CU::SInputMessage& aInputMessage);
+	void GamePadLeftTrigger(const CU::SInputMessage& aInputMessage);
+	void GamePadRightTrigger(const CU::SInputMessage& aInputMessage);
+	void GamePadLeftTriggerReleased(const CU::SInputMessage& aInputMessage);
+	void GamePadRightTriggerReleased(const CU::SInputMessage& aInputMessage);
 	void JoystickDeadzone();
 
 	bool myIsMovingFoward;
