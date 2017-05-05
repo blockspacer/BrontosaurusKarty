@@ -70,3 +70,16 @@ void CSpeedHandlerManager::Update(float aDeltaTime)
 		myComponents[i]->Update(aDeltaTime);
 	}
 }
+
+CSpeedHandlerComponent* CSpeedHandlerManager::CreateAndRegisterComponent()
+{
+	if(CComponentManager::GetInstancePtr() != nullptr)
+	{
+		CSpeedHandlerComponent* component = new CSpeedHandlerComponent();
+		myComponents.Add(component);
+		CComponentManager::GetInstancePtr()->RegisterComponent(component);
+		return component;
+	
+	}
+	return nullptr;
+}

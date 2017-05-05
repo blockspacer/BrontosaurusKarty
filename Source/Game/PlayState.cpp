@@ -69,6 +69,7 @@
 #include "PlayerControllerManager.h"
 #include "KartControllerComponent.h"
 #include "PlayerController.h"
+#include "SpeedHandlerComponent.h"
 
 CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -195,11 +196,6 @@ void CPlayState::Load()
 void CPlayState::Init()
 {
 	myGameObjectManager->SendObjectsDoneMessage();
-
-	if(CSpeedHandlerManager::GetInstance() != nullptr)
-	{
-		CSpeedHandlerManager::GetInstance()->Init();
-	}
 }
 
 eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
@@ -287,6 +283,7 @@ void CPlayState::CreateManagersAndFactories()
 	myScriptComponentManager = new CScriptComponentManager();
 	myKartComponentManager = new CKartComponentManager();
 	CSpeedHandlerManager::CreateInstance();
+	CSpeedHandlerManager::GetInstance()->Init();
 	myKartControllerComponentManager = new CKartControllerComponentManager;
 	myPlayerControllerManager = new CPlayerControllerManager;
 	CKartSpawnPointManager::GetInstance().Create();
@@ -304,7 +301,11 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 
 	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent();
 	CPlayerController* controls = myPlayerControllerManager->CreatePlayerController(*kartComponent);
-
+	if(CSpeedHandlerManager::GetInstance() != nullptr)
+	{
+		CSpeedHandlerComponent* speedHandlerComponent = CSpeedHandlerManager::GetInstance()->CreateAndRegisterComponent();
+		playerObject->AddComponent(speedHandlerComponent);
+	}
 	/*CKartComponent* kartComponent = myKartComponentManager->CreateComponent();
 	CKeyboardControllerComponent* keyBoardInput = new CKeyboardControllerComponent();
 	CXboxControllerComponent* xboxInput = new CXboxControllerComponent();

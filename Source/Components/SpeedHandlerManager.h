@@ -14,6 +14,7 @@ public:
 	void LoadBoostData();
 	const SBoostData* GetData(eBoostType aType) const;
 	void Update(float aDeltaTime);
+	CSpeedHandlerComponent* CreateAndRegisterComponent();
 private:
 	CSpeedHandlerManager();
 	

@@ -6,6 +6,8 @@
 #include "..\CommonUtilities\EKeyboardKeys.h"
 #include "KartControllerComponent.h"
 
+//Temp includes
+#include "BoostData.h"
 
 CPlayerController::CPlayerController(CKartControllerComponent & aKartComponent) : CController(aKartComponent)
 {
@@ -117,6 +119,18 @@ void CPlayerController::PressedKey(const CU::SInputMessage & aInputMessage)
 		myControllerComponent.TurnRight();
 		myIsTurningRight = true;
 		break;
+	case CU::eKeys::SPACE:
+	{
+		SComponentMessageData boostMessageData;
+		SBoostData* boostData = new SBoostData();
+		boostData->accerationBoost = 5;
+		boostData->duration = 4.0f;
+		boostData->maxSpeedBoost = 5.0f;
+		boostData->type = eBoostType::eDefault;
+		boostMessageData.myBoostData = boostData;
+		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+		break;
+	}
 	}
 }
 

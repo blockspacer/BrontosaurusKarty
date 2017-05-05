@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "KartControllerComponent.h"
-
+#include "BoostData.h"
 
 CKartControllerComponent::CKartControllerComponent()
 {
@@ -18,6 +18,9 @@ CKartControllerComponent::CKartControllerComponent()
 
 	mySteering = 0.f;
 	myAngularAcceleration = 1.f;
+
+	myMaxSpeedModifier = 1.0f;
+	myAccelerationModifier = 1.0f;
 }
 
 
@@ -65,10 +68,10 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 
 	myFowrardSpeed += myFriction * way * aDeltaTime;
 
-	myFowrardSpeed += myAcceleration * aDeltaTime;
-	if (myFowrardSpeed > myMaxSpeed)
+	myFowrardSpeed += myAcceleration * aDeltaTime * myAccelerationModifier;
+	if (myFowrardSpeed > myMaxSpeed * myMaxSpeedModifier)
 	{
-		myFowrardSpeed = myMaxSpeed;
+		myFowrardSpeed = myMaxSpeed + myMaxSpeedModifier;
 	}
 	if (myFowrardSpeed < myMinSpeed)
 	{
@@ -81,4 +84,18 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 
 	GetParent()->GetLocalTransform().Move(CU::Vector3f(0.0f, 0.0f, myFowrardSpeed * aDeltaTime));
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, SComponentMessageData());
+}
+
+void CKartControllerComponent::Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData)
+{
+	switch (aMessageType)
+	{
+	case eComponentMessageType::eSetBoost:
+	{
+		myMaxSpeedModifier = 1.0f + aMessageData.myBoostData->maxSpeedBoost;
+		myAccelerationModifier = 1.0f + aMessageData.myBoostData->accerationBoost;
+	}
+	default:
+		break;
+	}
 }

@@ -15,6 +15,7 @@ public:
 
 
 	void Update(const float aDeltaTime);
+	void Receive(const eComponentMessageType, const SComponentMessageData&) override;
 
 private:
 
@@ -32,5 +33,8 @@ private:
 
 	float mySteering;
 	float myAngularAcceleration;
+
+	float myMaxSpeedModifier;
+	float myAccelerationModifier;
 };
 
