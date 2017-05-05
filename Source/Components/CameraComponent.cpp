@@ -36,7 +36,7 @@ CCameraComponent::CCameraComponent()
 {
 	myType = eComponentType::eCamera;
 
-	float rotationAngle = PI / 9.0f;
+	float rotationAngle = PI / 14.0f;
 	myKartOffset.RotateAroundAxis(rotationAngle, CU::Axees::X);
 	myKartOffset.Move(CU::Vector3f(0.0f, 0.0f, -4.2f));
 	myKartOffset.GetPosition() += CU::Vector3f(0.0f, 1.0f, .0f);
