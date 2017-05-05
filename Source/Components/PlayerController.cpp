@@ -100,6 +100,9 @@ void CPlayerController::ReleasedKey(const CU::SInputMessage & aInputMessage)
 			myControllerComponent.TurnLeft();
 		}
 		break;
+	case CU::eKeys::LCONTROL:
+		myControllerComponent.StopDrifting();
+		break;
 	}
 }
 
@@ -139,6 +142,9 @@ void CPlayerController::PressedKey(const CU::SInputMessage & aInputMessage)
 		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
 		break;
 	}
+	case CU::eKeys::LCONTROL:
+		myControllerComponent.Drift();
+		break;
 	}
 }
 

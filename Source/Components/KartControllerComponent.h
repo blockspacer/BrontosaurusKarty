@@ -12,7 +12,8 @@ public:
 	void MoveFoward();
 	void MoveBackWards();
 	void StopTurning();
-
+	void Drift();
+	void StopDrifting();
 
 	void Update(const float aDeltaTime);
 	void Receive(const eComponentMessageType, const SComponentMessageData&) override;
@@ -36,5 +37,10 @@ private:
 
 	float myMaxSpeedModifier;
 	float myAccelerationModifier;
+
+	float myDriftRate;
+	float myDriftTimer;
+
+	bool myIsDrifting;
 };
 
