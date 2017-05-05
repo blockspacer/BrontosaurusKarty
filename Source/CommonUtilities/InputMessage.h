@@ -23,7 +23,13 @@ namespace CU
 		eGamePadLeftJoyStickChanged,
 		eGamePadRightJoyStickPressed,
 		eGamePadRightJoyStickReleased,
-		eGamePadRightJoyStickChanged
+		eGamePadRightJoyStickChanged,
+		eGamePadLeftTriggerChanged,
+		eGamePadLeftTriggerReleased,
+		eGamePadLeftTriggerPressed,
+		eGamePadRightTriggerChanged,
+		eGamePadRightTriggerReleased,
+		eGamePadRightTriggerPressed,
 	};
 
 	struct SInputMessage
