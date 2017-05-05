@@ -40,10 +40,10 @@ CKartControllerComponent::CKartControllerComponent()
 	myDriftRate = 0;
 	myDriftTimer = 0;
 	myDriftSteerModifier = 0;
-	myDriftSteeringModifier = 1.3f;
-	myMaxDriftRate = 5.5f;
-	myTimeMultiplier = 2.5f;
-	myMaxDriftSteerAffection = 1.7f;
+	myDriftSteeringModifier = Karts.at("DriftTurnRate").GetFloat();
+	myMaxDriftRate = Karts.at("MaxDriftRate").GetFloat();
+	myTimeMultiplier = Karts.at("DriftOverTimeMultiplier").GetFloat();
+	myMaxDriftSteerAffection = Karts.at("MaxDriftTurnRate").GetFloat();
 	myBoostSpeedDecay = myMaxAcceleration * myAccelerationModifier * 1.25f;
 
 	myLeftWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("DriftParticle").GetString());
