@@ -73,6 +73,8 @@ namespace CU
 
 		float GetLeftTriggerDown(const unsigned int aJoystickIndex);
 		float GetRightTringgerDown(const unsigned int aJoystickIndex);
+		float GetLeftTriggerChanged(const unsigned int aJoystickIndex);
+		float GetRightTriggerChanged(const unsigned int aJoystickIndex);
 
 		void SetLeftVibration(const unsigned int aJoystickIndex, const unsigned short aAmount);
 		void SetRightVibration(const unsigned int aJoystickIndex, const unsigned short aAmount);

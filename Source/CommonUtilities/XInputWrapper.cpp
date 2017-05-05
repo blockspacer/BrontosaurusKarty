@@ -230,7 +230,27 @@ namespace CU
 	{
 		unsigned char trigger = myJoysticks[aJoystickIndex].Gamepad.bRightTrigger;
 
-		return static_cast<float>(THROW_AWAY_IF_LOW(XINPUT_GAMEPAD_TRIGGER_THRESHOLD, trigger)) / static_cast<float>(UCHAR_MAX);
+		float result = static_cast<float>(THROW_AWAY_IF_LOW(XINPUT_GAMEPAD_TRIGGER_THRESHOLD, trigger)) / static_cast<float>(UCHAR_MAX);
+
+		return result;
+	}
+
+	float XInputWrapper::GetLeftTriggerChanged(const unsigned int aJoystickIndex)
+	{
+		unsigned char trigger = myJoysticks[aJoystickIndex].Gamepad.bLeftTrigger;
+
+		float result = static_cast<float>(THROW_AWAY_IF_LOW(255, trigger)) / static_cast<float>(UCHAR_MAX);
+
+		return result;
+	}
+
+	float XInputWrapper::GetRightTriggerChanged(const unsigned int aJoystickIndex)
+	{
+		unsigned char trigger = myJoysticks[aJoystickIndex].Gamepad.bRightTrigger;
+
+		float result = static_cast<float>(THROW_AWAY_IF_LOW(255, trigger)) / static_cast<float>(UCHAR_MAX);
+
+		return result;
 	}
 
 	void XInputWrapper::SetLeftVibration(const unsigned int aJoystickIndex, const unsigned short aAmount)
