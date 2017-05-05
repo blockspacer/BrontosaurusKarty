@@ -313,5 +313,38 @@ void CInputManager::UpdateGamePad()
 				}
 			}
 		}
+
+
+		if (myXInputWrapper->GetLeftTriggerChanged(i) > 0)
+		{
+			for (CU::CInputMessenger* messenger : myMessengers)
+			{
+				CU::SInputMessage padJoyStick;
+				padJoyStick.myType = CU::eInputType::eGamePadLeftTriggerPressed;
+				if (messenger->RecieveInput(padJoyStick) == CU::eInputReturn::eKeepSecret)
+				{
+					break;
+				}
+			}
+		}
+
+
+			float test = myXInputWrapper->GetRightTriggerChanged(i);
+			if (test > 0)
+			{
+				for (CU::CInputMessenger* messenger : myMessengers)
+				{
+					CU::SInputMessage padJoyStick;
+					padJoyStick.myType = CU::eInputType::eGamePadRightTriggerPressed;
+					if (messenger->RecieveInput(padJoyStick) == CU::eInputReturn::eKeepSecret)
+					{
+						break;
+					}
+				}
+			}
+		
+
+
+
 	}
 }
