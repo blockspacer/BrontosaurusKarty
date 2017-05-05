@@ -15,6 +15,8 @@ CPlayerController::CPlayerController(CKartControllerComponent & aKartComponent) 
 	myIsMovingFoward = false;
 	myIsTurningLeft = false;
 	myIsTurningRight = false;
+
+	myIsDrifting = false;
 }
 
 CPlayerController::~CPlayerController()
@@ -230,7 +232,11 @@ void CPlayerController::MovedJoystick(const CU::SInputMessage & aInputMessage)
 
 void CPlayerController::GamePadLeftTrigger(const CU::SInputMessage & aInputMessage)
 {
-	myControllerComponent.Drift();
+	if (myIsDrifting == false)
+	{
+		myControllerComponent.Drift();
+		myIsDrifting = true;
+	}
 }
 
 void CPlayerController::GamePadRightTrigger(const CU::SInputMessage & aInputMessage)
@@ -247,7 +253,11 @@ void CPlayerController::GamePadRightTrigger(const CU::SInputMessage & aInputMess
 
 void CPlayerController::GamePadLeftTriggerReleased(const CU::SInputMessage & aInputMessage)
 {
-	myControllerComponent.StopDrifting();
+	if (myIsDrifting == true)
+	{
+		myControllerComponent.StopDrifting();
+		myIsDrifting = false;
+	}
 }
 
 void CPlayerController::GamePadRightTriggerReleased(const CU::SInputMessage & aInputMessage)

@@ -29,6 +29,8 @@ private:
 	bool myIsTurningLeft;
 	bool myIsTurningRight;
 
+	bool myIsDrifting;
+
 
 	float myLastTurnDirection;
 };
