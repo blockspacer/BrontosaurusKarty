@@ -40,6 +40,14 @@ CU::eInputReturn CPlayerController::TakeInput(const CU::SInputMessage & aInputMe
 	{
 		MovedJoystick(aInputMessage);
 	}
+	else if(aInputMessage.myType == CU::eInputType::eGamePadLeftTriggerPressed)
+	{
+		GamePadLeftTrigger(aInputMessage);
+	}
+	else if (aInputMessage.myType == CU::eInputType::eGamePadRightTriggerPressed)
+	{
+		GamePadRightTrigger(aInputMessage);
+	}
 	else if (aInputMessage.myType == CU::eInputType::eKeyboardReleased)
 	{
 		ReleasedKey(aInputMessage);
@@ -199,6 +207,23 @@ void CPlayerController::MovedJoystick(const CU::SInputMessage & aInputMessage)
 		myControllerComponent.TurnLeft();
 	}
 
+}
+
+void CPlayerController::GamePadLeftTrigger(const CU::SInputMessage & aInputMessage)
+{
+	
+}
+
+void CPlayerController::GamePadRightTrigger(const CU::SInputMessage & aInputMessage)
+{
+	SComponentMessageData boostMessageData;
+	SBoostData* boostData = new SBoostData();
+	boostData->accerationBoost = 5;
+	boostData->duration = 4.0f;
+	boostData->maxSpeedBoost = 2.0f;
+	boostData->type = eBoostType::eDefault;
+	boostMessageData.myBoostData = boostData;
+	myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
 }
 
 void CPlayerController::JoystickDeadzone()
