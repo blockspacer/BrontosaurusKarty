@@ -3,6 +3,7 @@
 #include "../CommonUtilities/Camera.h"
 #include "../Audio/AudioInterface.h"
 #include "../CommonUtilities/PICarlApproved.h"
+#include "../CommonUtilities/JsonValue.h"
 
 //float pascalTriangle(float a, float b);
 //
@@ -36,10 +37,19 @@ CCameraComponent::CCameraComponent()
 {
 	myType = eComponentType::eCamera;
 
-	float rotationAngle = PI / 14.0f;
+	CU::CJsonValue levelsFile;
+	std::string errorString = levelsFile.Parse("Json/Camera.json");
+	if (!errorString.empty()) DL_MESSAGE_BOX(errorString.c_str());
+
+	CU::CJsonValue levelsArray = levelsFile.at("Camera");
+
+	float radians = levelsArray.at("CameraRotationX").GetFloat() * PI/180;
+
+
+	float rotationAngle = radians;
 	myKartOffset.RotateAroundAxis(rotationAngle, CU::Axees::X);
-	myKartOffset.Move(CU::Vector3f(0.0f, 0.0f, -4.2f));
-	myKartOffset.GetPosition() += CU::Vector3f(0.0f, 1.0f, .0f);
+	myKartOffset.Move(CU::Vector3f(0.0f, 0.0f, levelsArray.at("CameraOffsetZ").GetFloat()));
+	myKartOffset.GetPosition() += CU::Vector3f(0.0f, levelsArray.at("CameraOffsetY").GetFloat(), .0f);
 }
 
 CCameraComponent::~CCameraComponent()

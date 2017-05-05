@@ -151,7 +151,7 @@ void CPlayerController::GamePadPressedKey(const CU::SInputMessage & aInputMessag
 		SBoostData* boostData = new SBoostData();
 		boostData->accerationBoost = 5;
 		boostData->duration = 4.0f;
-		boostData->maxSpeedBoost = 5.0f;
+		boostData->maxSpeedBoost = 2.0f;
 		boostData->type = eBoostType::eDefault;
 		boostMessageData.myBoostData = boostData;
 		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
