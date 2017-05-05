@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "KartControllerComponent.h"
 #include "BoostData.h"
+#include "ParticleEmitterInstance.h"
+#include "ParticleEmitterManager.h"
 
 CKartControllerComponent::CKartControllerComponent()
 {
@@ -25,6 +27,9 @@ CKartControllerComponent::CKartControllerComponent()
 	myIsDrifting = false;
 	myDriftRate = 0;
 	myDriftTimer = 0;
+	myDriftSteerModifier = 0;
+
+	myDriftParticleEmitter = CParticleEmitterManager::GetInstance().GetEmitterInstance("GatlingSmoke");
 }
 
 
@@ -34,12 +39,26 @@ CKartControllerComponent::~CKartControllerComponent()
 
 void CKartControllerComponent::TurnRight()
 {
-	mySteering = myTurnRate;
+	if (myIsDrifting == false)
+	{
+		mySteering = myTurnRate;
+	}
+	else
+	{
+		myDriftSteerModifier = 1.3f;
+	}
 }
 
 void CKartControllerComponent::TurnLeft()
 {
-	mySteering = -myTurnRate;
+	if (myIsDrifting == false)
+	{
+		mySteering = -myTurnRate;
+	}
+	else
+	{
+		myDriftSteerModifier = -1.3f;
+	}
 }
 
 void CKartControllerComponent::StopMoving()
@@ -59,7 +78,14 @@ void CKartControllerComponent::MoveBackWards()
 
 void CKartControllerComponent::StopTurning()
 {
-	mySteering = 0;
+	if (myIsDrifting == false)
+	{
+		mySteering = 0;
+	}
+	else
+	{
+		myDriftSteerModifier = 0;
+	}
 }
 
 //Checks if the player is turning left or right and then sets the drift values accordingly
@@ -67,17 +93,15 @@ void CKartControllerComponent::Drift()
 {
 	if (mySteering > 0)
 	{
-		//right
 		myIsDrifting = true;
-		mySteering = myTurnRate * 1.2f;// +myDriftTimer;
-		myDriftRate = -3.5f;
+		myDriftRate = -5.5f;
+		CParticleEmitterManager::GetInstance().Activate(myDriftParticleEmitter);
 	}
 	else if (mySteering < 0)
 	{
-		//left
 		myIsDrifting = true;
-		mySteering = -myTurnRate * 1.2f;// - myDriftTimer;
-		myDriftRate = 3.5f;
+		myDriftRate = 5.5f;
+		CParticleEmitterManager::GetInstance().Activate(myDriftParticleEmitter);
 	}
 }
 
@@ -85,6 +109,9 @@ void CKartControllerComponent::StopDrifting()
 {
 	myIsDrifting = false;
 	myDriftRate = 0;
+	mySteering = 0;
+	myDriftSteerModifier = 0;
+	CParticleEmitterManager::GetInstance().Deactivate(myDriftParticleEmitter);
 }
 
 void CKartControllerComponent::Update(const float aDeltaTime)
@@ -107,7 +134,7 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 		myFowrardSpeed = myMinSpeed;
 	}
 
-	float steerAngle = mySteering * myAngularAcceleration * -way;
+	float steerAngle = (mySteering + myDriftSteerModifier) * myAngularAcceleration * -way;
 	CU::Matrix44f& parentTransform = GetParent()->GetLocalTransform();
 	parentTransform.RotateAroundAxis(steerAngle * aDeltaTime, CU::Axees::Y);
 
@@ -115,7 +142,22 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	if (myIsDrifting == true)
 	{
 		myDriftTimer += aDeltaTime;
+		if (mySteering > 0)
+		{
+			if (mySteering <= 1.7f)
+			{
+				mySteering += (aDeltaTime / 2.5f);
+			}
+		}
+		else if (mySteering < 0)
+		{
+			if (mySteering >= -1.7f)
+			{
+				mySteering -= (aDeltaTime / 2.5f);
+			}
+		}
 		GetParent()->GetLocalTransform().Move(CU::Vector3f(myDriftRate * aDeltaTime, 0.0f, 0.0f));
+		CParticleEmitterManager::GetInstance().SetPosition(myDriftParticleEmitter, GetParent()->GetWorldPosition());
 	}
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, SComponentMessageData());
 }

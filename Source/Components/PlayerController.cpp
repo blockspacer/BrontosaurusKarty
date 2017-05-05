@@ -152,7 +152,7 @@ void CPlayerController::GamePadPressedKey(const CU::SInputMessage & aInputMessag
 		myControllerComponent.MoveBackWards();
 		myIsMovingBackwards = true;
 		break;
-	case CU::GAMEPAD::RIGHT_SHOULDER:
+	case CU::GAMEPAD::LEFT_SHOULDER:
 		SComponentMessageData boostMessageData;
 		SBoostData* boostData = new SBoostData();
 		boostData->accerationBoost = 5;

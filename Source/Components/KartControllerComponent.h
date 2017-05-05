@@ -1,5 +1,8 @@
 #pragma once
 #include "Component.h"
+
+class CParticleEmitterInstance;
+
 class CKartControllerComponent : public CComponent
 {
 public:
@@ -19,7 +22,6 @@ public:
 	void Receive(const eComponentMessageType, const SComponentMessageData&) override;
 
 private:
-
 	float myFowrardSpeed;
 	float myMaxSpeed;
 	float myMinSpeed;
@@ -40,6 +42,9 @@ private:
 
 	float myDriftRate;
 	float myDriftTimer;
+	float myDriftSteerModifier;
+
+	int myDriftParticleEmitter;
 
 	bool myIsDrifting;
 };
