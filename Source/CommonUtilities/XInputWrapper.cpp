@@ -69,62 +69,6 @@ namespace CU
 		}
 	}
 
-	//bool XInputWrapper::GetKeyStroke(const unsigned int aJoystickIndex, KeyStroke& aKeyStrokeOutput)
-	//{
-	//	XINPUT_KEYSTROKE keyStroke = {};
-
-	//	unsigned int result = XInputGetKeystroke(aJoystickIndex, 0, &keyStroke);
-	//	if (result == ERROR_SUCCESS)
-	//	{
-	//		aKeyStrokeOutput.myKeyState = FlagsToKeyState(keyStroke.Flags);
-	//		aKeyStrokeOutput.myKeyCode = myJoysticks[aJoystickIndex].Gamepad.wButtons;//keyStroke.VirtualKey;
-	//		return true;
-	//	}
-	//	else if (result == ERROR_DEVICE_NOT_CONNECTED)
-	//	{
-	//		myDisconnectedJoysticks.Add(myJoysticks[aJoystickIndex]);
-	//	}
-
-	//	return false;
-	//}
-
-	//bool XInputWrapper::GetKeyPressed(const unsigned int aJoystickIndex, const unsigned short aButton)
-	//{
-	//	KeyStroke keyStroke = {};
-	//	if (GetKeyStroke(aJoystickIndex, keyStroke) == true)
-	//	{
-	//		DL_PRINT("%i", keyStroke.myKeyCode);
-	//		if (keyStroke.myKeyCode == aButton && keyStroke.myKeyState == KeyStroke::eKeyState::ePressed)
-	//		{
-	//			return true;
-	//		}
-
-	//		for (int i = 0; i < 14; ++i)
-	//		{
-	//			if (keyStroke.myKeyCode & static_cast<unsigned short>(GamePadButtons[i]) && keyStroke.myKeyState == KeyStroke::eKeyState::ePressed)
-	//			{
-	//				return true;
-	//			}
-	//		}
-	//	}
-
-	//	return false;
-	//}
-
-	//bool XInputWrapper::GetKeyReleased(const unsigned int aJoystickIndex, const unsigned short aButton)
-	//{
-	//	KeyStroke keyStroke = {};
-	//	if (GetKeyStroke(aJoystickIndex, keyStroke) == true)
-	//	{
-	//		if (keyStroke.myKeyCode & aButton && keyStroke.myKeyState == KeyStroke::eKeyState::eReleased)
-	//		{
-	//			return true;
-	//		}
-	//	}
-
-	//	return false;
-	//}
-
 	bool XInputWrapper::GetKeyEvents(const unsigned int aJoystickIndex, CU::GrowingArray<KeyEvent>& aKeys)
 	{
 		aKeys.RemoveAll();
