@@ -7,8 +7,8 @@
 CKartControllerComponent::CKartControllerComponent()
 {
 	myFowrardSpeed = 0.0f;
-	myMaxSpeed = 10.0f;
-	myMinSpeed = -5.0f;
+	myMaxSpeed = 30.0f;
+	myMinSpeed = -10.0f;
 	myAcceleration = 0.0f;
 
 	myMaxAcceleration = 100.f;
