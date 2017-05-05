@@ -27,6 +27,14 @@ namespace CU
 		Y = 0x8000
 	};
 
+	struct TriggerState
+	{
+		float LeftLastFrame = 0;
+		float RightLastFrame = 0;
+		bool LeftReleased = false;
+		bool RightReleased = false;
+	};
+
 	struct KeyEvent
 	{
 		GAMEPAD button;
@@ -72,9 +80,12 @@ namespace CU
 		bool RightStickWasInDeadzone(const unsigned int aJoystickIndex);
 
 		float GetLeftTriggerDown(const unsigned int aJoystickIndex);
-		float GetRightTringgerDown(const unsigned int aJoystickIndex);
 		float GetLeftTriggerChanged(const unsigned int aJoystickIndex);
+		bool GetLeftTriggerReleased(const unsigned int aJoystickIndex);
+
+		float GetRightTringgerDown(const unsigned int aJoystickIndex);
 		float GetRightTriggerChanged(const unsigned int aJoystickIndex);
+		bool GetRightTriggerReleased(const unsigned int aJoystickIndex);
 
 		void SetLeftVibration(const unsigned int aJoystickIndex, const unsigned short aAmount);
 		void SetRightVibration(const unsigned int aJoystickIndex, const unsigned short aAmount);
@@ -89,5 +100,7 @@ namespace CU
 		GrowingArray<XINPUT_STATE> myJoysticks;
 		GrowingArray<unsigned short> myPreviousButtonState;
 		GrowingArray<struct SJoystickDead> myPreviousJoystickStates;
+		GrowingArray<TriggerState> myPreviousTriggerStates;
+
 	};
 }
