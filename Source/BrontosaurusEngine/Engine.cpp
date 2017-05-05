@@ -107,6 +107,8 @@ void CEngine::Init(SInitEngineParams& aInitEngineParams)
 	timerMgr.UpdateTimers();
 	time = timerMgr.GetTimer(handle).GetDeltaTime().GetMilliseconds();
 	ENGINE_LOG("Carl Inited Weapon Models in %f ms", time);
+	CParticleEmitterManager::Create();
+	CParticleEmitterManager::GetInstance().LoadParticleLibrary("Json/Particles.json");
 }
 
 void CEngine::Render()
