@@ -11,7 +11,6 @@ CPlayerControllerManager::CPlayerControllerManager()
 
 CPlayerControllerManager::~CPlayerControllerManager()
 {
-	myPlayerControllers.DeleteAll();
 }
 
 CPlayerController * CPlayerControllerManager::CreatePlayerController(CKartControllerComponent& aKartComponent)
@@ -21,4 +20,12 @@ CPlayerController * CPlayerControllerManager::CreatePlayerController(CKartContro
 	myPlayerControllers.Add(controller);
 
 	return controller;
+}
+
+void CPlayerControllerManager::Update()
+{
+	for (int i = 0; i < myPlayerControllers.Size(); i++)
+	{
+		myPlayerControllers[i]->Update();
+	}
 }

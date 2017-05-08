@@ -12,12 +12,11 @@
 #define HIGH_ENUF 10
 
 #include "../TShared/AnimationState.h"
-#include "TextureManager.h"
 DECLARE_ANIMATION_ENUM_AND_STRINGS;
 
 #include "../CommonUtilities/CommonUtilities.h"
 
-CModelInstance::CModelInstance(const std::string& aModelPath): myVertexTexture(nullptr)
+CModelInstance::CModelInstance(const std::string& aModelPath)
 {
 	myCurrentAnimation = eAnimationState::idle01;
 	myNextAnimation = eAnimationState::none;
@@ -53,11 +52,6 @@ CModelInstance::~CModelInstance()
 		model->RemoveRef();
 		model = nullptr;
 		myModel = NULL_MODEL;
-	}
-
-	if(myVertexTexture)
-	{
-		myVertexTexture->DecRef();
 	}
 }
 
@@ -233,7 +227,7 @@ void CModelInstance::RenderDeferred(CRenderCamera & aRenderToCamera)
 	}
 
 	SRenderMessage* msg = nullptr;
-	if (!myHasAnimations && modelRefCount > HIGH_ENUF && !myVertexTexture)
+	if (!myHasAnimations && modelRefCount > HIGH_ENUF)
 	{
 		SRenderModelInstancedMessage* instancedMsg = new SRenderModelInstancedMessage();
 		instancedMsg->myModelID = myModel;
@@ -245,11 +239,6 @@ void CModelInstance::RenderDeferred(CRenderCamera & aRenderToCamera)
 		SRenderModelDeferredMessage* lonelyMsg = new SRenderModelDeferredMessage();
 		lonelyMsg->myModelID = myModel;
 		lonelyMsg->myRenderParams = params;
-		lonelyMsg->myVertexTexture = myVertexTexture;
-		if(myVertexTexture)
-		{
-			myVertexTexture->AddRef();
-		}
 		msg = lonelyMsg;
 	}
 	aRenderToCamera.AddRenderMessage(msg);
@@ -298,11 +287,6 @@ void CModelInstance::SetHighlight(const CU::Vector4f& aColor, float anIntensivit
 {
 	myHighlightColor = aColor;
 	myHighlightIntencity = anIntensivity;
-}
-
-void CModelInstance::SetVertexStreamData(const std::string& aStreamPath)
-{
-	myVertexTexture = &CEngine::GetInstance()->GetTextureManager().LoadTexture(aStreamPath.c_str());
 }
 
 float CModelInstance::GetAnimationDuration(const eAnimationState aAnimationState) const

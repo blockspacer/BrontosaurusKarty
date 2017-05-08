@@ -18,23 +18,14 @@ namespace CU
 
 		eGamePadButtonPressed,
 		eGamePadButtonReleased,
-		eGamePadLeftJoyStickPressed,
-		eGamePadLeftJoyStickReleased,
-		eGamePadLeftJoyStickChanged,
-		eGamePadRightJoyStickPressed,
-		eGamePadRightJoyStickReleased,
-		eGamePadRightJoyStickChanged,
-		eGamePadLeftTriggerChanged,
-		eGamePadLeftTriggerReleased,
-		eGamePadLeftTriggerPressed,
-		eGamePadRightTriggerChanged,
-		eGamePadRightTriggerReleased,
-		eGamePadRightTriggerPressed,
+		eGamePadJoyStickPressed,
+		eGamePadJoyStickReleased,
+		eGamePadJoyStickChanged
 	};
 
 	struct SInputMessage
 	{
-		SInputMessage() : myType(eInputType::eMouseMoved), myMousePosition(0.f, 0.f) {}
+		SInputMessage() : myType(eInputType::eMouseMoved) {}
 		union
 		{
 			Vector2f myMousePosition;

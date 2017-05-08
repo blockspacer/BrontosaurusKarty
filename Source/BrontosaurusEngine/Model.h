@@ -5,7 +5,7 @@
 
 #include "../CommonUtilities/StaticArray.h"
 #include "../CommonUtilities/AABB.h"
-#include "stdafx.h"
+//#include "stdafx.h"
 
 class CEffect;
 class CSurface;
@@ -27,11 +27,6 @@ namespace Lights
 {
 	struct SDirectionalLight;
 	class matrix44;
-}
-
-namespace Render
-{
-	struct SEffectData;
 }
 
 namespace CU
@@ -79,12 +74,12 @@ public:
 	bool Initialize(CEffect* aEffect, CSurface* aSurface, const CU::GrowingArray<CLoaderMesh*>& aLoadedMesh);
 	bool Initialize(CEffect* aEffect, CSurface* aSurface);
 
-	void Render(SForwardRenderModelParams& aParamObj, const Render::SEffectData& anEffectData);
-	void Render(SDeferredRenderModelParams& aParamObj, const Render::SEffectData& anEffectData);
+	void Render(SForwardRenderModelParams& aParamObj);
+	void Render(SDeferredRenderModelParams& aParamObj);
 	//void Render(SShadowRenderModelParams& aParamObj);
 
 
-	void RenderInstanced(const bool aRenderDepth, ID3D11PixelShader* aDepthShader, const Render::SEffectData& anEffectData);
+	void RenderInstanced(const bool aRenderDepth, ID3D11PixelShader* aDepthShader);
 	void AddInstanceToRenderBuffer(const SDeferredRenderModelParams& aParamObj);
 
 	inline bool GetInitialized() const;
@@ -107,7 +102,7 @@ public:
 
 	float GetAnimationDuration(const eAnimationState aAnimationState) const;
 	bool GetAnimationStates(CU::GrowingArray<eAnimationState>& aAnimationStatesOut) const;
-	void SetEffectType(const Render::SEffectData& aEffectData);
+
 private:
 
 	SLodData& GetCurrentLODModel(const CU::Vector3f& aModelPosition);
@@ -143,14 +138,14 @@ private:
 	CSceneAnimator* mySceneAnimator;
 	CSceneAnimator* myBindposeSceneAnimator;
 
-	//CEffect* myDeferredEffect;
-	//CEffect* myForwardEffect;
+	CEffect* myDeferredEffect;
+	CEffect* myForwardEffect;
 	
 	CSurface* mySurface;
 	CDXFramework* myFramework;
 
 	const struct aiScene* myScene;
-	Render::SEffectData myEffectData;
+
 	static const unsigned int ourMaxBoneBufferSize = 64u * sizeof(CU::Matrix44f);
 	static const unsigned int ourMaxInstances = 512u;
 	static const unsigned int ourMaxInstanceSize = ourMaxInstances * sizeof(SToWorldSpace);

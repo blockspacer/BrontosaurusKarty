@@ -343,7 +343,7 @@ namespace CU
 		}
 
 		void SetEulerRotation(const Vector3f& aRotation);
-
+		//Doesn't work, don't use
 		const CU::Vector3f GetEulerRotation() const;
 
 		static Matrix44 CreateRotateAroundX(const TYPE aAngle)

@@ -220,10 +220,8 @@ struct SRenderModelMessage : SRenderMessage
 struct SRenderModelDeferredMessage : SRenderMessage
 {
 	SRenderModelDeferredMessage();
-	~SRenderModelDeferredMessage();
 	SDeferredRenderModelParams myRenderParams;
 	int myModelID;
-	CTexture* myVertexTexture;
 };
 
 struct SRenderModelInstancedMessage : SRenderMessage

@@ -104,8 +104,6 @@ void CScene::Render()
 		PlayerOneCamera.AddRenderMessage(new SRenderPointLight(pointlightMessage));
 	}
 
-	CParticleEmitterManager::GetInstance().Render(PlayerOneCamera);
-
 	for (unsigned int i = 0; i < myModels.Size(); ++i)
 	{
 		if (myModels[i] == nullptr)

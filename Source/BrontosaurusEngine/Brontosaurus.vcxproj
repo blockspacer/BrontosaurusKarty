@@ -387,8 +387,6 @@
     <ClInclude Include="ColorGrader.h" />
     <ClInclude Include="Cubemap.h" />
     <ClInclude Include="DeferredRenderer.h" />
-    <ClInclude Include="EffectsFactory.h" />
-    <ClInclude Include="EffectsManager.h" />
     <ClInclude Include="ELUTType.h" />
     <ClInclude Include="GeometryBuffer.h" />
     <ClInclude Include="GUIElement.h" />
@@ -472,8 +470,6 @@
     <ClCompile Include="ColorGrader.cpp" />
     <ClCompile Include="Cubemap.cpp" />
     <ClCompile Include="DeferredRenderer.cpp" />
-    <ClCompile Include="EffectsFactory.cpp" />
-    <ClCompile Include="EffectsManager.cpp" />
     <ClCompile Include="GeometryBuffer.cpp" />
     <ClCompile Include="HighlightComponent.cpp" />
     <ClCompile Include="LightModel.cpp" />

@@ -29,7 +29,7 @@ public:
 	~CEffect();
 
 	
-	void Activate(const bool aInstanced = false, const bool aActivateForDepth = false);
+	void Activate(const bool aInstanced = false);
 	void ActivateForDepth(ID3D11PixelShader* aShadowShader = nullptr, const bool aInstanced = false);
 
 private:

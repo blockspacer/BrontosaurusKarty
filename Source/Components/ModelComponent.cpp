@@ -3,7 +3,6 @@
 
 #include "../BrontosaurusEngine/ModelInstance.h"
 #include "HighlightComponent.h"
-#include "VertexStreamComponent.h"
 
 CModelComponent::CModelComponent(CModelInstance& aModel)
 	: myModel(aModel)
@@ -62,10 +61,6 @@ void CModelComponent::Receive(const eComponentMessageType aType, const SComponen
 			CHighlightComponent* component = static_cast<CHighlightComponent*>(aData.myComponent);
 
 			myModel.SetHighlight(component->GetColor(), component->GetIntensity());
-		}
-		else if(aData.myComponentTypeAdded == eComponentType::eVertexStream)
-		{
-			myModel.SetVertexStreamData(static_cast<Component::CVertexStreamComponent*>(aData.myComponent)->GetMapPath());
 		}
 	case eComponentMessageType::eMoving:
 		myModel.SetTransformation(GetToWorldTransform());

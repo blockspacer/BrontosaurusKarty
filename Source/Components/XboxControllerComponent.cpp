@@ -23,7 +23,7 @@ CU::eInputReturn CXboxControllerComponent::TakeInput(const CU::SInputMessage& aI
 	{
 		ReleasedKey(aInputMessage);
 	}
-	else if (aInputMessage.myType == CU::eInputType::eGamePadLeftJoyStickChanged)
+	else if (aInputMessage.myType == CU::eInputType::eGamePadJoyStickChanged)
 	{
 		MovedJoystick(aInputMessage);
 	}

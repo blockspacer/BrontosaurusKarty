@@ -82,7 +82,9 @@ private:
 	void CreateDepthStencilStates();
 	void CreateSamplerStates();
 
+
 	void DoRenderQueue();
+
 
 	void DoColorGrading();
 private:

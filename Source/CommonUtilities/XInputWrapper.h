@@ -27,14 +27,6 @@ namespace CU
 		Y = 0x8000
 	};
 
-	struct TriggerState
-	{
-		float LeftLastFrame = 0;
-		float RightLastFrame = 0;
-		bool LeftReleased = false;
-		bool RightReleased = false;
-	};
-
 	struct KeyEvent
 	{
 		GAMEPAD button;
@@ -64,11 +56,12 @@ namespace CU
 
 		void UpdateStates();
 
-		//bool GetKeyStroke(const unsigned int aJoystickIndex, KeyStroke& aKeyStrokeOutput);
-		//bool GetKeyPressed(const unsigned int aJoystickIndex, const unsigned short aButton);
-		//bool GetKeyReleased(const unsigned int aJoystickIndex, const unsigned short aButton);
+		bool GetKeyStroke(const unsigned int aJoystickIndex, KeyStroke& aKeyStrokeOutput);
+		bool GetKeyPressed(const unsigned int aJoystickIndex, const unsigned short aButton);
+		bool GetKeyReleased(const unsigned int aJoystickIndex, const unsigned short aButton);
 
 		bool GetKeyEvents(const unsigned int aJoystickIndex, CU::GrowingArray<KeyEvent>& aKeys);
+		//bool GetKeysReleased(const unsigned int aJoystickIndex, CU::GrowingArray<KeyEvent>& aKeys);
 
 		bool IsConnected(const unsigned int aJoystickIndex, unsigned int* aError = nullptr);
 
@@ -76,16 +69,9 @@ namespace CU
 		CU::Vector2f GetLeftStickPosition(const unsigned int aJoystickIndex);
 		bool LeftStickIsInDeadzone(const unsigned int aJoystickIndex);
 		bool RightStickIsInDeadzone(const unsigned int aJoystickIndex);
-		bool LeftStickWasInDeadzone(const unsigned int aJoystickIndex);
-		bool RightStickWasInDeadzone(const unsigned int aJoystickIndex);
 
 		float GetLeftTriggerDown(const unsigned int aJoystickIndex);
-		float GetLeftTriggerChanged(const unsigned int aJoystickIndex);
-		bool GetLeftTriggerReleased(const unsigned int aJoystickIndex);
-
 		float GetRightTringgerDown(const unsigned int aJoystickIndex);
-		float GetRightTriggerChanged(const unsigned int aJoystickIndex);
-		bool GetRightTriggerReleased(const unsigned int aJoystickIndex);
 
 		void SetLeftVibration(const unsigned int aJoystickIndex, const unsigned short aAmount);
 		void SetRightVibration(const unsigned int aJoystickIndex, const unsigned short aAmount);
@@ -96,11 +82,9 @@ namespace CU
 
 	private:
 		bool UpdateState(const unsigned int aJoystickIndex);
-		
-		GrowingArray<XINPUT_STATE> myJoysticks;
-		GrowingArray<unsigned short> myPreviousButtonState;
-		GrowingArray<struct SJoystickDead> myPreviousJoystickStates;
-		GrowingArray<TriggerState> myPreviousTriggerStates;
+		void MoveDisconnectedJoysticks();
 
+		GrowingArray<XINPUT_STATE*> myJoysticks;
+		GrowingArray<XINPUT_STATE*> myDisconnectedJoysticks;
 	};
 }

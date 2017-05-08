@@ -353,8 +353,6 @@
     <ClInclude Include="LoadPointLightComponent.h" />
     <ClInclude Include="LoadScriptComponent.h" />
     <ClInclude Include="LoadSoundComponent.h" />
-    <ClInclude Include="LoadVertexInstanceStream.h" />
-    <ClInclude Include="LoadWeaponCrate.h" />
     <ClInclude Include="LuaFunctions.h" />
     <ClInclude Include="ServerLoadManager.h" />
     <ClInclude Include="stdafx.h" />
@@ -373,8 +371,6 @@
     <ClCompile Include="LoadPointLightComponent.cpp" />
     <ClCompile Include="LoadScriptComponent.cpp" />
     <ClCompile Include="LoadSoundComponent.cpp" />
-    <ClCompile Include="LoadVertexInstanceStream.cpp" />
-    <ClCompile Include="LoadWeaponCrate.cpp" />
     <ClCompile Include="LuaFunctions.cpp" />
     <ClCompile Include="ServerLoadManager.cpp" />
     <ClCompile Include="stdafx.cpp">

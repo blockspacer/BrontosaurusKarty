@@ -11,7 +11,6 @@
 #include "../CommonUtilities/Intersection.h"
 
 #include "../TShared/AnimationState.h"
-#include "EffectsManager.h"
 DECLARE_ANIMATION_ENUM_AND_STRINGS;
 
 CModel::CModel()
@@ -24,8 +23,8 @@ CModel::CModel()
 	, myBoneBuffer(nullptr)
 	, mySceneAnimator(nullptr)
 	, myBindposeSceneAnimator(nullptr)
-	//, myDeferredEffect(nullptr)
-	//, myForwardEffect(nullptr)
+	, myDeferredEffect(nullptr)
+	, myForwardEffect(nullptr)
 	, mySurface(nullptr)
 	, myFramework(nullptr)
 	, myScene(nullptr)
@@ -66,8 +65,8 @@ CModel::~CModel()
 	myIsInitialized = false;
 	myVertexSize = 0;
 
-	//SAFE_DELETE(myDeferredEffect); //make sure this releases stuff
-	//SAFE_DELETE(myForwardEffect); //make sure this releases stuff
+	SAFE_DELETE(myDeferredEffect); //make sure this releases stuff
+	SAFE_DELETE(myForwardEffect); //make sure this releases stuff
 
 	SAFE_DELETE(mySurface);
 
@@ -79,7 +78,7 @@ bool CModel::Initialize(CEffect* aEffect, CSurface* aSurface)
 {
 	mySurface = aSurface;
 	myFramework = CEngine::GetInstance()->GetFramework();
-	//myForwardEffect = aEffect;
+	myForwardEffect = aEffect;
 	myIsInitialized = true;
 	InitConstBuffers();
 	return true;
@@ -102,17 +101,18 @@ bool CModel::Initialize(CEffect* aEffect, CSurface* aSurface, const CU::GrowingA
 		myLODModels.GetLast().myLodLevel = aLoadedMeshList[i]->myLODLevel;
 
 #define SQUARE(nr) ((nr) * (nr))
+
 		float temp = SQUARE(aLoadedMeshList[i]->myLOD_DistStart);
 		myLODModels.GetLast().myDistances.LOD_DistStart2 = temp * 10;
 
 		temp = SQUARE(aLoadedMeshList[i]->myLOD_DistEnd);
 		myLODModels.GetLast().myDistances.LOD_DistEnd2 = temp * 10;
+
 #undef SQUARE
 
 		if (InitBuffers(aLoadedMeshList[i]) == false)
 		{
 			DL_ASSERT("Failed To create LOD:", i, " from path: ", aLoadedMeshList[i]->myName);
-			return false;
 		}
 	}
 
@@ -183,22 +183,16 @@ bool CModel::InitBuffers(const CLoaderMesh* aLoadedMesh)
 	return true;
 }
 
-void CModel::Render(SForwardRenderModelParams& aParamObj, const Render::SEffectData& aEffectData)
+void CModel::Render(SForwardRenderModelParams& aParamObj)
 {
-	/*if (aParamObj.myRenderToDepth == true)
+	if (aParamObj.myRenderToDepth == true)
 	{
 		myForwardEffect->ActivateForDepth();
 	}
 	else
 	{
 		myForwardEffect->Activate();
-	}*/
-
-	Render::SEffectData effectData = myEffectData;
-	effectData.vertexBlueprint |= aEffectData.vertexBlueprint;
-	effectData.pixelBlueprint |= aEffectData.pixelBlueprint;;
-	effectData.geometryBlueprint |= aEffectData.geometryBlueprint;
-	Render::CEffectsManager::GetInstance().GetEffect(effectData)->Activate(false, aParamObj.myRenderToDepth);
+	}
 
 	if (mySurface != nullptr)
 	{
@@ -225,13 +219,16 @@ void CModel::Render(SForwardRenderModelParams& aParamObj, const Render::SEffectD
 	}
 }
 
-void CModel::Render(SDeferredRenderModelParams& aParamObj, const Render::SEffectData& aEffectData)
+void CModel::Render(SDeferredRenderModelParams& aParamObj)
 {
-	Render::SEffectData effectData = myEffectData;
-	effectData.vertexBlueprint |= EModelBluePrint::EModelBluePrint_Deferred | aEffectData.vertexBlueprint;
-	effectData.pixelBlueprint |= EModelBluePrint::EModelBluePrint_Deferred | aEffectData.pixelBlueprint;;
-	effectData.geometryBlueprint |= EModelBluePrint::EModelBluePrint_Deferred | aEffectData.geometryBlueprint;
-	Render::CEffectsManager::GetInstance().GetEffect(effectData)->Activate(false, aParamObj.myRenderToDepth);
+	if (aParamObj.myRenderToDepth == true)
+	{
+		myDeferredEffect->ActivateForDepth();
+	}
+	else
+	{
+		myDeferredEffect->Activate();
+	}
 
 	if (mySurface != nullptr)
 	{
@@ -280,9 +277,9 @@ void CModel::Render(SDeferredRenderModelParams& aParamObj, const Render::SEffect
 //	}
 //}
 
-void CModel::RenderInstanced(const bool aRenderDepth, ID3D11PixelShader* aDepthShader, const Render::SEffectData& aEffectData)
+void CModel::RenderInstanced(const bool aRenderDepth, ID3D11PixelShader* aDepthShader)
 {
-	/*if (aRenderDepth)
+	if (aRenderDepth)
 	{
 		myDeferredEffect->ActivateForDepth(aDepthShader, true);
 	}
@@ -290,24 +287,6 @@ void CModel::RenderInstanced(const bool aRenderDepth, ID3D11PixelShader* aDepthS
 	{
 		myDeferredEffect->Activate(true);
 		if (mySurface != nullptr)
-		{
-			mySurface->Activate();
-		}
-	}*/
-
-	Render::SEffectData effectData = myEffectData;
-	effectData.vertexBlueprint |= EModelBluePrint::EModelBluePrint_Deferred | aEffectData.vertexBlueprint;
-	effectData.pixelBlueprint |= EModelBluePrint::EModelBluePrint_Deferred | aEffectData.pixelBlueprint;;
-	effectData.geometryBlueprint |= EModelBluePrint::EModelBluePrint_Deferred | aEffectData.geometryBlueprint;
-	CEffect* effect = Render::CEffectsManager::GetInstance().GetEffect(effectData);
-	if(aRenderDepth)
-	{
-		effect->ActivateForDepth(aDepthShader, true);
-	}
-	else
-	{
-		effect->Activate(true);
-		if(mySurface != nullptr)
 		{
 			mySurface->Activate();
 		}
@@ -516,11 +495,6 @@ bool CModel::GetAnimationStates(CU::GrowingArray<eAnimationState>& aAnimationSta
 	return false;
 }
 
-void CModel::SetEffectType(const Render::SEffectData& aEffectData)
-{
-	myEffectData = aEffectData;
-}
-
 std::vector<mat4>& CModel::GetBones(float aTime, const eAnimationState aAnimationState, const bool aAnimationLooping)
 {
 	if(mySceneAnimator != nullptr)
@@ -659,15 +633,13 @@ CModel& CModel::operator=(CModel&& aModel)
 	//}
 	myBindposeSceneAnimator = aModel.myBindposeSceneAnimator;
 
-	myEffectData = aModel.myEffectData;
-
-	/*SAFE_DELETE(myDeferredEffect);
+	SAFE_DELETE(myDeferredEffect);
 	myDeferredEffect = aModel.myDeferredEffect;
 	aModel.myDeferredEffect = nullptr;
 
 	SAFE_DELETE(myForwardEffect);
 	myForwardEffect = aModel.myForwardEffect;
-	aModel.myForwardEffect = nullptr;*/
+	aModel.myForwardEffect = nullptr;
 
 	SAFE_DELETE(mySurface);
 	mySurface = aModel.mySurface;
@@ -751,7 +723,7 @@ CModel& CModel::operator=(const CModel& aModel)
 	mySceneAnimator = aModel.mySceneAnimator;
 	myBindposeSceneAnimator = aModel.myBindposeSceneAnimator;
 
-	/*SAFE_DELETE(myDeferredEffect);
+	SAFE_DELETE(myDeferredEffect);
 	if (aModel.myDeferredEffect != nullptr)
 	{
 		myDeferredEffect = new CEffect(*aModel.myDeferredEffect);
@@ -761,9 +733,7 @@ CModel& CModel::operator=(const CModel& aModel)
 	if (aModel.myForwardEffect != nullptr)
 	{
 		myForwardEffect = new CEffect(*aModel.myForwardEffect);
-	}*/
-
-	myEffectData = aModel.myEffectData;
+	}
 
 	SAFE_DELETE(mySurface);
 	if (aModel.mySurface != nullptr)

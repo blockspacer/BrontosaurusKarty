@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "KartComponent.h"
 
+#define MIN(A,B) ((A) < (B)) ? A : B
+#define MAX(A,B) ((A) > (B)) ? A : B
+#define RANGE(A,B,C) ((A) < (B)) ? B : ((A) > (C)) ? C : A
+#define CLAMP(V,A_MIN,A_MAX) RANGE(V,A_MIN,A_MAX)
+
 CKartComponent::CKartComponent()
 {
 	myFowrardSpeed = 0.0f;
@@ -46,15 +51,7 @@ void CKartComponent::Receive(const eComponentMessageType aMessageType, const SCo
 		break;
 	}
 
-	if (mySteering < -1.f)
-	{
-		mySteering = -1.f;
-	}
-	else if (mySteering > 1.f)
-	{
-		mySteering = 1.f;
-	}
-
+	//CLAMP(mySteering, -1.f, 1.f);
 	//CLAMP(myAcceleration, myMinAcceleration, myMaxAcceleration);
 }
 
@@ -89,7 +86,6 @@ void CKartComponent::Update(float aDeltaTime)
 	if (myFowrardSpeed != 0.f)
 	{
 		parentTransform.Move(CU::Vector3f(0.0f, 0.0f, myFowrardSpeed * aDeltaTime));
+		GetParent()->NotifyComponents(eComponentMessageType::eMoving, SComponentMessageData());
 	}
-
-	GetParent()->NotifyComponents(eComponentMessageType::eMoving, SComponentMessageData());
 }

@@ -11,11 +11,9 @@
 #include "LoadPointLightComponent.h"
 #include "LoadCollider.h"
 #include "LoadKartSpawnPoint.h"
-#include "LoadManager/LoadWeaponCrate.h"
 
 #include "LoadParticleEmitterComponent.h"
 #include "LoadHighlightComponent.h"
-#include "LoadVertexInstanceStream.h"
 
 LoadManager* LoadManager::ourInstance = nullptr;
 
@@ -54,7 +52,6 @@ void LoadManager::RegisterFunctions()
 	loader.RegisterObjectLinkFunction(LinkObject);
 
 	loader.RegisterComponentLoadFunction("MeshFilter", LoadMeshFilter);
-	loader.RegisterComponentLoadFunction("VertexInstanceStream", LoadVertexStreamInstanceComponent);
 	loader.RegisterComponentLoadFunction("Camera", LoadCamera);
 	loader.RegisterComponentLoadFunction("KartSpawner", LoadKartSpawnPoint);
 	loader.RegisterComponentLoadFunction("ParticleEmitterComponent", LoadParticleEmitterComponent);
@@ -67,7 +64,6 @@ void LoadManager::RegisterFunctions()
 	//loader.RegisterComponentLoadFunction("ScriptComponent", LoadScriptComponent);
 	loader.RegisterComponentLoadFunction("HighlightComponent",LoadHighlightComponent);
 	loader.RegisterComponentLoadFunction("Light", LoadPointLightComponent);
-	loader.RegisterComponentLoadFunction("WeaponCrateComponent", LoadWeapoCrateComponent);
 
 	//loader.RegisterComponentLoadFunction("CircleCollider", LoadCircleCollider);
 	//loader.RegisterComponentLoadFunction("SoundComponent", LoadSoundComponent);

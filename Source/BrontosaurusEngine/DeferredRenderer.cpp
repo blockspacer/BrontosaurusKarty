@@ -111,11 +111,12 @@ void CDeferredRenderer::DoRenderQueue(CRenderer& aRenderer)
 			CModel* model = modelManager->GetModel(msg->myModelID);
 			if (!model) break;
 
+
 			if (msg->myRenderParams.myIgnoreDepth == true)
 			{
 				myGbuffer.BindOutput(CGeometryBuffer::eALL, CGeometryBuffer::eEmissive);
 			}
-			model->Render(msg->myRenderParams, Render::SEffectData());
+			model->Render(msg->myRenderParams);
 			if (msg->myRenderParams.myIgnoreDepth == true)
 			{
 				myGbuffer.BindOutput();
@@ -146,11 +147,8 @@ void CDeferredRenderer::DoRenderQueue(CRenderer& aRenderer)
 			{
 				model = modelManager->GetModel(id);
 				if (!model) continue;
-				Render::SEffectData effectData;
-				effectData.pixelBlueprint |= EModelBluePrint_Instance;
-				effectData.vertexBlueprint |= EModelBluePrint_Instance;
-				effectData.geometryBlueprint |= EModelBluePrint_Instance;
-				model->RenderInstanced(msg->myRenderToDepth, msg->myPixelShader, effectData);
+
+				model->RenderInstanced(msg->myRenderToDepth, msg->myPixelShader);
 			}
 			myBatchedModelIds.RemoveAll();
 			break;

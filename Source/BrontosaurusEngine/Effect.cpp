@@ -47,15 +47,10 @@ CEffect::~CEffect()
 {
 }
 
-void CEffect::Activate(const bool aInstanced, const bool aActivateForDepth)
+void CEffect::Activate(const bool aInstanced)
 {
-	if(aActivateForDepth == true)
-	{
-		ActivateForDepth(nullptr, aInstanced);
-		return;
-	}
-	//assert((aInstanced && myVertexInstancedShader && myInstancedLayout) || (!aInstanced));
-	if (false)
+	assert((aInstanced && myVertexInstancedShader && myInstancedLayout) || (!aInstanced));
+	if (aInstanced)
 	{
 		myFramework->GetDeviceContext()->VSSetShader(myVertexInstancedShader, NULL, 0);
 		myFramework->GetDeviceContext()->IASetInputLayout(myInstancedLayout);
