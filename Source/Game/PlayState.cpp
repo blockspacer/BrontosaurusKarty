@@ -25,6 +25,7 @@
 
 #include "CameraComponent.h"
 #include "KartComponentManager.h"
+#include "SpeedHandlerManager.h"
 
 //Networking
 #include "TClient/Client.h"
@@ -64,6 +65,11 @@
 #include "KeyboardControllerComponent.h"
 #include "KartSpawnPointManager.h"
 #include "XboxControllerComponent.h"
+#include "KartControllerComponentManager.h"
+#include "PlayerControllerManager.h"
+#include "KartControllerComponent.h"
+#include "PlayerController.h"
+#include "SpeedHandlerComponent.h"
 
 CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -96,6 +102,9 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myPhysicsScene);
 	SAFE_DELETE(myGameObjectManager);
 	SAFE_DELETE(myKartComponentManager);
+	CSpeedHandlerManager::Destroy();
+	SAFE_DELETE(myKartControllerComponentManager);
+	SAFE_DELETE(myPlayerControllerManager);
 }
 
 void CPlayState::Load()
@@ -192,7 +201,7 @@ void CPlayState::Init()
 eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 {
 	CParticleEmitterComponentManager::GetInstance().UpdateEmitters(aDeltaTime);
-
+	CParticleEmitterManager::GetInstance().Update(aDeltaTime);
 	myScene->Update(aDeltaTime);
 	if (myPhysicsScene->Simulate(aDeltaTime) == true)
 	{
@@ -200,10 +209,16 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	}
 
 	myKartComponentManager->Update(aDeltaTime.GetSeconds());
+	myKartControllerComponentManager->Update(aDeltaTime.GetSeconds());
 	
 	if(myCameraComponent != nullptr)
 	{
 		myCameraComponent->Update(aDeltaTime.GetSeconds());
+	}
+
+	if (CSpeedHandlerManager::GetInstance() != nullptr)
+	{
+		CSpeedHandlerManager::GetInstance()->Update(aDeltaTime.GetSeconds());
 	}
 
 	return myStatus;
@@ -267,6 +282,10 @@ void CPlayState::CreateManagersAndFactories()
 
 	myScriptComponentManager = new CScriptComponentManager();
 	myKartComponentManager = new CKartComponentManager();
+	CSpeedHandlerManager::CreateInstance();
+	CSpeedHandlerManager::GetInstance()->Init();
+	myKartControllerComponentManager = new CKartControllerComponentManager;
+	myPlayerControllerManager = new CPlayerControllerManager;
 	CKartSpawnPointManager::GetInstance().Create();
 }
 
@@ -279,16 +298,28 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	CComponentManager::GetInstance().RegisterComponent(cameraComponent);
 	cameraComponent->SetCamera(aCamera);
 	myCameraComponent = cameraComponent;
-	CKartComponent* kartComponent = myKartComponentManager->CreateComponent();
+
+	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent();
+	CPlayerController* controls = myPlayerControllerManager->CreatePlayerController(*kartComponent);
+	if(CSpeedHandlerManager::GetInstance() != nullptr)
+	{
+		CSpeedHandlerComponent* speedHandlerComponent = CSpeedHandlerManager::GetInstance()->CreateAndRegisterComponent();
+		playerObject->AddComponent(speedHandlerComponent);
+	}
+	/*CKartComponent* kartComponent = myKartComponentManager->CreateComponent();
 	CKeyboardControllerComponent* keyBoardInput = new CKeyboardControllerComponent();
 	CXboxControllerComponent* xboxInput = new CXboxControllerComponent();
 	Subscribe(*keyBoardInput);
-	Subscribe(*xboxInput);
+	Subscribe(*xboxInput);*/
+	Subscribe(*controls);
 
 	playerObject->AddComponent(playerModel);
+
 	playerObject->AddComponent(kartComponent);
-	playerObject->AddComponent(keyBoardInput);
-	playerObject->AddComponent(xboxInput);
+
+	//playerObject->AddComponent(kartComponent);
+	//playerObject->AddComponent(keyBoardInput);
+	//playerObject->AddComponent(xboxInput);
 
 	playerObject->AddComponent(cameraComponent);
 }

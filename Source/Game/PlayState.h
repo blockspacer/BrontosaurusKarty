@@ -26,6 +26,8 @@ class CSpriteInstance;
 class CGameObject;
 class CCameraComponent;
 class CKartComponentManager;
+class CKartControllerComponentManager;
+class CPlayerControllerManager;
 
 class CPlayState : public State , public Postmaster::ISubscriber
 {
@@ -69,6 +71,9 @@ private:
 	CColliderComponentManager* myColliderComponentManager;
 	CScriptComponentManager* myScriptComponentManager;
 	CKartComponentManager* myKartComponentManager;
+
+	CKartControllerComponentManager* myKartControllerComponentManager;
+	CPlayerControllerManager* myPlayerControllerManager;
 
 	CCameraComponent* myCameraComponent;
 

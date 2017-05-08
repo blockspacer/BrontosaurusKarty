@@ -3,7 +3,6 @@
 #include "KartSpawnPoint.h"
 
 CKartSpawnPointManager* CKartSpawnPointManager::ourInstance = nullptr;
-unsigned char CKartSpawnPointManager::ourNumberOfSpawnpoints = 0;
 
 void CKartSpawnPointManager::Create()
 {
@@ -30,7 +29,6 @@ CKartSpawnPointManager& CKartSpawnPointManager::GetInstance()
 void CKartSpawnPointManager::AddSpawnPoint(CKartSpawnPoint* aSpawnPoint)
 {
 	mySpawnPoints.Add(aSpawnPoint);
-	ourNumberOfSpawnpoints++;
 }
 
 CKartSpawnPointManager::CKartSpawnPointManager()

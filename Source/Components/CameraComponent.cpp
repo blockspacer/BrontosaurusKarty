@@ -3,30 +3,31 @@
 #include "../CommonUtilities/Camera.h"
 #include "../Audio/AudioInterface.h"
 #include "../CommonUtilities/PICarlApproved.h"
+#include "../CommonUtilities/JsonValue.h"
 
-float pascalTriangle(float a, float b);
-
-float generalSmoothStep(float N, float x)   //Generalized smoothstep
-{
-	//x must be between 0 and 1
-	float result = 0;
-	for (float n = 0; n <= N; n+=1.f)
-	{
-		result += (pascalTriangle(-N - 1, n) * pascalTriangle(2 * N + 1, N - n) * powf(x, N + n + 1));
-	}
-	return result;
-}
-
-float pascalTriangle(float a,float b)
-{
-	//Pascal triangle for replacement with binomial coefficient because a factorial can't be used with negative numbers
-	float result = 1;
-	for (float i = 0; i < b; i += 1.f)
-	{
-		result *= (a - i) / (i + 1);
-	}
-	return result;
-}
+//float pascalTriangle(float a, float b);
+//
+//float generalSmoothStep(float N, float x)   //Generalized smoothstep
+//{
+//	//x must be between 0 and 1
+//	float result = 0;
+//	for (float n = 0; n <= N; n+=1.f)
+//	{
+//		result += (pascalTriangle(-N - 1, n) * pascalTriangle(2 * N + 1, N - n) * powf(x, N + n + 1));
+//	}
+//	return result;
+//}
+//
+//float pascalTriangle(float a,float b)
+//{
+//	//Pascal triangle for replacement with binomial coefficient because a factorial can't be used with negative numbers
+//	float result = 1;
+//	for (float i = 0; i < b; i += 1.f)
+//	{
+//		result *= (a - i) / (i + 1);
+//	}
+//	return result;
+//}
 
 CCameraComponent::CCameraComponent()
 	: myCamera(nullptr)
@@ -36,10 +37,19 @@ CCameraComponent::CCameraComponent()
 {
 	myType = eComponentType::eCamera;
 
-	float rotationAngle = PI / 9.0f;
+	CU::CJsonValue levelsFile;
+	std::string errorString = levelsFile.Parse("Json/Camera.json");
+	if (!errorString.empty()) DL_MESSAGE_BOX(errorString.c_str());
+
+	CU::CJsonValue levelsArray = levelsFile.at("Camera");
+
+	float radians = levelsArray.at("CameraRotationX").GetFloat() * PI/180;
+
+
+	float rotationAngle = radians;
 	myKartOffset.RotateAroundAxis(rotationAngle, CU::Axees::X);
-	myKartOffset.Move(CU::Vector3f(0.0f, 0.0f, -4.2f));
-	myKartOffset.GetPosition() += CU::Vector3f(0.0f, 1.0f, .0f);
+	myKartOffset.Move(CU::Vector3f(0.0f, 0.0f, levelsArray.at("CameraOffsetZ").GetFloat()));
+	myKartOffset.GetPosition() += CU::Vector3f(0.0f, levelsArray.at("CameraOffsetY").GetFloat(), .0f);
 }
 
 CCameraComponent::~CCameraComponent()
@@ -96,5 +106,5 @@ void CCameraComponent::Update(float aDeltaTime)
 	CU::Matrix44f& cameraTransform = myCamera->GetTransformation();
 
 	cameraTransform.Lerp(myCameraInterpolateTowardsMatrix, myInterpolatingSpeed * aDeltaTime);
-	cameraTransform.LerpPosition(myCameraInterpolateTowardsMatrix.myPosition, 0.5f * myInterpolatingSpeed * aDeltaTime);
+	cameraTransform.LerpPosition(myCameraInterpolateTowardsMatrix.myPosition, myInterpolatingSpeed * aDeltaTime);
 }

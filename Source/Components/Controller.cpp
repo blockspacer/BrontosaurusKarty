@@ -11,6 +11,6 @@ CController::~CController()
 {
 }
 
-void CController::Update()
+void CController::Update(const float aDeltaTime)
 {
 }
