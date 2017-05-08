@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "Scene.h"
 #include "ModelInstance.h"
-#include "Engine.h"
+//#include "Engine.h"
 #include "ModelManager.h"
 #include "PointLightInstance.h"
 #include "Camera.h"

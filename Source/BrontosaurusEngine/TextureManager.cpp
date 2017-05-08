@@ -1,10 +1,7 @@
 #include "stdafx.h"
 #include "TextureManager.h"
 #include "DDSTextureLoader.h"
-#include "Engine.h"
 #include <StringHelper.h>
-#include "DXFramework.h"
-//#include <mutex>
 
 CTextureManager::CTextureManager()
 {

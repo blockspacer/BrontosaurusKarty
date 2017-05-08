@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "StreakEmitterInstance.h"
 #include "StreakEmitter.h"
-#include "EmitterData.h"
-
 
 CStreakEmitterInstance::CStreakEmitterInstance()
 {

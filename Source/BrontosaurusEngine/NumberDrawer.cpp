@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "NumberDrawer.h"
-#include "Engine.h"
+//#include "Engine.h"
 
 
 CNumberDrawer::CNumberDrawer() : myNumber(0)

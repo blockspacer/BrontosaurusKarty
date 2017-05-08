@@ -12,7 +12,7 @@
 #include "../ThreadedPostmaster/Postmaster.h"
 
 #include "../CommonUtilities/EKeyboardKeys.h"
-#include "../Game/stdafx.h"
+//#include "../Game/stdafx.h"
 
 #include "../CommonUtilities/InputMessage.h"
 #include "../CommonUtilities/InputMessenger.h"

@@ -1,22 +1,18 @@
 #include "stdafx.h"
 #include "DeferredRenderer.h"
 #include "RenderMessages.h"
-#include "Engine.h"
-#include "DXFramework.h"
 #include "ModelManager.h"
 #include "ConstBufferTemplate.h"
 #include "FullScreenHelper.h"
 #include "Lights.h"
 #include "Renderer.h"
 #include "LightModel.h"
-#include "Engine.h"
 #include "ShaderManager.h"
 #include "FBXLoader.h"
 #include "ParticleEmitterManager.h"
 #include "ParticleEmitter.h"
 #include "Texture.h"
 #include "TextureManager.h"
-#include "Engine.h"
 
 #ifdef _ENABLE_RENDERMODES
 #include <../CommonUtilities/InputWrapper.h>

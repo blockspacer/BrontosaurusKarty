@@ -1,13 +1,13 @@
 #include "stdafx.h"
 #include "Skybox.h"
-#include "DXFramework.h"
+//#include "DXFramework.h"
 #include "Effect.h"
 #include "BufferStructs.h"
-#include "Engine.h"
+//#include "Engine.h"
 #include "TextureManager.h"
 #include "ConstBufferTemplate.h"
-#include <Camera.h>
-#include <matrix44.h>
+//#include <Camera.h>
+//#include <matrix44.h>
 #include "DDSTextureLoader.h"
 #include "ShaderManager.h"
 

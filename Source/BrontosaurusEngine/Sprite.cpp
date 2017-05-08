@@ -2,14 +2,14 @@
 #include "Sprite.h"
 #include "SpriteInstance.h"
 
-#include "Engine.h"
-#include "DXFramework.h"
+//#include "Engine.h"
+//#include "DXFramework.h"
 #include "ShaderManager.h"
 #include "Effect.h"
 #include "Surface.h"
 
 #include "ConstBufferTemplate.h"
-#include "../CommonUtilities/vector2.h"
+//#include "../CommonUtilities/vector2.h"
 #include "../CommonUtilities/StringHelper.h"
 #include "EModelBluePrint.h"
 

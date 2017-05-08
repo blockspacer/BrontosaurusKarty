@@ -1,6 +1,6 @@
 #pragma once
 #include <functional>
-#include "../CommonUtilities/vector2.h"
+//#include "../CommonUtilities/vector2.h"
 #include "../FontEngine/FontEngineFacade.h"
 #include "ParticleEmitterManager.h"
 //#include "TextInstance.h"

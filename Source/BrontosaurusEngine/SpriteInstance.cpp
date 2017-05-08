@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "SpriteInstance.h"
 #include "Sprite.h"
-#include "Engine.h"
+//#include "Engine.h"
 #include "Renderer.h"
 #include "SpriteManager.h"
 

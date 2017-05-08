@@ -1,7 +1,5 @@
 #include "stdafx.h"
 #include "Text.h"
-#include "Engine.h"
-#include "DXFramework.h"
 #include "../FontEngine/FontEngineFacade.h"
 #include "ConstBufferTemplate.h"
 #include "Effect.h"

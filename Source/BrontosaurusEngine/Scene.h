@@ -5,7 +5,7 @@
 
 #include "Lights.h" //directional //make forward declaration
 #include "InstanceID.h"
-#include "Camera.h"
+//#include "Camera.h"
 #include "RenderCamera.h"
 #include "Cubemap.h"
 

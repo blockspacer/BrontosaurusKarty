@@ -5,7 +5,7 @@
 
 #include "../CommonUtilities/StaticArray.h"
 #include "../CommonUtilities/AABB.h"
-#include "stdafx.h"
+//#include "stdafx.h"
 
 class CEffect;
 class CSurface;

@@ -1,6 +1,5 @@
 #pragma once
-
-#include "../PostMaster/Subscriber.h"
+//#include "../PostMaster/Subscriber.h"
 #include "../ThreadedPostmaster/Subscriber.h"
 
 namespace CU

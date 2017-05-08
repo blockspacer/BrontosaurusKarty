@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include "Effect.h"
-#include "Engine.h"
-#include "DXFramework.h"
+//#include "Engine.h"
+//#include "DXFramework.h"
 #include "ConstBufferTemplate.h"
 #include "DDSTextureLoader.h"
-#include <Camera.h>
+//#include <Camera.h>
 #include <d3d10.h>
 
 CEffect::CEffect(ID3D11VertexShader* aVertexShader, ID3D11PixelShader* aPixelShader,
