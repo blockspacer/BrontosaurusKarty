@@ -45,6 +45,9 @@
     <ClInclude Include="LoadKartSpawnPoint.h">
       <Filter>LoadThings\LoadKartSpawn</Filter>
     </ClInclude>
+    <ClInclude Include="LoadVertexInstanceStream.h">
+      <Filter>LoadThings\LoadVertexInstanceStream</Filter>
+</ClInclude>
     <ClInclude Include="LoadWeaponCrate.h">
       <Filter>LoadThings\LoadWeaponCrateComponent</Filter>
     </ClInclude>
@@ -91,6 +94,9 @@
     <ClCompile Include="LoadKartSpawnPoint.cpp">
       <Filter>LoadThings\LoadKartSpawn</Filter>
     </ClCompile>
+    <ClCompile Include="LoadVertexInstanceStream.cpp">
+      <Filter>LoadThings\LoadVertexInstanceStream</Filter>
+</ClCompile>
     <ClCompile Include="LoadWeaponCrate.cpp">
       <Filter>LoadThings\LoadWeaponCrateComponent</Filter>
     </ClCompile>
@@ -138,7 +144,10 @@
     <Filter Include="LoadThings\LoadKartSpawn">
       <UniqueIdentifier>{be719607-b147-4145-8664-bb74de6e9d6b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="LoadThings\LoadWeaponCrateComponent">
+    <Filter Include="LoadThings\LoadVertexInstanceStream">
+      <UniqueIdentifier>{66b4090e-e59a-4309-be68-ffe1fa423fd7}</UniqueIdentifier>
+	</Filter>    
+<Filter Include="LoadThings\LoadWeaponCrateComponent">
       <UniqueIdentifier>{f4195dad-7a96-4743-b27b-d9db740a39aa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>

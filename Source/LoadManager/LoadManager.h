@@ -15,7 +15,6 @@ public:
 	CPlayState& GetCurrentPLaystate() const;
 
 	void RegisterFunctions();
-
 private:
 	static void CreateInstance(CPlayState& aPlayState, CScene& aScene);
 	static void DestroyInstance();

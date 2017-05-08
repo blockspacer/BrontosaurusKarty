@@ -74,6 +74,9 @@
     <Filter Include="Renderer">
       <UniqueIdentifier>{7c401d84-94f5-420a-ace6-9f10c874bfef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Effects">
+      <UniqueIdentifier>{8f5f5b3d-345a-4b85-a048-c1921f7551cb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -283,6 +286,12 @@
     <ClInclude Include="GUIElement.h">
       <Filter>Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="EffectsManager.h">
+      <Filter>Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectsFactory.h">
+      <Filter>Effects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -438,6 +447,12 @@
     </ClCompile>
     <ClCompile Include="GeometryBuffer.cpp" />
     <ClCompile Include="ColorGrader.cpp" />
+    <ClCompile Include="EffectsManager.cpp">
+      <Filter>Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectsFactory.cpp">
+      <Filter>Effects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">

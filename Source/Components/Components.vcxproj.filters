@@ -39,6 +39,7 @@
     <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="AIController.cpp" />
     <ClCompile Include="PlayerControllerManager.cpp" />
+    <ClCompile Include="VertexStreamComponent.cpp" />
     <ClCompile Include="PickupComponentManager.cpp">
       <Filter>Pickups\Manager</Filter>
     </ClCompile>
@@ -99,6 +100,7 @@
     <ClInclude Include="Controller.h" />
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="PlayerControllerManager.h" />
+    <ClInclude Include="VertexStreamComponent.h" />
     <ClInclude Include="PlayerControls.h" />
     <ClInclude Include="PickupComponentManager.h">
       <Filter>Pickups\Manager</Filter>
