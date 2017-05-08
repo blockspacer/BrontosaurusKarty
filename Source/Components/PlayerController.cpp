@@ -54,6 +54,10 @@ CU::eInputReturn CPlayerController::TakeInput(const CU::SInputMessage & aInputMe
 	{
 		GamePadLeftTriggerReleased(aInputMessage);
 	}
+	else if (aInputMessage.myType == CU::eInputType::eGamePadRightTriggerReleased)
+	{
+		GamePadRightTriggerReleased(aInputMessage);
+	}
 	else if (aInputMessage.myType == CU::eInputType::eKeyboardReleased)
 	{
 		ReleasedKey(aInputMessage);
@@ -171,16 +175,16 @@ void CPlayerController::GamePadPressedKey(const CU::SInputMessage & aInputMessag
 		break;
 	case CU::GAMEPAD::RIGHT_SHOULDER:
 		
+		myControllerComponent.Drift();
 		
+		break;
+	case CU::GAMEPAD::LEFT_SHOULDER:
 		boostData->accerationBoost = 5;
 		boostData->duration = 4.0f;
 		boostData->maxSpeedBoost = 2.0f;
 		boostData->type = eBoostType::eDefault;
 		boostMessageData.myBoostData = boostData;
 		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
-		break;
-	case CU::GAMEPAD::LEFT_SHOULDER:
-		myControllerComponent.Drift();
 		break;
 	}
 }
@@ -232,15 +236,6 @@ void CPlayerController::MovedJoystick(const CU::SInputMessage & aInputMessage)
 
 void CPlayerController::GamePadLeftTrigger(const CU::SInputMessage & aInputMessage)
 {
-	if (myIsDrifting == false)
-	{
-		myControllerComponent.Drift();
-		myIsDrifting = true;
-	}
-}
-
-void CPlayerController::GamePadRightTrigger(const CU::SInputMessage & aInputMessage)
-{
 	SComponentMessageData boostMessageData;
 	SBoostData* boostData = new SBoostData();
 	boostData->accerationBoost = 5;
@@ -251,17 +246,29 @@ void CPlayerController::GamePadRightTrigger(const CU::SInputMessage & aInputMess
 	myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
 }
 
+void CPlayerController::GamePadRightTrigger(const CU::SInputMessage & aInputMessage)
+{
+	if (myIsDrifting == false)
+	{
+		myControllerComponent.Drift();
+		myIsDrifting = true;
+	}
+}
+
 void CPlayerController::GamePadLeftTriggerReleased(const CU::SInputMessage & aInputMessage)
+{
+
+
+
+}
+
+void CPlayerController::GamePadRightTriggerReleased(const CU::SInputMessage & aInputMessage)
 {
 	if (myIsDrifting == true)
 	{
 		myControllerComponent.StopDrifting();
 		myIsDrifting = false;
 	}
-}
-
-void CPlayerController::GamePadRightTriggerReleased(const CU::SInputMessage & aInputMessage)
-{
 }
 
 void CPlayerController::JoystickDeadzone()
