@@ -51,6 +51,8 @@ private:
 
 	int myLeftWheelDriftEmmiterHandle;
 	int myRightWheelDriftEmmiterHandle;
+	int myLeftDriftBoostEmitterhandle;
+	int myRightDriftBoostEmitterhandle;
 
 	bool myIsDrifting;
 };

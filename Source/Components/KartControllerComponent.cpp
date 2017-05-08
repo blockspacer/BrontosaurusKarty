@@ -36,6 +36,8 @@ CKartControllerComponent::CKartControllerComponent()
 
 	myLeftWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GatlingSmoke");
 	myRightWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GatlingSmoke");
+	myLeftDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GunFire");
+	myRightDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GunFire");
 }
 
 
@@ -124,9 +126,9 @@ void CKartControllerComponent::StopDrifting()
 		{
 			SComponentMessageData boostMessageData;
 			SBoostData* boostData = new SBoostData();
-			boostData->accerationBoost = 5.5f;
-			boostData->duration = 2.0f;
-			boostData->maxSpeedBoost = 1.5f;
+			boostData->accerationBoost = 3.5f;
+			boostData->duration = 1.5f;
+			boostData->maxSpeedBoost = 1.0f;
 			boostData->type = eBoostType::eDefault;
 			boostMessageData.myBoostData = boostData;
 			GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
@@ -135,9 +137,9 @@ void CKartControllerComponent::StopDrifting()
 		{
 			SComponentMessageData boostMessageData;
 			SBoostData* boostData = new SBoostData();
-			boostData->accerationBoost = 5;
-			boostData->duration = 1.5f;
-			boostData->maxSpeedBoost = 1.0f;
+			boostData->accerationBoost = 2;
+			boostData->duration = 1.0f;
+			boostData->maxSpeedBoost = 0.7f;
 			boostData->type = eBoostType::eDefault;
 			boostMessageData.myBoostData = boostData;
 			GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
@@ -149,6 +151,8 @@ void CKartControllerComponent::StopDrifting()
 	mySteering = 0;
 	myDriftTimer = 0;
 	myDriftSteerModifier = 0;
+	CParticleEmitterManager::GetInstance().Deactivate(myLeftDriftBoostEmitterhandle);
+	CParticleEmitterManager::GetInstance().Deactivate(myRightDriftBoostEmitterhandle);
 }
 
 void CKartControllerComponent::Update(const float aDeltaTime)
@@ -197,8 +201,16 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 		CU::Matrix44f particlePosition = GetParent()->GetLocalTransform();
 		particlePosition.Move(CU::Vector3f(-0.45f, 0, 0));
 		CParticleEmitterManager::GetInstance().SetPosition(myLeftWheelDriftEmmiterHandle, particlePosition.GetPosition());
+		CParticleEmitterManager::GetInstance().SetPosition(myLeftDriftBoostEmitterhandle, particlePosition.GetPosition());
 		particlePosition.Move(CU::Vector3f(0.9f, 0, 0));
 		CParticleEmitterManager::GetInstance().SetPosition(myRightWheelDriftEmmiterHandle, particlePosition.GetPosition());
+		CParticleEmitterManager::GetInstance().SetPosition(myRightDriftBoostEmitterhandle, particlePosition.GetPosition());
+		static bool driftParticlesActivated = false;
+		if (myDriftTimer >= 2.0f && driftParticlesActivated == false)
+		{
+			CParticleEmitterManager::GetInstance().Activate(myLeftDriftBoostEmitterhandle);
+			CParticleEmitterManager::GetInstance().Activate(myRightDriftBoostEmitterhandle);
+		}
 	}
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, SComponentMessageData());
 }
