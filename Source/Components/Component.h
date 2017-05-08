@@ -61,6 +61,7 @@ enum class eComponentType : unsigned char
 	ePickup,
 	eHealthPickupComponent,
 	eWeaponPickupComponent,
+	eVertexStream,
 	eNone,
 
 };
@@ -78,7 +79,7 @@ public:
 
 	virtual void Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData);
 	virtual bool Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData);
-	virtual void Destroy() {};
+	virtual void Destroy() {}
 	virtual bool IsGameObject();
 
 	__forceinline CGameObject* GetParent();

@@ -20,6 +20,7 @@
 #include "../FontEngine/FontEngineFacade.h"
 #include "../ThreadedPostmaster/Postmaster.h"
 #include "../ThreadedPostmaster/PostOffice.h"
+#include "EffectsManager.h"
 
 CEngine* CEngine::myInstance = nullptr;
 
@@ -88,25 +89,14 @@ void CEngine::Init(SInitEngineParams& aInitEngineParams)
 	myConsole->Init();
 	myDebugInfoDrawer = new CDebugInfoDrawer(aInitEngineParams.myDebugFlags);
 
-
+	Render::CEffectsManager::Create();
 
 	timerMgr.UpdateTimers();
 	float time = timerMgr.GetTimer(handle).GetLifeTime().GetMilliseconds();
 	ENGINE_LOG("Engine Inited in %f ms", time);
 
-
-	static const std::string WeaponDirectory = "Models/Animations/M_";
-	myModelManager->LoadModel(WeaponDirectory + "BFG_01.fbx");
-	myModelManager->LoadModel(WeaponDirectory + "Plasma_01.fbx");
-	myModelManager->LoadModel(WeaponDirectory + "Saw_01.fbx");
-	myModelManager->LoadModel(WeaponDirectory + "Shotgun_01.fbx");
-	myModelManager->LoadModel(WeaponDirectory + "WeaponPlayer_01_Plasma_01.fbx");
-	myModelManager->LoadModel(WeaponDirectory + "WeaponPlayer_01_Shotgun_01.fbx");
-
-
-	timerMgr.UpdateTimers();
-	time = timerMgr.GetTimer(handle).GetDeltaTime().GetMilliseconds();
-	ENGINE_LOG("Carl Inited Weapon Models in %f ms", time);
+	CParticleEmitterManager::Create();
+	CParticleEmitterManager::GetInstance().LoadParticleLibrary("Json/Particles.json");
 }
 
 void CEngine::Render()
@@ -313,6 +303,7 @@ CEngine::~CEngine()
 	myFontEngine.DestroyInstance();
 
 	Audio::CAudioInterface::Destroy();
+	Render::CEffectsManager::Destroy();
 	myIsRunning = true;
 }
 

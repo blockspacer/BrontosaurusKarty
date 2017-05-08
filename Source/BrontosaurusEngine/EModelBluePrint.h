@@ -15,4 +15,5 @@ enum EModelBluePrint
 	EModelBluePrint_Fire = 1 << 10,
 	EModelBluePrint_Bar = 1 << 11,
 	EModelBluePrint_Instance = 1 << 12,
+	EModelBluePrint_Deferred = 1 << 13,
 };

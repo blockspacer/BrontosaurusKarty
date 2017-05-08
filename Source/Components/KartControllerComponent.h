@@ -1,18 +1,27 @@
 #pragma once
 #include "Component.h"
+
+class CParticleEmitterInstance;
+
 class CKartControllerComponent : public CComponent
 {
 public:
 	CKartControllerComponent();
 	~CKartControllerComponent();
 
-	void MoveRight();
-	void MoveLeft();
+	void TurnRight();
+	void TurnLeft();
+	void StopMoving();
 	void MoveFoward();
 	void MoveBackWards();
+	void StopTurning();
+	void Drift();
+	void StopDrifting();
+
+	void Update(const float aDeltaTime);
+	void Receive(const eComponentMessageType, const SComponentMessageData&) override;
 
 private:
-
 	float myFowrardSpeed;
 	float myMaxSpeed;
 	float myMinSpeed;
@@ -21,9 +30,28 @@ private:
 	float myMaxAcceleration;
 	float myMinAcceleration;
 
+	float myTurnRate;
+
 	float myFriction;
 
 	float mySteering;
 	float myAngularAcceleration;
+
+	float myMaxSpeedModifier;
+	float myAccelerationModifier;
+
+	float myDriftRate;
+	float myDriftTimer;
+	float myDriftSteerModifier;
+	float myBoostSpeedDecay;
+	float myDriftSteeringModifier;
+	float myMaxDriftRate;
+	float myTimeMultiplier;
+	float myMaxDriftSteerAffection;
+
+	int myLeftWheelDriftEmmiterHandle;
+	int myRightWheelDriftEmmiterHandle;
+
+	bool myIsDrifting;
 };
 
