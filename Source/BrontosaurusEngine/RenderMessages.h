@@ -1,6 +1,6 @@
 #pragma once
 
-//#include "../CommonUtilities/Camera.h"
+#include "../CommonUtilities/Camera.h"
 
 #include "RenderPackage.h"
 #include "FullScreenHelper.h"

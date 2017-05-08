@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "LineDrawer.h"
 
-//#include "Engine.h"
-//#include "DXFramework.h"
+#include "Engine.h"
+#include "DXFramework.h"
 #include "Effect.h"
 #include "EModelBluePrint.h"
 #include "ShaderManager.h"

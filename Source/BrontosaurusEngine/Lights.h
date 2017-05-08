@@ -1,6 +1,6 @@
 #pragma once
-//#include "../Commonutilities/vector3.h"
-//#include "../Commonutilities/vector4.h"
+#include "../Commonutilities/vector3.h"
+#include "../Commonutilities/vector4.h"
 
 #define NUMBER_OF_POINTLIGHTS 8 
 

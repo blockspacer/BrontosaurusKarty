@@ -1,4 +1,5 @@
 #pragma once
+#include "../CommonUtilities/vector2.h"
 
 struct ID3D11ShaderResourceView;
 class CDXFramework;

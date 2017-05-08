@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Navmesh.h"
 #include "ObjLoader.h"
-//#include "Engine.h"
+#include "Engine.h"
 #include "ShaderManager.h"
 #include "ModelManager.h"
 #include <Line3D.h>

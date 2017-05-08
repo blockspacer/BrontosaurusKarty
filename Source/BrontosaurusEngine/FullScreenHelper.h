@@ -1,8 +1,8 @@
 #pragma once
 
-//#include "../CommonUtilities/vector2.h"
-//#include "../CommonUtilities/vector4.h"
-//#include "../CommonUtilities/StaticArray.h"
+#include "../CommonUtilities/vector2.h"
+#include "../CommonUtilities/vector4.h"
+#include "../CommonUtilities/StaticArray.h"
 
 struct ID3D11Buffer;
 struct ID3D11ShaderResourceView;

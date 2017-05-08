@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "GeometryBuffer.h"
-//#include "DXFramework.h"
+#include "DXFramework.h"
 
 CGeometryBuffer::CGeometryBuffer()
 {

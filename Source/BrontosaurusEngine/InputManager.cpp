@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "InputManager.h"
 
-//#include "Engine.h"
+#include "Engine.h"
 #include "WindowsWindow.h"
 
 #include "../CommonUtilities/InputWrapper.h"
@@ -12,12 +12,12 @@
 
 #include "../PostMaster/Message.h"
 #include "../PostMaster/Event.h"
-#include "../PostMaster/FocusChange.h"
-#include "../ThreadedPostmaster/Postmaster.h"
 
 #include "../CommonUtilities/InputMessenger.h"
 #include "../CommonUtilities/InputMessage.h"
 #include "../CommonUtilities/EInputReturn.h"
+#include "../ThreadedPostmaster/Postmaster.h"
+#include "../PostMaster/FocusChange.h"
 
 CInputManager* CInputManager::ourInstance = nullptr;
 

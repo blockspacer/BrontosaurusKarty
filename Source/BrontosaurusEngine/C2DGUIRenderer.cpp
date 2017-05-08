@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "C2DGUIRenderer.h"
+#include "../ThreadedPostmaster/Postmaster.h"
 #include "FullScreenHelper.h"
 #include "Renderer.h"
 #include "ConstBufferTemplate.h"

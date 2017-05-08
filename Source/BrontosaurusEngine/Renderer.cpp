@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Renderer.h"
-//#include "DXFramework.h"
-//#include "Engine.h"
+#include "DXFramework.h"
+#include "Engine.h"
 #include "PointLightInstance.h"
 #include "Lights.h"
 #include "Model.h"
@@ -16,7 +16,7 @@
 #include "ModelManager.h"
 #include "ConstBufferTemplate.h"
 #include "WindowsWindow.h"
-//#include <Camera.h>
+#include <Camera.h>
 
 #include "ModelInstance.h"
 #include "../PostMaster/Message.h"

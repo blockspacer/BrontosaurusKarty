@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "RenderPackage.h"
-//#include "Engine.h"
-//#include "DXFramework.h"
+#include "Engine.h"
+#include "DXFramework.h"
 #include "ScreenGrab/ScreenGrab.h"
-//#include <vector2.h>
+#include <vector2.h>
 #include <minwinbase.h>
 
 CRenderPackage::CRenderPackage(): myDepthTexture(nullptr), myDepthTarget(nullptr)

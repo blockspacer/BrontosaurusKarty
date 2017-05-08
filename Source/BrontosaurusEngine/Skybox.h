@@ -1,6 +1,6 @@
 #pragma once
-//#include <vector4.h>
-//#include <matrix44.h>
+#include <vector4.h>
+#include <matrix44.h>
 
 class CEffect;
 class CTexture;

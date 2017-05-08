@@ -4,9 +4,10 @@
 
 #include "CascadeShadowMap.h"
 #include "ModelInstance.h"
+#include "RenderMessages.h"
+#include "Engine.h"
 #include "Renderer.h"
 #include "..\CommonUtilities\Sphere.h"
-#include "RenderCamera.h"
 
 #define SHADOWMAP_SIZE 2048u
 #define SHADOWBUFFER_SIZE 1024u
@@ -19,9 +20,8 @@
 
 CCascadeShadowMap::CCascadeShadowMap(const int /*aNumOfCascades*/, const float aNear, const float aFar)
 {
-	myRenderCamera = new CRenderCamera();
-	myRenderCamera->InitOrthographic(32.f , 32.f, aFar, aNear, SHADOWBUFFER_SIZE, SHADOWBUFFER_SIZE, nullptr, DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT);
-	myRenderCamera->ShadowInit();
+	myRenderCamera.InitOrthographic(32.f , 32.f, aFar, aNear, SHADOWBUFFER_SIZE, SHADOWBUFFER_SIZE, nullptr, DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT);
+	myRenderCamera.ShadowInit();
 
 	CU::Vector2ui size = { SHADOWMAP_SIZE, SHADOWMAP_SIZE };
 	myShadowMap.Init(size, nullptr, DXGI_FORMAT_R32_FLOAT);
@@ -55,7 +55,6 @@ CCascadeShadowMap::CCascadeShadowMap(const int /*aNumOfCascades*/, const float a
 
 CCascadeShadowMap::~CCascadeShadowMap()
 {
-	SAFE_DELETE(myRenderCamera);
 }
 
 void CCascadeShadowMap::ComputeShadowProjection(const CU::Camera& aCamera)
@@ -153,8 +152,8 @@ void CCascadeShadowMap::Render(const CU::GrowingArray<CModelInstance*, InstanceI
 		statemsg.myDepthStencilState = eDepthStencilState::eDefault;
 		statemsg.myBlendState = eBlendState::eNoBlend;
 		statemsg.mySamplerState = eSamplerState::eDeferred;
-		myRenderCamera->AddRenderMessage(new SChangeStatesMessage(statemsg));
-		myRenderCamera->GetCamera().ReInit(
+		myRenderCamera.AddRenderMessage(new SChangeStatesMessage(statemsg));
+		myRenderCamera.GetCamera().ReInit(
 			cascade.myOrthoProjection,
 			cascade.myTransformation);
 
@@ -163,20 +162,20 @@ void CCascadeShadowMap::Render(const CU::GrowingArray<CModelInstance*, InstanceI
 			if (modelInstance == nullptr || modelInstance->ShouldRender() == false)
 				continue;
 
-			if (myRenderCamera->GetCamera().IsInside(modelInstance->GetModelBoundingSphere()) == false)
+			if (myRenderCamera.GetCamera().IsInside(modelInstance->GetModelBoundingSphere()) == false)
 				continue;
 
 			if (modelInstance->GetIgnoreDepth() == true)
 				continue;
 
-			modelInstance->RenderDeferred(*myRenderCamera);
+			modelInstance->RenderDeferred(myRenderCamera);
 		}
 		SRenderModelBatches batchMessage;
-		batchMessage.myPixelShader = myRenderCamera->GetShadowShader();
+		batchMessage.myPixelShader = myRenderCamera.GetShadowShader();
 		batchMessage.myRenderToDepth = true;
 
-		myRenderCamera->AddRenderMessage(new SRenderModelBatches());
-		myRenderCamera->Render();
+		myRenderCamera.AddRenderMessage(new SRenderModelBatches());
+		myRenderCamera.Render();
 
 		// DRAW SHADOWBUFFER
 		statemsg.myBlendState = eBlendState::eNoBlend;
@@ -192,7 +191,7 @@ void CCascadeShadowMap::Render(const CU::GrowingArray<CModelInstance*, InstanceI
 
 		SRenderFullscreenEffectMessage * msg = new SRenderFullscreenEffectMessage();
 		msg->myRect = cascade.myRect;
-		msg->myFirstPackage = myRenderCamera->GetRenderPackage();
+		msg->myFirstPackage = myRenderCamera.GetRenderPackage();
 		msg->myEffectType = CFullScreenHelper::eEffectType::eCopyR;
 		msg->myFirstUseDepthResource = false;
 		RENDERER.AddRenderMessage(msg);
@@ -209,8 +208,8 @@ void CCascadeShadowMap::Render(const CU::GrowingArray<CModelInstance*, InstanceI
 
 	SSetShadowBuffer *shadowMSG = new SSetShadowBuffer();
 	shadowMSG->cascadeBuffer = myCascadeBuffer;
-	//shadowMSG->myCameraProjection = myRenderCamera->GetCamera().GetProjection();
-	//shadowMSG->myCameraTransformation = myRenderCamera->GetCamera().GetInverse();
+	//shadowMSG->myCameraProjection = myRenderCamera.GetCamera().GetProjection();
+	//shadowMSG->myCameraTransformation = myRenderCamera.GetCamera().GetInverse();
 	shadowMSG->myShadowBuffer = myShadowMap;
 	for (SCascade& cascade : shadowMSG->cascadeBuffer.myCascades)
 	{

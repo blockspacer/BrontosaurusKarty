@@ -2,10 +2,10 @@
 #include "StreakEmitter.h"
 #include "VertexStructs.h"
 #include "Effect.h"
-//#include "Engine.h"
+#include "Engine.h"
 #include "ShaderManager.h"
 #include <d3d11.h>
-//#include "DXFramework.h"
+#include "DXFramework.h"
 #include "ConstBufferTemplate.h"
 #include <Camera.h>
 #include "TextureManager.h"

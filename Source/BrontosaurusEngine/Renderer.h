@@ -9,6 +9,7 @@
 #include <TimerManager.h>
 
 //temp includes
+#include "../PostMaster/Subscriber.h" //mvh carl
 #include "../ThreadedPostmaster/Subscriber.h"
 #include "ParticleRenderer.h"
 #include "C2DGUIRenderer.h"

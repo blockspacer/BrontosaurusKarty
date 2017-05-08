@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "FullScreenHelper.h"
-//#include "DXFramework.h"
+#include "DXFramework.h"
 #include "Effect.h"
 #include "RenderPackage.h"
 #include "WindowsWindow.h"
@@ -139,7 +139,7 @@ void CFullScreenHelper::DoEffect(const eEffectType aEffectType, const CU::Vector
 
 		D3D11_VIEWPORT activeViewPort;
 		unsigned int numPorts = 1u;
-		DEVICE_CONTEXT->RSGetViewports(&numPorts, &activeViewPort);
+ 		DEVICE_CONTEXT->RSGetViewports(&numPorts, &activeViewPort);
 
 		if(numPorts != 0u)
 		{

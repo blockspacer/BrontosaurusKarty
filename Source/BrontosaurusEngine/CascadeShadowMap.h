@@ -2,12 +2,16 @@
 #include <vector>
 #include <array>
 #include <math.h>
+#include <..\CommonUtilities\Camera.h>
+#include "..\CommonUtilities\matrix44.h"
 
+
+#include "RenderCamera.h"
 #include "RenderPackage.h"
 #include "CascadeBuffer.h"
 
 class CRenderCamera;
-//class CRenderPackage;
+class CRenderPackage;
 class CModelInstance;
 
 typedef unsigned int InstanceID;
@@ -34,7 +38,7 @@ public:
 
 	void DumpToFile(const char* aPath);
 private:
-	CRenderCamera* myRenderCamera;
+	CRenderCamera myRenderCamera;
 	CRenderPackage myShadowMap;
 
 	SCascadeBuffer myCascadeBuffer;

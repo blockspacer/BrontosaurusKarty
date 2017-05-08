@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "GUIModleHelper.h"
 
+#include "Engine.h"
 #include "ShaderManager.h"
 #include "FBXLoader.h"
 #include "Effect.h"

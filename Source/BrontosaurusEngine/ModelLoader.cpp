@@ -5,6 +5,7 @@
 #include "BufferStructs.h"
 #include "FBXLoader.h"
 #include "Effect.h"
+#include "Engine.h"
 #include "ShaderManager.h"
 #include "Surface.h"
 #include "EffectsManager.h"

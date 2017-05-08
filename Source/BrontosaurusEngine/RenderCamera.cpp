@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "RenderCamera.h"
 #include "Renderer.h"
-//#include "Engine.h"
+#include "Engine.h"
 #include "ShaderManager.h"
-//#include "RenderMessages.h"
+#include "RenderMessages.h"
 
 #include "GeometryBuffer.h"
 #include "EModelBluePrint.h"

@@ -2,7 +2,7 @@
 #include "ShaderManager.h"
 #include "VertexStructs.h"
 #include "EffectHelper.h"
-//#include "Engine.h"
+#include "Engine.h"
 
 CShaderManager::CShaderManager() //precompiled shaders later
 {

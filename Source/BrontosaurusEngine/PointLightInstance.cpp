@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "PointLightInstance.h"
 #include "LightManager.h"
-//#include "Engine.h"
+#include "Engine.h"
 
 CPointLightInstance::CPointLightInstance()
 {

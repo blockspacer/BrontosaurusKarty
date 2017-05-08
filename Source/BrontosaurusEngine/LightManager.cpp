@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "LightManager.h"
-//#include <vector4.h>
+#include <vector4.h>
 
 CLightManager::CLightManager()
 {
