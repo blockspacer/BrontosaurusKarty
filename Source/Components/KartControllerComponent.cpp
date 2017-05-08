@@ -46,8 +46,12 @@ CKartControllerComponent::CKartControllerComponent()
 	myMaxDriftSteerAffection = Karts.at("MaxDriftTurnRate").GetFloat();
 	myBoostSpeedDecay = myMaxAcceleration * myAccelerationModifier * 1.25f;
 
-	myLeftWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("DriftParticle").GetString());
-	myRightWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("DriftParticle").GetString());
+	myLeftWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GatlingSmoke");
+	myRightWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GatlingSmoke");
+	myLeftDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GunFire");
+	myRightDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GunFire");
+
+	myCurrentAction = eCurrentAction::eDefault;
 }
 
 
@@ -57,6 +61,7 @@ CKartControllerComponent::~CKartControllerComponent()
 
 void CKartControllerComponent::TurnRight()
 {
+	myCurrentAction = eCurrentAction::eTurningRight;
 	if (myIsDrifting == false)
 	{
 		mySteering = myTurnRate;
@@ -69,6 +74,7 @@ void CKartControllerComponent::TurnRight()
 
 void CKartControllerComponent::TurnLeft()
 {
+	myCurrentAction = eCurrentAction::eTurningLeft;
 	if (myIsDrifting == false)
 	{
 		mySteering = -myTurnRate;
@@ -96,6 +102,7 @@ void CKartControllerComponent::MoveBackWards()
 
 void CKartControllerComponent::StopTurning()
 {
+	myCurrentAction = eCurrentAction::eDefault;
 	if (myIsDrifting == false)
 	{
 		mySteering = 0;
@@ -136,9 +143,9 @@ void CKartControllerComponent::StopDrifting()
 		{
 			SComponentMessageData boostMessageData;
 			SBoostData* boostData = new SBoostData();
-			boostData->accerationBoost = 5.5f;
-			boostData->duration = 2.0f;
-			boostData->maxSpeedBoost = 1.5f;
+			boostData->accerationBoost = 3.5f;
+			boostData->duration = 1.5f;
+			boostData->maxSpeedBoost = 1.0f;
 			boostData->type = eBoostType::eDefault;
 			boostMessageData.myBoostData = boostData;
 			GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
@@ -147,9 +154,9 @@ void CKartControllerComponent::StopDrifting()
 		{
 			SComponentMessageData boostMessageData;
 			SBoostData* boostData = new SBoostData();
-			boostData->accerationBoost = 5;
-			boostData->duration = 1.5f;
-			boostData->maxSpeedBoost = 1.0f;
+			boostData->accerationBoost = 2;
+			boostData->duration = 1.0f;
+			boostData->maxSpeedBoost = 0.7f;
 			boostData->type = eBoostType::eDefault;
 			boostMessageData.myBoostData = boostData;
 			GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
@@ -158,9 +165,25 @@ void CKartControllerComponent::StopDrifting()
 
 	myIsDrifting = false;
 	myDriftRate = 0;
-	mySteering = 0;
 	myDriftTimer = 0;
 	myDriftSteerModifier = 0;
+	CParticleEmitterManager::GetInstance().Deactivate(myLeftDriftBoostEmitterhandle);
+	CParticleEmitterManager::GetInstance().Deactivate(myRightDriftBoostEmitterhandle);
+
+	switch (myCurrentAction)
+	{
+	case CKartControllerComponent::eCurrentAction::eTurningRight:
+		TurnRight();
+		break;
+	case CKartControllerComponent::eCurrentAction::eTurningLeft:
+		TurnLeft();
+		break;
+	case CKartControllerComponent::eCurrentAction::eDefault:
+		StopTurning();
+		break;
+	default:
+		break;
+	}
 }
 
 void CKartControllerComponent::Update(const float aDeltaTime)
@@ -209,8 +232,16 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 		CU::Matrix44f particlePosition = GetParent()->GetLocalTransform();
 		particlePosition.Move(CU::Vector3f(-0.45f, 0, 0));
 		CParticleEmitterManager::GetInstance().SetPosition(myLeftWheelDriftEmmiterHandle, particlePosition.GetPosition());
+		CParticleEmitterManager::GetInstance().SetPosition(myLeftDriftBoostEmitterhandle, particlePosition.GetPosition());
 		particlePosition.Move(CU::Vector3f(0.9f, 0, 0));
 		CParticleEmitterManager::GetInstance().SetPosition(myRightWheelDriftEmmiterHandle, particlePosition.GetPosition());
+		CParticleEmitterManager::GetInstance().SetPosition(myRightDriftBoostEmitterhandle, particlePosition.GetPosition());
+		static bool driftParticlesActivated = false;
+		if (myDriftTimer >= 2.0f && driftParticlesActivated == false)
+		{
+			CParticleEmitterManager::GetInstance().Activate(myLeftDriftBoostEmitterhandle);
+			CParticleEmitterManager::GetInstance().Activate(myRightDriftBoostEmitterhandle);
+		}
 	}
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, SComponentMessageData());
 }
