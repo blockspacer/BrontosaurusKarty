@@ -50,6 +50,8 @@ CKartControllerComponent::CKartControllerComponent()
 	myRightWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GatlingSmoke");
 	myLeftDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GunFire");
 	myRightDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GunFire");
+
+	myCurrentAction = eCurrentAction::eDefault;
 }
 
 
@@ -59,6 +61,7 @@ CKartControllerComponent::~CKartControllerComponent()
 
 void CKartControllerComponent::TurnRight()
 {
+	myCurrentAction = eCurrentAction::eTurningRight;
 	if (myIsDrifting == false)
 	{
 		mySteering = myTurnRate;
@@ -71,6 +74,7 @@ void CKartControllerComponent::TurnRight()
 
 void CKartControllerComponent::TurnLeft()
 {
+	myCurrentAction = eCurrentAction::eTurningLeft;
 	if (myIsDrifting == false)
 	{
 		mySteering = -myTurnRate;
@@ -98,6 +102,7 @@ void CKartControllerComponent::MoveBackWards()
 
 void CKartControllerComponent::StopTurning()
 {
+	myCurrentAction = eCurrentAction::eDefault;
 	if (myIsDrifting == false)
 	{
 		mySteering = 0;
@@ -160,11 +165,25 @@ void CKartControllerComponent::StopDrifting()
 
 	myIsDrifting = false;
 	myDriftRate = 0;
-	mySteering = 0;
 	myDriftTimer = 0;
 	myDriftSteerModifier = 0;
 	CParticleEmitterManager::GetInstance().Deactivate(myLeftDriftBoostEmitterhandle);
 	CParticleEmitterManager::GetInstance().Deactivate(myRightDriftBoostEmitterhandle);
+
+	switch (myCurrentAction)
+	{
+	case CKartControllerComponent::eCurrentAction::eTurningRight:
+		TurnRight();
+		break;
+	case CKartControllerComponent::eCurrentAction::eTurningLeft:
+		TurnLeft();
+		break;
+	case CKartControllerComponent::eCurrentAction::eDefault:
+		StopTurning();
+		break;
+	default:
+		break;
+	}
 }
 
 void CKartControllerComponent::Update(const float aDeltaTime)

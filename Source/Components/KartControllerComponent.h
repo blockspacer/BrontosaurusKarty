@@ -21,6 +21,13 @@ public:
 	void Update(const float aDeltaTime);
 	void Receive(const eComponentMessageType, const SComponentMessageData&) override;
 
+	enum class eCurrentAction
+	{
+		eTurningRight,
+		eTurningLeft,
+		eDefault,
+	};
+
 private:
 	float myFowrardSpeed;
 	float myMaxSpeed;
@@ -48,6 +55,8 @@ private:
 	float myMaxDriftRate;
 	float myTimeMultiplier;
 	float myMaxDriftSteerAffection;
+
+	eCurrentAction myCurrentAction;
 
 	int myLeftWheelDriftEmmiterHandle;
 	int myRightWheelDriftEmmiterHandle;
