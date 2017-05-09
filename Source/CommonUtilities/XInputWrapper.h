@@ -9,7 +9,7 @@ namespace CU
 	class Vector2;
 	using Vector2f = Vector2<float>;
 
-	enum class GAMEPAD
+	enum class GAMEPAD : short
 	{
 		DPAD_UP = 0x0001,
 		DPAD_DOWN = 0x0002,
