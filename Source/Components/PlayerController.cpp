@@ -17,6 +17,7 @@ CPlayerController::CPlayerController(CKartControllerComponent & aKartComponent) 
 	myIsTurningRight = false;
 
 	myIsDrifting = false;
+	myControllerIndex = 0;
 }
 
 CPlayerController::~CPlayerController()
@@ -30,41 +31,44 @@ void CPlayerController::Update(const float aDeltaTime)
 
 CU::eInputReturn CPlayerController::TakeInput(const CU::SInputMessage & aInputMessage)
 {
-	if (aInputMessage.myType == CU::eInputType::eGamePadButtonPressed)
+	if (aInputMessage.myGamepadIndex[1] == 0/*my controller index later on*/)
 	{
-		GamePadPressedKey(aInputMessage);
-	}
-	else if (aInputMessage.myType == CU::eInputType::eGamePadButtonReleased)
-	{
-		GamePadReleasedKey(aInputMessage);
-	}
-	else if (aInputMessage.myType == CU::eInputType::eGamePadLeftJoyStickChanged)
-	{
-		MovedJoystick(aInputMessage);
-	}
-	else if(aInputMessage.myType == CU::eInputType::eGamePadLeftTriggerPressed)
-	{
-		GamePadLeftTrigger(aInputMessage);
-	}
-	else if (aInputMessage.myType == CU::eInputType::eGamePadRightTriggerPressed)
-	{
-		GamePadRightTrigger(aInputMessage);
-	}
-	else if (aInputMessage.myType == CU::eInputType::eGamePadLeftTriggerReleased)
-	{
-		GamePadLeftTriggerReleased(aInputMessage);
-	}
-	else if (aInputMessage.myType == CU::eInputType::eGamePadRightTriggerReleased)
-	{
-		GamePadRightTriggerReleased(aInputMessage);
-	}
-	else if (aInputMessage.myType == CU::eInputType::eKeyboardReleased)
-	{
-		ReleasedKey(aInputMessage);
-	}
-	else if (aInputMessage.myType == CU::eInputType::eKeyboardPressed)
-	{
-		PressedKey(aInputMessage);
+		if (aInputMessage.myType == CU::eInputType::eGamePadButtonPressed)
+		{
+			GamePadPressedKey(aInputMessage);
+		}
+		else if (aInputMessage.myType == CU::eInputType::eGamePadButtonReleased)
+		{
+			GamePadReleasedKey(aInputMessage);
+		}
+		else if (aInputMessage.myType == CU::eInputType::eGamePadLeftJoyStickChanged)
+		{
+			MovedJoystick(aInputMessage);
+		}
+		else if (aInputMessage.myType == CU::eInputType::eGamePadLeftTriggerPressed)
+		{
+			GamePadLeftTrigger(aInputMessage);
+		}
+		else if (aInputMessage.myType == CU::eInputType::eGamePadRightTriggerPressed)
+		{
+			GamePadRightTrigger(aInputMessage);
+		}
+		else if (aInputMessage.myType == CU::eInputType::eGamePadLeftTriggerReleased)
+		{
+			GamePadLeftTriggerReleased(aInputMessage);
+		}
+		else if (aInputMessage.myType == CU::eInputType::eGamePadRightTriggerReleased)
+		{
+			GamePadRightTriggerReleased(aInputMessage);
+		}
+		else if (aInputMessage.myType == CU::eInputType::eKeyboardReleased)
+		{
+			ReleasedKey(aInputMessage);
+		}
+		else if (aInputMessage.myType == CU::eInputType::eKeyboardPressed)
+		{
+			PressedKey(aInputMessage);
+		}
 	}
 
 	return CU::eInputReturn::ePassOn;

@@ -24,6 +24,10 @@ private:
 	void GamePadRightTriggerReleased(const CU::SInputMessage& aInputMessage);
 	void JoystickDeadzone();
 
+	float myLastTurnDirection;
+
+	short myControllerIndex;
+
 	bool myIsMovingFoward;
 	bool myIsMovingBackwards;
 	bool myIsTurningLeft;
@@ -32,6 +36,5 @@ private:
 	bool myIsDrifting;
 
 
-	float myLastTurnDirection;
 };
 

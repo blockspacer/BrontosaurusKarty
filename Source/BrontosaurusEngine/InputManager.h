@@ -15,7 +15,7 @@ namespace CU
 	using Vector2f = Vector2<float>;
 
 	enum class eKeys;
-	enum class GAMEPAD;
+	enum class GAMEPAD : short;
 
 	struct KeyEvent;
 }
