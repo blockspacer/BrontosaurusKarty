@@ -194,7 +194,7 @@ void CEngine::Start()
 	{
 		GetThreadPool()->GetInstance()->LogEnd();
 		myTimerManager->UpdateTimers();
-		myInputManager->Update();
+		myInputManager->Update(myTimerManager->GetTimer(myTimerH).GetDeltaTime());
 
 		myRenderer->SwapWrite();
 

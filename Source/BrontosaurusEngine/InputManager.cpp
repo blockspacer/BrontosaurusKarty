@@ -18,6 +18,8 @@
 #include "../CommonUtilities/EInputReturn.h"
 #include "../ThreadedPostmaster/Postmaster.h"
 #include "../PostMaster/FocusChange.h"
+#include "../PostMaster/SetVibrationOnController.h"
+#include "../PostMaster/StopVibrationOnController.h"
 
 CInputManager* CInputManager::ourInstance = nullptr;
 
@@ -41,6 +43,18 @@ CInputManager::CInputManager()
 	myXInputWrapper = new CU::XInputWrapper();
 	myXInputWrapper->Init(1);
 
+	myControllerVibrationStates.Init(myXInputWrapper->GetConnectedJoystickCount());
+	for (unsigned int i = 0; i < myXInputWrapper->GetConnectedJoystickCount(); ++i)
+	{
+		SControllerVibrationState state;
+		state.myController = i;
+		state.myLeftIntensity = 0;
+		state.myRightIntensity = 0;
+		state.myTimeToRumble = 0;
+		state.myTimeIHaveRumbled = 2.5f;
+		myControllerVibrationStates.Add(state);
+	}
+
 	myDInputWrapper->Init(hingsten, hunden);
 
 	CU::Vector2f windowSize(WINDOW_SIZE);
@@ -50,6 +64,8 @@ CInputManager::CInputManager()
 	myHasFocus = true;
 
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eFocusChanged);
+	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eSetVibration);
+	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eStopVibration);
 }
 
 CInputManager::~CInputManager()
@@ -108,14 +124,37 @@ eMessageReturn CInputManager::DoEvent(const FocusChange& aFocusChange)
 	return eMessageReturn::eContinue;
 }
 
-void CInputManager::Update()
+eMessageReturn CInputManager::DoEvent(const SetVibrationOnController& aSetVibrationmessage)
+{
+	SControllerVibrationState* state = &myControllerVibrationStates[aSetVibrationmessage.GetJoystickIndex()];
+	state->myRightIntensity = aSetVibrationmessage.GetRightIntensity();
+	state->myTimeToRumble = aSetVibrationmessage.GetLeftIntensity();
+	state->myTimeToRumble = aSetVibrationmessage.GetMyTimeToRumble();
+	state->myShouldRumbleForever = aSetVibrationmessage.GetShoudlRumbleForever();
+	return eMessageReturn::eContinue;
+}
+
+eMessageReturn CInputManager::DoEvent(const StopVibrationOnController& aStopVibrationmessage)
+{
+	myXInputWrapper->StopVibration(aStopVibrationmessage.GetJoyStick());
+	SControllerVibrationState* state = &myControllerVibrationStates[aStopVibrationmessage.GetJoyStick()];
+	state->myShouldRumbleForever = false;
+	state->myLeftIntensity = 0;
+	state->myRightIntensity = 0;
+	state->myTimeToRumble = 0;
+	state->myTimeIHaveRumbled = 2.5f;
+
+	return eMessageReturn::eContinue;
+}
+
+void CInputManager::Update(const CU::Time& aDeltaTime)
 {
 	myDInputWrapper->Update();
 	myXInputWrapper->UpdateStates();
 
 	UpdateMouse();
 	UpdateKeyboard();
-	UpdateGamePad();
+	UpdateGamePad(aDeltaTime);
 }
 
 void CInputManager::UpdateMouse()
@@ -264,7 +303,7 @@ void CInputManager::UpdateKeyboard()
 	}
 }
 
-void CInputManager::UpdateGamePad()
+void CInputManager::UpdateGamePad(const CU::Time& aDeltaTime)
 {
 	for (unsigned i = 0; i < myXInputWrapper->GetConnectedJoystickCount(); ++i)
 	{
@@ -368,7 +407,33 @@ void CInputManager::UpdateGamePad()
 					}
 				}
 			}
-
-
+			SControllerVibrationState* state = &myControllerVibrationStates[i];
+			if (state->myShouldRumbleForever == true)
+			{
+				state->myTimeIHaveRumbled += aDeltaTime.GetSeconds();
+				if (state->myTimeIHaveRumbled >= 2.5f)
+				{
+					state->myTimeIHaveRumbled -= 2.5f;
+					myXInputWrapper->SetLeftVibration(state->myController, state->myLeftIntensity);
+					myXInputWrapper->SetRightVibration(state->myController, state->myRightIntensity);
+				}
+				continue;
+			}
+			if (state->myTimeToRumble > 0)
+			{
+				state->myTimeToRumble -= aDeltaTime.GetSeconds();
+				if (state->myTimeToRumble <= 0)
+				{
+					myXInputWrapper->StopVibration(state->myController);
+					continue;
+				}
+				state->myTimeIHaveRumbled += aDeltaTime.GetSeconds();
+				if (state->myTimeIHaveRumbled >= 3.0f)
+				{
+					state->myTimeIHaveRumbled -= 3.0f;
+					myXInputWrapper->SetLeftVibration(state->myController, state->myLeftIntensity);
+					myXInputWrapper->SetRightVibration(state->myController, state->myRightIntensity);
+				}
+			}
 	}
 }

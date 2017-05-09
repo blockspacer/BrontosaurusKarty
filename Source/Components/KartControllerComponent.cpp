@@ -4,7 +4,9 @@
 #include "ParticleEmitterInstance.h"
 #include "ParticleEmitterManager.h"
 #include "../CommonUtilities/JsonValue.h"
-
+#include "../PostMaster/SetVibrationOnController.h"
+#include "../PostMaster/StopVibrationOnController.h"
+#include "../ThreadedPostmaster/Postmaster.h"
 CKartControllerComponent::CKartControllerComponent()
 {
 
@@ -122,6 +124,8 @@ void CKartControllerComponent::Drift()
 		myDriftRate = -myMaxDriftRate;
 		CParticleEmitterManager::GetInstance().Activate(myLeftWheelDriftEmmiterHandle);
 		CParticleEmitterManager::GetInstance().Activate(myRightWheelDriftEmmiterHandle);
+		SetVibrationOnController* vibrationMessage = new SetVibrationOnController(0, 10, 10);
+		Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 	}
 	else if (mySteering < 0)
 	{
@@ -129,6 +133,8 @@ void CKartControllerComponent::Drift()
 		myDriftRate = myMaxDriftRate;
 		CParticleEmitterManager::GetInstance().Activate(myLeftWheelDriftEmmiterHandle);
 		CParticleEmitterManager::GetInstance().Activate(myRightWheelDriftEmmiterHandle);
+		SetVibrationOnController* vibrationMessage = new SetVibrationOnController(0, 10, 10);
+		Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 	}
 }
 
@@ -169,6 +175,9 @@ void CKartControllerComponent::StopDrifting()
 	myDriftSteerModifier = 0;
 	CParticleEmitterManager::GetInstance().Deactivate(myLeftDriftBoostEmitterhandle);
 	CParticleEmitterManager::GetInstance().Deactivate(myRightDriftBoostEmitterhandle);
+
+	StopVibrationOnController* stopionMessageLeft = new StopVibrationOnController(0);
+	Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(stopionMessageLeft);
 
 	switch (myCurrentAction)
 	{
