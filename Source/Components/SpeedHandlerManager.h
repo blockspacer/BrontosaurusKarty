@@ -1,7 +1,6 @@
 #pragma once
 class CSpeedHandlerComponent;
 struct SBoostData;
-enum class eBoostType;
 class CSpeedHandlerManager
 {
 public:
@@ -12,7 +11,7 @@ public:
 	static CSpeedHandlerManager* GetInstance();
 	void Init();
 	void LoadBoostData();
-	const SBoostData* GetData(eBoostType aType) const;
+	const SBoostData* GetData(short aHashedName) const;
 	void Update(float aDeltaTime);
 	CSpeedHandlerComponent* CreateAndRegisterComponent();
 private:

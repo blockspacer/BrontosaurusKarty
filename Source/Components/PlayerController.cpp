@@ -147,7 +147,7 @@ void CPlayerController::PressedKey(const CU::SInputMessage & aInputMessage)
 		boostData->accerationBoost = 5;
 		boostData->duration = 4.0f;
 		boostData->maxSpeedBoost = 2.0f;
-		boostData->type = eBoostType::eDefault;
+		boostData->hashedName = std::hash<std::string>()("TempBoost");
 		boostMessageData.myBoostData = boostData;
 		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
 		break;
@@ -182,7 +182,7 @@ void CPlayerController::GamePadPressedKey(const CU::SInputMessage & aInputMessag
 		boostData->accerationBoost = 5;
 		boostData->duration = 4.0f;
 		boostData->maxSpeedBoost = 2.0f;
-		boostData->type = eBoostType::eDefault;
+		boostData->hashedName = std::hash<std::string>()("TempBoost");
 		boostMessageData.myBoostData = boostData;
 		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
 		break;
@@ -241,7 +241,7 @@ void CPlayerController::GamePadLeftTrigger(const CU::SInputMessage & aInputMessa
 	boostData->accerationBoost = 5;
 	boostData->duration = 4.0f;
 	boostData->maxSpeedBoost = 2.0f;
-	boostData->type = eBoostType::eDefault;
+	boostData->hashedName = std::hash<std::string>()("TempBoost");
 	boostMessageData.myBoostData = boostData;
 	myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
 }

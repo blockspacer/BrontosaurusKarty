@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "KartControllerComponent.h"
+#include "SpeedHandlerManager.h"
 #include "BoostData.h"
 #include "ParticleEmitterInstance.h"
 #include "ParticleEmitterManager.h"
@@ -148,23 +149,13 @@ void CKartControllerComponent::StopDrifting()
 		if (myDriftTimer >= 5.0f)
 		{
 			SComponentMessageData boostMessageData;
-			SBoostData* boostData = new SBoostData();
-			boostData->accerationBoost = 3.5f;
-			boostData->duration = 1.5f;
-			boostData->maxSpeedBoost = 1.0f;
-			boostData->type = eBoostType::eDefault;
-			boostMessageData.myBoostData = boostData;
+			boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("DriftBoost"));
 			GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
 		}
 		else
 		{
 			SComponentMessageData boostMessageData;
-			SBoostData* boostData = new SBoostData();
-			boostData->accerationBoost = 2;
-			boostData->duration = 1.0f;
-			boostData->maxSpeedBoost = 0.7f;
-			boostData->type = eBoostType::eDefault;
-			boostMessageData.myBoostData = boostData;
+			boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("MiniDriftBoost"));
 			GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
 		}
 	}
