@@ -305,6 +305,7 @@ void CInputManager::UpdateKeyboard()
 
 void CInputManager::UpdateGamePad(const CU::Time& aDeltaTime)
 {
+	//delta time is needed for measuring how long a controller is supposed to be vibrating
 	for (unsigned i = 0; i < myXInputWrapper->GetConnectedJoystickCount(); ++i)
 	{
 		if (myXInputWrapper->GetKeyEvents(i, myPadInputs) == true)

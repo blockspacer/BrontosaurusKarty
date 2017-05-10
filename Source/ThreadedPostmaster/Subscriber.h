@@ -22,6 +22,7 @@ class CNetworkDebugInfo;
 class CGameEventMessage;
 class SetVibrationOnController;
 class StopVibrationOnController;
+class GetAvailableController;
 
 namespace Postmaster
 {

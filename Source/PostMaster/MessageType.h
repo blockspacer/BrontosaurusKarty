@@ -27,6 +27,7 @@ enum class eMessageType
 	ePlayerEnterArena,
 	eSetVibration,
 	eStopVibration,
+	eGetAvailableController,
 	eLength,
 };
 

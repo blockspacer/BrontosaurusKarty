@@ -49,10 +49,10 @@ CKartControllerComponent::CKartControllerComponent()
 	myMaxDriftSteerAffection = Karts.at("MaxDriftTurnRate").GetFloat();
 	myBoostSpeedDecay = myMaxAcceleration * myAccelerationModifier * 1.25f;
 
-	myLeftWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GatlingSmoke");
-	myRightWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GatlingSmoke");
-	myLeftDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GunFire");
-	myRightDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GunFire");
+	myLeftWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("DriftParticle").GetString());
+	myRightWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("DriftParticle").GetString());
+	myLeftDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("FirstStageBoostParticle").GetString());
+	myRightDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("FirstStageBoostParticle").GetString());
 
 	myCurrentAction = eCurrentAction::eDefault;
 }
