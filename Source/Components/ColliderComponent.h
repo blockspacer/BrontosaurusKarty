@@ -19,7 +19,8 @@ struct SColliderData
 		eSphere,
 		eCapsule,
 		eRigidbody,
-		eMesh
+		eMesh,
+		eConcaveMesh
 	} myType = eColliderType::eNone;
 	
 	Physics::SMaterialData material;

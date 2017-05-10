@@ -1,11 +1,5 @@
 #pragma once
 #include "VertexStructs.h"
-#include <vector>
-#include <map>
-
-#include "../CommonUtilities/matrix44.h"
-
-#include "FbxLoader/AssImp/scene.h"
 
 struct BoneInfo
 {
@@ -118,6 +112,36 @@ public:
 
 };
 
+struct SLoaderCollisionMesh
+{
+	SLoaderCollisionMesh()
+		: vertices({ 0, 0, nullptr })
+		, indices({ 0, 0, nullptr })
+	{
+	}
+
+	~SLoaderCollisionMesh()
+	{
+		delete[] vertices.data;
+		delete[] indices.data;
+	}
+
+	struct 
+	{
+		unsigned int count;
+		unsigned int stride;
+		float* data;
+
+	} vertices;
+
+	struct
+	{
+		unsigned int triangleCount;
+		unsigned int stride;
+		unsigned int* data;
+	} indices;
+};
+
 struct aiNode;
 class CFBXLoader
 {
@@ -129,6 +153,8 @@ public:
 	CLoaderModel* LoadModel(const std::string& aModel);
 	bool LoadGUIScene(const std::string& aFilePath, CLoaderScene & aSceneOut);
 	bool LoadModelScene(const std::string& aFilePath, CLoaderScene & aSceneOut);
+	bool LoadCollisionMesh(const std::string& aFilePath, SLoaderCollisionMesh& aLoaderMeshOut);
+
 	const struct aiScene* GetScene(const std::string& aFBXPath);
 
 

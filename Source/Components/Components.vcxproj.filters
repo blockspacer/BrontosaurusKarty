@@ -56,6 +56,7 @@
       <Filter>SpeedHandling</Filter>
     </ClCompile>
     <ClCompile Include="KartControllerComponentManager.cpp" />
+    <ClCompile Include="ConcaveMeshCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -111,6 +112,7 @@
     <ClInclude Include="IPickupComponent.h">
       <Filter>Pickups\Base</Filter>
     </ClInclude>
+    <ClInclude Include="ConcaveMeshCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Pickups">

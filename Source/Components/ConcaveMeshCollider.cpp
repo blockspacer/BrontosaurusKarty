@@ -1,23 +1,22 @@
 #include "stdafx.h"
-#include "MeshColliderComponent.h"
-#include "../Physics/Shape.h"
-#include "../Physics/Physics.h"
-#include "../Physics/PhysXManager.h"
+#include "ConcaveMeshCollider.h"
+
 #include "../Physics/Foundation.h"
+#include "../Physics/Physics.h"
+#include "../Physics/Shape.h"
 #include "../Physics/PhysicsScene.h"
 
-CMeshColliderComponent::CMeshColliderComponent(const SMeshColliderData& aColliderData, Physics::CPhysicsScene* aScene) : myScene(aScene),
-	CColliderComponent(aColliderData, nullptr, nullptr, false)
+CConcaveMeshColliderComponent::CConcaveMeshColliderComponent(const SConcaveMeshColliderData& aColliderData, Physics::CPhysicsScene* aScene)
+	: CColliderComponent(aColliderData, nullptr, nullptr, false)
 {
 	myData = aColliderData;
 }
 
-
-CMeshColliderComponent::~CMeshColliderComponent()
+CConcaveMeshColliderComponent::~CConcaveMeshColliderComponent()
 {
 }
 
-void CMeshColliderComponent::Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData)
+void CConcaveMeshColliderComponent::Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData)
 {
 	switch (aMessageType)
 	{
@@ -26,26 +25,25 @@ void CMeshColliderComponent::Receive(const eComponentMessageType aMessageType, c
 		{
 			const CU::Vector3f scale = GetParent()->GetToWorldTransform().GetScale();
 			Init(scale);
-			
 		}
 	}
+
 	CColliderComponent::Receive(aMessageType, aMessageData);
 }
 
-void CMeshColliderComponent::Init(const CU::Vector3f& aScale)
+void CConcaveMeshColliderComponent::Init(const CU::Vector3f& aScale)
 {
 	Physics::CPhysics* physics = Physics::CFoundation::GetInstance()->GetPhysics();
 	Physics::SMaterialData material;
 	Physics::CShape* shape = physics->CreateMeshShape(myData.myPath, material, aScale);
-	
+
 	if (!shape)
 	{
 		DL_ASSERT("Failed to create BoxShape");
-		return;
 	}
 
 	shape->SetCollisionLayers(myData.myLayer, myData.myCollideAgainst);
-	if(GetParent() != nullptr)
+	if (GetParent() != nullptr)
 	{
 		shape->SetObjectId(GetParent()->GetId());
 	}
@@ -54,7 +52,6 @@ void CMeshColliderComponent::Init(const CU::Vector3f& aScale)
 	if (!actor)
 	{
 		DL_ASSERT("Failed to create physics actor");
-		return;
 	}
 	myScene->AddActor(actor);
 	myActor = actor;

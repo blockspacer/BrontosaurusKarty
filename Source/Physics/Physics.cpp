@@ -17,6 +17,7 @@
 #include "SimulationEventCallback.h"
 #include "Collection.h"
 #include <iostream>
+#include "BrontosaurusEngine\FBXLoader.h"
 
 namespace Physics
 {
@@ -147,7 +148,7 @@ namespace Physics
 		PxDefaultFileInputData inputData(aPath);
 		PxSerializationRegistry* registry = PxSerialization::createSerializationRegistry(PxGetPhysics());
 		PxCollection* collection = PxSerialization::createCollectionFromXml(inputData,
-			Physics::CFoundation::GetInstance()->GetCooking(), *registry);
+			CFoundation::GetInstance()->GetCooking(), *registry);
 
 		CShape* shape = nullptr;
 
@@ -207,6 +208,40 @@ namespace Physics
 			}
 		}
 		return shape;
+	}
+
+	Physics::CShape* CPhysics::CreateConcaveMeshShape(const std::string& aPath, const SMaterialData& aMaterialData, const CU::Vector3f& aScale)
+	{
+		SLoaderCollisionMesh loaderMesh;
+		CFBXLoader loader;
+		if (!loader.LoadCollisionMesh(aPath, loaderMesh))
+		{
+			return nullptr;
+		}
+
+		PxTriangleMeshDesc meshDesc;
+		meshDesc.points.count = loaderMesh.vertices.count;
+		meshDesc.points.stride = loaderMesh.vertices.stride;
+		meshDesc.points.data = loaderMesh.vertices.data;
+
+		meshDesc.triangles.count = loaderMesh.indices.triangleCount;
+		meshDesc.triangles.stride = 3 * sizeof(unsigned int);
+		meshDesc.triangles.data = loaderMesh.indices.data;
+		
+		PxDefaultMemoryOutputStream writeBuffer;
+		if (!CFoundation::GetInstance()->GetCooking().cookTriangleMesh(meshDesc, writeBuffer))
+		{
+			return nullptr;
+		}
+
+		PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
+		PxTriangleMesh* triangleMesh = myPxPhysics->createTriangleMesh(readBuffer);
+
+		PxMaterial* material = CreateMaterial(aMaterialData);
+
+		PxTriangleMeshGeometry* meshGeometry = new PxTriangleMeshGeometry(triangleMesh); // TODO: create on stack?? or delete?? or release?? or both???
+		PxShape* shape = myPxPhysics->createShape(*meshGeometry, *material);
+		return new CShape(shape);
 	}
 
 	CShape* CPhysics::CreateShape(PxGeometry& aGeometry, const SMaterialData & aMaterialData)

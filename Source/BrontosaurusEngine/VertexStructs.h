@@ -1,7 +1,5 @@
 #pragma once
-#include <assert.h>
 #include <memory.h>
-#include <vector>
 #include "EModelBluePrint.h"
 
 // SIMPLE Wrappers
@@ -207,34 +205,43 @@ struct VertexBoneData
 	}
 };
 
-
+template <typename T> class aiVector3t;
+typedef aiVector3t<float> aiVector3D;
 
 class SVertexCollection
 {
 public:
+	SVertexCollection()
+	{
+		myData = nullptr;
+		myCurrentPointerPosition = 0;
+	}
+	~SVertexCollection()
+	{
+		delete[] myData;
+		myData = nullptr;
+		myCurrentPointerPosition = 0;
+	}
+	void Init(const int aByteSize)
+	{
+		myData = new float[aByteSize];
+	}
+
 	void PushVec4(const FBXLoader::Vector4f& aPos)
 	{
-		myData.push_back(aPos.myX);
-		myData.push_back(aPos.myY);
-		myData.push_back(aPos.myZ);
-		myData.push_back(aPos.myW);
-
-		//myRawData.AddChunk(&aPos, sizeof(aPos));
+		myData[myCurrentPointerPosition++] = aPos.myX;
+		myData[myCurrentPointerPosition++] = aPos.myY;
+		myData[myCurrentPointerPosition++] = aPos.myZ;
+		myData[myCurrentPointerPosition++] = aPos.myW;
 	}
+	void PushVec4(const aiVector3D& aPos);
 
 	void PushVec2(const FBXLoader::Vector2f aPos)
 	{
-		myData.push_back(aPos.myX);
-		myData.push_back(aPos.myY);
-
-		//myRawData.AddChunk(&aPos, sizeof(aPos));
+		myData[myCurrentPointerPosition++] = aPos.myX;
+		myData[myCurrentPointerPosition++] = aPos.myY;
 	}
 
-	void PushVec4ui(const FBXLoader::Vector4ui& /*aPos*/)
-	{
-		//myRawData.AddChunk(static_cast<const void*>(&aPos), sizeof(FBXLoader::Vector4ui));
-	}
-
-	std::vector<float> myData;
-	//CU::GrowingArray<char> myRawData;
+	float* myData = nullptr;
+	int myCurrentPointerPosition = 0;
 };

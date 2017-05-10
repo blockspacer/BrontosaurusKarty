@@ -6,6 +6,8 @@
 #include "MeshColliderComponent.h"
 #include "RigidBodyComponent.h"
 
+struct SConcaveMeshColliderData;
+
 namespace Physics
 {
 	class CPhysicsScene;
@@ -17,10 +19,10 @@ namespace Physics
 class CCharacterControllerComponent;
 class CColliderComponentManager
 {
-
 public:
 	CColliderComponentManager();
 	~CColliderComponentManager();
+
 	CColliderComponent* CreateComponent(SColliderData* aColliderData, ComponentId anId);
 	void Update();
 	inline void SetPhysicsScene(Physics::CPhysicsScene* aScene) { myScene = aScene; }
@@ -30,11 +32,13 @@ public:
 
 	CCharacterControllerComponent* CreateCharacterControllerComponent(const Physics::SCharacterControllerDesc& aParams, ComponentId anId);
 	inline Physics::CPhysicsScene* GetScene();
+
 private:
 	CColliderComponent* CreateBoxCollider(const SBoxColliderData& aBoxColliderData, ComponentId anId);
 	CColliderComponent* CreateSphereCollider(const SSphereColliderData& aBoxColliderData, ComponentId anId);
 	CColliderComponent* CreateCapsuleCollider(const SCapsuleColliderData& aBoxColliderData, ComponentId anId);
 	CColliderComponent* CreateMeshCollider(const SMeshColliderData& aBoxColliderData, ComponentId anId);
+	CColliderComponent* CreateConcaveMeshCollider(const SConcaveMeshColliderData& aBoxColliderData, ComponentId anId);
 	CColliderComponent* CreateRigidbody(const SRigidBodyData& aBoxColliderData, ComponentId anId);
 
 private:
