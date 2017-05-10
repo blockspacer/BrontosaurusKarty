@@ -49,6 +49,7 @@
     <ClCompile Include="DroppedFile.cpp" />
     <ClCompile Include="FocusChange.cpp" />
     <ClCompile Include="GameEventMessageEvent.cpp" />
+    <ClCompile Include="GetAvailableController.cpp" />
     <ClCompile Include="KeyCharPressed.cpp" />
     <ClCompile Include="NetworkPosMessageEvent.cpp" />
     <ClCompile Include="PopCurrentState.cpp" />
@@ -76,6 +77,7 @@
     <ClInclude Include="Event.h" />
     <ClInclude Include="FocusChange.h" />
     <ClInclude Include="GameEventMessageEvent.h" />
+    <ClInclude Include="GetAvailableController.h" />
     <ClInclude Include="KeyCharPressed.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="MessageType.h" />

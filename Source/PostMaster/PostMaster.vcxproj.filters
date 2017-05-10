@@ -57,7 +57,10 @@
     <ClCompile Include="SetVibrationOnController.cpp">
       <Filter>Events\SetVibrationOnController</Filter>
     </ClCompile>
-    <ClCompile Include="StopVibrationOnController.cpp" />
+    <ClCompile Include="GetAvailableController.cpp" />
+    <ClCompile Include="StopVibrationOnController.cpp">
+      <Filter>Events\SetVibrationOnController</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Subscriber.h">
@@ -92,7 +95,6 @@
     </ClInclude>
     <ClInclude Include="PopCurrentState.h" />
     <ClInclude Include="PopCurrentState.h" />
-    <ClInclude Include="PostMaster.h" />
     <ClInclude Include="PushState.h" />
     <ClInclude Include="PopCurrentState.h" />
     <ClInclude Include="PostMaster.h" />
@@ -206,7 +208,11 @@
     <ClInclude Include="SetVibrationOnController.h">
       <Filter>Events\SetVibrationOnController</Filter>
     </ClInclude>
-    <ClInclude Include="StopVibrationOnController.h" />
+    <ClInclude Include="PopCurrentState.h" />
+    <ClInclude Include="GetAvailableController.h" />
+    <ClInclude Include="StopVibrationOnController.h">
+      <Filter>Events\SetVibrationOnController</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Events">
@@ -253,6 +259,9 @@
     </Filter>
     <Filter Include="Events\SetVibrationOnController">
       <UniqueIdentifier>{02e08a38-4e99-4b22-9d9e-00066f06da75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Events\GetFreeController">
+      <UniqueIdentifier>{da52245e-3162-41af-ac97-9e81409b4526}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
