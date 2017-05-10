@@ -41,6 +41,7 @@ namespace CU
 		: myJoysticks(4)
 		, myPreviousButtonState(4)
 		, myPreviousJoystickStates(4)
+		,myPreviousTriggerStates(4)
 	{
 	}
 
@@ -53,6 +54,7 @@ namespace CU
 		myJoysticks.Resize(aJoystickCount);
 		myPreviousButtonState.Resize(aJoystickCount);
 		myPreviousJoystickStates.Resize(aJoystickCount);
+		myPreviousTriggerStates.Resize(aJoystickCount);
 	}
 
 	void XInputWrapper::UpdateStates()
@@ -174,7 +176,58 @@ namespace CU
 	{
 		unsigned char trigger = myJoysticks[aJoystickIndex].Gamepad.bRightTrigger;
 
-		return static_cast<float>(THROW_AWAY_IF_LOW(XINPUT_GAMEPAD_TRIGGER_THRESHOLD, trigger)) / static_cast<float>(UCHAR_MAX);
+		float result = static_cast<float>(THROW_AWAY_IF_LOW(XINPUT_GAMEPAD_TRIGGER_THRESHOLD, trigger)) / static_cast<float>(UCHAR_MAX);
+
+		return result;
+	}
+
+	float XInputWrapper::GetLeftTriggerChanged(const unsigned int aJoystickIndex)
+	{
+
+		unsigned char trigger = myJoysticks[aJoystickIndex].Gamepad.bLeftTrigger;
+
+		float result = static_cast<float>(THROW_AWAY_IF_LOW(255, trigger)) / static_cast<float>(UCHAR_MAX);
+
+		if (myPreviousTriggerStates[aJoystickIndex].LeftLastFrame > 0 && result == 0)
+		{
+			myPreviousTriggerStates[aJoystickIndex].LeftReleased = true;
+		}
+		else
+		{
+			myPreviousTriggerStates[aJoystickIndex].LeftReleased = false;
+		}
+		myPreviousTriggerStates[aJoystickIndex].LeftLastFrame = result;
+
+		return result;
+	}
+
+	bool XInputWrapper::GetLeftTriggerReleased(const unsigned int aJoystickIndex)
+	{
+		return myPreviousTriggerStates[aJoystickIndex].LeftReleased;
+	}
+
+	float XInputWrapper::GetRightTriggerChanged(const unsigned int aJoystickIndex)
+	{
+		unsigned char trigger = myJoysticks[aJoystickIndex].Gamepad.bRightTrigger;
+
+		float result = static_cast<float>(THROW_AWAY_IF_LOW(255, trigger)) / static_cast<float>(UCHAR_MAX);
+
+		if (myPreviousTriggerStates[aJoystickIndex].RightLastFrame > 0 && result == 0)
+		{
+			myPreviousTriggerStates[aJoystickIndex].RightReleased = true;
+		}
+		else
+		{
+			myPreviousTriggerStates[aJoystickIndex].RightReleased = false;
+		}
+		myPreviousTriggerStates[aJoystickIndex].RightLastFrame = result;
+
+		return result;
+	}
+
+	bool XInputWrapper::GetRightTriggerReleased(const unsigned int aJoystickIndex)
+	{
+		return myPreviousTriggerStates[aJoystickIndex].RightReleased;
 	}
 
 	void XInputWrapper::SetLeftVibration(const unsigned int aJoystickIndex, const unsigned short aAmount)

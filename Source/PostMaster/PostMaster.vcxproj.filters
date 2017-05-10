@@ -54,6 +54,10 @@
       <Filter>Events\SendNetworkMessage</Filter>
     </ClCompile>
     <ClCompile Include="QuitGame.cpp" />
+    <ClCompile Include="SetVibrationOnController.cpp">
+      <Filter>Events\SetVibrationOnController</Filter>
+    </ClCompile>
+    <ClCompile Include="StopVibrationOnController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Subscriber.h">
@@ -87,7 +91,6 @@
       <Filter>Events\WindowSizeChanged</Filter>
     </ClInclude>
     <ClInclude Include="PopCurrentState.h" />
-    <ClInclude Include="PostMaster.h" />
     <ClInclude Include="PopCurrentState.h" />
     <ClInclude Include="PostMaster.h" />
     <ClInclude Include="PushState.h" />
@@ -199,6 +202,11 @@
     <ClInclude Include="PostMaster.h" />
     <ClInclude Include="QuitGame.h" />
     <ClInclude Include="PopCurrentState.h" />
+    <ClInclude Include="PopCurrentState.h" />
+    <ClInclude Include="SetVibrationOnController.h">
+      <Filter>Events\SetVibrationOnController</Filter>
+    </ClInclude>
+    <ClInclude Include="StopVibrationOnController.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Events">
@@ -242,6 +250,9 @@
     </Filter>
     <Filter Include="Events\SendNetworkMessage">
       <UniqueIdentifier>{16ca5ba6-f79f-4a89-b650-f830f24cf8fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Events\SetVibrationOnController">
+      <UniqueIdentifier>{02e08a38-4e99-4b22-9d9e-00066f06da75}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

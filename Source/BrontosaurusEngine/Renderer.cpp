@@ -1021,7 +1021,7 @@ bool CRenderer::HandleRenderMessage(SRenderMessage * aRenderMesage, int & aDrawC
 		params.myRenderToDepth = false;
 
 
-		model->Render(params);
+		model->Render(params, Render::SEffectData());
 		++aDrawCallCount;
 		break;
 	}
@@ -1056,7 +1056,7 @@ bool CRenderer::HandleRenderMessage(SRenderMessage * aRenderMesage, int & aDrawC
 		CModel* model = modelManager->GetModel(msg->myModelID);
 		if (!model) break;
 
-		model->Render(msg->myRenderParams);
+		model->Render(msg->myRenderParams, Render::SEffectData());
 		++aDrawCallCount;
 		break;
 	}
@@ -1071,7 +1071,7 @@ bool CRenderer::HandleRenderMessage(SRenderMessage * aRenderMesage, int & aDrawC
 		SRenderModelDepthMessage* msg = static_cast<SRenderModelDepthMessage*>(aRenderMesage);
 		CModel* model = CEngine::GetInstance()->GetModelManager()->GetModel(msg->myModelID);
 		if (!model) break;
-		model->Render(msg->myRenderParams);
+		model->Render(msg->myRenderParams, Render::SEffectData());
 		++aDrawCallCount;
 		break;
 	}
@@ -1080,7 +1080,7 @@ bool CRenderer::HandleRenderMessage(SRenderMessage * aRenderMesage, int & aDrawC
 		SRenderModelShadowMessage* msg = static_cast<SRenderModelShadowMessage*>(aRenderMesage);
 		CModel* model = CEngine::GetInstance()->GetModelManager()->GetModel(msg->myModelID);
 		if (!model) break;
-		model->Render(msg->myRenderParams);
+		model->Render(msg->myRenderParams, Render::SEffectData());
 		++aDrawCallCount;
 		break;
 	}

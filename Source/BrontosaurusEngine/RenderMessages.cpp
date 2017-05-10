@@ -165,6 +165,14 @@ SRenderModelDeferredMessage::SRenderModelDeferredMessage()
 	myModelID = -1;
 }
 
+SRenderModelDeferredMessage::~SRenderModelDeferredMessage()
+{
+	if(myVertexTexture)
+	{
+		myVertexTexture->DecRef();
+	}
+}
+
 SRenderDirectionalLight::SRenderDirectionalLight()
 	: SRenderMessage(SRenderMessage::eRenderMessageType::eRenderDirectionalLight)
 {

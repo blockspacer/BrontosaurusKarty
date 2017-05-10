@@ -25,6 +25,8 @@ enum class eMessageType
 	eSpawnWave,
 	eAddEnemyToWave,
 	ePlayerEnterArena,
+	eSetVibration,
+	eStopVibration,
 	eLength,
 };
 

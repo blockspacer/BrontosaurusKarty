@@ -53,7 +53,7 @@ void CSpeedHandlerComponent::Update(float aDeltaTime)
 const SBoostData* CSpeedHandlerComponent::GetFastestBoost() const
 {
 	float fastestBoostSpeed = -10000.0f;
-	const SBoostData* returnData = CSpeedHandlerManager::GetInstance()->GetData(eBoostType::eNoBoost);
+	const SBoostData* returnData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("NoBoost"));
 	for(unsigned int i = 0; i < myBoostList.Size(); i++)
 	{
 		if(fastestBoostSpeed < myBoostList[i].data->maxSpeedBoost)

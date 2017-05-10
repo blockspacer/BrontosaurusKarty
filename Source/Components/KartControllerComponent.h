@@ -1,5 +1,8 @@
 #pragma once
 #include "Component.h"
+
+class CParticleEmitterInstance;
+
 class CKartControllerComponent : public CComponent
 {
 public:
@@ -12,13 +15,20 @@ public:
 	void MoveFoward();
 	void MoveBackWards();
 	void StopTurning();
-
+	void Drift();
+	void StopDrifting();
 
 	void Update(const float aDeltaTime);
 	void Receive(const eComponentMessageType, const SComponentMessageData&) override;
 
-private:
+	enum class eCurrentAction
+	{
+		eTurningRight,
+		eTurningLeft,
+		eDefault,
+	};
 
+private:
 	float myFowrardSpeed;
 	float myMaxSpeed;
 	float myMinSpeed;
@@ -36,5 +46,23 @@ private:
 
 	float myMaxSpeedModifier;
 	float myAccelerationModifier;
+
+	float myDriftRate;
+	float myDriftTimer;
+	float myDriftSteerModifier;
+	float myBoostSpeedDecay;
+	float myDriftSteeringModifier;
+	float myMaxDriftRate;
+	float myTimeMultiplier;
+	float myMaxDriftSteerAffection;
+
+	eCurrentAction myCurrentAction;
+
+	int myLeftWheelDriftEmmiterHandle;
+	int myRightWheelDriftEmmiterHandle;
+	int myLeftDriftBoostEmitterhandle;
+	int myRightDriftBoostEmitterhandle;
+
+	bool myIsDrifting;
 };
 

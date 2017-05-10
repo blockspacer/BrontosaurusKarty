@@ -1,5 +1,6 @@
 #pragma once
 #include "../CommonUtilities/Sphere.h"
+#include "Texture.h"
 
 enum class eAnimationState;
 
@@ -67,7 +68,7 @@ public:
 	inline ModelId GetModelID();
 	inline void SetIgnoreDepth(const bool aShouldIgnore);
 	inline bool GetIgnoreDepth() const;
-
+	void SetVertexStreamData(const std::string& aStreamPath);
 private:
 	CU::Matrix44f myTransformation;
 	CU::Matrix44f myLastFrame;
@@ -87,6 +88,7 @@ private:
 	bool myHasAnimations;
 	bool myAnimationLooping;
 	bool myIgnoreDepth;
+	CTexture* myVertexTexture;
 };
 
 inline const CU::Matrix44f& CModelInstance::GetTransformation() const

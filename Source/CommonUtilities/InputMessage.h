@@ -4,7 +4,7 @@ namespace CU
 {
 	enum class eMouseButtons;
 	enum class eKeys;
-	enum class GAMEPAD;
+	enum class GAMEPAD : short;
 
 	enum class eInputType
 	{
@@ -23,7 +23,13 @@ namespace CU
 		eGamePadLeftJoyStickChanged,
 		eGamePadRightJoyStickPressed,
 		eGamePadRightJoyStickReleased,
-		eGamePadRightJoyStickChanged
+		eGamePadRightJoyStickChanged,
+		eGamePadLeftTriggerChanged,
+		eGamePadLeftTriggerReleased,
+		eGamePadLeftTriggerPressed,
+		eGamePadRightTriggerChanged,
+		eGamePadRightTriggerReleased,
+		eGamePadRightTriggerPressed,
 	};
 
 	struct SInputMessage
@@ -42,8 +48,8 @@ namespace CU
 			eMouseButtons myMouseButton;
 			eKeys myKey;
 			GAMEPAD myGamePad;
+			short myGamepadIndex[2];
 		};
-
 		eInputType myType;
 	};
 }

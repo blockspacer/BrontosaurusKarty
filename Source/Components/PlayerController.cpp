@@ -15,6 +15,9 @@ CPlayerController::CPlayerController(CKartControllerComponent & aKartComponent) 
 	myIsMovingFoward = false;
 	myIsTurningLeft = false;
 	myIsTurningRight = false;
+
+	myIsDrifting = false;
+	myControllerIndex = 0;
 }
 
 CPlayerController::~CPlayerController()
@@ -28,25 +31,44 @@ void CPlayerController::Update(const float aDeltaTime)
 
 CU::eInputReturn CPlayerController::TakeInput(const CU::SInputMessage & aInputMessage)
 {
-	if (aInputMessage.myType == CU::eInputType::eGamePadButtonPressed)
+	if (aInputMessage.myGamepadIndex[1] == 0/*my controller index later on*/)
 	{
-		GamePadPressedKey(aInputMessage);
-	}
-	else if (aInputMessage.myType == CU::eInputType::eGamePadButtonReleased)
-	{
-		GamePadReleasedKey(aInputMessage);
-	}
-	else if (aInputMessage.myType == CU::eInputType::eGamePadLeftJoyStickChanged)
-	{
-		MovedJoystick(aInputMessage);
-	}
-	else if (aInputMessage.myType == CU::eInputType::eKeyboardReleased)
-	{
-		ReleasedKey(aInputMessage);
-	}
-	else if (aInputMessage.myType == CU::eInputType::eKeyboardPressed)
-	{
-		PressedKey(aInputMessage);
+		if (aInputMessage.myType == CU::eInputType::eGamePadButtonPressed)
+		{
+			GamePadPressedKey(aInputMessage);
+		}
+		else if (aInputMessage.myType == CU::eInputType::eGamePadButtonReleased)
+		{
+			GamePadReleasedKey(aInputMessage);
+		}
+		else if (aInputMessage.myType == CU::eInputType::eGamePadLeftJoyStickChanged)
+		{
+			MovedJoystick(aInputMessage);
+		}
+		else if (aInputMessage.myType == CU::eInputType::eGamePadLeftTriggerPressed)
+		{
+			GamePadLeftTrigger(aInputMessage);
+		}
+		else if (aInputMessage.myType == CU::eInputType::eGamePadRightTriggerPressed)
+		{
+			GamePadRightTrigger(aInputMessage);
+		}
+		else if (aInputMessage.myType == CU::eInputType::eGamePadLeftTriggerReleased)
+		{
+			GamePadLeftTriggerReleased(aInputMessage);
+		}
+		else if (aInputMessage.myType == CU::eInputType::eGamePadRightTriggerReleased)
+		{
+			GamePadRightTriggerReleased(aInputMessage);
+		}
+		else if (aInputMessage.myType == CU::eInputType::eKeyboardReleased)
+		{
+			ReleasedKey(aInputMessage);
+		}
+		else if (aInputMessage.myType == CU::eInputType::eKeyboardPressed)
+		{
+			PressedKey(aInputMessage);
+		}
 	}
 
 	return CU::eInputReturn::ePassOn;
@@ -92,6 +114,9 @@ void CPlayerController::ReleasedKey(const CU::SInputMessage & aInputMessage)
 			myControllerComponent.TurnLeft();
 		}
 		break;
+	case CU::eKeys::LCONTROL:
+		myControllerComponent.StopDrifting();
+		break;
 	}
 }
 
@@ -126,16 +151,22 @@ void CPlayerController::PressedKey(const CU::SInputMessage & aInputMessage)
 		boostData->accerationBoost = 5;
 		boostData->duration = 4.0f;
 		boostData->maxSpeedBoost = 2.0f;
-		boostData->type = eBoostType::eDefault;
+		boostData->hashedName = std::hash<std::string>()("TempBoost");
 		boostMessageData.myBoostData = boostData;
 		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
 		break;
 	}
+	case CU::eKeys::LCONTROL:
+		myControllerComponent.Drift();
+		break;
 	}
 }
 
 void CPlayerController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 {
+	SComponentMessageData boostMessageData;
+	SBoostData* boostData = new SBoostData();
+
 	switch (aInputMessage.myGamePad)
 	{
 	case CU::GAMEPAD::A:
@@ -147,12 +178,15 @@ void CPlayerController::GamePadPressedKey(const CU::SInputMessage & aInputMessag
 		myIsMovingBackwards = true;
 		break;
 	case CU::GAMEPAD::RIGHT_SHOULDER:
-		SComponentMessageData boostMessageData;
-		SBoostData* boostData = new SBoostData();
+		
+		myControllerComponent.Drift();
+		
+		break;
+	case CU::GAMEPAD::LEFT_SHOULDER:
 		boostData->accerationBoost = 5;
 		boostData->duration = 4.0f;
-		boostData->maxSpeedBoost = 5.0f;
-		boostData->type = eBoostType::eDefault;
+		boostData->maxSpeedBoost = 2.0f;
+		boostData->hashedName = std::hash<std::string>()("TempBoost");
 		boostMessageData.myBoostData = boostData;
 		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
 		break;
@@ -179,6 +213,9 @@ void CPlayerController::GamePadReleasedKey(const CU::SInputMessage & aInputMessa
 			myControllerComponent.MoveFoward();
 		}
 		break;
+	case CU::GAMEPAD::LEFT_SHOULDER:
+		myControllerComponent.StopDrifting();
+		break;
 	}
 }
 
@@ -199,6 +236,43 @@ void CPlayerController::MovedJoystick(const CU::SInputMessage & aInputMessage)
 		myControllerComponent.TurnLeft();
 	}
 
+}
+
+void CPlayerController::GamePadLeftTrigger(const CU::SInputMessage & aInputMessage)
+{
+	SComponentMessageData boostMessageData;
+	SBoostData* boostData = new SBoostData();
+	boostData->accerationBoost = 5;
+	boostData->duration = 4.0f;
+	boostData->maxSpeedBoost = 2.0f;
+	boostData->hashedName = std::hash<std::string>()("TempBoost");
+	boostMessageData.myBoostData = boostData;
+	myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+}
+
+void CPlayerController::GamePadRightTrigger(const CU::SInputMessage & aInputMessage)
+{
+	if (myIsDrifting == false)
+	{
+		myControllerComponent.Drift();
+		myIsDrifting = true;
+	}
+}
+
+void CPlayerController::GamePadLeftTriggerReleased(const CU::SInputMessage & aInputMessage)
+{
+
+
+
+}
+
+void CPlayerController::GamePadRightTriggerReleased(const CU::SInputMessage & aInputMessage)
+{
+	if (myIsDrifting == true)
+	{
+		myControllerComponent.StopDrifting();
+		myIsDrifting = false;
+	}
 }
 
 void CPlayerController::JoystickDeadzone()

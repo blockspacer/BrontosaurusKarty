@@ -15,10 +15,20 @@ namespace CU
 	using Vector2f = Vector2<float>;
 
 	enum class eKeys;
-	enum class GAMEPAD;
+	enum class GAMEPAD : short;
 
 	struct KeyEvent;
 }
+
+struct SControllerVibrationState
+{
+	float myTimeToRumble;
+	float myTimeIHaveRumbled;
+	unsigned int myController;
+	unsigned short myLeftIntensity;
+	unsigned short myRightIntensity;
+	bool myShouldRumbleForever;
+};
 
 class CInputManager : public Postmaster::ISubscriber
 {
@@ -26,7 +36,7 @@ public:
 	CInputManager();
 	~CInputManager();
 
-	void Update();
+	void Update(const CU::Time& aDeltaTime);
 	void SetMousePosition(const CU::Vector2f& aMousePosition);
 	void LockUnlockMouse(const bool aHasFocus);
 
@@ -35,11 +45,13 @@ public:
 	static CInputManager* GetInstance();
 
 	eMessageReturn DoEvent(const FocusChange& aDroppedFile) override;
+	eMessageReturn DoEvent(const SetVibrationOnController& aFocusChange) override;
+	eMessageReturn DoEvent(const StopVibrationOnController& aStopVibrationmessage) override;
 
 private:
 	void UpdateMouse();
 	void UpdateKeyboard();
-	void UpdateGamePad();
+	void UpdateGamePad(const CU::Time& aDeltaTime);
 
 
 	CU::GrowingArray<CU::eKeys> myKeys;
@@ -49,6 +61,8 @@ private:
 	CU::Vector2f myLastMousePosition;
 	CU::InputWrapper* myDInputWrapper;
 	CU::XInputWrapper* myXInputWrapper;
+
+	CU::GrowingArray<SControllerVibrationState> myControllerVibrationStates;
 
 	int myLastMouseWheelPosition;
 

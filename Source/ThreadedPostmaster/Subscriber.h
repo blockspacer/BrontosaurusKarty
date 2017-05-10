@@ -20,6 +20,8 @@ class CChangeLevel;
 class CQuitGame;
 class CNetworkDebugInfo;
 class CGameEventMessage;
+class SetVibrationOnController;
+class StopVibrationOnController;
 
 namespace Postmaster
 {
@@ -52,6 +54,8 @@ namespace Postmaster
 		virtual eMessageReturn DoEvent(const CQuitGame& aQuitGameMessage);
 		virtual eMessageReturn DoEvent(const CNetworkDebugInfo& aDebugInfo);
 		virtual eMessageReturn DoEvent(const CGameEventMessage & aGameEventMessageMessage);
+		virtual eMessageReturn DoEvent(const SetVibrationOnController& asetVibrationMessage);
+		virtual eMessageReturn DoEvent(const StopVibrationOnController& aStopVibrationMessage);
 
 		void SetSubscribedThread(const std::thread::id& aId);
 		const std::thread::id& GetSubscribedId() const;
