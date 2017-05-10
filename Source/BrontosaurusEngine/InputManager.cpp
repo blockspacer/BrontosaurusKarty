@@ -66,6 +66,7 @@ CInputManager::CInputManager()
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eFocusChanged);
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eSetVibration);
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eStopVibration);
+	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eGetAvailableController);
 }
 
 CInputManager::~CInputManager()
@@ -305,6 +306,7 @@ void CInputManager::UpdateKeyboard()
 
 void CInputManager::UpdateGamePad(const CU::Time& aDeltaTime)
 {
+	//delta time is needed for measuring how long a controller is supposed to be vibrating
 	for (unsigned i = 0; i < myXInputWrapper->GetConnectedJoystickCount(); ++i)
 	{
 		if (myXInputWrapper->GetKeyEvents(i, myPadInputs) == true)

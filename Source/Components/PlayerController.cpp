@@ -31,7 +31,7 @@ void CPlayerController::Update(const float aDeltaTime)
 
 CU::eInputReturn CPlayerController::TakeInput(const CU::SInputMessage & aInputMessage)
 {
-	if (aInputMessage.myGamepadIndex[1] == 0/*my controller index later on*/)
+	if (aInputMessage.myGamepadIndex[1] == myControllerIndex)
 	{
 		if (aInputMessage.myType == CU::eInputType::eGamePadButtonPressed)
 		{
