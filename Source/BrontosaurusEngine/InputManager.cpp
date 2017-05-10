@@ -66,7 +66,6 @@ CInputManager::CInputManager()
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eFocusChanged);
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eSetVibration);
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eStopVibration);
-	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eGetAvailableController);
 }
 
 CInputManager::~CInputManager()
