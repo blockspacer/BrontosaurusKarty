@@ -38,7 +38,6 @@
     <ClInclude Include="LoadParticleEmitterComponent.h">
       <Filter>LoadThings\LoadParticleComponent</Filter>
     </ClInclude>
-    <ClInclude Include="LoadCollider.h" />
     <ClInclude Include="LoadHighlightComponent.h">
       <Filter>LoadThings\LoadHighlightComponent</Filter>
     </ClInclude>
@@ -47,9 +46,12 @@
     </ClInclude>
     <ClInclude Include="LoadVertexInstanceStream.h">
       <Filter>LoadThings\LoadVertexInstanceStream</Filter>
-</ClInclude>
+    </ClInclude>
     <ClInclude Include="LoadWeaponCrate.h">
       <Filter>LoadThings\LoadWeaponCrateComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadCollider.h">
+      <Filter>LoadThings\LoadCollider</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -87,7 +89,6 @@
     <ClCompile Include="LoadParticleEmitterComponent.cpp">
       <Filter>LoadThings\LoadParticleComponent</Filter>
     </ClCompile>
-    <ClCompile Include="LoadCollider.cpp" />
     <ClCompile Include="LoadHighlightComponent.cpp">
       <Filter>LoadThings\LoadHighlightComponent</Filter>
     </ClCompile>
@@ -96,9 +97,12 @@
     </ClCompile>
     <ClCompile Include="LoadVertexInstanceStream.cpp">
       <Filter>LoadThings\LoadVertexInstanceStream</Filter>
-</ClCompile>
+    </ClCompile>
     <ClCompile Include="LoadWeaponCrate.cpp">
       <Filter>LoadThings\LoadWeaponCrateComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadCollider.cpp">
+      <Filter>LoadThings\LoadCollider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -146,9 +150,12 @@
     </Filter>
     <Filter Include="LoadThings\LoadVertexInstanceStream">
       <UniqueIdentifier>{66b4090e-e59a-4309-be68-ffe1fa423fd7}</UniqueIdentifier>
-	</Filter>    
-<Filter Include="LoadThings\LoadWeaponCrateComponent">
+    </Filter>
+    <Filter Include="LoadThings\LoadWeaponCrateComponent">
       <UniqueIdentifier>{f4195dad-7a96-4743-b27b-d9db740a39aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LoadThings\LoadCollider">
+      <UniqueIdentifier>{45b8ed3e-8cff-4ebe-8257-2d4e586e85d4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

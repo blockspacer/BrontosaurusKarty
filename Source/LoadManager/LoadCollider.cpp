@@ -9,6 +9,7 @@
 #include "RigidBodyComponent.h"
 #include "Physics\PhysicsCharacterController.h"
 #include "CharacterControllerComponent.h"
+#include "ConcaveMeshCollider.h"
 
 #define TO_RADIANS(x) (x) * (3.1415f / 180.f)
 
@@ -113,9 +114,9 @@ int LoadMeshCollider(KLoader::SLoadedComponentData someData)
 	CU::Vector3f scale = parent->GetToWorldTransform().GetScale();
 	CU::Vector3f parentPos = parent->GetToWorldTransform().GetPosition();
 
-	SMeshColliderData data;
+	SConcaveMeshColliderData data;
 	data.IsTrigger = someData.myData.at("isTrigger").GetBool();
-	
+
 	CU::Vector3f material = someData.myData.at("material").GetVector3f("xyz");
 	data.material.aStaticFriction = material.x;
 	data.material.aDynamicFriction = material.y;
@@ -129,6 +130,35 @@ int LoadMeshCollider(KLoader::SLoadedComponentData someData)
 
 	CColliderComponent* component = CreateComponent(data);
 	if(component == nullptr)
+	{
+		return -1;
+	}
+
+	return component->GetId();
+}
+
+int LoadConcaveColliderServer(KLoader::SLoadedComponentData someData)
+{
+	CGameObject* parent = GetCurrentObject();
+	CU::Vector3f scale = parent->GetToWorldTransform().GetScale();
+	CU::Vector3f parentPos = parent->GetToWorldTransform().GetPosition();
+
+	SConcaveMeshColliderData data;
+	data.IsTrigger = someData.myData.at("isTrigger").GetBool();
+
+	CU::Vector3f material = someData.myData.at("material").GetVector3f("xyz");
+	data.material.aStaticFriction = material.x;
+	data.material.aDynamicFriction = material.y;
+	data.material.aRestitution = material.z;
+
+	//data.center = someData.myData.at("center").GetVector3f("xyz");
+	data.center.x *= -1;
+	data.center.z *= -1;
+	data.center = data.center * parent->GetToWorldTransform().GetRotation();
+	data.myPath = someData.myData.at("meshPath").GetString().c_str();
+
+	CColliderComponent* component = CreateComponent(data);
+	if (component == nullptr)
 	{
 		return -1;
 	}

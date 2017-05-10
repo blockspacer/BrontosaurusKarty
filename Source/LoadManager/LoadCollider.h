@@ -17,6 +17,7 @@ int LoadSphereColliderServer(KLoader::SLoadedComponentData someData);
 int LoadCapsuleColliderServer(KLoader::SLoadedComponentData someData);
 int LoadBoxColliderServer(KLoader::SLoadedComponentData someData);
 int LoadMeshColliderServer(KLoader::SLoadedComponentData someData);
+int LoadConcaveColliderServer(KLoader::SLoadedComponentData someData);
 
 int LoadRigidBodyServer(KLoader::SLoadedComponentData someData);
 int LoadCharacterControllerServer(KLoader::SLoadedComponentData someData);
