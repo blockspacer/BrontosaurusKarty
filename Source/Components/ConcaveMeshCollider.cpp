@@ -35,7 +35,7 @@ void CConcaveMeshColliderComponent::Init(const CU::Vector3f& aScale)
 {
 	Physics::CPhysics* physics = Physics::CFoundation::GetInstance()->GetPhysics();
 	Physics::SMaterialData material;
-	Physics::CShape* shape = physics->CreateMeshShape(myData.myPath, material, aScale);
+	Physics::CShape* shape = physics->CreateConcaveMeshShape(myData.myPath, material, aScale);
 
 	if (!shape)
 	{
