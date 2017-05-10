@@ -2,6 +2,7 @@
 #include "SpeedHandlerManager.h"
 #include "SpeedHandlerComponent.h"
 #include "BoostData.h"
+#include "../CommonUtilities/JsonValue.h"
 
 CSpeedHandlerManager* CSpeedHandlerManager::ourInstance = nullptr;
 
@@ -44,22 +45,37 @@ void CSpeedHandlerManager::LoadBoostData()
 	noBoostData->accerationBoost = 0.0f;
 	noBoostData->duration = 0.0f;
 	noBoostData->maxSpeedBoost = 0.0f;
-	noBoostData->type = eBoostType::eNoBoost;
+	noBoostData->hashedName = std::hash<std::string>()("NoBoost");
 	myBoostDataList.Add(noBoostData);
 	
 
-	// DO JSon stuff or something;
+	CU::CJsonValue boostList;
+	std::string filePath = "Json/Boost/Boost.json";
+	const std::string& errorString = boostList.Parse(filePath);
+	CU::CJsonValue levelsArray = boostList.at("Boost");
+	for (int i = 0; i < levelsArray.Size(); ++i)
+	{
+		std::string boostName = levelsArray[i].at("BoostName").GetString();
+		SBoostData* loadedBoostData = new SBoostData();
+		loadedBoostData->maxSpeedBoost = levelsArray[i].at("MaxSpeedPercentModifier").GetFloat() / 100.0f;
+		loadedBoostData->accerationBoost = levelsArray[i].at("AccelerationPercentModifier").GetFloat() / 100.0f;
+		loadedBoostData->duration = levelsArray[i].at("DurationSeconds").GetFloat();
+		short hashedName = std::hash<std::string>()(boostName);
+		loadedBoostData->hashedName = hashedName;
+		myBoostDataList.Add(loadedBoostData);
+	}
 }
-const SBoostData* CSpeedHandlerManager::GetData(eBoostType aType) const
+const SBoostData* CSpeedHandlerManager::GetData(short aHashedName) const
 {
 	for(unsigned int i = 0; i < myBoostDataList.Size(); i++)
 	{
-		if(myBoostDataList[i]->type == aType)
+		if(myBoostDataList[i]->hashedName == aHashedName)
 		{
 			return myBoostDataList[i];
 		}
 	}
-	DL_ASSERT("Couldn't find what boost to give type was %u", aType);
+
+	DL_ASSERT("Couldn't find what boost to give type was %i", aHashedName);
 	return nullptr;
 }
 
