@@ -73,6 +73,9 @@ CU::Matrix44f ConvertToCUMatrix44(const aiMatrix4x4& aAssimpMatrix)
 
 int CFBXLoader::DetermineAndLoadVerticies(aiMesh* fbxMesh, CLoaderMesh* aLoaderMesh)
 {
+	const unsigned int ModelVertexSize = EModelBluePrint_Position | EModelBluePrint_UV | EModelBluePrint_Normal | EModelBluePrint_BinormTan;
+	const unsigned int AnimationVertexSize = ModelVertexSize | EModelBluePrint_Bones;
+
 	unsigned int modelBluePrintType = 0;
 
 	modelBluePrintType |= (fbxMesh->HasPositions() ? EModelBluePrint_Position : 0);
@@ -130,50 +133,97 @@ int CFBXLoader::DetermineAndLoadVerticies(aiMesh* fbxMesh, CLoaderMesh* aLoaderM
 			}
 		}
 	}
-	
 
 	SVertexCollection vertexCollection;
-	for (unsigned int i = 0; i < fbxMesh->mNumVertices; i++)
+	vertexCollection.Init(fbxMesh->mNumVertices * vertexBufferSize);
+	
+	if (modelBluePrintType == ModelVertexSize)
 	{
-		if (fbxMesh->HasPositions())
+		for (unsigned int i = 0; i < fbxMesh->mNumVertices; i++)
 		{
 			aiVector3D& mVertice = fbxMesh->mVertices[i];
-			vertexCollection.PushVec4(FBXLoader::Vector4f(mVertice.x, mVertice.y, mVertice.z, 1));
-		}
-		if (fbxMesh->HasNormals())
-		{
+			vertexCollection.PushVec4(mVertice);
+
 			aiVector3D& mNorm = fbxMesh->mNormals[i];
-			vertexCollection.PushVec4(FBXLoader::Vector4f(mNorm.x, mNorm.y, mNorm.z, 1));
-		}
-		if (fbxMesh->HasTangentsAndBitangents())
-		{
+			vertexCollection.PushVec4(mNorm);
+
 			aiVector3D& mTangent = fbxMesh->mTangents[i];
 			aiVector3D& biTangent = fbxMesh->mBitangents[i];
+			vertexCollection.PushVec4(mTangent);
+			vertexCollection.PushVec4(biTangent);
 
-			vertexCollection.PushVec4(FBXLoader::Vector4f(mTangent.x, mTangent.y, mTangent.z, 1));
-			vertexCollection.PushVec4(FBXLoader::Vector4f(biTangent.x, biTangent.y, biTangent.z, 1));
-		}
-		if (fbxMesh->HasTextureCoords(TEXTURE_SET_0))		//HasTextureCoords(texture_coordinates_set)
-		{
 			vertexCollection.PushVec2(FBXLoader::Vector2f(fbxMesh->mTextureCoords[TEXTURE_SET_0][i].x, fbxMesh->mTextureCoords[TEXTURE_SET_0][i].y));
 		}
-		if (fbxMesh->HasBones())
+	}
+	else if (modelBluePrintType == AnimationVertexSize)
+	{
+		for (unsigned int i = 0; i < fbxMesh->mNumVertices; i++)
 		{
-			VertexBoneData& boneData = collectedBoneData[i];
+			aiVector3D& mVertice = fbxMesh->mVertices[i];
+			vertexCollection.PushVec4(mVertice);
+
+			aiVector3D& mNorm = fbxMesh->mNormals[i];
+			vertexCollection.PushVec4(mNorm);
+
+			aiVector3D& mTangent = fbxMesh->mTangents[i];
+			aiVector3D& biTangent = fbxMesh->mBitangents[i];
+			vertexCollection.PushVec4(mTangent);
+			vertexCollection.PushVec4(biTangent);
+
+			vertexCollection.PushVec2(FBXLoader::Vector2f(fbxMesh->mTextureCoords[TEXTURE_SET_0][i].x, fbxMesh->mTextureCoords[TEXTURE_SET_0][i].y));
 
 			//TODO: fix so vertexCollexion can haz UINTS too so we don't need to cast float to uint in the sha-ding
 			//TODO: see VertexCollexion, i added code but we have to change in shader too before start using different stuffs mvh carl
 			// UINTS woudl be better
-			aiVector3D bones;
+			VertexBoneData& boneData = collectedBoneData[i];
 			vertexCollection.PushVec4(FBXLoader::Vector4f((float)boneData.IDs[0], (float)boneData.IDs[1], (float)boneData.IDs[2], (float)boneData.IDs[3])); //TODO: change to uint, change in shader too
-
-			aiVector3D weights;
 			vertexCollection.PushVec4(FBXLoader::Vector4f(boneData.Weights[0], boneData.Weights[1], boneData.Weights[2], boneData.Weights[3]));
+		}
+	}
+	else
+	{
+		DL_PRINT_WARNING("Non standard vertex size when loading fbx, will take longer time");
+
+		for (unsigned int i = 0; i < fbxMesh->mNumVertices; i++)
+		{
+			if (fbxMesh->HasPositions())
+			{
+				aiVector3D& mVertice = fbxMesh->mVertices[i];
+				vertexCollection.PushVec4(mVertice);
+			}
+			if (fbxMesh->HasNormals())
+			{
+				aiVector3D& mNorm = fbxMesh->mNormals[i];
+				vertexCollection.PushVec4(mNorm);
+			}
+			if (fbxMesh->HasTangentsAndBitangents())
+			{
+				aiVector3D& mTangent = fbxMesh->mTangents[i];
+				aiVector3D& biTangent = fbxMesh->mBitangents[i];
+
+				vertexCollection.PushVec4(mTangent);
+				vertexCollection.PushVec4(biTangent);
+			}
+			if (fbxMesh->HasTextureCoords(TEXTURE_SET_0))		//HasTextureCoords(texture_coordinates_set)
+			{
+				vertexCollection.PushVec2(FBXLoader::Vector2f(fbxMesh->mTextureCoords[TEXTURE_SET_0][i].x, fbxMesh->mTextureCoords[TEXTURE_SET_0][i].y));
+			}
+			if (fbxMesh->HasBones())
+			{
+				VertexBoneData& boneData = collectedBoneData[i];
+
+				//TODO: fix so vertexCollexion can haz UINTS too so we don't need to cast float to uint in the sha-ding
+				//TODO: see VertexCollexion, i added code but we have to change in shader too before start using different stuffs mvh carl
+				// UINTS woudl be better
+
+				vertexCollection.PushVec4(FBXLoader::Vector4f((float)boneData.IDs[0], (float)boneData.IDs[1], (float)boneData.IDs[2], (float)boneData.IDs[3])); //TODO: change to uint, change in shader too
+				vertexCollection.PushVec4(FBXLoader::Vector4f(boneData.Weights[0], boneData.Weights[1], boneData.Weights[2], boneData.Weights[3]));
+			}
 		}
 	}
 
 	memcpy(aLoaderMesh->myVerticies, &vertexCollection.myData[0], vertexBufferSize * fbxMesh->mNumVertices);
-
+	
 	return vertexBufferSize;
 }
 
@@ -568,6 +618,64 @@ bool CFBXLoader::LoadModelScene(const std::string& aFilePath, CLoaderScene& aSce
 	return true;
 }
 
+bool CFBXLoader::LoadCollisionMesh(const std::string& aFilePath, SLoaderCollisionMesh& aLoaderMeshOut)
+{
+	const aiScene* scene = aiImportFile(aFilePath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded);
+	if (!scene)
+	{
+		DL_MESSAGE_BOX("Failed to load collision mesh fbx %s", aFilePath.c_str());
+		return false;
+	}
+
+	if (scene->mNumMeshes != 1)
+	{
+		DL_MESSAGE_BOX("Collision mesh fbx has %d meshes instead of 1 %s", (int)scene->mNumMeshes, aFilePath.c_str());
+		return false;
+	}
+
+	aiMesh* fbxMesh = scene->mMeshes[0];
+
+	if (fbxMesh->mNumVertices < 3 || fbxMesh->mNumFaces < 1)
+	{
+		DL_MESSAGE_BOX("Collision mesh fbx has %d vertices and %d faces, both most be positive\n%s", (int)fbxMesh->mNumVertices, (int)fbxMesh->mNumFaces, aFilePath.c_str());
+		return false;
+	}
+
+	unsigned int vertexCount = fbxMesh->mNumVertices;
+	unsigned int vertexStride = sizeof(float) * 3;
+	std::vector<float> vertices(vertexCount * 3);
+
+	for (unsigned int i = 0; i < vertexCount - 2; i += 3)
+	{
+		vertices[i] = fbxMesh->mVertices[i].x;
+		vertices[i + 1] = fbxMesh->mVertices[i].y;
+		vertices[i + 2] = fbxMesh->mVertices[i].z;
+	}
+
+	std::vector<float> indices;
+	indices.reserve(fbxMesh->mNumFaces * 3);
+	for (unsigned int i = 0; i < fbxMesh->mNumFaces; i++)
+	{
+		for (uint j = 0; j < fbxMesh->mFaces[i].mNumIndices; j++)
+		{
+			indices.push_back(fbxMesh->mFaces[i].mIndices[j]);
+		}
+	}
+
+	aLoaderMeshOut.vertices.count = vertexCount;
+	aLoaderMeshOut.vertices.stride = sizeof(float) * 3;
+	aLoaderMeshOut.vertices.data = new float[vertexCount * 3];
+	memcpy(aLoaderMeshOut.vertices.data, vertices.data(), vertexCount * 3);
+
+	unsigned int indexCount = static_cast<unsigned int>(indices.size());
+	aLoaderMeshOut.indices.triangleCount = indexCount;
+	aLoaderMeshOut.indices.stride = sizeof(unsigned int);
+	aLoaderMeshOut.indices.data = new unsigned int[indexCount];
+	memcpy(aLoaderMeshOut.indices.data, indices.data(), indexCount);
+
+	return true;
+}
+
 const aiScene* CFBXLoader::GetScene(const std::string& aFBXPath)
 {
 	if (!does_file_exist(aFBXPath.c_str()))
@@ -725,4 +833,13 @@ void CFBXLoader::LoadTexture(int aType, std::vector<std::string>& someTextures, 
 	}
 
 	someTextures.push_back(filePath);
+}
+
+
+void SVertexCollection::PushVec4(const aiVector3D& aPos)
+{
+	myData[myCurrentPointerPosition++] = aPos.x;
+	myData[myCurrentPointerPosition++] = aPos.y;
+	myData[myCurrentPointerPosition++] = aPos.z;
+	myData[myCurrentPointerPosition++] = 1.f;
 }

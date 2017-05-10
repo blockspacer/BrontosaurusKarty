@@ -19,6 +19,10 @@
 #define SAFE_DELETE(ptr) delete ptr; ptr = nullptr
 #endif
 
+#ifndef SAFE_DELETE_ARRAY
+#define SAFE_DELETE_ARRAY(ptr) delete[] ptr; ptr = nullptr
+#endif // !SAFE_DELETE_ARRAY
+
 #define self (*this)
 
 #define SAFE_RELEASE(comptr) if (comptr != nullptr) { comptr->Release(); comptr = nullptr; }

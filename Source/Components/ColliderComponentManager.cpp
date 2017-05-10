@@ -14,7 +14,10 @@
 #include "..\Physics\CollisionLayers.h"
 #include "../Physics/Collection.h"
 #include "EffectHelper.h"
+#include "ConcaveMeshCollider.h"
 
+const std::nullptr_t nopeptr_constant = 0x0;
+#define nopeptr nopeptr_constant
 
 CColliderComponentManager::CColliderComponentManager()
 {
@@ -46,13 +49,16 @@ CColliderComponent* CColliderComponentManager::CreateComponent(SColliderData* aC
 		break;
 	case SColliderData::eColliderType::eMesh:
 		{
-		CColliderComponent* collider = CreateMeshCollider(*reinterpret_cast<SMeshColliderData*>(aColliderData),anId);
+			CColliderComponent* collider = CreateMeshCollider(*reinterpret_cast<SMeshColliderData*>(aColliderData),anId);
 			if(collider == nullptr)
 			{
 				return nullptr;
 			}
 			myColliderComponents.Add(collider);
 		}
+		break;
+	case SColliderData::eColliderType::eConcaveMesh:
+		CreateConcaveMeshCollider(*static_cast<SConcaveMeshColliderData*>(aColliderData), anId);
 		break;
 	case SColliderData::eColliderType::eRigidbody:
 		myColliderComponents.Add(CreateRigidbody(*reinterpret_cast<SRigidBodyData*>(aColliderData),anId));
@@ -182,6 +188,17 @@ CColliderComponent* CColliderComponentManager::CreateMeshCollider(const SMeshCol
 	
 	CMeshColliderComponent* component = new CMeshColliderComponent(aMeshColliderData, myScene);
 	return component;
+}
+
+CColliderComponent* CColliderComponentManager::CreateConcaveMeshCollider(const SConcaveMeshColliderData& aMeshColliderData, ComponentId anId)
+{
+	if (!std::ifstream(aMeshColliderData.myPath).good())
+	{
+		DL_MESSAGE_BOX("Mesh collider not found %s", aMeshColliderData.myPath);
+		return nopeptr;
+	}
+	
+	return new CConcaveMeshColliderComponent(aMeshColliderData, myScene);
 }
 
 CColliderComponent* CColliderComponentManager::CreateRigidbody(const SRigidBodyData& aRigidbodyData, ComponentId anId)

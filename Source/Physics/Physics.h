@@ -14,6 +14,7 @@ namespace physx
 
 namespace Physics
 {
+	class CFoundation;
 	class CPhysicsScene;
 	class CPhysicsActor;
 	class CPhysicsCharacterController;
@@ -25,7 +26,6 @@ namespace Physics
 	class CPhysics
 	{
 		friend class CCharacterControllerManager;
-		class CFoundation;
 
 	public:
 		CPhysics(physx::PxPhysics* aPxPhysics);
@@ -39,6 +39,7 @@ namespace Physics
 		CShape* CreateSphereShape(const float aRadius, const SMaterialData& aMaterialData);
 		CShape* CreateCapsuleShape(const float aRadius, const float aHalfHeight, const SMaterialData& aMaterialData);
 		CShape* CreateMeshShape(const char* aPath, const SMaterialData& aMaterialData, const CU::Vector3f& aScale);
+		CShape* CreateConcaveMeshShape(const std::string& aPath, const SMaterialData& aMaterialData, const CU::Vector3f& aScale);
 
 		physx::PxMaterial* CreateMaterial(const SMaterialData & aMaterialData);
 

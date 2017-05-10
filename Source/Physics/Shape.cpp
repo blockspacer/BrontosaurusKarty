@@ -25,7 +25,7 @@ namespace Physics
 
 	void CShape::SetCollisionLayers(const ECollisionLayer& aLayer)
 	{
-		physx::PxFilterData filterData = myShape->getSimulationFilterData();;
+		physx::PxFilterData filterData = myShape->getSimulationFilterData();
 
 		filterData.word0 = aLayer;
 		physx::PxU32 collideAll = 0;
@@ -47,7 +47,7 @@ namespace Physics
 		myShape->setSimulationFilterData(filterData);
 	}
 
-	void CShape::SetObjectId(int aI)
+	void CShape::SetObjectId(unsigned int aI)
 	{
 		physx::PxFilterData filterData = myShape->getSimulationFilterData();
 

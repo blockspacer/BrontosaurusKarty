@@ -22,4 +22,3 @@ private:
 	SMeshColliderData myData;
 	Physics::CPhysicsScene* myScene;
 };
-
