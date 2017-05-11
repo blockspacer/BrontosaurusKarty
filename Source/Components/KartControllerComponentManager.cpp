@@ -16,6 +16,7 @@ CKartControllerComponentManager::~CKartControllerComponentManager()
 CKartControllerComponent * CKartControllerComponentManager::CreateAndRegisterComponent()
 {
 	CKartControllerComponent* kartController = new CKartControllerComponent();
+	kartController->Init(myPhysicsScene);
 	CComponentManager::GetInstance().RegisterComponent(kartController);
 	myComponents.Add(kartController);
 	return kartController;
@@ -27,4 +28,9 @@ void CKartControllerComponentManager::Update(const float aDeltaTime)
 	{
 		myComponents[i]->Update(aDeltaTime);
 	}
+}
+
+void CKartControllerComponentManager::Init(Physics::CPhysicsScene* aPhysicsScene)
+{
+	myPhysicsScene = aPhysicsScene;
 }
