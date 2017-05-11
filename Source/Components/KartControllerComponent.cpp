@@ -204,7 +204,13 @@ void CKartControllerComponent::CheckZKill()
 
 	if(height < killHeight)
 	{
+		GetParent()->SetWorldTransformation(CU::Matrix44f());
 		GetParent()->SetWorldPosition(CU::Vector3f(0.f, 1.f, 0.f));
+		myFowrardSpeed = 0.f;
+		for(int i  = 0; i < static_cast<int>(AxisPos::Size); ++i)
+		{
+			myAxisSpeed[i] = 0;
+		}
 	}
 }
 
@@ -367,9 +373,10 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 	const CU::Vector3f avgBVec = (axees[static_cast<int>(AxisPos::RightBack)] + axees[static_cast<int>(AxisPos::LeftBack)]) / 2.f;
 
 	const CU::Vector3f newRight = (avgRVec - avgLVec).Normalize();
-	const CU::Vector3f newFront = (avgFVec - avgBVec).Normalize();
+	CU::Vector3f newFront = (avgFVec - avgBVec).Normalize();
 
-	const CU::Vector3f newUp = newFront.Cross(newRight);
+	const CU::Vector3f newUp = newFront.Cross(newRight).Normalize();
+	newFront = newRight.Cross(newUp);
 
 	CU::Matrix33f newRotation;
 	newRotation.myRightVector = newRight;

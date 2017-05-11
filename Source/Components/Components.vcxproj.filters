@@ -57,6 +57,12 @@
     </ClCompile>
     <ClCompile Include="KartControllerComponentManager.cpp" />
     <ClCompile Include="ConcaveMeshCollider.cpp" />
+    <ClCompile Include="BoostPadComponent.cpp">
+      <Filter>BoostPad</Filter>
+    </ClCompile>
+    <ClCompile Include="BoostPadComponentManager.cpp">
+      <Filter>BoostPad</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -113,6 +119,12 @@
       <Filter>Pickups\Base</Filter>
     </ClInclude>
     <ClInclude Include="ConcaveMeshCollider.h" />
+    <ClInclude Include="BoostPadComponent.h">
+      <Filter>BoostPad</Filter>
+    </ClInclude>
+    <ClInclude Include="BoostPadComponentManager.h">
+      <Filter>BoostPad</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Pickups">
@@ -136,6 +148,9 @@
     <ClInclude Include="SpeedHandlerComponent.h">
       <Filter>SpeedHandling</Filter>
     </ClInclude>
+    <Filter Include="BoostPad">
+      <UniqueIdentifier>{bd38f595-82e0-4d5f-b9e5-35eba06e74e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="SpeedHandling">

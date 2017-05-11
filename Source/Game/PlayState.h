@@ -28,6 +28,7 @@ class CCameraComponent;
 class CKartComponentManager;
 class CKartControllerComponentManager;
 class CPlayerControllerManager;
+class CBoostPadComponentManager;
 
 class CPlayState : public State , public Postmaster::ISubscriber
 {
@@ -57,7 +58,7 @@ public:
 	eMessageReturn DoEvent(const CLoadLevelMessage& aLoadLevelMessage) override;
 	CU::eInputReturn RecieveInput(const CU::SInputMessage& aInputMessage) override;
 	void SetCameraComponent(CCameraComponent* aCameraComponent);
-
+	inline CBoostPadComponentManager* GetBoostPadComponentManager();
 private:
 	void CreatePlayer(CU::Camera& aCamera);
 private:
@@ -71,6 +72,7 @@ private:
 	CColliderComponentManager* myColliderComponentManager;
 	CScriptComponentManager* myScriptComponentManager;
 	CKartComponentManager* myKartComponentManager;
+	CBoostPadComponentManager* myBoostPadComponentManager;
 
 	CKartControllerComponentManager* myKartControllerComponentManager;
 	CPlayerControllerManager* myPlayerControllerManager;
@@ -94,4 +96,9 @@ inline CColliderComponentManager* CPlayState::GetColliderComponentManager()
 inline CScriptComponentManager* CPlayState::GetScriptComponentManager()
 {
 	return myScriptComponentManager;
+}
+
+inline CBoostPadComponentManager* CPlayState::GetBoostPadComponentManager()
+{
+	return myBoostPadComponentManager;
 }

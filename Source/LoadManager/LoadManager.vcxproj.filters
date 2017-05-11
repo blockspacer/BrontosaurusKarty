@@ -53,6 +53,9 @@
     <ClInclude Include="LoadCollider.h">
       <Filter>LoadThings\LoadCollider</Filter>
     </ClInclude>
+    <ClInclude Include="LoadBoostPad.h">
+      <Filter>LoadThings\LoadBoostPads</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -103,6 +106,9 @@
     </ClCompile>
     <ClCompile Include="LoadCollider.cpp">
       <Filter>LoadThings\LoadCollider</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadBoostPad.cpp">
+      <Filter>LoadThings\LoadBoostPads</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -156,6 +162,9 @@
     </Filter>
     <Filter Include="LoadThings\LoadCollider">
       <UniqueIdentifier>{45b8ed3e-8cff-4ebe-8257-2d4e586e85d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LoadThings\LoadBoostPads">
+      <UniqueIdentifier>{8f7c1513-285d-4625-a021-2fabb9ee0f8f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
