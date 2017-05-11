@@ -26,6 +26,7 @@
 #include "CameraComponent.h"
 #include "KartComponentManager.h"
 #include "SpeedHandlerManager.h"
+#include "BoostPadComponentManager.h"
 
 //Networking
 #include "TClient/Client.h"
@@ -106,6 +107,7 @@ CPlayState::~CPlayState()
 	CSpeedHandlerManager::Destroy();
 	SAFE_DELETE(myKartControllerComponentManager);
 	SAFE_DELETE(myPlayerControllerManager);
+	SAFE_DELETE(myBoostPadComponentManager);
 }
 
 void CPlayState::Load()
@@ -222,7 +224,10 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	{
 		CSpeedHandlerManager::GetInstance()->Update(aDeltaTime.GetSeconds());
 	}
-
+	if (myBoostPadComponentManager != nullptr)
+	{
+		myBoostPadComponentManager->Update();
+	}
 	return myStatus;
 }
 
@@ -290,6 +295,7 @@ void CPlayState::CreateManagersAndFactories()
 	myKartControllerComponentManager = new CKartControllerComponentManager;
 	myKartControllerComponentManager->Init(myPhysicsScene);
 	myPlayerControllerManager = new CPlayerControllerManager;
+	myBoostPadComponentManager = new CBoostPadComponentManager();
 	CKartSpawnPointManager::GetInstance().Create();
 }
 

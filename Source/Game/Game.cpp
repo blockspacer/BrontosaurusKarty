@@ -10,6 +10,7 @@
 #include "ThreadedPostmaster/PostOffice.h"
 
 #include "LoadState.h"
+#include "../Game/PollingStation.h"
 
 CGame::CGame()
 {
@@ -28,9 +29,10 @@ void CGame::Init()
 	CBackgroundLoadingManager::CreateInstance();
 	KLoader::CKevinLoader::CreateInstance();
 	SSlua::LuaWrapper::GetInstance().RegisterFunctions(&ScriptLoader::RegisterLuaFunctions);
+	CPollingStation::Create();
 	myGameEventMessenger.Init({ 0.5f, 0.1f });
 	myClient.StartClient();
-
+	myClient.Connect("127.0.0.1", "temp.cccp");
 	myStateStack.PushState(new CLoadState(myStateStack, 0));
 }
 

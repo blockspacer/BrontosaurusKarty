@@ -30,11 +30,13 @@
 #include "../ThreadedPostmaster/SetClientIDMessage.h"
 #include "../TShared/NetworkMessage_ServerReady.h"
 #include "../ThreadedPostmaster/NetworkDebugInfo.h"
-#include "../ThreadedPostmaster/GameEventMessage.h"
 #include "../Game/GameEventMessenger.h"
+#include "../ThreadedPostmaster/GameEventMessage.h"
 #include "../CommonUtilities/StringHelper.h"
 #include "../TShared/NetworkMessage_Disconected.h"
 #include "../TShared/NetworkMessage_AnimationStart.h"
+#include "../TShared/NetworkMessage_StartCountdown.h"
+#include "../Game/PollingStation.h"
 
 
 CClient::CClient() : myMainTimer(0), myState(eClientState::DISCONECTED), myId(0), myServerIp(""), myServerPingTime(0), myServerIsPinged(false), myPlayerPositionUpdated(false), myRoundTripTime(0), myCurrentTime(0), myPositionWaitTime(0)
@@ -65,10 +67,10 @@ bool CClient::StartClient()
 	myMainTimer = myTimerManager.CreateTimer();
 	CU::Work work(std::bind(&CClient::Update, this));
 	work.SetName("ClientUpdate");
-	//std::function<bool(void)> condition;
-	//condition = std::bind(&CClient::IsRunning, this);
-	////condition = []()->bool{return true; };
-	//work.AddLoopCondition(condition);
+	std::function<bool(void)> condition;
+	condition = std::bind(&CClient::IsRunning, this);
+	//condition = []()->bool{return true; };
+	work.AddLoopCondition(condition);
 	std::function<void()> callback = [this]() {myCanQuit = true;  };
 	work.SetFinishedCallback(callback);
 	CEngine::GetInstance()->GetThreadPool()->AddWork(work);
@@ -199,7 +201,15 @@ void CClient::Update()
 			{
 				CNetworkMessage_AnimationStart* animationMessage = currentMessage->CastTo<CNetworkMessage_AnimationStart>();
 			}
-				break;
+			break;
+			case ePackageType::eStartCountdown:
+			{
+				CNetworkMessage_StartCountdown* countdownMessage = currentMessage->CastTo<CNetworkMessage_StartCountdown>();
+				CPollingStation::GetInstance()->SetStartCountDownTime(countdownMessage->myCountdownTime);
+				// BYT TILL POSTMASTER NÄR SAKER FUNKAR :D (annars slår Hampus mig  :c)
+			}
+			break;
+
 			case ePackageType::eZero:
 			case ePackageType::eSize:
 			default: break;
