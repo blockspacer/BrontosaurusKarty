@@ -26,7 +26,7 @@ void CKartControllerComponent::CKartAxis::DoPhysics()
 {
 }
 
-CKartControllerComponent::CKartControllerComponent(): myFallSpeed(0)
+CKartControllerComponent::CKartControllerComponent(): myFallSpeed(0), myPhysicsScene(nullptr)
 {
 	CU::CJsonValue levelsFile;
 	std::string errorString = levelsFile.Parse("Json/KartStats.json");
@@ -202,10 +202,15 @@ void CKartControllerComponent::StopDrifting()
 	}
 }
 
+void CKartControllerComponent::CheckZKill()
+{
+	//const float height = GetParent();
+}
+
 void CKartControllerComponent::Update(const float aDeltaTime)
 {
 	DoPhysics(aDeltaTime);
-
+	CheckZKill();
 	float way = 1.f;
 	if (myFowrardSpeed > 0.f)
 	{
