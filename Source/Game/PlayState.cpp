@@ -294,12 +294,14 @@ void CPlayState::CreateManagersAndFactories()
 	myKartControllerComponentManager->Init(myPhysicsScene);
 	myPlayerControllerManager = new CPlayerControllerManager;
 	myBoostPadComponentManager = new CBoostPadComponentManager();
-	CKartSpawnPointManager::GetInstance().Create();
+	CKartSpawnPointManager::GetInstance()->Create();
 }
 
 void CPlayState::CreatePlayer(CU::Camera& aCamera)
 {
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
+	CU::Matrix44f kartTransformation = CKartSpawnPointManager::GetInstance()->PopSpawnPoint().mySpawnTransformaion;
+	playerObject->SetWorldTransformation(kartTransformation);
 	playerObject->Move({ 0.f, 1.f, 0.f });
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
 	CCameraComponent* cameraComponent = myCameraComponent;
