@@ -13,21 +13,14 @@
 #include "../Physics/PhysicsScene.h"
 #include "../TServer/GameServer.h"
 
-CKartControllerComponent::CKartAxis::CKartAxis() : CKartAxis(1.f, 1.f)
-{
 
-}
-
-CKartControllerComponent::CKartAxis::CKartAxis(float aLength, float aWidth) 
+CKartControllerComponent::CKartControllerComponent(): myPhysicsScene(nullptr)
 {
-}
+	for(int i = 0; i < static_cast<int>(AxisPos::Size); ++i)
+	{
+		myAxisSpeed[i] = 0.f;
+	}
 
-void CKartControllerComponent::CKartAxis::DoPhysics()
-{
-}
-
-CKartControllerComponent::CKartControllerComponent(): myFallSpeed(0), myPhysicsScene(nullptr)
-{
 	CU::CJsonValue levelsFile;
 	std::string errorString = levelsFile.Parse("Json/KartStats.json");
 	if (!errorString.empty()) DL_MESSAGE_BOX(errorString.c_str());
@@ -211,7 +204,13 @@ void CKartControllerComponent::CheckZKill()
 
 	if(height < killHeight)
 	{
+		GetParent()->SetWorldTransformation(CU::Matrix44f());
 		GetParent()->SetWorldPosition(CU::Vector3f(0.f, 1.f, 0.f));
+		myFowrardSpeed = 0.f;
+		for(int i  = 0; i < static_cast<int>(AxisPos::Size); ++i)
+		{
+			myAxisSpeed[i] = 0;
+		}
 	}
 }
 
@@ -299,26 +298,96 @@ void CKartControllerComponent::Init(Physics::CPhysicsScene* aPhysicsScene)
 }
 
 const float gravity = 9.82;
-const float upDist = 0.5;
+const float upDist = 0.05;
 void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 {
 	const CU::Vector3f down = -CU::Vector3f::UnitY;
+	const CU::Vector3f right = GetParent()->GetToWorldTransform().myRightVector;
+	const CU::Vector3f front = GetParent()->GetToWorldTransform().myForwardVector;
 	const CU::Vector3f pos = GetParent()->GetWorldPosition();
-	//Update fall speed
-	myFallSpeed += gravity * aDeltaTime;
 
-	//Check if on ground
-	Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(pos, down, 1);
-	if(raycastHitData.hit == true && raycastHitData.distance < upDist)
+	const float halfWidth = myAxisDescription.width / 2.f;
+	const float halfLength = myAxisDescription.length / 2.f;
+
+	const CU::Vector3f rxhw = halfWidth * right;
+
+	
+
+	//Check if on ground (once per axis)
+
+	CU::Vector3f axees[static_cast<int>(AxisPos::Size)];
+
+	for(int i = 0; i < static_cast<int>(AxisPos::Size); ++i)
 	{
-		myFallSpeed = 0;
-		const float disp = upDist - raycastHitData.distance;
+		//Update fall speed
+		myAxisSpeed[i] += gravity * aDeltaTime;
+		CU::Vector3f examineVector = pos;
 
-		GetParent()->GetLocalTransform().Move(-down * disp);
+		if(i % 2 != 0)
+		{
+			examineVector += front * myAxisDescription.length;
+		}
+		if(i < 2)
+		{
+			examineVector += rxhw;
+		}
+		else
+		{
+			examineVector -= rxhw;
+		}
+
+		Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(examineVector, down, 1);
+		if (raycastHitData.hit == true && raycastHitData.distance < upDist)
+		{
+			myAxisSpeed[i] = 0;
+			const float disp = upDist - raycastHitData.distance;
+
+			examineVector -= down * disp;
+
+		}
+
+		//When not on ground, do fall
+		const CU::Vector3f disp = down * myAxisSpeed[i] * aDeltaTime;
+		examineVector += disp;
+
+		axees[i] = examineVector;
 	}
 
+	CU::Vector3f avgPos = CU::Vector3f::Zero;
 
-	//When not on ground, do fall
-	const CU::Vector3f disp = down * myFallSpeed * aDeltaTime;
-	GetParent()->GetLocalTransform().Move(disp);
+	for(int i = 0; i < static_cast<int>(AxisPos::Size);++i)
+	{
+		avgPos += axees[i];
+	}
+
+	avgPos /= static_cast<int>(AxisPos::Size);
+
+	avgPos -= front * halfLength;
+
+	CU::Matrix44f transform = GetParent()->GetToWorldTransform();
+
+	const CU::Vector3f avgRVec = (axees[static_cast<int>(AxisPos::RightFront)] + axees[static_cast<int>(AxisPos::RightBack)]) / 2.f;
+	const CU::Vector3f avgLVec = (axees[static_cast<int>(AxisPos::LeftFront)] + axees[static_cast<int>(AxisPos::LeftBack)]) / 2.f;
+
+	const CU::Vector3f avgFVec = (axees[static_cast<int>(AxisPos::RightFront)] + axees[static_cast<int>(AxisPos::LeftFront)]) / 2.f;
+	const CU::Vector3f avgBVec = (axees[static_cast<int>(AxisPos::RightBack)] + axees[static_cast<int>(AxisPos::LeftBack)]) / 2.f;
+
+	const CU::Vector3f newRight = (avgRVec - avgLVec).Normalize();
+	CU::Vector3f newFront = (avgFVec - avgBVec).Normalize();
+
+	const CU::Vector3f newUp = newFront.Cross(newRight).Normalize();
+	newFront = newRight.Cross(newUp);
+
+	CU::Matrix33f newRotation;
+	newRotation.myRightVector = newRight;
+	newRotation.myForwardVector = newFront;
+	newRotation.myUpVector = newUp;
+	
+	
+
+	transform.SetRotation(newRotation);
+
+	transform.SetPosition(avgPos);
+	GetParent()->SetWorldTransformation(transform);
+	NotifyParent(eComponentMessageType::eMoving, SComponentMessageData());
 }
