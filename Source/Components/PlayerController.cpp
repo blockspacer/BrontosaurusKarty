@@ -5,6 +5,7 @@
 #include "..\CommonUtilities\XInputWrapper.h"
 #include "..\CommonUtilities\EKeyboardKeys.h"
 #include "KartControllerComponent.h"
+#include "SpeedHandlerManager.h"
 
 //Temp includes
 #include "BoostData.h"
@@ -147,12 +148,7 @@ void CPlayerController::PressedKey(const CU::SInputMessage & aInputMessage)
 	case CU::eKeys::SPACE:
 	{
 		SComponentMessageData boostMessageData;
-		SBoostData* boostData = new SBoostData();
-		boostData->accerationBoost = 5;
-		boostData->duration = 4.0f;
-		boostData->maxSpeedBoost = 2.0f;
-		boostData->hashedName = std::hash<std::string>()("TempBoost");
-		boostMessageData.myBoostData = boostData;
+		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("BoostPad"));
 		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
 		break;
 	}

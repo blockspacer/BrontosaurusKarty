@@ -1,6 +1,10 @@
 #pragma once
 #include "Component.h"
 
+namespace Physics {
+	class CPhysicsScene;
+}
+
 class CParticleEmitterInstance;
 
 class CKartControllerComponent : public CComponent
@@ -20,6 +24,7 @@ public:
 
 	void Update(const float aDeltaTime);
 	void Receive(const eComponentMessageType, const SComponentMessageData&) override;
+	void Init(Physics::CPhysicsScene* aPhysicsScene);
 
 	enum class eCurrentAction
 	{
@@ -29,6 +34,9 @@ public:
 	};
 
 private:
+	void DoPhysics(const float aDeltaTime);
+	float myFallSpeed;
+
 	float myFowrardSpeed;
 	float myMaxSpeed;
 	float myMinSpeed;
@@ -64,5 +72,6 @@ private:
 	int myRightDriftBoostEmitterhandle;
 
 	bool myIsDrifting;
+	Physics::CPhysicsScene* myPhysicsScene;
 };
 

@@ -53,6 +53,7 @@
 #include "Physics/PhysicsCharacterController.h"
 #include "CharacterControllerComponent.h"
 #include "../Components/ParticleEmitterComponentManager.h"
+#include "ConcaveMeshCollider.h"
 
 //Other stuff I dunno
 #include "PointLightComponentManager.h"
@@ -285,6 +286,7 @@ void CPlayState::CreateManagersAndFactories()
 	CSpeedHandlerManager::CreateInstance();
 	CSpeedHandlerManager::GetInstance()->Init();
 	myKartControllerComponentManager = new CKartControllerComponentManager;
+	myKartControllerComponentManager->Init(myPhysicsScene);
 	myPlayerControllerManager = new CPlayerControllerManager;
 	CKartSpawnPointManager::GetInstance().Create();
 }
@@ -292,6 +294,7 @@ void CPlayState::CreateManagersAndFactories()
 void CPlayState::CreatePlayer(CU::Camera& aCamera)
 {
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
+	playerObject->Move({ 0.f, 1.f, 0.f });
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
 	CCameraComponent* cameraComponent = myCameraComponent;
 	cameraComponent = new CCameraComponent();
@@ -316,7 +319,17 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	playerObject->AddComponent(playerModel);
 
 	playerObject->AddComponent(kartComponent);
-
+	/*SConcaveMeshColliderData crystalMeshColliderData;
+	crystalMeshColliderData.IsTrigger = false;
+	crystalMeshColliderData.myPath = "Models/Meshes/M_Kart_01.fbx";
+	crystalMeshColliderData.material.aDynamicFriction = 0.5f;
+	crystalMeshColliderData.material.aRestitution = 0.5f;
+	crystalMeshColliderData.material.aStaticFriction = 0.5f;
+	CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&crystalMeshColliderData, playerObject->GetId());
+	playerObject->AddComponent(playerColliderComponent);*/
+	SRigidBodyData rigidBodyData;
+	//CColliderComponent* rigidBodyComponent = myColliderComponentManager->CreateComponent(&rigidBodyData, playerObject->GetId());
+	//playerObject->AddComponent(rigidBodyComponent);
 	//playerObject->AddComponent(kartComponent);
 	//playerObject->AddComponent(keyBoardInput);
 	//playerObject->AddComponent(xboxInput);

@@ -3,7 +3,7 @@
 
 struct SConcaveMeshColliderData : SColliderData
 {
-	SConcaveMeshColliderData() { myType = eColliderType::eMesh; }
+	SConcaveMeshColliderData() { myType = eColliderType::eConcaveMesh; }
 	const char* myPath;
 };
 
@@ -16,7 +16,7 @@ public:
 	virtual void Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData) override;
 
 	const SConcaveMeshColliderData* GetData() override { return &myData; };
-	inline SColliderData::eColliderType GetType() { return SColliderData::eColliderType::eMesh; }
+	inline SColliderData::eColliderType GetType() { return SColliderData::eColliderType::eConcaveMesh; }
 
 private:
 	void Init(const CU::Vector3f& aScale);

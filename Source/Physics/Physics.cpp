@@ -63,6 +63,7 @@ namespace Physics
 		myDefaultMaterial = myPxPhysics->createMaterial(defMatStaticFriction, defMatDynamicFriction, defMatRestitution);
 		myEventCallback = new CSimulationEventCallback();
 		myDispatcher = PxDefaultCpuDispatcherCreate(0);
+		//myCooking = nullptr;
 	}
 
 	CPhysics::~CPhysics()
@@ -71,6 +72,7 @@ namespace Physics
 		SAFE_RELEASE(myDispatcher);
 		SAFE_DELETE(myEventCallback);
 		//SAFE_RELEASE(myDefaultMaterial);
+		//SAFE_RELEASE(myCooking);
 	}
 
 	CPhysicsScene* CPhysics::CreateScene(const CU::Vector3f aGravity)
@@ -93,6 +95,14 @@ namespace Physics
 			pvdClient->setScenePvdFlag(PxPvdSceneFlag::Enum::eTRANSMIT_CONSTRAINTS, true);
 		}
 #endif
+
+		//PxCookingParams cookingParams = PxCookingParams(physx::PxTolerancesScale());
+		//myCooking = PxCreateCooking(PX_PHYSICS_VERSION, myPxPhysics->getFoundation(), cookingParams);
+		//if (!myCooking)
+		//{
+		//	DL_MESSAGE_BOX("Failed to create cooking, how shall we now make food??");
+		//}
+
 		return new CPhysicsScene(pxScene);
 	}
 
@@ -212,6 +222,7 @@ namespace Physics
 
 	Physics::CShape* CPhysics::CreateConcaveMeshShape(const std::string& aPath, const SMaterialData& aMaterialData, const CU::Vector3f& aScale)
 	{
+
 		SLoaderCollisionMesh loaderMesh;
 		CFBXLoader loader;
 		if (!loader.LoadCollisionMesh(aPath, loaderMesh))

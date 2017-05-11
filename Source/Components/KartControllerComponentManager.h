@@ -1,4 +1,7 @@
 #pragma once
+namespace Physics {
+	class CPhysicsScene;
+}
 
 class CKartControllerComponent;
 
@@ -11,10 +14,10 @@ public:
 	CKartControllerComponent* CreateAndRegisterComponent();
 
 	void Update(const float aDeltaTime);
-
+	void Init(Physics::CPhysicsScene* aPhysicsScene);
 
 private:
 	CU::GrowingArray<CKartControllerComponent*> myComponents;
-
+	Physics::CPhysicsScene* myPhysicsScene;
 };
 

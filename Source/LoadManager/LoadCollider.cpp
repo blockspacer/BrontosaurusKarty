@@ -137,7 +137,7 @@ int LoadMeshCollider(KLoader::SLoadedComponentData someData)
 	return component->GetId();
 }
 
-int LoadConcaveColliderServer(KLoader::SLoadedComponentData someData)
+int LoadConcaveCollider(KLoader::SLoadedComponentData someData)
 {
 	CGameObject* parent = GetCurrentObject();
 	CU::Vector3f scale = parent->GetToWorldTransform().GetScale();
