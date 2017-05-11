@@ -10,15 +10,7 @@ class CParticleEmitterInstance;
 class CKartControllerComponent : public CComponent
 {
 public:
-	class CKartAxis
-	{
-	public:
-		CKartAxis();
-		CKartAxis(float aLength, float aWidth);
-		void DoPhysics();
-	private:
-	};
-
+	
 	CKartControllerComponent();
 	~CKartControllerComponent();
 
@@ -45,7 +37,24 @@ public:
 
 private:
 	void DoPhysics(const float aDeltaTime);
-	float myFallSpeed;
+
+	enum class AxisPos
+	{
+		RightBack,
+		RightFront,
+		LeftBack,
+		LeftFront,
+		Size
+	};
+	
+	float myAxisSpeed[static_cast<int>(AxisPos::Size)];
+
+	struct
+	{
+		float width = 1.f;
+		float length = 1.f;
+	} myAxisDescription;
+
 
 	float myFowrardSpeed;
 	float myMaxSpeed;
