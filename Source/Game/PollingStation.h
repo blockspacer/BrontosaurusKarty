@@ -2,19 +2,21 @@
 
 class CPollingStation
 {
+friend class CClient;
+
 public:
 	static void Create();
 	static void Destroy();
 	static CPollingStation* GetInstance()			{ return ourInstance; }
-	static unsigned char GetStartCountdownTime()	{ return myStartCountdownTime; }
+	unsigned char GetStartCountdownTime()	{ return myStartCountdownTime; }
 private:
 	CPollingStation();
 	~CPollingStation();
 
-	void SetStartCountDownTime(unsigned char aTime) { myStartCountdownTime = aTime; }
+	inline void SetStartCountDownTime(unsigned char aTime) { myStartCountdownTime = aTime; }
 
 private:
 	static CPollingStation* ourInstance;
-	static unsigned char myStartCountdownTime;
+	unsigned char myStartCountdownTime;
 };
 
