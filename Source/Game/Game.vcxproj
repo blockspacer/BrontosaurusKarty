@@ -311,6 +311,7 @@
     <ClCompile Include="LoadState.cpp" />
     <ClCompile Include="ParticleEffectManager.cpp" />
     <ClCompile Include="PlayState.cpp" />
+    <ClCompile Include="PollingStation.cpp" />
     <ClCompile Include="ScriptHelperFunctions.cpp" />
     <ClCompile Include="ScriptLoader.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -329,6 +330,7 @@
     <ClInclude Include="LoadState.h" />
     <ClInclude Include="ParticleEffectManager.h" />
     <ClInclude Include="PlayState.h" />
+    <ClInclude Include="PollingStation.h" />
     <ClInclude Include="ScriptHelperFunctions.h" />
     <ClInclude Include="ScriptLoader.h" />
     <ClInclude Include="stdafx.h" />

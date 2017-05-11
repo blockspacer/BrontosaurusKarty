@@ -36,6 +36,7 @@
       <Filter>KartSpawnPoint</Filter>
     </ClCompile>
     <ClCompile Include="KartSpawnPointManager.cpp" />
+    <ClCompile Include="PollingStation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -75,7 +76,10 @@
     <ClInclude Include="KartSpawnPoint.h">
       <Filter>KartSpawnPoint</Filter>
     </ClInclude>
-    <ClInclude Include="KartSpawnPointManager.h" />
+    <ClInclude Include="KartSpawnPointManager.h">
+      <Filter>KartSpawnPoint</Filter>
+    </ClInclude>
+    <ClInclude Include="PollingStation.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="States">
