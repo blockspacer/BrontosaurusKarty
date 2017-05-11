@@ -57,6 +57,7 @@
     </ClCompile>
     <ClCompile Include="KartControllerComponentManager.cpp" />
     <ClCompile Include="ConcaveMeshCollider.cpp" />
+    <ClCompile Include="BoostPadComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -113,6 +114,7 @@
       <Filter>Pickups\Base</Filter>
     </ClInclude>
     <ClInclude Include="ConcaveMeshCollider.h" />
+    <ClInclude Include="BoostPadComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Pickups">

@@ -191,7 +191,7 @@ void CKartControllerComponent::StopDrifting()
 
 void CKartControllerComponent::Update(const float aDeltaTime)
 {
-	//DoPhysics(aDeltaTime);
+	DoPhysics(aDeltaTime);
 
 	float way = 1.f;
 	if (myFowrardSpeed > 0.f)
