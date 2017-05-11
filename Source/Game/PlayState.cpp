@@ -177,9 +177,10 @@ void CPlayState::Load()
 	myScene->AddCamera(CScene::eCameraType::ePlayerOneCamera);
 	CRenderCamera& playerCamera = myScene->GetRenderCamera(CScene::eCameraType::ePlayerOneCamera);
 	playerCamera.InitPerspective(90, WINDOW_SIZE_F.x, WINDOW_SIZE_F.y, 0.1f, 500.f);
+	myScene->InitPlayerCameras(2);
 
 
-	CreatePlayer(playerCamera.GetCamera());
+	CreatePlayer(playerCamera/*myScene->GetPlayerCamera(0)*/.GetCamera());
 	myScene->SetSkybox("default_cubemap.dds");
 	myScene->SetCubemap("purpleCubemap.dds");
 
@@ -228,6 +229,7 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 void CPlayState::Render()
 {
 	myScene->Render();
+	//myScene->RenderSplitScreen(2);
 }
 
 void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
