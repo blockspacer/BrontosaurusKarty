@@ -30,11 +30,13 @@
 #include "../ThreadedPostmaster/SetClientIDMessage.h"
 #include "../TShared/NetworkMessage_ServerReady.h"
 #include "../ThreadedPostmaster/NetworkDebugInfo.h"
-#include "../ThreadedPostmaster/GameEventMessage.h"
 #include "../Game/GameEventMessenger.h"
+#include "../ThreadedPostmaster/GameEventMessage.h"
 #include "../CommonUtilities/StringHelper.h"
 #include "../TShared/NetworkMessage_Disconected.h"
 #include "../TShared/NetworkMessage_AnimationStart.h"
+#include "../TShared/NetworkMessage_StartCountdown.h"
+#include "../Game/PollingStation.h"
 
 
 CClient::CClient() : myMainTimer(0), myState(eClientState::DISCONECTED), myId(0), myServerIp(""), myServerPingTime(0), myServerIsPinged(false), myPlayerPositionUpdated(false), myRoundTripTime(0), myCurrentTime(0), myPositionWaitTime(0)
@@ -202,7 +204,9 @@ void CClient::Update()
 			break;
 			case ePackageType::eStartCountdown:
 			{
-				int br = 0;
+				CNetworkMessage_StartCountdown* countdownMessage = currentMessage->CastTo<CNetworkMessage_StartCountdown>();
+				CPollingStation::GetInstance()->SetStartCountDownTime(countdownMessage->myCountdownTime);
+				// BYT TILL POSTMASTER NÄR SAKER FUNKAR :D (annars slår Hampus mig  :c)
 			}
 			break;
 
