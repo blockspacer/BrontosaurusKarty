@@ -1,7 +1,8 @@
 #pragma once
 #include "Component.h"
 
-namespace Physics {
+namespace Physics
+{
 	class CPhysicsScene;
 }
 
