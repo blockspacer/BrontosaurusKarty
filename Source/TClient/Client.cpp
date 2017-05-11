@@ -65,10 +65,10 @@ bool CClient::StartClient()
 	myMainTimer = myTimerManager.CreateTimer();
 	CU::Work work(std::bind(&CClient::Update, this));
 	work.SetName("ClientUpdate");
-	//std::function<bool(void)> condition;
-	//condition = std::bind(&CClient::IsRunning, this);
-	////condition = []()->bool{return true; };
-	//work.AddLoopCondition(condition);
+	std::function<bool(void)> condition;
+	condition = std::bind(&CClient::IsRunning, this);
+	//condition = []()->bool{return true; };
+	work.AddLoopCondition(condition);
 	std::function<void()> callback = [this]() {myCanQuit = true;  };
 	work.SetFinishedCallback(callback);
 	CEngine::GetInstance()->GetThreadPool()->AddWork(work);
@@ -199,7 +199,13 @@ void CClient::Update()
 			{
 				CNetworkMessage_AnimationStart* animationMessage = currentMessage->CastTo<CNetworkMessage_AnimationStart>();
 			}
-				break;
+			break;
+			case ePackageType::eStartCountdown:
+			{
+				int br = 0;
+			}
+			break;
+
 			case ePackageType::eZero:
 			case ePackageType::eSize:
 			default: break;

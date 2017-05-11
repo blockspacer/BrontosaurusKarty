@@ -30,7 +30,7 @@ void CGame::Init()
 	SSlua::LuaWrapper::GetInstance().RegisterFunctions(&ScriptLoader::RegisterLuaFunctions);
 	myGameEventMessenger.Init({ 0.5f, 0.1f });
 	myClient.StartClient();
-
+	myClient.Connect("127.0.0.1", "temp.cccp");
 	myStateStack.PushState(new CLoadState(myStateStack, 0));
 }
 
