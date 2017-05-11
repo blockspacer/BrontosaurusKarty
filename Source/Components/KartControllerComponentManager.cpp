@@ -1,12 +1,12 @@
 #include "stdafx.h"
 #include "KartControllerComponentManager.h"
 #include "KartControllerComponent.h"
-
+#include "PollingStation.h"
 
 CKartControllerComponentManager::CKartControllerComponentManager()
 {
 	myComponents.Init(4);
-	myShouldUpdate = true;
+	myShouldUpdate = false;
 }
 
 
@@ -26,7 +26,12 @@ CKartControllerComponent * CKartControllerComponentManager::CreateAndRegisterCom
 void CKartControllerComponentManager::Update(const float aDeltaTime)
 {
 	if (myShouldUpdate == false)
-		return;
+	{
+		if (CPollingStation::GetInstance()->GetStartCountdownTime() != 4)
+			return;
+		else
+			myShouldUpdate = true;
+	}
 
 	for (int i = 0; i < myComponents.Size(); i++)
 	{
