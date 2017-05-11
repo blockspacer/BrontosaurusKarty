@@ -13,6 +13,19 @@
 #include "../Physics/PhysicsScene.h"
 #include "../TServer/GameServer.h"
 
+CKartControllerComponent::CKartAxis::CKartAxis() : CKartAxis(1.f, 1.f)
+{
+
+}
+
+CKartControllerComponent::CKartAxis::CKartAxis(float aLength, float aWidth) 
+{
+}
+
+void CKartControllerComponent::CKartAxis::DoPhysics()
+{
+}
+
 CKartControllerComponent::CKartControllerComponent(): myFallSpeed(0)
 {
 	CU::CJsonValue levelsFile;
@@ -273,6 +286,7 @@ void CKartControllerComponent::Init(Physics::CPhysicsScene* aPhysicsScene)
 }
 
 const float gravity = 9.82;
+const float upDist = 0.5;
 void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 {
 	const CU::Vector3f down = -CU::Vector3f::UnitY;
@@ -282,9 +296,12 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 
 	//Check if on ground
 	Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(pos, down, 1);
-	if(raycastHitData.hit == true && raycastHitData.distance < 0.02)
+	if(raycastHitData.hit == true && raycastHitData.distance < upDist)
 	{
 		myFallSpeed = 0;
+		const float disp = upDist - raycastHitData.distance;
+
+		GetParent()->GetLocalTransform().Move(-down * disp);
 	}
 
 

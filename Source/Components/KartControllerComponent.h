@@ -10,6 +10,15 @@ class CParticleEmitterInstance;
 class CKartControllerComponent : public CComponent
 {
 public:
+	class CKartAxis
+	{
+	public:
+		CKartAxis();
+		CKartAxis(float aLength, float aWidth);
+		void DoPhysics();
+	private:
+	};
+
 	CKartControllerComponent();
 	~CKartControllerComponent();
 
