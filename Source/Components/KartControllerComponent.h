@@ -10,6 +10,15 @@ class CParticleEmitterInstance;
 class CKartControllerComponent : public CComponent
 {
 public:
+	class CKartAxis
+	{
+	public:
+		CKartAxis();
+		CKartAxis(float aLength, float aWidth);
+		void DoPhysics();
+	private:
+	};
+
 	CKartControllerComponent();
 	~CKartControllerComponent();
 
@@ -22,6 +31,7 @@ public:
 	void Drift();
 	void StopDrifting();
 
+	void CheckZKill();
 	void Update(const float aDeltaTime);
 	void Receive(const eComponentMessageType, const SComponentMessageData&) override;
 	void Init(Physics::CPhysicsScene* aPhysicsScene);

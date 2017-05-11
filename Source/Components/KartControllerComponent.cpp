@@ -13,7 +13,20 @@
 #include "../Physics/PhysicsScene.h"
 #include "../TServer/GameServer.h"
 
-CKartControllerComponent::CKartControllerComponent(): myFallSpeed(0)
+CKartControllerComponent::CKartAxis::CKartAxis() : CKartAxis(1.f, 1.f)
+{
+
+}
+
+CKartControllerComponent::CKartAxis::CKartAxis(float aLength, float aWidth) 
+{
+}
+
+void CKartControllerComponent::CKartAxis::DoPhysics()
+{
+}
+
+CKartControllerComponent::CKartControllerComponent(): myFallSpeed(0), myPhysicsScene(nullptr)
 {
 	CU::CJsonValue levelsFile;
 	std::string errorString = levelsFile.Parse("Json/KartStats.json");
@@ -189,10 +202,23 @@ void CKartControllerComponent::StopDrifting()
 	}
 }
 
+//TODO: Hard coded, not good, change soon
+const float killHeight = -25;
+
+void CKartControllerComponent::CheckZKill()
+{
+	const float height = GetParent()->GetWorldPosition().y;
+
+	if(height < killHeight)
+	{
+		GetParent()->SetWorldPosition(CU::Vector3f(0.f, 1.f, 0.f));
+	}
+}
+
 void CKartControllerComponent::Update(const float aDeltaTime)
 {
 	DoPhysics(aDeltaTime);
-
+	CheckZKill();
 	float way = 1.f;
 	if (myFowrardSpeed > 0.f)
 	{
@@ -273,6 +299,7 @@ void CKartControllerComponent::Init(Physics::CPhysicsScene* aPhysicsScene)
 }
 
 const float gravity = 9.82;
+const float upDist = 0.5;
 void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 {
 	const CU::Vector3f down = -CU::Vector3f::UnitY;
@@ -282,9 +309,12 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 
 	//Check if on ground
 	Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(pos, down, 1);
-	if(raycastHitData.hit == true && raycastHitData.distance < 0.02)
+	if(raycastHitData.hit == true && raycastHitData.distance < upDist)
 	{
 		myFallSpeed = 0;
+		const float disp = upDist - raycastHitData.distance;
+
+		GetParent()->GetLocalTransform().Move(-down * disp);
 	}
 
 
