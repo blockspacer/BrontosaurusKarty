@@ -58,7 +58,7 @@ public:
 	eMessageReturn DoEvent(const CLoadLevelMessage& aLoadLevelMessage) override;
 	CU::eInputReturn RecieveInput(const CU::SInputMessage& aInputMessage) override;
 	void SetCameraComponent(CCameraComponent* aCameraComponent);
-
+	inline CBoostPadComponentManager* GetBoostPadComponentManager();
 private:
 	void CreatePlayer(CU::Camera& aCamera);
 private:
@@ -96,4 +96,9 @@ inline CColliderComponentManager* CPlayState::GetColliderComponentManager()
 inline CScriptComponentManager* CPlayState::GetScriptComponentManager()
 {
 	return myScriptComponentManager;
+}
+
+inline CBoostPadComponentManager* CPlayState::GetBoostPadComponentManager()
+{
+	return myBoostPadComponentManager;
 }

@@ -16,6 +16,7 @@
 #include "LoadParticleEmitterComponent.h"
 #include "LoadHighlightComponent.h"
 #include "LoadVertexInstanceStream.h"
+#include "LoadBoostPad.h"
 
 LoadManager* LoadManager::ourInstance = nullptr;
 
@@ -69,7 +70,7 @@ void LoadManager::RegisterFunctions()
 	loader.RegisterComponentLoadFunction("HighlightComponent",LoadHighlightComponent);
 	loader.RegisterComponentLoadFunction("Light", LoadPointLightComponent);
 	loader.RegisterComponentLoadFunction("WeaponCrateComponent", LoadWeapoCrateComponent);
-
+	loader.RegisterComponentLoadFunction("BoostpadComponent", LoadBoostPadComponent);
 	//loader.RegisterComponentLoadFunction("CircleCollider", LoadCircleCollider);
 	//loader.RegisterComponentLoadFunction("SoundComponent", LoadSoundComponent);
 	//loader.RegisterComponentLoadFunction("FireComponent", LoadFireComponent);
