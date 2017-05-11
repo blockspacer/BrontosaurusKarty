@@ -11,10 +11,9 @@ public:
 	CKartControllerComponent* CreateAndRegisterComponent();
 
 	void Update(const float aDeltaTime);
-
+	void ShouldUpdate(const bool aShouldUpdate);
 
 private:
 	CU::GrowingArray<CKartControllerComponent*> myComponents;
-
+	bool myShouldUpdate;
 };
-
