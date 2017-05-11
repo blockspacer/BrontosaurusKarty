@@ -58,7 +58,7 @@ CColliderComponent* CColliderComponentManager::CreateComponent(SColliderData* aC
 		}
 		break;
 	case SColliderData::eColliderType::eConcaveMesh:
-		CreateConcaveMeshCollider(*static_cast<SConcaveMeshColliderData*>(aColliderData), anId);
+		myColliderComponents.Add(CreateConcaveMeshCollider(*static_cast<SConcaveMeshColliderData*>(aColliderData), anId));
 		break;
 	case SColliderData::eColliderType::eRigidbody:
 		myColliderComponents.Add(CreateRigidbody(*reinterpret_cast<SRigidBodyData*>(aColliderData),anId));

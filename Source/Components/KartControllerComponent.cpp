@@ -8,9 +8,26 @@
 #include "../PostMaster/SetVibrationOnController.h"
 #include "../PostMaster/StopVibrationOnController.h"
 #include "../ThreadedPostmaster/Postmaster.h"
-CKartControllerComponent::CKartControllerComponent()
+#include "../Physics/PhysicsCallbackActor.h"
+#include "../Physics/PhysXManager.h"
+#include "../Physics/PhysicsScene.h"
+#include "../TServer/GameServer.h"
+
+CKartControllerComponent::CKartAxis::CKartAxis() : CKartAxis(1.f, 1.f)
 {
 
+}
+
+CKartControllerComponent::CKartAxis::CKartAxis(float aLength, float aWidth) 
+{
+}
+
+void CKartControllerComponent::CKartAxis::DoPhysics()
+{
+}
+
+CKartControllerComponent::CKartControllerComponent(): myFallSpeed(0), myPhysicsScene(nullptr)
+{
 	CU::CJsonValue levelsFile;
 	std::string errorString = levelsFile.Parse("Json/KartStats.json");
 	if (!errorString.empty()) DL_MESSAGE_BOX(errorString.c_str());
@@ -18,7 +35,6 @@ CKartControllerComponent::CKartControllerComponent()
 	CU::CJsonValue levelsArray = levelsFile.at("Karts");
 
 	CU::CJsonValue Karts = levelsArray.at("BaseKart");
-
 
 
 	myFowrardSpeed = 0.0f;
@@ -186,8 +202,23 @@ void CKartControllerComponent::StopDrifting()
 	}
 }
 
+//TODO: Hard coded, not good, change soon
+const float killHeight = -25;
+
+void CKartControllerComponent::CheckZKill()
+{
+	const float height = GetParent()->GetWorldPosition().y;
+
+	if(height < killHeight)
+	{
+		GetParent()->SetWorldPosition(CU::Vector3f(0.f, 1.f, 0.f));
+	}
+}
+
 void CKartControllerComponent::Update(const float aDeltaTime)
 {
+	DoPhysics(aDeltaTime);
+	CheckZKill();
 	float way = 1.f;
 	if (myFowrardSpeed > 0.f)
 	{
@@ -260,4 +291,34 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 		break;
 	}
 
+}
+
+void CKartControllerComponent::Init(Physics::CPhysicsScene* aPhysicsScene)
+{
+	myPhysicsScene = aPhysicsScene;
+}
+
+const float gravity = 9.82;
+const float upDist = 0.5;
+void CKartControllerComponent::DoPhysics(const float aDeltaTime)
+{
+	const CU::Vector3f down = -CU::Vector3f::UnitY;
+	const CU::Vector3f pos = GetParent()->GetWorldPosition();
+	//Update fall speed
+	myFallSpeed += gravity * aDeltaTime;
+
+	//Check if on ground
+	Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(pos, down, 1);
+	if(raycastHitData.hit == true && raycastHitData.distance < upDist)
+	{
+		myFallSpeed = 0;
+		const float disp = upDist - raycastHitData.distance;
+
+		GetParent()->GetLocalTransform().Move(-down * disp);
+	}
+
+
+	//When not on ground, do fall
+	const CU::Vector3f disp = down * myFallSpeed * aDeltaTime;
+	GetParent()->GetLocalTransform().Move(disp);
 }
