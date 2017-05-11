@@ -6,6 +6,7 @@ namespace physx
 	class PxPhysics;
 	class PxDefaultCpuDispatcher;
 	class PxMaterial;
+	//class PxCooking;
 	class PxGeometry;
 	class PxControllerManager;
 	class PxTriangleMesh;
@@ -52,6 +53,7 @@ namespace Physics
 		physx::PxPhysics* myPxPhysics;
 		physx::PxDefaultCpuDispatcher* myDispatcher;
 		physx::PxMaterial* myDefaultMaterial;
+		//physx::PxCooking* myCooking;
 
 		CSimulationEventCallback* myEventCallback;
 

@@ -8,6 +8,7 @@
 
 CConcaveMeshColliderComponent::CConcaveMeshColliderComponent(const SConcaveMeshColliderData& aColliderData, Physics::CPhysicsScene* aScene)
 	: CColliderComponent(aColliderData, nullptr, nullptr, false)
+	, myScene(aScene)
 {
 	myData = aColliderData;
 }

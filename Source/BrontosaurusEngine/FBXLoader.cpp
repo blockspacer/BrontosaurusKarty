@@ -652,7 +652,7 @@ bool CFBXLoader::LoadCollisionMesh(const std::string& aFilePath, SLoaderCollisio
 		vertices[i + 2] = fbxMesh->mVertices[i].z;
 	}
 
-	std::vector<float> indices;
+	std::vector<unsigned int> indices;
 	indices.reserve(fbxMesh->mNumFaces * 3);
 	for (unsigned int i = 0; i < fbxMesh->mNumFaces; i++)
 	{
@@ -663,15 +663,15 @@ bool CFBXLoader::LoadCollisionMesh(const std::string& aFilePath, SLoaderCollisio
 	}
 
 	aLoaderMeshOut.vertices.count = vertexCount;
-	aLoaderMeshOut.vertices.stride = sizeof(float) * 3;
+	aLoaderMeshOut.vertices.stride = vertexStride;
 	aLoaderMeshOut.vertices.data = new float[vertexCount * 3];
-	memcpy(aLoaderMeshOut.vertices.data, vertices.data(), vertexCount * 3);
+	memcpy(aLoaderMeshOut.vertices.data, vertices.data(), vertexCount * vertexStride);
 
 	unsigned int indexCount = static_cast<unsigned int>(indices.size());
-	aLoaderMeshOut.indices.triangleCount = indexCount;
+	aLoaderMeshOut.indices.triangleCount = fbxMesh->mNumFaces;
 	aLoaderMeshOut.indices.stride = sizeof(unsigned int);
 	aLoaderMeshOut.indices.data = new unsigned int[indexCount];
-	memcpy(aLoaderMeshOut.indices.data, indices.data(), indexCount);
+	memcpy(aLoaderMeshOut.indices.data, indices.data(), indexCount * sizeof(unsigned int));
 
 	return true;
 }
