@@ -44,6 +44,9 @@
     <Filter Include="NetworkMessage\AnimationStart">
       <UniqueIdentifier>{fee5141f-4e54-4115-9f79-0caf0bdd3d02}</UniqueIdentifier>
     </Filter>
+    <Filter Include="NetworkMessage\StartCountdown">
+      <UniqueIdentifier>{9b628e3c-6cba-4316-b2cc-d40d03222040}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -112,6 +115,9 @@
     <ClInclude Include="NetworkMessage_AnimationStart.h">
       <Filter>NetworkMessage\AnimationStart</Filter>
     </ClInclude>
+    <ClInclude Include="NetworkMessage_StartCountdown.h">
+      <Filter>NetworkMessage\StartCountdown</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -159,6 +165,9 @@
     </ClCompile>
     <ClCompile Include="NetworkMessage_AnimationStart.cpp">
       <Filter>NetworkMessage\AnimationStart</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkMessage_StartCountdown.cpp">
+      <Filter>NetworkMessage\StartCountdown</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
