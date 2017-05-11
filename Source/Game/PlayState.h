@@ -28,6 +28,7 @@ class CCameraComponent;
 class CKartComponentManager;
 class CKartControllerComponentManager;
 class CPlayerControllerManager;
+class CBoostPadComponentManager;
 
 class CPlayState : public State , public Postmaster::ISubscriber
 {
@@ -71,6 +72,7 @@ private:
 	CColliderComponentManager* myColliderComponentManager;
 	CScriptComponentManager* myScriptComponentManager;
 	CKartComponentManager* myKartComponentManager;
+	CBoostPadComponentManager* myBoostPadComponentManager;
 
 	CKartControllerComponentManager* myKartControllerComponentManager;
 	CPlayerControllerManager* myPlayerControllerManager;

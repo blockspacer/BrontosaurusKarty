@@ -60,6 +60,9 @@
     <ClCompile Include="BoostPadComponent.cpp">
       <Filter>BoostPad</Filter>
     </ClCompile>
+    <ClCompile Include="BoostPadComponentManager.cpp">
+      <Filter>BoostPad</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -117,6 +120,9 @@
     </ClInclude>
     <ClInclude Include="ConcaveMeshCollider.h" />
     <ClInclude Include="BoostPadComponent.h">
+      <Filter>BoostPad</Filter>
+    </ClInclude>
+    <ClInclude Include="BoostPadComponentManager.h">
       <Filter>BoostPad</Filter>
     </ClInclude>
   </ItemGroup>
