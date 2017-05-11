@@ -16,12 +16,18 @@ namespace CU
 		Time GetLifeTime() const;
 		Time GetDeltaTime() const;
 		TimeUnit GetFPS() const;
+		bool GetIsActive();
 
 	private:
 		TimeUnit myLifeTime;
 		TimeUnit myDeltaTime;
 		bool myOn;
 	};
+
+	inline bool Timer::GetIsActive()
+	{
+		return myOn;
+	}
 
 	inline void Timer::Start()
 	{

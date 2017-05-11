@@ -8,6 +8,7 @@
 #include "../TShared/NetworkMessage_Ping.h"
 #include "../TShared/NetworkMessage_ConectResponse.h"
 #include "../TShared/NetworkMessage_ChatMessage.h"
+#include "../TShared/NetworkMessage_StartCountdown.h"
 
 
 #include "GameServer.h"
@@ -41,6 +42,12 @@ CServerMain::CServerMain() : myTimerHandle(0), myImportantCount(0), currentFreeI
 
 	myIsRunning = false;
 	myCanQuit = false;
+	myStartCountdownStarted = false;
+	myStartCountdownTime = 0;
+
+	myStartCountdownHandle = myTimerManager.CreateTimer();
+	CU::Timer CDTimer = myTimerManager.GetTimer(myStartCountdownHandle);
+	CDTimer.Stop(); 	CDTimer.Reset();
 }
 
 CServerMain::~CServerMain()
@@ -136,7 +143,7 @@ void CServerMain::RecievePingResponse(SNetworkPackageHeader aHeader)
 void CServerMain::Ping(ClientID aClientID)
 {
 	//Ping was my best best friend growing up
-	//though Ping stole my gir....
+	//though Ping stole my gir....affe
 	//Now I'm on a quest to slay the dark overlord Ping to restore balnce to the force!
 	CNetworkMessage_Ping* pingMessage = CServerMessageManager::GetInstance()->CreateMessage<CNetworkMessage_Ping>(aClientID);
 
@@ -415,6 +422,19 @@ bool CServerMain::Update()
 				DisconectClient(currentMessage->GetHeader().mySenderID);
 			}
 			break;
+
+			case ePackageType::eStartCountdown:
+			{
+				if (myStartCountdownStarted == false)
+				{
+					myStartCountdownStarted = true;
+					CU::Timer CDTimer = myTimerManager.GetTimer(myStartCountdownHandle);
+					CDTimer.Reset();
+					CDTimer.Start();
+				}
+			}
+			break;
+
 			case ePackageType::eZero:
 			case ePackageType::eSize:
 			default: break;
@@ -427,7 +447,10 @@ bool CServerMain::Update()
 			currentMessage = myNetworkWrapper.Recieve(&currentSenderIp, &currentSenderPort);
 		}
 
-		
+
+		// Maybe redefine how bool is started, really through client message?
+		if (myStartCountdownStarted)
+			UpdateStartCountdown();
 
 
 		if (currentTime > 1.f)
@@ -508,4 +531,35 @@ void CServerMain::Shutdown()
 bool CServerMain::IsClosed()
 {
 	return myIsClosed;
+}
+
+void CServerMain::UpdateStartCountdown()
+{
+	//myStartCountdownStarted = true;
+	CU::Timer CDTimer = myTimerManager.GetTimer(myStartCountdownHandle);
+
+	if (CDTimer.GetIsActive() == false)
+		CDTimer.Start();
+	//myTimerManager.StartTimer(myStartCountdownHandle);
+
+	myTimerManager.UpdateTimers();
+
+	float newTime = CDTimer.GetLifeTime().GetSeconds();
+	if (newTime > myStartCountdownTime)
+	{
+		myStartCountdownTime = newTime;
+
+		CNetworkMessage_StartCountdown* CDMessage = CServerMessageManager::GetInstance()->
+			CreateMessage<CNetworkMessage_StartCountdown>(ID_ALL_BUT_ME);
+
+		CDMessage->myCountdownTime = myStartCountdownTime;
+		SendTo(CDMessage);
+	}
+
+	 // Just fixed the timer, now make sure I can send messages and recieve them in client.
+	// Make sure it sends a message every new sec.
+
+	  // Update Pollingstation
+	 // Get time from polling
+	// Unlock controlls at 4
 }

@@ -6,6 +6,7 @@
 CKartControllerComponentManager::CKartControllerComponentManager()
 {
 	myComponents.Init(4);
+	myShouldUpdate = true;
 }
 
 
@@ -24,10 +25,18 @@ CKartControllerComponent * CKartControllerComponentManager::CreateAndRegisterCom
 
 void CKartControllerComponentManager::Update(const float aDeltaTime)
 {
+	if (myShouldUpdate == false)
+		return;
+
 	for (int i = 0; i < myComponents.Size(); i++)
 	{
 		myComponents[i]->Update(aDeltaTime);
 	}
+}
+
+void CKartControllerComponentManager::ShouldUpdate(const bool aShouldUpdate)
+{
+	myShouldUpdate = aShouldUpdate;
 }
 
 void CKartControllerComponentManager::Init(Physics::CPhysicsScene* aPhysicsScene)
