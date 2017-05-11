@@ -202,9 +202,17 @@ void CKartControllerComponent::StopDrifting()
 	}
 }
 
+//TODO: Hard coded, not good, change soon
+const float killHeight = -25;
+
 void CKartControllerComponent::CheckZKill()
 {
-	//const float height = GetParent();
+	const float height = GetParent()->GetWorldPosition().y;
+
+	if(height < killHeight)
+	{
+		GetParent()->SetWorldPosition(CU::Vector3f(0.f, 1.f, 0.f));
+	}
 }
 
 void CKartControllerComponent::Update(const float aDeltaTime)
