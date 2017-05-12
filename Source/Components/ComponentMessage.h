@@ -75,6 +75,8 @@ enum class eComponentMessageType
 	eStopTurnKart,
 	eGiveBoost,
 	eSetBoost,
+	eGiveItem,
+	eUseItem,
 	eLength,
 };
 
