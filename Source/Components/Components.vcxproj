@@ -387,7 +387,7 @@
     <ClInclude Include="KartControllerComponent.h" />
     <ClInclude Include="MeshColliderComponent.h" />
     <ClInclude Include="PickupComponentManager.h" />
-    <ClInclude Include="PlayerController.h" />
+    <ClInclude Include="KeyboardController.h" />
     <ClInclude Include="PlayerControllerManager.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RigidBodyComponent.h" />
@@ -415,6 +415,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="VertexStreamComponent.h" />
     <ClInclude Include="WeaponCratePickupComponent.h" />
+    <ClInclude Include="XboxController.h" />
     <ClInclude Include="XboxControllerComponent.h" />
   </ItemGroup>
   <ItemGroup>
@@ -443,7 +444,7 @@
     <ClCompile Include="KartControllerComponent.cpp" />
     <ClCompile Include="MeshColliderComponent.cpp" />
     <ClCompile Include="PickupComponentManager.cpp" />
-    <ClCompile Include="PlayerController.cpp" />
+    <ClCompile Include="KeyboardController.cpp" />
     <ClCompile Include="PlayerControllerManager.cpp" />
     <ClCompile Include="PointLightComponent.cpp" />
     <ClCompile Include="PointLightComponentManager.cpp" />
@@ -476,6 +477,7 @@
     <ClCompile Include="StreakEmitterComponent.cpp" />
     <ClCompile Include="VertexStreamComponent.cpp" />
     <ClCompile Include="WeaponCratePickupComponent.cpp" />
+    <ClCompile Include="XboxController.cpp" />
     <ClCompile Include="XboxControllerComponent.cpp" />
   </ItemGroup>
   <ItemGroup>

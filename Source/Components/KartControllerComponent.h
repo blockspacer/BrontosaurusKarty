@@ -15,8 +15,9 @@ public:
 	CKartControllerComponent();
 	~CKartControllerComponent();
 
-	void TurnRight();
-	void TurnLeft();
+	void Turn(float aDirectionX);
+	void TurnRight(const float aNormalizedModifier = 1.f);
+	void TurnLeft(const float aNormalizedModifier = -1.f);
 	void StopMoving();
 	void MoveFoward();
 	void MoveBackWards();

@@ -70,8 +70,9 @@
 #include "KartControllerComponentManager.h"
 #include "PlayerControllerManager.h"
 #include "KartControllerComponent.h"
-#include "PlayerController.h"
+#include "KeyboardController.h"
 #include "SpeedHandlerComponent.h"
+#include "XboxController.h"
 
 CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -303,24 +304,23 @@ void CPlayState::CreateManagersAndFactories()
 void CPlayState::CreatePlayer(CU::Camera& aCamera)
 {
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
-	playerObject->Move({ 0.f, 1.f, 0.f });
+	playerObject->Move(CU::Vector3f::UnitY);
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
 	myCameraComponent = new CCameraComponent();
 	CComponentManager::GetInstance().RegisterComponent(myCameraComponent);
 	myCameraComponent->SetCamera(aCamera);
 
 	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent();
-	CPlayerController* controls = myPlayerControllerManager->CreatePlayerController(*kartComponent);
+	CKeyboardController* controls = myPlayerControllerManager->CreateKeyboardController(*kartComponent);
 	if(CSpeedHandlerManager::GetInstance() != nullptr)
 	{
 		CSpeedHandlerComponent* speedHandlerComponent = CSpeedHandlerManager::GetInstance()->CreateAndRegisterComponent();
 		playerObject->AddComponent(speedHandlerComponent);
 	}
-	/*CKartComponent* kartComponent = myKartComponentManager->CreateComponent();
-	CKeyboardControllerComponent* keyBoardInput = new CKeyboardControllerComponent();
-	CXboxControllerComponent* xboxInput = new CXboxControllerComponent();
-	Subscribe(*keyBoardInput);
-	Subscribe(*xboxInput);*/
+	CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent);
+	//CXboxControllerComponent* xboxInput = new CXboxControllerComponent();
+	//Subscribe(*keyBoardInput);
+	//Subscribe(*xboxInput);
 	Subscribe(*controls);
 
 	playerObject->AddComponent(playerModel);
@@ -339,13 +339,6 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	colliderObject->AddComponent(playerColliderComponent);
 
 	playerObject->AddComponent(colliderObject);
-
-	//SRigidBodyData rigidBodyData;
-	//CColliderComponent* rigidBodyComponent = myColliderComponentManager->CreateComponent(&rigidBodyData, playerObject->GetId());
-	//playerObject->AddComponent(rigidBodyComponent);
-	//playerObject->AddComponent(kartComponent);
-	//playerObject->AddComponent(keyBoardInput);
-	//playerObject->AddComponent(xboxInput);
 
 	playerObject->AddComponent(myCameraComponent);
 }

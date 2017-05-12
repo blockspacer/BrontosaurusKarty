@@ -47,8 +47,11 @@ namespace CU
 		{
 			eMouseButtons myMouseButton;
 			eKeys myKey;
-			GAMEPAD myGamePad;
-			short myGamepadIndex[2];
+			struct  
+			{
+				GAMEPAD myGamePad;
+				short myGamepadIndex;
+			};
 		};
 		eInputType myType;
 	};

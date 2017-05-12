@@ -65,8 +65,31 @@ CKartControllerComponent::~CKartControllerComponent()
 {
 }
 
-void CKartControllerComponent::TurnRight()
+void CKartControllerComponent::Turn(float aDirectionX)
 {
+	if (aDirectionX < 0.f)
+	{
+		if (aDirectionX < -1.f)
+		{
+			aDirectionX = -1.f;
+		}
+
+		TurnLeft(aDirectionX);
+	}
+	else if (aDirectionX > 0.f)
+	{
+		if (aDirectionX > 1.f)
+		{
+			aDirectionX = 1.f;
+		}
+
+		TurnRight(aDirectionX);
+	}
+}
+
+void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
+{
+	assert(aNormalizedModifier <= 1.f && aNormalizedModifier >= -1.f && "normalized modifier not normalized mvh carl");
 	myCurrentAction = eCurrentAction::eTurningRight;
 
 	if (myDrifter->IsDrifting() == false)
@@ -79,7 +102,7 @@ void CKartControllerComponent::TurnRight()
 	}
 }
 
-void CKartControllerComponent::TurnLeft()
+void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 {
 	myCurrentAction = eCurrentAction::eTurningLeft;
 	if (myDrifter->IsDrifting() == false)
@@ -282,12 +305,12 @@ float CKartControllerComponent::GetHeightSpeed(int anIndex)
 {
 	const float heightDelta = myCurrentHeight[anIndex] - myPreviousHeight[anIndex];
 
-	if(heightDelta < 0.f)
+	if (heightDelta < 0.f)
 	{
 		return 0.f;
 	}
 
-	if(heightDelta > 0.f)
+	if (heightDelta > 0.f)
 	{
 		int i = 0;
 	}
@@ -300,13 +323,13 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 	switch (aMessageType)
 	{
 	case eComponentMessageType::eAddComponent:
-		if(aMessageData.myComponent == this)
+		if (aMessageData.myComponent == this)
 		{
 			ClearHeight();
 		}
 		break;
 	case eComponentMessageType::eObjectDone:
-		if(myFirstMovingPass == true)
+		if (myFirstMovingPass == true)
 		{
 			myFirstMovingPass = false;
 			ClearHeight();
@@ -332,8 +355,8 @@ void CKartControllerComponent::ClearSpeed()
 	}
 }
 
-const float gravity = 9.82;
-const float upDist = 0.05;
+const float gravity = 9.82f;
+const float upDist = 0.05f;
 void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 {
 	const CU::Vector3f down = -CU::Vector3f::UnitY;
