@@ -24,10 +24,13 @@
 #include "KevinLoader/KevinLoader.h"
 
 #include "CameraComponent.h"
+#include "ItemHolderComponent.h"
+
 #include "KartComponentManager.h"
 #include "SpeedHandlerManager.h"
 #include "BoostPadComponentManager.h"
 #include "ItemFactory.h"
+#include "../Components/PickupComponentManager.h"
 
 //Networking
 #include "TClient/Client.h"
@@ -303,6 +306,7 @@ void CPlayState::CreateManagersAndFactories()
 	myBoostPadComponentManager = new CBoostPadComponentManager();
 	myItemFactory = new CItemFactory();
 	CKartSpawnPointManager::GetInstance().Create();
+	CPickupComponentManager::Create();
 }
 
 void CPlayState::CreatePlayer(CU::Camera& aCamera)
@@ -328,6 +332,9 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	Subscribe(*controls);
 
 	playerObject->AddComponent(playerModel);
+
+	CItemHolderComponent* itemHolder = new CItemHolderComponent(*myItemFactory);
+	playerObject->AddComponent(itemHolder);
 
 	playerObject->AddComponent(kartComponent);
 	SConcaveMeshColliderData crystalMeshColliderData;
