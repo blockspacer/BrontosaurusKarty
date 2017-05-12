@@ -302,6 +302,10 @@ void CServerMain::StartGame()
 
 	SendTo(message);
 
+	myStartCountdownStarted = true;
+	CU::Timer CDTimer = myTimerManager.GetTimer(myStartCountdownHandle);
+	CDTimer.Reset();
+	CDTimer.Start();
 }
 
 bool CServerMain::Update()
@@ -423,18 +427,6 @@ bool CServerMain::Update()
 			}
 			break;
 
-			case ePackageType::eStartCountdown:
-			{
-				if (myStartCountdownStarted == false)
-				{
-					myStartCountdownStarted = true;
-					CU::Timer CDTimer = myTimerManager.GetTimer(myStartCountdownHandle);
-					CDTimer.Reset();
-					CDTimer.Start();
-				}
-			}
-			break;
-
 			case ePackageType::eZero:
 			case ePackageType::eSize:
 			default: break;
@@ -447,9 +439,8 @@ bool CServerMain::Update()
 			currentMessage = myNetworkWrapper.Recieve(&currentSenderIp, &currentSenderPort);
 		}
 
-
 		// Maybe redefine how bool is started, really through client message?
-		if (myStartCountdownStarted)
+		if (myStartCountdownStarted == false)
 			UpdateStartCountdown();
 
 
@@ -535,17 +526,15 @@ bool CServerMain::IsClosed()
 
 void CServerMain::UpdateStartCountdown()
 {
-	//myStartCountdownStarted = true;
 	CU::Timer CDTimer = myTimerManager.GetTimer(myStartCountdownHandle);
 
 	if (CDTimer.GetIsActive() == false)
 		CDTimer.Start();
-	//myTimerManager.StartTimer(myStartCountdownHandle);
 
 	myTimerManager.UpdateTimers();
 
 	float newTime = CDTimer.GetLifeTime().GetSeconds();
-	if (newTime > myStartCountdownTime)
+	if ((char)newTime <= 4 && (char)newTime != myStartCountdownTime)
 	{
 		myStartCountdownTime = newTime;
 
@@ -554,12 +543,8 @@ void CServerMain::UpdateStartCountdown()
 
 		CDMessage->myCountdownTime = myStartCountdownTime;
 		SendTo(CDMessage);
+
+		if (myStartCountdownTime == 4)
+			myStartCountdownStarted = false;
 	}
-
-	 // Just fixed the timer, now make sure I can send messages and recieve them in client.
-	// Make sure it sends a message every new sec.
-
-	  // Update Pollingstation
-	 // Get time from polling
-	// Unlock controlls at 4
 }

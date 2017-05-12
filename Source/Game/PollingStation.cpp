@@ -22,7 +22,7 @@ void CPollingStation::Destroy()
 
 CPollingStation::CPollingStation()
 {
-	myStartCountdownTime = 3;
+	myStartCountdownTime = 0;
 }
 
 CPollingStation::~CPollingStation()

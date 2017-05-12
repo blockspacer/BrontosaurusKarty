@@ -10,14 +10,6 @@ class CParticleEmitterInstance;
 class CKartControllerComponent : public CComponent
 {
 public:
-	class CKartAxis
-	{
-	public:
-		CKartAxis();
-		CKartAxis(float aLength, float aWidth);
-		void DoPhysics();
-	private:
-	};
 
 	CKartControllerComponent();
 	~CKartControllerComponent();
@@ -33,6 +25,7 @@ public:
 
 	void CheckZKill();
 	void Update(const float aDeltaTime);
+	
 	void Receive(const eComponentMessageType, const SComponentMessageData&) override;
 	void Init(Physics::CPhysicsScene* aPhysicsScene);
 
@@ -44,8 +37,29 @@ public:
 	};
 
 private:
+	void ClearSpeed();
+	void ClearHeight();
+	void SetHeight(int aWheelIndex, float aHeight, const float aDt);
+	float GetHeightSpeed(int anIndex);
 	void DoPhysics(const float aDeltaTime);
-	float myFallSpeed;
+
+	enum class AxisPos
+	{
+		RightBack,
+		RightFront,
+		LeftBack,
+		LeftFront,
+		Size
+	};
+	
+	float myAxisSpeed[static_cast<int>(AxisPos::Size)];
+
+	struct
+	{
+		float width = 1.f;
+		float length = 1.f;
+	} myAxisDescription;
+
 
 	float myFowrardSpeed;
 	float myMaxSpeed;
@@ -83,5 +97,9 @@ private:
 
 	bool myIsDrifting;
 	Physics::CPhysicsScene* myPhysicsScene;
+
+	float myPreviousHeight[static_cast<int>(AxisPos::Size)];
+	float myCurrentHeight[static_cast<int>(AxisPos::Size)];
+	bool myFirstMovingPass;
 };
 

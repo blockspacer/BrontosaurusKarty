@@ -5,6 +5,6 @@
 
 int LoadWeapoCrateComponent(KLoader::SLoadedComponentData someData)
 {
-	CWeaponCratePickupComponent* pickup = CPickupComponentManager::GetInstance()->CreateWeaponCratePickupComponent(someData.myData.at("RespawnTime").GetFloat());
+	CItemPickupComponent* pickup = CPickupComponentManager::GetInstance()->CreateWeaponCratePickupComponent(someData.myData.at("RespawnTime").GetFloat());
 	return pickup->GetId();
 }
