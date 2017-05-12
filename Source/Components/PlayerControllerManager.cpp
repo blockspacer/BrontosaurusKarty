@@ -20,6 +20,15 @@ CKeyboardController* CPlayerControllerManager::CreateKeyboardController(CKartCon
 {
 	CKeyboardController* controller = new CKeyboardController(aKartComponent);
 
+	CU::CInputMessenger* playState = CU::CInputMessenger::GetInstance(eInputMessengerType::ePlayState);
+	if (!playState)
+	{
+		DL_MESSAGE_BOX("Play state input messenger cannot be found");
+		return nullptr;
+	}
+
+	playState->Subscribe(*controller);
+
 	myPlayerControllers.Add(controller);
 
 	return controller;
@@ -37,6 +46,7 @@ CXboxController* CPlayerControllerManager::CreateXboxController(CKartControllerC
 	}
 
 	playState->Subscribe(*controller);
+	controller->SetIndex(playState->AddXboxController());
 
 	myPlayerControllers.Add(controller);
 

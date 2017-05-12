@@ -8,6 +8,7 @@ public:
 	CXboxController(CKartControllerComponent& aKartComponent);
 	~CXboxController();
 
+	void SetIndex(const int aIndex);
 	virtual CU::eInputReturn TakeInput(const CU::SInputMessage& aInputMessage) override;
 
 private:
@@ -25,6 +26,4 @@ private:
 	bool myIsMovingFoward;
 	bool myIsMovingBackwards;
 	bool myIsDrifting;
-
-	static short ourControllerIndices;
 };
