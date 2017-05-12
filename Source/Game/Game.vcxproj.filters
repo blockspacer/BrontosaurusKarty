@@ -36,7 +36,6 @@
     <ClCompile Include="KartSpawnPointManager.cpp">
       <Filter>KartSpawnPoint</Filter>
     </ClCompile>
-
     <ClCompile Include="ItemFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
