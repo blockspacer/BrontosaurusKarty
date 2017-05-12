@@ -38,8 +38,6 @@ CXboxController* CPlayerControllerManager::CreateXboxController(CKartControllerC
 {
 	CXboxController* controller = new CXboxController(aKartComponent);
 
-
-
 	CU::CInputMessenger* playState = CU::CInputMessenger::GetInstance(eInputMessengerType::ePlayState);
 	if (!playState)
 	{

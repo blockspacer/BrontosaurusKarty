@@ -41,7 +41,7 @@ namespace CU
 		: myJoysticks(4)
 		, myPreviousButtonState(4)
 		, myPreviousJoystickStates(4)
-		,myPreviousTriggerStates(4)
+		, myPreviousTriggerStates(4)
 	{
 	}
 
@@ -94,9 +94,17 @@ namespace CU
 
 	bool XInputWrapper::IsConnected(const unsigned int aJoystickIndex, unsigned int* aError)
 	{
-		ZeroMemory(&myJoysticks[aJoystickIndex], sizeof(XINPUT_STATE));
+		XINPUT_STATE joystickOnStack;
+		XINPUT_STATE* joystick = &joystickOnStack;
+		unsigned int joystickIndex = myJoysticks.Size();
+		if (aJoystickIndex < joystickIndex)
+		{
+			joystick = &myJoysticks[aJoystickIndex];
+			joystickIndex = aJoystickIndex;
+		}
+		ZeroMemory(joystick, sizeof(XINPUT_STATE));
 
-		DWORD result = XInputGetState(aJoystickIndex, &myJoysticks[aJoystickIndex]);
+		DWORD result = XInputGetState(joystickIndex, joystick);
 
 		if (aError != nullptr)
 		{
@@ -113,13 +121,16 @@ namespace CU
 
 	int XInputWrapper::AddController()
 	{
-		int index = myJoysticks.Size();
+		unsigned int index = myJoysticks.Size();
 		if (IsConnected(index))
 		{
-			return index;
+			myJoysticks.Add();
+			myPreviousButtonState.Add();
+			myPreviousJoystickStates.Add();
+			myPreviousTriggerStates.Add();
+			return static_cast<int>(index);
 		}
 
-		myJoysticks.Pop();
 		return -1;
 	}
 

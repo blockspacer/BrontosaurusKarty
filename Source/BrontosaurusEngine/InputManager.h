@@ -45,7 +45,7 @@ public:
 	int AddXboxController();
 
 	eMessageReturn DoEvent(const FocusChange& aDroppedFile) override;
-	eMessageReturn DoEvent(const SetVibrationOnController& aFocusChange) override;
+	eMessageReturn DoEvent(const SetVibrationOnController& aSetVibration) override;
 	eMessageReturn DoEvent(const StopVibrationOnController& aStopVibrationmessage) override;
 
 	static CInputManager* GetInstance();

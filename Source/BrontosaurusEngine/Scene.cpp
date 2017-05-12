@@ -198,10 +198,15 @@ void CScene::RenderSplitScreen(const int aRectCount)
 	}
 
 	const CU::Vector4f oneSplit[2] = { CU::Vector4f(0.f, 0.f, 1.f, 0.5f), CU::Vector4f(0.f, 0.5f, 1.f, 1.f) };
-	const CU::Vector4f twoSplit[4] = { CU::Vector4f(0.f, 0.f, 0.5f, 0.5f), CU::Vector4f(0.5f, 0.f, 1.f, 0.5f), CU::Vector4f(0.f, 5.f, 0.5f, 1.f), CU::Vector4f(0.5f, 0.5f, 1.f, 1.0f) };
+	const CU::Vector4f twoSplit[4] = { CU::Vector4f(0.f, 0.f, 0.5f, 0.5f), CU::Vector4f(0.5f, 0.f, 1.f, 0.5f), CU::Vector4f(0.f, 0.5f, 0.5f, 1.f), CU::Vector4f(0.5f, 0.5f, 1.f, 1.f) };
+	const CU::Vector4f noSplit(0.f, 0.f, 1.f, 1.f);
 
-	const CU::Vector4f* splits[2] = { oneSplit, twoSplit };
+	const CU::Vector4f* splits[3] = { oneSplit, twoSplit, &noSplit };
 	int split = (aRectCount - 1) / 2;
+	if (aRectCount == 1)
+	{
+		split = 2;
+	}
 
 	for (int rect = 0; rect < aRectCount; ++rect)
 	{
@@ -404,12 +409,16 @@ void CScene::InitPlayerCameras(const int aPlayerCount)
 	}
 
 	CU::Vector2f frameSize(WINDOW_SIZE);
-	frameSize.y *= 0.5f;
-	const CU::Vector2f oneSplit[2] = { CU::Vector2f(1.f, 0.5f), CU::Vector2f(1.f, 0.5f) };
-	//const CU::Vector4f twoSplit[4] = { CU::Vector4f(0.f, 0.f, 0.5f, 0.5f), CU::Vector4f(0.5f, 0.f, 1.f, 0.5f), CU::Vector4f(0.f, 5.f, 0.5f, 1.f), CU::Vector4f(0.5f, 0.5f, 1.f, 1.0f) };
+	const CU::Vector2f oneSplit(1.f, 0.5f);
+	const CU::Vector2f twoSplit(0.5f, 0.5f);
 
-	//const CU::Vector4f* splits[2] = { oneSplit, twoSplit };
+	const CU::Vector2f splits[2] = { oneSplit, twoSplit };
 	int split = (aPlayerCount - 1) / 2;
+
+	if (aPlayerCount > 1)
+	{
+		frameSize *= splits[split];
+	}
 
 	for (int player = 0; player < aPlayerCount; ++player)
 	{

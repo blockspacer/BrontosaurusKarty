@@ -44,7 +44,7 @@ CInputManager::CInputManager()
 	//myXInputWrapper->Init(1);
 
 	myControllerVibrationStates.Init(4);
-	for (unsigned int i = 0; i < myXInputWrapper->GetConnectedJoystickCount(); ++i)
+	for (unsigned int i = 0; i < 4; ++i)
 	{
 		SControllerVibrationState state;
 		state.myController = i;

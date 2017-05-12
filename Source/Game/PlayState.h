@@ -77,8 +77,9 @@ private:
 	CKartControllerComponentManager* myKartControllerComponentManager;
 	CPlayerControllerManager* myPlayerControllerManager;
 
-	CCameraComponent* myCameraComponent;
+	CU::GrowingArray<CCameraComponent*> myCameraComponents;
 
+	int myPlayerCount;
 	int myLevelIndex;
 	std::atomic_bool myIsLoaded;
 };

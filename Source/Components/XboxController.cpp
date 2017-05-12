@@ -10,6 +10,9 @@
 #include "..\CommonUtilities\XInputWrapper.h"
 #include "..\CommonUtilities\EKeyboardKeys.h"
 
+#include "..\PostMaster\SetVibrationOnController.h"
+#include "..\ThreadedPostmaster\Postmaster.h"
+
 CXboxController::CXboxController(CKartControllerComponent& aKartComponent)
 	: CController(aKartComponent)
 	, myControllerIndex(-1)
@@ -56,6 +59,10 @@ CU::eInputReturn CXboxController::TakeInput(const CU::SInputMessage& aInputMessa
 			GamePadRightTriggerReleased(aInputMessage);
 			break;
 		}
+	}
+	else
+	{
+		DL_PRINT("my index is : %d", myControllerIndex);
 	}
 
 	return CU::eInputReturn::ePassOn;
@@ -154,15 +161,18 @@ void CXboxController::GamePadRightTrigger(const CU::SInputMessage& aInputMessage
 	if (myIsDrifting == false)
 	{
 		myControllerComponent.Drift();
+
+		SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerIndex, 10, 10);
+		Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 		myIsDrifting = true;
 	}
 }
 
-void CXboxController::GamePadLeftTriggerReleased(const CU::SInputMessage & aInputMessage)
+void CXboxController::GamePadLeftTriggerReleased(const CU::SInputMessage& aInputMessage)
 {
 }
 
-void CXboxController::GamePadRightTriggerReleased(const CU::SInputMessage & aInputMessage)
+void CXboxController::GamePadRightTriggerReleased(const CU::SInputMessage& aInputMessage)
 {
 	if (myIsDrifting == true)
 	{
