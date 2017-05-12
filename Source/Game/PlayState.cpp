@@ -182,7 +182,7 @@ void CPlayState::Load()
 	myScene->InitPlayerCameras(2);
 
 
-	CreatePlayer(playerCamera/*myScene->GetPlayerCamera(0)*/.GetCamera());
+	CreatePlayer(/*playerCamera*/myScene->GetPlayerCamera(0).GetCamera());
 	myScene->SetSkybox("default_cubemap.dds");
 	myScene->SetCubemap("purpleCubemap.dds");
 
@@ -233,8 +233,8 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 
 void CPlayState::Render()
 {
-	myScene->Render();
-	//myScene->RenderSplitScreen(2);
+	//myScene->Render();
+	myScene->RenderSplitScreen(2);
 }
 
 void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
@@ -304,11 +304,9 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
 	playerObject->Move({ 0.f, 1.f, 0.f });
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
-	CCameraComponent* cameraComponent = myCameraComponent;
-	cameraComponent = new CCameraComponent();
-	CComponentManager::GetInstance().RegisterComponent(cameraComponent);
-	cameraComponent->SetCamera(aCamera);
-	myCameraComponent = cameraComponent;
+	myCameraComponent = new CCameraComponent();
+	CComponentManager::GetInstance().RegisterComponent(myCameraComponent);
+	myCameraComponent->SetCamera(aCamera);
 
 	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent();
 	CPlayerController* controls = myPlayerControllerManager->CreatePlayerController(*kartComponent);
@@ -335,14 +333,14 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	crystalMeshColliderData.material.aStaticFriction = 0.5f;
 	CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&crystalMeshColliderData, playerObject->GetId());
 	playerObject->AddComponent(playerColliderComponent);*/
-	SRigidBodyData rigidBodyData;
+	//SRigidBodyData rigidBodyData;
 	//CColliderComponent* rigidBodyComponent = myColliderComponentManager->CreateComponent(&rigidBodyData, playerObject->GetId());
 	//playerObject->AddComponent(rigidBodyComponent);
 	//playerObject->AddComponent(kartComponent);
 	//playerObject->AddComponent(keyBoardInput);
 	//playerObject->AddComponent(xboxInput);
 
-	playerObject->AddComponent(cameraComponent);
+	playerObject->AddComponent(myCameraComponent);
 }
 
 void CPlayState::SetCameraComponent(CCameraComponent* aCameraComponent)
