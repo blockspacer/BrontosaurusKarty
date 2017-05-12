@@ -204,7 +204,7 @@ struct SRenderToIntermediate : SRenderMessage
 
 struct SRenderCameraQueueMessage : SRenderMessage
 {
-	~SRenderCameraQueueMessage() override;
+	~SRenderCameraQueueMessage();
 	SRenderCameraQueueMessage();
 	CRenderCamera myRenderCamera;
 	bool RenderDepth;

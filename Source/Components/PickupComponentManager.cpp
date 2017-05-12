@@ -26,10 +26,10 @@ CPickupComponentManager * CPickupComponentManager::GetInstance()
 	return ourInstance;
 }
 
-CItemPickupComponent * CPickupComponentManager::CreateWeaponCratePickupComponent(const float aRespawnTime)
+CItemPickupComponent * CPickupComponentManager::CreateWeaponCratePickupComponent(const float aRespawnTime, CItemFactory& aItemFactory)
 {
 	static int weaponCrateID = 0;
-	CItemPickupComponent* cratePickup = new CItemPickupComponent();
+	CItemPickupComponent* cratePickup = new CItemPickupComponent(aItemFactory);
 	cratePickup->SetRespawnTime(aRespawnTime);
 	cratePickup->SetNetworkId(weaponCrateID);
 	COMPMGR.RegisterComponent(cratePickup);

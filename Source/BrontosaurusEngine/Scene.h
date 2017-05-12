@@ -40,6 +40,8 @@ public:
 
 	void Update(const CU::Time aDeltaTime);
 	void Render();
+	void RenderSplitScreen(const int aRectCount);
+	void RenderToRect(const CU::Vector4f& aRect, CRenderCamera& aCamera);
 
 	//Add shiz, camera, modeller ljus, partiklar
 	InstanceID AddModelInstance(CModelInstance* aModelInstance); //return int
@@ -48,6 +50,7 @@ public:
 	//InstanceID AddParticleEmitterInstance(CParticleEmitterInstance* aParticleEmitterInstance);
 	InstanceID AddFireEmitters(const CFireEmitterInstance& aFireEmitter);
 	void AddCamera(const eCameraType aCameraType);
+	void InitPlayerCameras(const int aPlayerCount);
 
 	void SetSkybox(const char* aPath);
 	void SetSkybox(ID3D11ShaderResourceView* aSRV);
@@ -76,6 +79,8 @@ public:
 
 	inline CSkybox& GetSkybox();
 	
+	CRenderCamera& GetPlayerCamera(const int aPlayerIndex);
+
 private:
 	//Inget bör vara pekare sen.
 	CCascadeShadowMap* myShadowMap;
@@ -92,6 +97,7 @@ private:
 	CU::GrowingArray<CFireEmitterInstance, InstanceID> myFireEmitters;
 
 	CU::StaticArray<CRenderCamera, static_cast<int>(eCameraType::eLength)> myRenderCameras;
+	CU::VectorOnStack<CRenderCamera, 4> myPlayerCameras;
 	Lights::SDirectionalLight myDirectionalLight; //make array
 
 	CSkybox* mySkybox;

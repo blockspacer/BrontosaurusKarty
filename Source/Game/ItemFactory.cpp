@@ -2,21 +2,21 @@
 #include "ItemFactory.h"
 
 
-ItemFactory::ItemFactory()
+CItemFactory::CItemFactory()
 {
 }
 
 
-ItemFactory::~ItemFactory()
+CItemFactory::~CItemFactory()
 {
 }
 
-eItemTypes ItemFactory::RandomizeItem()
+eItemTypes CItemFactory::RandomizeItem()
 {
 	return eItemTypes::eMushroom;
 }
 
-int ItemFactory::CreateItem(const eItemTypes aItemType)
+int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userComponent)
 {
 	switch (aItemType)
 	{
@@ -30,7 +30,8 @@ int ItemFactory::CreateItem(const eItemTypes aItemType)
 		//Create shell that homes in on the leader
 		break;
 	case eItemTypes::eMushroom:
-		//boost
+
+		//userComponent->GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost,)
 		break;
 	case eItemTypes::eGoldenMushroom:
 		//boost and have some form of cooldown before 

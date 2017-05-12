@@ -6,7 +6,7 @@
 CKartControllerComponentManager::CKartControllerComponentManager()
 {
 	myComponents.Init(4);
-	myShouldUpdate = false;
+	myShouldUpdate = true;
 }
 
 

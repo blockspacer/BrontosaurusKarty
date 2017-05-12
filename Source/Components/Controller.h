@@ -8,11 +8,9 @@ public:
 	CController(CKartControllerComponent& aKartComponent);
 	~CController();
 
-
 	virtual void Update(const float aDeltaTime);
 
 protected:
 	CKartControllerComponent& myControllerComponent;
-
 };
 

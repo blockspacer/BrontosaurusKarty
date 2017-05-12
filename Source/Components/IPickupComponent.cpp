@@ -76,8 +76,9 @@ void IPickupComponent::Receive(const eComponentMessageType aMessageType, const S
 	case eComponentMessageType::eOnTriggerEnter:
 		if (myHasBeenPickedUp == false)
 		{
-			IPickupComponent::DoMyEffect();
-			DoMyEffect();
+
+			IPickupComponent::DoMyEffect(aMessageData.myComponent);
+			DoMyEffect(aMessageData.myComponent);
 		}
 		break;
 	default:
@@ -95,7 +96,7 @@ const bool IPickupComponent::GetIsActive() const
 	return myHasBeenPickedUp;
 }
 
-void IPickupComponent::DoMyEffect()
+void IPickupComponent::DoMyEffect(CComponent* theCollider)
 {
 	SetActive(false);
 	SComponentMessageData data;
