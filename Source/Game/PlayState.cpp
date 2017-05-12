@@ -39,7 +39,7 @@
 #include "ThreadedPostmaster/PostOffice.h"
 #include "ThreadedPostmaster/SendNetowrkMessageMessage.h"
 
-
+// Common Utilities
 #include "CommonUtilities/InputMessage.h"
 #include <CommonUtilities/EKeyboardKeys.h>
 #include <ThreadPool.h>
@@ -61,6 +61,7 @@
 #include "BrontosaurusEngine/SpriteInstance.h"
 #include "ThreadedPostmaster/GameEventMessage.h"
 #include <LuaWrapper/SSlua/SSlua.h>
+#include <GUIElement.h>
 
 // player creationSpeciifcIncludes
 #include "KartComponent.h"
@@ -123,10 +124,15 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myItemFactory);
 }
 
+// Runs on its own thread.
 void CPlayState::Load()
 {
 	CU::CStopWatch loadPlaystateTimer;
 	loadPlaystateTimer.Start();
+
+	//SRenderMessage* msg = new SRenderMessage(SRenderMessage::eRenderMessageType::eCreateGuiElement);
+	//SRenderToGUI* guiRenderThing = new SRenderToGUI(L"Sprites/GUI/countdown.dds",msg);
+	
 
 	myTimerManager = new CU::TimerManager();
 	myCountdownTimerHandle = myTimerManager->CreateTimer();
