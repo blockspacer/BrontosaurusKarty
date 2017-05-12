@@ -14,12 +14,11 @@
 #include "../TServer/GameServer.h"
 
 
-CKartControllerComponent::CKartControllerComponent(): myPhysicsScene(nullptr)
+CKartControllerComponent::CKartControllerComponent(): myPhysicsScene(nullptr), myFirstMovingPass(true)
 {
-	for(int i = 0; i < static_cast<int>(AxisPos::Size); ++i)
-	{
-		myAxisSpeed[i] = 0.f;
-	}
+	ClearHeight();
+	ClearSpeed();
+	
 
 	CU::CJsonValue levelsFile;
 	std::string errorString = levelsFile.Parse("Json/KartStats.json");
@@ -276,10 +275,63 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, SComponentMessageData());
 }
 
+void CKartControllerComponent::ClearHeight()
+{
+	float height = 0.f;
+	if(GetParent() != nullptr)
+	{
+		height = GetParent()->GetWorldPosition().y;
+	}
+
+	for(int i = 0; i < static_cast<int>(AxisPos::Size); ++i)
+	{
+		SetHeight(i, height,1.f);
+		SetHeight(i, height,1.f);
+	}
+}
+
+void CKartControllerComponent::SetHeight(int aWheelIndex, float aHeight, const float aDt)
+{
+	myPreviousHeight[aWheelIndex] = myCurrentHeight[aWheelIndex];
+	myCurrentHeight[aWheelIndex] = aHeight / aDt;
+}
+
+float CKartControllerComponent::GetHeightSpeed(int anIndex)
+{
+	const float heightDelta = myCurrentHeight[anIndex] - myPreviousHeight[anIndex];
+
+	if(heightDelta < 0.f)
+	{
+		return 0.f;
+	}
+
+	if(heightDelta > 0.f)
+	{
+		int i = 0;
+	}
+
+	return heightDelta;
+}
+
 void CKartControllerComponent::Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData)
 {
 	switch (aMessageType)
 	{
+	case eComponentMessageType::eAddComponent:
+		if(aMessageData.myComponent == this)
+		{
+			ClearHeight();
+		}
+	
+		break;
+	case eComponentMessageType::eObjectDone:
+		if(myFirstMovingPass == true)
+		{
+			myFirstMovingPass = false;
+			ClearHeight();
+		}
+		break;
+
 	case eComponentMessageType::eSetBoost:
 	{
 		myMaxSpeedModifier = 1.0f + aMessageData.myBoostData->maxSpeedBoost;
@@ -295,6 +347,14 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 void CKartControllerComponent::Init(Physics::CPhysicsScene* aPhysicsScene)
 {
 	myPhysicsScene = aPhysicsScene;
+}
+
+void CKartControllerComponent::ClearSpeed()
+{
+	for (int i = 0; i < static_cast<int>(AxisPos::Size); ++i)
+	{
+		myAxisSpeed[i] = 0.f;
+	}
 }
 
 const float gravity = 9.82;
@@ -319,6 +379,7 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 
 	for(int i = 0; i < static_cast<int>(AxisPos::Size); ++i)
 	{
+
 		//Update fall speed
 		myAxisSpeed[i] += gravity * aDeltaTime;
 		CU::Vector3f examineVector = pos;
@@ -346,11 +407,21 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 
 		}
 
+
+		const float heightSpeed = GetHeightSpeed(i);
+
 		//When not on ground, do fall
-		const CU::Vector3f disp = down * myAxisSpeed[i] * aDeltaTime;
+		const CU::Vector3f disp = down * myAxisSpeed[i] * aDeltaTime/* + CU::Vector3f::UnitY * heightSpeed * aDeltaTime*/;
+
+		if(heightSpeed > 0.f)
+		{
+			int i = 0; 
+		}
 		examineVector += disp;
 
 		axees[i] = examineVector;
+
+		SetHeight(i, examineVector.y, aDeltaTime);
 	}
 
 	CU::Vector3f avgPos = CU::Vector3f::Zero;
