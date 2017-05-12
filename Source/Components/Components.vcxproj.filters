@@ -63,6 +63,7 @@
     <ClCompile Include="BoostPadComponentManager.cpp">
       <Filter>BoostPad</Filter>
     </ClCompile>
+    <ClCompile Include="Drifter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -125,6 +126,7 @@
     <ClInclude Include="BoostPadComponentManager.h">
       <Filter>BoostPad</Filter>
     </ClInclude>
+    <ClInclude Include="Drifter.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Pickups">

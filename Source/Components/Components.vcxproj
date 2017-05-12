@@ -375,6 +375,7 @@
     <ClInclude Include="ComponentMessageCallback.h" />
     <ClInclude Include="ComponentMessageTypeToLua.h" />
     <ClInclude Include="ConcaveMeshCollider.h" />
+    <ClInclude Include="Drifter.h" />
     <ClInclude Include="IPickupComponent.h" />
     <ClInclude Include="KartComponent.h" />
     <ClInclude Include="KartComponentManager.h" />
@@ -429,6 +430,7 @@
     <ClCompile Include="ComponentMessageTypeToLua.cpp" />
     <ClCompile Include="ConcaveMeshCollider.cpp" />
     <ClCompile Include="Controller.cpp" />
+    <ClCompile Include="Drifter.cpp" />
     <ClCompile Include="FireComponent.cpp" />
     <ClCompile Include="IPickupComponent.cpp" />
     <ClCompile Include="KartComponent.cpp" />
