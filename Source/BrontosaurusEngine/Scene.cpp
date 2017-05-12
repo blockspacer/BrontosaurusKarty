@@ -56,8 +56,10 @@ void CScene::Update(const CU::Time aDeltaTime)
 
 void CScene::Render()
 {
-	if(myCubemap)
+	if (myCubemap)
+	{
 		myCubemap->SetShaderResource();
+	}
 
 	SChangeStatesMessage statemsg;
 	if (mySkybox)
@@ -187,6 +189,144 @@ void CScene::Render()
 	//RENDERER.AddRenderMessage(new SActivateRenderToMessage());
 }
 
+void CScene::RenderSplitScreen(const int aRectCount)
+{
+	if (aRectCount < 1 || aRectCount > 4)
+	{
+		DL_ASSERT("messing up rendering to split screen");
+		return;
+	}
+
+	const CU::Vector4f oneSplit[2] = { CU::Vector4f(0.f, 0.f, 1.f, 0.5f), CU::Vector4f(0.f, 0.5f, 1.f, 1.f) };
+	const CU::Vector4f twoSplit[4] = { CU::Vector4f(0.f, 0.f, 0.5f, 0.5f), CU::Vector4f(0.5f, 0.f, 1.f, 0.5f), CU::Vector4f(0.f, 5.f, 0.5f, 1.f), CU::Vector4f(0.5f, 0.5f, 1.f, 1.0f) };
+
+	const CU::Vector4f* splits[2] = { oneSplit, twoSplit };
+	int split = (aRectCount - 1) / 2;
+
+	for (int rect = 0; rect < aRectCount; ++rect)
+	{
+		RenderToRect(splits[split][rect], myPlayerCameras[rect]);
+	}
+}
+
+void CScene::RenderToRect(const CU::Vector4f& aRect, CRenderCamera& aCamera)
+{
+	if (myCubemap)
+	{
+		myCubemap->SetShaderResource();
+	}
+
+	SChangeStatesMessage statemsg;
+	if (mySkybox)
+	{
+		statemsg.myBlendState = eBlendState::eNoBlend;
+		statemsg.myRasterizerState = eRasterizerState::eNoCulling;
+		statemsg.myDepthStencilState = eDepthStencilState::eDisableDepth;
+		statemsg.mySamplerState = eSamplerState::eWrap;
+		aCamera.AddRenderMessage(new SChangeStatesMessage(statemsg));
+
+		SRenderSkyboxMessage* msg = new SRenderSkyboxMessage();
+		mySkybox->AddRef();
+		msg->mySkybox = mySkybox;
+		aCamera.AddRenderMessage(msg);
+	}
+
+	statemsg.myRasterizerState = eRasterizerState::eDefault;
+	statemsg.myDepthStencilState = eDepthStencilState::eDefault;
+	statemsg.myBlendState = eBlendState::eNoBlend;
+	statemsg.mySamplerState = eSamplerState::eDeferred;
+	aCamera.AddRenderMessage(new SChangeStatesMessage(statemsg));
+
+	for (CPointLightInstance& pointLight : myPointLights)
+	{
+		if (pointLight.GetIsActive() == false)
+		{
+			continue;
+		}
+
+		CU::Sphere lightSphere;
+		lightSphere.myCenterPos = pointLight.GetPosition();
+		lightSphere.myRadius = pointLight.GetRange();
+
+		if (aCamera.GetCamera().IsInside(lightSphere) == false)
+		{
+			continue;
+		}
+
+		SRenderPointLight* pointlightMessage = new SRenderPointLight();
+		pointlightMessage->pointLight = pointLight.GetData();
+		aCamera.AddRenderMessage(pointlightMessage);
+	}
+
+	CParticleEmitterManager::GetInstance().Render(aCamera);
+
+	for (CModelInstance* model : myModels)
+	{
+		if (!model)
+		{
+			continue;
+		}
+
+		if (model->GetIgnoreDepth())
+		{
+			continue;
+		}
+
+		if (aCamera.GetCamera().IsInside(model->GetModelBoundingSphere()) == false)
+		{
+			continue;
+		}
+
+		model->RenderDeferred(aCamera);
+	}
+
+	aCamera.AddRenderMessage(new SRenderModelBatches());
+
+	statemsg.myRasterizerState = eRasterizerState::eDefault;
+	statemsg.myDepthStencilState = eDepthStencilState::eDefault;
+	statemsg.myBlendState = eBlendState::eNoBlend;
+	statemsg.mySamplerState = eSamplerState::eDeferred;
+	aCamera.AddRenderMessage(new SChangeStatesMessage(statemsg));
+
+	for (CModelInstance* model : myModels)
+	{
+		if (model == nullptr)
+		{
+			continue;
+		}
+		if (model->GetIgnoreDepth() == true)
+		{
+			model->RenderDeferred(aCamera);
+		}
+	}
+	aCamera.AddRenderMessage(new SRenderModelBatches());
+
+	SRenderDirectionalLight* light = new SRenderDirectionalLight();
+	light->directionalLight = myDirectionalLight;
+	aCamera.AddRenderMessage(light);
+
+	statemsg.myBlendState = eBlendState::eAlphaBlend;
+	statemsg.myRasterizerState = eRasterizerState::eDefault;
+	statemsg.myDepthStencilState = eDepthStencilState::eReadOnly;
+	statemsg.mySamplerState = eSamplerState::eClamp;
+	aCamera.AddRenderMessage(new SChangeStatesMessage(statemsg));
+
+	aCamera.Render();
+
+	statemsg.myBlendState = eBlendState::eAlphaBlend;
+	statemsg.myRasterizerState = eRasterizerState::eDefault;
+	statemsg.myDepthStencilState = eDepthStencilState::eDisableDepth;
+	statemsg.mySamplerState = eSamplerState::eClamp;
+	RENDERER.AddRenderMessage(new SChangeStatesMessage(statemsg));
+	RENDERER.AddRenderMessage(new SActivateRenderToMessage());
+
+	SRenderToIntermediate * interMSG = new SRenderToIntermediate();
+	interMSG->myRect = aRect;//{ 0.0f, 0.0f, 1.0f, 1.0f };
+	interMSG->useDepthResource = false;
+	interMSG->myRenderPackage = aCamera.GetRenderPackage();
+	RENDERER.AddRenderMessage(interMSG);
+}
+
 InstanceID CScene::AddModelInstance(CModelInstance* aModelInstance)
 {
 	InstanceID id = 0;
@@ -200,8 +340,7 @@ InstanceID CScene::AddModelInstance(CModelInstance* aModelInstance)
 
 	id = myFreeModels.Pop();
 	myModels[id] = aModelInstance;
-	
-	
+		
 	return id;
 }
 
@@ -254,6 +393,30 @@ InstanceID CScene::AddFireEmitters(const CFireEmitterInstance& aFireEmitter)
 void CScene::AddCamera(const eCameraType aCameraType)
 {
 	myRenderCameras[static_cast<int>(aCameraType)] = CRenderCamera(); //TODO: maybe not have add
+}
+
+void CScene::InitPlayerCameras(const int aPlayerCount)
+{
+	if (aPlayerCount < 1 || aPlayerCount > 4)
+	{
+		DL_ASSERT("messing up initing player cameras");
+		return;
+	}
+
+	CU::Vector2f frameSize(WINDOW_SIZE);
+	frameSize.y *= 0.5f;
+	const CU::Vector2f oneSplit[2] = { CU::Vector2f(1.f, 0.5f), CU::Vector2f(1.f, 0.5f) };
+	//const CU::Vector4f twoSplit[4] = { CU::Vector4f(0.f, 0.f, 0.5f, 0.5f), CU::Vector4f(0.5f, 0.f, 1.f, 0.5f), CU::Vector4f(0.f, 5.f, 0.5f, 1.f), CU::Vector4f(0.5f, 0.5f, 1.f, 1.0f) };
+
+	//const CU::Vector4f* splits[2] = { oneSplit, twoSplit };
+	int split = (aPlayerCount - 1) / 2;
+
+	for (int player = 0; player < aPlayerCount; ++player)
+	{
+		myPlayerCameras.Add(CRenderCamera());
+		myPlayerCameras.GetLast().InitPerspective(90, frameSize.x, frameSize.y, 0.1f, 500.f);
+		//myPlayerCameras.GetLast().SetViewport(viewp)
+	}
 }
 
 void CScene::SetSkybox(const char* aPath)
@@ -444,4 +607,9 @@ void CScene::GenerateCubemap()
 
 	//RENDERER.AddRenderMessage(new SActivateRenderToMessage());
 	//myCubemap->SetShaderResource();
+}
+
+CRenderCamera& CScene::GetPlayerCamera(const int aPlayerIndex)
+{
+	return myPlayerCameras[aPlayerIndex];
 }

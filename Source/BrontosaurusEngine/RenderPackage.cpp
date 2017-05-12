@@ -96,6 +96,7 @@ void CRenderPackage::Activate(CRenderPackage& aRenderPackage)
 	renderTargets[0] = myTarget;
 	renderTargets[1] = aRenderPackage.myTarget;
 
+	//---                 "&renderTargets[0]"  ==  "&(*(renderTargets + 0))"               why not just "renderTargets"?
 	context->OMSetRenderTargets(2, &renderTargets[0], myDepth);
 	context->RSSetViewports(2, &viewPorts[0]);
 }

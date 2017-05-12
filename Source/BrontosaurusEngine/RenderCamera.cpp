@@ -83,11 +83,13 @@ void CRenderCamera::InitRenderPackages(const CU::Vector2ui& aTextureSize, ID3D11
 		if (!engine)
 		{
 			DL_ASSERT("Failed to get engine");
+			return;
 		}
 		CDXFramework* framework = engine->GetFramework();
 		if (!framework)
 		{
 			DL_ASSERT("Failed to get framework");
+			return;
 		}
 		myGbuffer->Init(aTextureSize, framework, aTexture, aFormat);
 	}

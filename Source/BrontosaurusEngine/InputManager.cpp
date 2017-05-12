@@ -315,7 +315,7 @@ void CInputManager::UpdateGamePad(const CU::Time& aDeltaTime)
 				CU::SInputMessage padInputsPressed;
 				padInputsPressed.myType = (myPadInputs[j].isReleased) ? CU:: eInputType::eGamePadButtonReleased : CU::eInputType::eGamePadButtonPressed;
 				padInputsPressed.myGamePad = myPadInputs[j].button;
-				padInputsPressed.myGamepadIndex[1] = i;
+				padInputsPressed.myGamepadIndex = i;
 
 				for (CU::CInputMessenger* messenger : myMessengers)
 				{
@@ -333,7 +333,7 @@ void CInputManager::UpdateGamePad(const CU::Time& aDeltaTime)
 			CU::SInputMessage padJoyStick;
 			padJoyStick.myType = CU::eInputType::eGamePadLeftJoyStickChanged;
 			padJoyStick.myJoyStickPosition = myXInputWrapper->GetLeftStickPosition(i);
-			padJoyStick.myGamepadIndex[1] = i;
+			padJoyStick.myGamepadIndex = i;
 
 			for (CU::CInputMessenger* messenger : myMessengers)
 			{
@@ -349,7 +349,7 @@ void CInputManager::UpdateGamePad(const CU::Time& aDeltaTime)
 			{
 				CU::SInputMessage padJoyStick;
 				padJoyStick.myType = CU::eInputType::eGamePadLeftJoyStickChanged;
-				padJoyStick.myGamepadIndex[1] = i;
+				padJoyStick.myGamepadIndex = i;
 				if (messenger->RecieveInput(padJoyStick) == CU::eInputReturn::eKeepSecret)
 				{
 					break;
@@ -363,7 +363,7 @@ void CInputManager::UpdateGamePad(const CU::Time& aDeltaTime)
 			for (CU::CInputMessenger* messenger : myMessengers)
 			{
 				CU::SInputMessage padJoyStick;
-				padJoyStick.myGamepadIndex[1] = i;
+				padJoyStick.myGamepadIndex = i;
 				padJoyStick.myType = CU::eInputType::eGamePadLeftTriggerPressed;
 				if (messenger->RecieveInput(padJoyStick) == CU::eInputReturn::eKeepSecret)
 				{
@@ -379,7 +379,7 @@ void CInputManager::UpdateGamePad(const CU::Time& aDeltaTime)
 				for (CU::CInputMessenger* messenger : myMessengers)
 				{
 					CU::SInputMessage padJoyStick;
-					padJoyStick.myGamepadIndex[1] = i;
+					padJoyStick.myGamepadIndex = i;
 					padJoyStick.myType = CU::eInputType::eGamePadRightTriggerPressed;
 					if (messenger->RecieveInput(padJoyStick) == CU::eInputReturn::eKeepSecret)
 					{
@@ -393,7 +393,7 @@ void CInputManager::UpdateGamePad(const CU::Time& aDeltaTime)
 				for (CU::CInputMessenger* messenger : myMessengers)
 				{
 					CU::SInputMessage padJoyStick;
-					padJoyStick.myGamepadIndex[1] = i;
+					padJoyStick.myGamepadIndex = i;
 					padJoyStick.myType = CU::eInputType::eGamePadLeftTriggerReleased;
 					if (messenger->RecieveInput(padJoyStick) == CU::eInputReturn::eKeepSecret)
 					{
@@ -407,7 +407,7 @@ void CInputManager::UpdateGamePad(const CU::Time& aDeltaTime)
 				for (CU::CInputMessenger* messenger : myMessengers)
 				{
 					CU::SInputMessage padJoyStick;
-					padJoyStick.myGamepadIndex[1] = i;
+					padJoyStick.myGamepadIndex = i;
 					padJoyStick.myType = CU::eInputType::eGamePadRightTriggerReleased;
 					if (messenger->RecieveInput(padJoyStick) == CU::eInputReturn::eKeepSecret)
 					{

@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "PlayerControllerManager.h"
-#include "PlayerController.h"
+#include "KeyboardController.h"
+#include "XboxController.h"
 
+#include "../CommonUtilities/InputMessenger.h"
 
 CPlayerControllerManager::CPlayerControllerManager()
 {
@@ -14,9 +16,27 @@ CPlayerControllerManager::~CPlayerControllerManager()
 	myPlayerControllers.DeleteAll();
 }
 
-CPlayerController * CPlayerControllerManager::CreatePlayerController(CKartControllerComponent& aKartComponent)
+CKeyboardController* CPlayerControllerManager::CreateKeyboardController(CKartControllerComponent& aKartComponent)
 {
-	CPlayerController* controller = new CPlayerController(aKartComponent);
+	CKeyboardController* controller = new CKeyboardController(aKartComponent);
+
+	myPlayerControllers.Add(controller);
+
+	return controller;
+}
+
+CXboxController* CPlayerControllerManager::CreateXboxController(CKartControllerComponent& aKartComponent)
+{
+	CXboxController* controller = new CXboxController(aKartComponent);
+
+	CU::CInputMessenger* playState = CU::CInputMessenger::GetInstance(eInputMessengerType::ePlayState);
+	if (!playState)
+	{
+		DL_MESSAGE_BOX("Play state input messenger cannot be found");
+		return nullptr;
+	}
+
+	playState->Subscribe(*controller);
 
 	myPlayerControllers.Add(controller);
 
