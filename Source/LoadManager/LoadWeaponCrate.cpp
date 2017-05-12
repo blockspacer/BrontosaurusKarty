@@ -2,9 +2,12 @@
 #include "LoadWeaponCrate.h"
 #include "Components/WeaponCratePickupComponent.h"
 #include "Components/PickupComponentManager.h"
+#include "Game/ItemFactory.h"
 
 int LoadWeapoCrateComponent(KLoader::SLoadedComponentData someData)
 {
-	CItemPickupComponent* pickup = CPickupComponentManager::GetInstance()->CreateWeaponCratePickupComponent(someData.myData.at("RespawnTime").GetFloat());
+	GET_LOADMANAGER(loadManager);
+	CItemFactory* ItemFactory = loadManager.GetCurrentPLaystate().GetItemFactory();
+	CItemPickupComponent* pickup = CPickupComponentManager::GetInstance()->CreateWeaponCratePickupComponent(someData.myData.at("RespawnTime").GetFloat(), *ItemFactory);
 	return pickup->GetId();
 }

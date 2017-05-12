@@ -29,6 +29,7 @@ class CKartComponentManager;
 class CKartControllerComponentManager;
 class CPlayerControllerManager;
 class CBoostPadComponentManager;
+class CItemFactory;
 
 class CPlayState : public State , public Postmaster::ISubscriber
 {
@@ -52,6 +53,7 @@ public:
 	CGameObjectManager* GetGameObjectManager();
 	inline CColliderComponentManager* GetColliderComponentManager();
 	inline CScriptComponentManager* GetScriptComponentManager();
+	inline CItemFactory* GetItemFactory();
 
 	inline bool IsLoaded() const;
 
@@ -76,6 +78,7 @@ private:
 
 	CKartControllerComponentManager* myKartControllerComponentManager;
 	CPlayerControllerManager* myPlayerControllerManager;
+	CItemFactory* myItemFactory;
 
 	CCameraComponent* myCameraComponent;
 
@@ -96,6 +99,11 @@ inline CColliderComponentManager* CPlayState::GetColliderComponentManager()
 inline CScriptComponentManager* CPlayState::GetScriptComponentManager()
 {
 	return myScriptComponentManager;
+}
+
+inline CItemFactory * CPlayState::GetItemFactory()
+{
+	return myItemFactory;
 }
 
 inline CBoostPadComponentManager* CPlayState::GetBoostPadComponentManager()
