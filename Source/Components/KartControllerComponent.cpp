@@ -12,6 +12,7 @@
 #include "../Physics/PhysXManager.h"
 #include "../Physics/PhysicsScene.h"
 #include "../TServer/GameServer.h"
+#include "CommonUtilities.h"
 
 
 CKartControllerComponent::CKartControllerComponent(): myPhysicsScene(nullptr), myFirstMovingPass(true)
@@ -210,6 +211,8 @@ void CKartControllerComponent::CheckZKill()
 		{
 			myAxisSpeed[i] = 0;
 		}
+		ClearSpeed();
+		ClearHeight();
 	}
 }
 
@@ -217,15 +220,16 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 {
 	DoPhysics(aDeltaTime);
 	CheckZKill();
+
 	float way = 1.f;
 	if (myFowrardSpeed > 0.f)
 	{
 		way = -1.f;
 	}
 
-	myFowrardSpeed += myFriction * way * aDeltaTime;
-
-	myFowrardSpeed += myAcceleration * aDeltaTime * myAccelerationModifier;
+	const float onGroundModifier = (myIsOnGround == true ? 1.f : 0.f);
+	myFowrardSpeed += myFriction * way * aDeltaTime * onGroundModifier;
+	myFowrardSpeed += myAcceleration * aDeltaTime * myAccelerationModifier * onGroundModifier;
 	if (myFowrardSpeed > myMaxSpeed * myMaxSpeedModifier)
 	{
 		myFowrardSpeed -= myBoostSpeedDecay * aDeltaTime;
@@ -235,7 +239,7 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 		myFowrardSpeed = myMinSpeed;
 	}
 
-	float steerAngle = (mySteering + myDriftSteerModifier) * myAngularAcceleration * -way;
+	float steerAngle = (mySteering  + myDriftSteerModifier) * myAngularAcceleration * -way * onGroundModifier;
 	CU::Matrix44f& parentTransform = GetParent()->GetLocalTransform();
 	parentTransform.RotateAroundAxis(steerAngle * aDeltaTime, CU::Axees::Y);
 
@@ -277,23 +281,29 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 
 void CKartControllerComponent::ClearHeight()
 {
-	float height = 0.f;
-	if(GetParent() != nullptr)
-	{
-		height = GetParent()->GetWorldPosition().y;
-	}
+	
 
 	for(int i = 0; i < static_cast<int>(AxisPos::Size); ++i)
 	{
-		SetHeight(i, height,1.f);
-		SetHeight(i, height,1.f);
+		ClearHeight(i);
 	}
+}
+
+void CKartControllerComponent::ClearHeight(const int anIndex)
+{
+	float height = 0.f;
+	if (GetParent() != nullptr)
+	{
+		height = GetParent()->GetWorldPosition().y;
+	}
+	SetHeight(anIndex, height, 1.f);
+	SetHeight(anIndex, height, 1.f);
 }
 
 void CKartControllerComponent::SetHeight(int aWheelIndex, float aHeight, const float aDt)
 {
 	myPreviousHeight[aWheelIndex] = myCurrentHeight[aWheelIndex];
-	myCurrentHeight[aWheelIndex] = aHeight / aDt;
+	myCurrentHeight[aWheelIndex] = aHeight;
 }
 
 float CKartControllerComponent::GetHeightSpeed(int anIndex)
@@ -311,6 +321,10 @@ float CKartControllerComponent::GetHeightSpeed(int anIndex)
 	}
 
 	return heightDelta;
+}
+
+void CKartControllerComponent::ApplyNormalityBias(const float aDt)
+{
 }
 
 void CKartControllerComponent::Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData)
@@ -377,11 +391,12 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 
 	CU::Vector3f axees[static_cast<int>(AxisPos::Size)];
 
+	myIsOnGround = false;
+
 	for(int i = 0; i < static_cast<int>(AxisPos::Size); ++i)
 	{
-
 		//Update fall speed
-		myAxisSpeed[i] += gravity * aDeltaTime;
+		
 		CU::Vector3f examineVector = pos;
 
 		if(i % 2 != 0)
@@ -398,30 +413,45 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 		}
 
 		Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(examineVector, down, 1);
+
+		const float heightSpeed = GetHeightSpeed(i);
 		if (raycastHitData.hit == true && raycastHitData.distance < upDist)
 		{
 			myAxisSpeed[i] = 0;
+
 			const float disp = upDist - raycastHitData.distance;
 
-			examineVector -= down * disp;
+			examineVector -= down * (disp < 0.f ? 0.f : disp);
+			myIsOnGround = true;
+			SetHeight(i, examineVector.y, aDeltaTime);
+		}
+		else
+		{
 
+			
+			myAxisSpeed[i] += gravity * aDeltaTime;
+			ClearHeight(i);
 		}
 
 
-		const float heightSpeed = GetHeightSpeed(i);
-
-		//When not on ground, do fall
-		const CU::Vector3f disp = down * myAxisSpeed[i] * aDeltaTime/* + CU::Vector3f::UnitY * heightSpeed * aDeltaTime*/;
 
 		if(heightSpeed > 0.f)
 		{
 			int i = 0; 
+
 		}
+
+		//myAxisSpeed[i] -= CLAMP(heightSpeed, 0.f, 1000.f);
+
+		//When not on ground, do fall
+		const CU::Vector3f disp = down * myAxisSpeed[i] * aDeltaTime/* + CU::Vector3f::UnitY * heightSpeed * aDeltaTime*/;
+
+		
 		examineVector += disp;
 
 		axees[i] = examineVector;
 
-		SetHeight(i, examineVector.y, aDeltaTime);
+		
 	}
 
 	CU::Vector3f avgPos = CU::Vector3f::Zero;
@@ -447,14 +477,23 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 	CU::Vector3f newFront = (avgFVec - avgBVec).Normalize();
 
 	const CU::Vector3f newUp = newFront.Cross(newRight).Normalize();
+	if(newUp.Cross(CU::Vector3f::UnitY).Length2() != 0)
+	{
+		int i = 0;
+	}
 	newFront = newRight.Cross(newUp);
 
 	CU::Matrix33f newRotation;
 	newRotation.myRightVector = newRight;
 	newRotation.myForwardVector = newFront;
 	newRotation.myUpVector = newUp;
+
 	
 	
+	if(myIsOnGround == false)
+	{
+		ApplyNormalityBias(aDeltaTime);
+	}
 
 	transform.SetRotation(newRotation);
 

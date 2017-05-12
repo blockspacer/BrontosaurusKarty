@@ -39,8 +39,10 @@ public:
 private:
 	void ClearSpeed();
 	void ClearHeight();
+	void ClearHeight(const int anIndex);
 	void SetHeight(int aWheelIndex, float aHeight, const float aDt);
 	float GetHeightSpeed(int anIndex);
+	void ApplyNormalityBias(const float aDt);
 	void DoPhysics(const float aDeltaTime);
 
 	enum class AxisPos
@@ -101,5 +103,6 @@ private:
 	float myPreviousHeight[static_cast<int>(AxisPos::Size)];
 	float myCurrentHeight[static_cast<int>(AxisPos::Size)];
 	bool myFirstMovingPass;
+	bool myIsOnGround;
 };
 
