@@ -98,6 +98,8 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex)
 			myPlayerCount = std::atoi(playerCountStr.c_str());
 		}
 	}
+
+	DL_PRINT("started with %d players", myPlayerCount);
 }
 
 CPlayState::~CPlayState()
