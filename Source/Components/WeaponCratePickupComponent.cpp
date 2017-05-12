@@ -2,16 +2,16 @@
 #include "WeaponCratePickupComponent.h"
 
 
-CWeaponCratePickupComponent::CWeaponCratePickupComponent()
+CItemPickupComponent::CItemPickupComponent()
 {
 }
 
 
-CWeaponCratePickupComponent::~CWeaponCratePickupComponent()
+CItemPickupComponent::~CItemPickupComponent()
 {
 }
 
-void CWeaponCratePickupComponent::DoMyEffect()
+void CItemPickupComponent::DoMyEffect()
 {
 	//Give weapon to the player... maybe it should be networked or maybe not we'll see
 }

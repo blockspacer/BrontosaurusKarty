@@ -2,7 +2,7 @@
 
 class CWeaponPickupComponent;
 
-class CWeaponCratePickupComponent;
+class CItemPickupComponent;
 
 class CPickupComponentManager
 {
@@ -11,13 +11,13 @@ public:
 	static void Destroy();
 	static CPickupComponentManager* GetInstance();
 
-	CWeaponCratePickupComponent* CreateWeaponCratePickupComponent(const float aRespawnTime);
-	CWeaponCratePickupComponent* GetWeaponCratePickupComponent(const int aId);
+	CItemPickupComponent* CreateWeaponCratePickupComponent(const float aRespawnTime);
+	CItemPickupComponent* GetWeaponCratePickupComponent(const int aId);
 	void DeactivateWeaponCratePickup(const int aId);
 
 	void Update(const float aDeltaTime);
 private:
-	std::map<int, CWeaponCratePickupComponent*> myWeaponCrates;
+	std::map<int, CItemPickupComponent*> myWeaponCrates;
 
 	static CPickupComponentManager* ourInstance;
 	CPickupComponentManager();

@@ -186,6 +186,7 @@ void CPlayState::Load()
 	myScene->SetCubemap("purpleCubemap.dds");
 
 
+
 	myIsLoaded = true;
 
 	// Get time to load the level:
@@ -327,14 +328,20 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	playerObject->AddComponent(playerModel);
 
 	playerObject->AddComponent(kartComponent);
-	/*SConcaveMeshColliderData crystalMeshColliderData;
+	SConcaveMeshColliderData crystalMeshColliderData;
 	crystalMeshColliderData.IsTrigger = false;
 	crystalMeshColliderData.myPath = "Models/Meshes/M_Kart_01.fbx";
 	crystalMeshColliderData.material.aDynamicFriction = 0.5f;
 	crystalMeshColliderData.material.aRestitution = 0.5f;
 	crystalMeshColliderData.material.aStaticFriction = 0.5f;
 	CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&crystalMeshColliderData, playerObject->GetId());
-	playerObject->AddComponent(playerColliderComponent);*/
+	CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
+	CU::Vector3f offset = playerObject->GetWorldPosition();
+	colliderObject->SetWorldPosition({offset.x,offset.y+0.1f,offset.z});
+	colliderObject->AddComponent(playerColliderComponent);
+
+	playerObject->AddComponent(colliderObject);
+
 	SRigidBodyData rigidBodyData;
 	//CColliderComponent* rigidBodyComponent = myColliderComponentManager->CreateComponent(&rigidBodyData, playerObject->GetId());
 	//playerObject->AddComponent(rigidBodyComponent);
