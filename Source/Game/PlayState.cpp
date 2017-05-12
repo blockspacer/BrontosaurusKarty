@@ -27,6 +27,7 @@
 #include "KartComponentManager.h"
 #include "SpeedHandlerManager.h"
 #include "BoostPadComponentManager.h"
+#include "ItemFactory.h"
 
 //Networking
 #include "TClient/Client.h"
@@ -83,6 +84,7 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex)
 	, myColliderComponentManager(nullptr)
 	, myScriptComponentManager(nullptr)
 	, myCameraComponent(nullptr)
+	,myItemFactory(nullptr)
 	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
 {
@@ -108,6 +110,7 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myKartControllerComponentManager);
 	SAFE_DELETE(myPlayerControllerManager);
 	SAFE_DELETE(myBoostPadComponentManager);
+	SAFE_DELETE(myItemFactory);
 }
 
 void CPlayState::Load()
@@ -295,6 +298,7 @@ void CPlayState::CreateManagersAndFactories()
 	myKartControllerComponentManager->Init(myPhysicsScene);
 	myPlayerControllerManager = new CPlayerControllerManager;
 	myBoostPadComponentManager = new CBoostPadComponentManager();
+	myItemFactory = new CItemFactory();
 	CKartSpawnPointManager::GetInstance().Create();
 }
 
