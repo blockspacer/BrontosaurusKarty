@@ -57,6 +57,9 @@
     </ClCompile>
     <ClCompile Include="KartControllerComponentManager.cpp" />
     <ClCompile Include="ConcaveMeshCollider.cpp" />
+    <ClCompile Include="ItemHolderComponent.cpp">
+      <Filter>ItemHolder</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -113,6 +116,10 @@
       <Filter>Pickups\Base</Filter>
     </ClInclude>
     <ClInclude Include="ConcaveMeshCollider.h" />
+    <ClInclude Include="ItemHolderComponent.h">
+      <Filter>ItemHolder</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Pickups">
@@ -136,6 +143,9 @@
     <ClInclude Include="SpeedHandlerComponent.h">
       <Filter>SpeedHandling</Filter>
     </ClInclude>
+    <Filter Include="ItemHolder">
+      <UniqueIdentifier>{c4b8ac7f-ec64-429f-a3bd-aa63dab5ef66}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="SpeedHandling">
