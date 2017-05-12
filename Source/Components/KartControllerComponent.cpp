@@ -415,25 +415,36 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 		Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(examineVector, down, 1);
 
 		const float heightSpeed = GetHeightSpeed(i);
-		if (raycastHitData.hit == true && raycastHitData.distance < upDist)
+		if (raycastHitData.hit == true)
 		{
-			myAxisSpeed[i] = 0;
+			if(raycastHitData.distance < upDist * 2.f)
+			{
+				myIsOnGround = true;
 
-			const float disp = upDist - raycastHitData.distance;
+				SetHeight(i, examineVector.y, aDeltaTime);
+			}
+			if(raycastHitData.distance < upDist)
+			{
+				myAxisSpeed[i] = 0;
 
-			examineVector -= down * (disp < 0.f ? 0.f : disp);
-			myIsOnGround = true;
-			SetHeight(i, examineVector.y, aDeltaTime);
+				const float disp = upDist - raycastHitData.distance;
+
+				examineVector -= down * (disp < 0.f ? 0.f : disp);
+			}
+			
+
 		}
+		
+		
 		else
 		{
 
 			
-			myAxisSpeed[i] += gravity * aDeltaTime;
 			ClearHeight(i);
 		}
 
 
+		myAxisSpeed[i] += gravity * aDeltaTime;
 
 		if(heightSpeed > 0.f)
 		{
@@ -477,10 +488,7 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 	CU::Vector3f newFront = (avgFVec - avgBVec).Normalize();
 
 	const CU::Vector3f newUp = newFront.Cross(newRight).Normalize();
-	if(newUp.Cross(CU::Vector3f::UnitY).Length2() != 0)
-	{
-		int i = 0;
-	}
+
 	newFront = newRight.Cross(newUp);
 
 	CU::Matrix33f newRotation;
@@ -492,7 +500,7 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 	
 	if(myIsOnGround == false)
 	{
-		ApplyNormalityBias(aDeltaTime);
+		//ApplyNormalityBias(aDeltaTime);
 	}
 
 	transform.SetRotation(newRotation);
