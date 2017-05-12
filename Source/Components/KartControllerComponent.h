@@ -11,7 +11,7 @@ class CParticleEmitterInstance;
 class CKartControllerComponent : public CComponent
 {
 public:
-	
+
 	CKartControllerComponent();
 	~CKartControllerComponent();
 
@@ -26,6 +26,7 @@ public:
 
 	void CheckZKill();
 	void Update(const float aDeltaTime);
+	
 	void Receive(const eComponentMessageType, const SComponentMessageData&) override;
 	void Init(Physics::CPhysicsScene* aPhysicsScene);
 
@@ -37,6 +38,10 @@ public:
 	};
 
 private:
+	void ClearSpeed();
+	void ClearHeight();
+	void SetHeight(int aWheelIndex, float aHeight, const float aDt);
+	float GetHeightSpeed(int anIndex);
 	void DoPhysics(const float aDeltaTime);
 
 	enum class AxisPos
@@ -93,5 +98,9 @@ private:
 
 	bool myIsDrifting;
 	Physics::CPhysicsScene* myPhysicsScene;
+
+	float myPreviousHeight[static_cast<int>(AxisPos::Size)];
+	float myCurrentHeight[static_cast<int>(AxisPos::Size)];
+	bool myFirstMovingPass;
 };
 
