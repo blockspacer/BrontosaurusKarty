@@ -75,22 +75,22 @@ eStateStatus CLoadState::Update(const CU::Time& aDeltaTime)
 
 	if (myPlayState->IsLoaded() == true)
 	{
-		CClientMessageManager* const messageManagerInstance = CClientMessageManager::GetInstance();
+		//CClientMessageManager* const messageManagerInstance = CClientMessageManager::GetInstance();
 
-		if (messageManagerInstance == nullptr)
-		{
-			DL_ASSERT("message manager is not created");
-		}
+		//	if (messageManagerInstance == nullptr)ö
+		//	{
+		//		DL_ASSERT("message manager is not created");
+		//	}
 
-		CNetworkMessage_ClientReady* readyMessage = messageManagerInstance->CreateMessage<CNetworkMessage_ClientReady>("__Server");
+		//	CNetworkMessage_ClientReady* readyMessage = messageManagerInstance->CreateMessage<CNetworkMessage_ClientReady>("__Server");
 
-		Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CSendNetworkMessageMessage(readyMessage));
-		myGotOkFromServer = true; // Remove me!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		myNumberOfPlayersToSpawnBeforeStarting = 0; // Remove me!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	}
+		//	Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CSendNetworkMessageMessage(readyMessage));
+		//	myGotOkFromServer = true; // Remove me!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		//	myNumberOfPlayersToSpawnBeforeStarting = 0; // Remove me!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		//}
 
-	if (myGotOkFromServer == true && myNumberOfPlayersToSpawnBeforeStarting == 0)
-	{
+	//if (myGotOkFromServer == true && myNumberOfPlayersToSpawnBeforeStarting == 0)
+	//{
 		myStateStack.SwapState(myPlayState);
 		CBackgroundLoadingManager::GetInstance().Clear();
 	}

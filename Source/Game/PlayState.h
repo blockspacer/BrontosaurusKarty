@@ -85,11 +85,12 @@ private:
 	CPlayerControllerManager* myPlayerControllerManager;
 	CItemFactory* myItemFactory;
 
-	CCameraComponent* myCameraComponent;
+	CU::GrowingArray<CCameraComponent*> myCameraComponents;
 
 	CU::TimerManager* myTimerManager;
 	TimerHandle myCountdownTimerHandle;
 
+	int myPlayerCount;
 	int myLevelIndex;
 	std::atomic_bool myIsLoaded;
 };

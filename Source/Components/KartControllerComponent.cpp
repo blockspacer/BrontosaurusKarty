@@ -152,15 +152,15 @@ void CKartControllerComponent::Drift()
 	{
 		CParticleEmitterManager::GetInstance().Activate(myLeftWheelDriftEmmiterHandle);
 		CParticleEmitterManager::GetInstance().Activate(myRightWheelDriftEmmiterHandle);
-		SetVibrationOnController* vibrationMessage = new SetVibrationOnController(0, 10, 10);
-		Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+		//SetVibrationOnController* vibrationMessage = new SetVibrationOnController(0, 10, 10);
+		//Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 	}
 	else if (mySteering < 0)
 	{
 		CParticleEmitterManager::GetInstance().Activate(myLeftWheelDriftEmmiterHandle);
 		CParticleEmitterManager::GetInstance().Activate(myRightWheelDriftEmmiterHandle);
-		SetVibrationOnController* vibrationMessage = new SetVibrationOnController(0, 10, 10);
-		Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+		//SetVibrationOnController* vibrationMessage = new SetVibrationOnController(0, 10, 10);
+		//Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 	}
 }
 

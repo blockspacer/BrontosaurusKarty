@@ -41,7 +41,7 @@ namespace CU
 		: myJoysticks(4)
 		, myPreviousButtonState(4)
 		, myPreviousJoystickStates(4)
-		,myPreviousTriggerStates(4)
+		, myPreviousTriggerStates(4)
 	{
 	}
 
@@ -51,10 +51,10 @@ namespace CU
 
 	void XInputWrapper::Init(const unsigned int aJoystickCount)
 	{
-		myJoysticks.Resize(aJoystickCount);
-		myPreviousButtonState.Resize(aJoystickCount);
-		myPreviousJoystickStates.Resize(aJoystickCount);
-		myPreviousTriggerStates.Resize(aJoystickCount);
+		//myJoysticks.Resize(aJoystickCount);
+		//myPreviousButtonState.Resize(aJoystickCount);
+		//myPreviousJoystickStates.Resize(aJoystickCount);
+		//myPreviousTriggerStates.Resize(aJoystickCount);
 	}
 
 	void XInputWrapper::UpdateStates()
@@ -81,11 +81,11 @@ namespace CU
 			unsigned short downBefore = (1 << i) & myPreviousButtonState[aJoystickIndex];
 			if (downNow && !downBefore)
 			{
-				aKeys.Add({ /*GamePadButtons[i]*/static_cast<GAMEPAD>(downNow), false });
+				aKeys.Add({ static_cast<GAMEPAD>(downNow), false });
 			}
 			else if (!downNow && downBefore)
 			{
-				aKeys.Add({ /*GamePadButtons[i]*/static_cast<GAMEPAD>(downBefore), true });
+				aKeys.Add({ static_cast<GAMEPAD>(downBefore), true });
 			}
 		}
 
@@ -94,9 +94,17 @@ namespace CU
 
 	bool XInputWrapper::IsConnected(const unsigned int aJoystickIndex, unsigned int* aError)
 	{
-		ZeroMemory(&myJoysticks[aJoystickIndex], sizeof(XINPUT_STATE));
+		XINPUT_STATE joystickOnStack;
+		XINPUT_STATE* joystick = &joystickOnStack;
+		unsigned int joystickIndex = myJoysticks.Size();
+		if (aJoystickIndex < joystickIndex)
+		{
+			joystick = &myJoysticks[aJoystickIndex];
+			joystickIndex = aJoystickIndex;
+		}
+		ZeroMemory(joystick, sizeof(XINPUT_STATE));
 
-		DWORD result = XInputGetState(aJoystickIndex, &myJoysticks[aJoystickIndex]);
+		DWORD result = XInputGetState(joystickIndex, joystick);
 
 		if (aError != nullptr)
 		{
@@ -109,6 +117,21 @@ namespace CU
 		}
 
 		return false;
+	}
+
+	int XInputWrapper::AddController()
+	{
+		unsigned int index = myJoysticks.Size();
+		if (IsConnected(index))
+		{
+			myJoysticks.Add();
+			myPreviousButtonState.Add();
+			myPreviousJoystickStates.Add();
+			myPreviousTriggerStates.Add();
+			return static_cast<int>(index);
+		}
+
+		return -1;
 	}
 
 	CU::Vector2f XInputWrapper::GetRightStickPosition(const unsigned int aJoystickIndex)
