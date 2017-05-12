@@ -183,7 +183,7 @@ void CPlayState::Load()
 	myScene->InitPlayerCameras(2);
 
 
-	CreatePlayer(playerCamera/*myScene->GetPlayerCamera(0)*/.GetCamera());
+	CreatePlayer(/*playerCamera*/myScene->GetPlayerCamera(0).GetCamera());
 	myScene->SetSkybox("default_cubemap.dds");
 	myScene->SetCubemap("purpleCubemap.dds");
 
@@ -235,8 +235,8 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 
 void CPlayState::Render()
 {
-	myScene->Render();
-	//myScene->RenderSplitScreen(2);
+	//myScene->Render();
+	myScene->RenderSplitScreen(2);
 }
 
 void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
@@ -318,10 +318,6 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 		playerObject->AddComponent(speedHandlerComponent);
 	}
 	CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent);
-	//CXboxControllerComponent* xboxInput = new CXboxControllerComponent();
-	//Subscribe(*keyBoardInput);
-	//Subscribe(*xboxInput);
-	Subscribe(*controls);
 
 	playerObject->AddComponent(playerModel);
 
@@ -335,7 +331,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&crystalMeshColliderData, playerObject->GetId());
 	CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
 	CU::Vector3f offset = playerObject->GetWorldPosition();
-	colliderObject->SetWorldPosition({offset.x,offset.y+0.1f,offset.z});
+	colliderObject->SetWorldPosition({ offset.x, offset.y + 0.1f, offset.z });
 	colliderObject->AddComponent(playerColliderComponent);
 
 	playerObject->AddComponent(colliderObject);

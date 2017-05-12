@@ -39,14 +39,16 @@ public:
 	void Update(const CU::Time& aDeltaTime);
 	void SetMousePosition(const CU::Vector2f& aMousePosition);
 	void LockUnlockMouse(const bool aHasFocus);
-
 	void Listen(CU::CInputMessenger& aMessenger, const int aPriority);
 	void Neglect(CU::CInputMessenger& aMessenger);
-	static CInputManager* GetInstance();
+
+	int AddXboxController();
 
 	eMessageReturn DoEvent(const FocusChange& aDroppedFile) override;
 	eMessageReturn DoEvent(const SetVibrationOnController& aFocusChange) override;
 	eMessageReturn DoEvent(const StopVibrationOnController& aStopVibrationmessage) override;
+
+	static CInputManager* GetInstance();
 
 private:
 	void UpdateMouse();

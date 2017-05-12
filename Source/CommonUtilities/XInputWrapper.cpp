@@ -51,10 +51,10 @@ namespace CU
 
 	void XInputWrapper::Init(const unsigned int aJoystickCount)
 	{
-		myJoysticks.Resize(aJoystickCount);
-		myPreviousButtonState.Resize(aJoystickCount);
-		myPreviousJoystickStates.Resize(aJoystickCount);
-		myPreviousTriggerStates.Resize(aJoystickCount);
+		//myJoysticks.Resize(aJoystickCount);
+		//myPreviousButtonState.Resize(aJoystickCount);
+		//myPreviousJoystickStates.Resize(aJoystickCount);
+		//myPreviousTriggerStates.Resize(aJoystickCount);
 	}
 
 	void XInputWrapper::UpdateStates()
@@ -81,11 +81,11 @@ namespace CU
 			unsigned short downBefore = (1 << i) & myPreviousButtonState[aJoystickIndex];
 			if (downNow && !downBefore)
 			{
-				aKeys.Add({ /*GamePadButtons[i]*/static_cast<GAMEPAD>(downNow), false });
+				aKeys.Add({ static_cast<GAMEPAD>(downNow), false });
 			}
 			else if (!downNow && downBefore)
 			{
-				aKeys.Add({ /*GamePadButtons[i]*/static_cast<GAMEPAD>(downBefore), true });
+				aKeys.Add({ static_cast<GAMEPAD>(downBefore), true });
 			}
 		}
 
@@ -109,6 +109,18 @@ namespace CU
 		}
 
 		return false;
+	}
+
+	int XInputWrapper::AddController()
+	{
+		int index = myJoysticks.Size();
+		if (IsConnected(index))
+		{
+			return index;
+		}
+
+		myJoysticks.Pop();
+		return -1;
 	}
 
 	CU::Vector2f XInputWrapper::GetRightStickPosition(const unsigned int aJoystickIndex)

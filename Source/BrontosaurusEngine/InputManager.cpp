@@ -41,9 +41,9 @@ CInputManager::CInputManager()
 	/*bool directInputSuccess =*/ myDInputWrapper->Init(hingsten, hunden);
 
 	myXInputWrapper = new CU::XInputWrapper();
-	myXInputWrapper->Init(1);
+	//myXInputWrapper->Init(1);
 
-	myControllerVibrationStates.Init(myXInputWrapper->GetConnectedJoystickCount());
+	myControllerVibrationStates.Init(4);
 	for (unsigned int i = 0; i < myXInputWrapper->GetConnectedJoystickCount(); ++i)
 	{
 		SControllerVibrationState state;
@@ -111,6 +111,11 @@ void CInputManager::Listen(CU::CInputMessenger& aMessenger, const int aPriority)
 void CInputManager::Neglect(CU::CInputMessenger& aMessenger)
 {
 	myMessengers.Remove(&aMessenger);
+}
+
+int CInputManager::AddXboxController()
+{
+	return myXInputWrapper->AddController();
 }
 
 CInputManager* CInputManager::GetInstance()

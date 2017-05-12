@@ -10,11 +10,9 @@
 #include "..\CommonUtilities\XInputWrapper.h"
 #include "..\CommonUtilities\EKeyboardKeys.h"
 
-short CXboxController::ourControllerIndices(0);
-
 CXboxController::CXboxController(CKartControllerComponent& aKartComponent)
 	: CController(aKartComponent)
-	, myControllerIndex(ourControllerIndices++)
+	, myControllerIndex(-1)
 	, myIsMovingFoward(false)
 	, myIsMovingBackwards(false)
 	, myIsDrifting(false)
@@ -23,6 +21,11 @@ CXboxController::CXboxController(CKartControllerComponent& aKartComponent)
 
 CXboxController::~CXboxController()
 {
+}
+
+void CXboxController::SetIndex(const int aIndex)
+{
+	myControllerIndex = static_cast<short>(aIndex);
 }
 
 CU::eInputReturn CXboxController::TakeInput(const CU::SInputMessage& aInputMessage)

@@ -61,16 +61,10 @@ namespace CU
 		~XInputWrapper();
 
 		void Init(const unsigned int aJoystickCount);
-
 		void UpdateStates();
-
-		//bool GetKeyStroke(const unsigned int aJoystickIndex, KeyStroke& aKeyStrokeOutput);
-		//bool GetKeyPressed(const unsigned int aJoystickIndex, const unsigned short aButton);
-		//bool GetKeyReleased(const unsigned int aJoystickIndex, const unsigned short aButton);
-
 		bool GetKeyEvents(const unsigned int aJoystickIndex, CU::GrowingArray<KeyEvent>& aKeys);
-
 		bool IsConnected(const unsigned int aJoystickIndex, unsigned int* aError = nullptr);
+		int AddController();
 
 		CU::Vector2f GetRightStickPosition(const unsigned int aJoystickIndex);
 		CU::Vector2f GetLeftStickPosition(const unsigned int aJoystickIndex);
