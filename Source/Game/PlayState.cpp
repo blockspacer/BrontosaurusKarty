@@ -42,8 +42,7 @@
 
 #include "CommonUtilities/InputMessage.h"
 #include <CommonUtilities/EKeyboardKeys.h>
-
-
+#include <ThreadPool.h>
 
 //PHYSICS
 #include "../Physics/Foundation.h"
@@ -118,6 +117,11 @@ void CPlayState::Load()
 {
 	CU::CStopWatch loadPlaystateTimer;
 	loadPlaystateTimer.Start();
+
+	myTimerManager = new CU::TimerManager();
+	myCountdownTimerHandle = myTimerManager->CreateTimer();
+	myTimerManager->StopTimer(myCountdownTimerHandle);
+	myTimerManager->ResetTimer(myCountdownTimerHandle);
 
 	srand(static_cast<unsigned int>(time(nullptr)));
 
@@ -246,6 +250,7 @@ void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
 {
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eChangeLevel);
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eNetworkMessage);
+	InitiateRace();
 }
 
 void CPlayState::OnExit(const bool /*aLetThroughRender*/)
@@ -347,6 +352,33 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	playerObject->AddComponent(colliderObject);
 
 	playerObject->AddComponent(myCameraComponent);
+}
+
+void CPlayState::InitiateRace()
+{
+	auto countdownLambda = [this]() {
+
+		const CU::Timer& CDTimer = myTimerManager->GetTimer(myCountdownTimerHandle);
+		unsigned char startCountdownTime = 0;
+
+		if (CDTimer.GetIsActive() == false)
+			((CU::Timer&)CDTimer).Start();
+
+		while (startCountdownTime < 4)
+		{
+			myTimerManager->UpdateTimers();
+
+			float newTime = CDTimer.GetLifeTime().GetSeconds();
+			if ((char)newTime <= 4 && (char)newTime != startCountdownTime)
+				startCountdownTime = newTime;
+		}
+	};
+
+	CU::Work work(countdownLambda);
+	work.SetName("Countdown thread");
+	std::function<void(void)> callback = [this]() { myKartControllerComponentManager->ShouldUpdate(true); };
+	work.SetFinishedCallback(callback);
+	CU::ThreadPool::GetInstance()->AddWork(work);
 }
 
 void CPlayState::SetCameraComponent(CCameraComponent* aCameraComponent)
