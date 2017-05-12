@@ -1,18 +1,24 @@
 #pragma once
 
-class CKartSpawnPoint;
+struct SKartSpawnPoint
+{
+	unsigned char myID;
+	CU::Matrix44f mySpawnTransformaion;
+};
 
 class CKartSpawnPointManager
 {
 public:
 	static void Create();
 	static void Destroy();
-	static CKartSpawnPointManager& GetInstance(); //Make friend?
-	void AddSpawnPoint(CKartSpawnPoint* aSpawnPoint);
+	static CKartSpawnPointManager* GetInstance();
+	void PushSpawnPoint(SKartSpawnPoint* aSpawnPoint);
+	SKartSpawnPoint PopSpawnPoint();
+
 private:
 	CKartSpawnPointManager();
 	~CKartSpawnPointManager();
-	CU::GrowingArray<CKartSpawnPoint*> mySpawnPoints;
+	CU::GrowingArray<SKartSpawnPoint*> mySpawnPoints;
 
 	static CKartSpawnPointManager* ourInstance;
 };

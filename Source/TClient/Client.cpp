@@ -204,8 +204,8 @@ void CClient::Update()
 			break;
 			case ePackageType::eStartCountdown:
 			{
-				CNetworkMessage_StartCountdown* countdownMessage = currentMessage->CastTo<CNetworkMessage_StartCountdown>();
-				CPollingStation::GetInstance()->SetStartCountDownTime(countdownMessage->myCountdownTime);
+				//CNetworkMessage_StartCountdown* countdownMessage = currentMessage->CastTo<CNetworkMessage_StartCountdown>();
+				//CPollingStation::GetInstance()->SetStartCountDownTime(countdownMessage->myCountdownTime);
 				// BYT TILL POSTMASTER NÄR SAKER FUNKAR :D (annars slår Hampus mig  :c)
 			}
 			break;
