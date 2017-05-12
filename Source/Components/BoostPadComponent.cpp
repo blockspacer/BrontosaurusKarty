@@ -16,11 +16,13 @@ void CBoostPadComponent::Receive(const eComponentMessageType aMessageType, const
 {
 	switch (aMessageType)
 	{
+	case eComponentMessageType::eOnCollisionEnter:
 	case eComponentMessageType::eOnTriggerEnter:
 	{
 		myCollidesWithObjects.Add(aMessageData.myComponent->GetParent());
 		break;
 	}
+	case eComponentMessageType::eOnCollisionExit:
 	case eComponentMessageType::eOnTriggerExit:
 	{
 		unsigned int foundIndex = myCollidesWithObjects.Find(aMessageData.myComponent->GetParent());
