@@ -85,7 +85,7 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex)
 	, myColliderComponentManager(nullptr)
 	, myScriptComponentManager(nullptr)
 	, myCameraComponent(nullptr)
-	,myItemFactory(nullptr)
+	, myItemFactory(nullptr)
 	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
 {
