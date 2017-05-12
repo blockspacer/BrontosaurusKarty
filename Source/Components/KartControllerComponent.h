@@ -1,21 +1,23 @@
 #pragma once
 #include "Component.h"
 
-namespace Physics {
+namespace Physics
+{
 	class CPhysicsScene;
 }
 
 class CParticleEmitterInstance;
+class CDrifter;
 
 class CKartControllerComponent : public CComponent
 {
 public:
-
 	CKartControllerComponent();
 	~CKartControllerComponent();
 
-	void TurnRight();
-	void TurnLeft();
+	void Turn(float aDirectionX);
+	void TurnRight(const float aNormalizedModifier = 1.f);
+	void TurnLeft(const float aNormalizedModifier = -1.f);
 	void StopMoving();
 	void MoveFoward();
 	void MoveBackWards();
@@ -51,8 +53,12 @@ private:
 		LeftFront,
 		Size
 	};
+
+	//std::function<bool(const CU::Vector3f&, const CU::Vector3f&, float)> myIsGrounded;
 	
 	float myAxisSpeed[static_cast<int>(AxisPos::Size)];
+
+	std::unique_ptr<CDrifter> myDrifter;
 
 	struct
 	{
@@ -79,27 +85,21 @@ private:
 	float myMaxSpeedModifier;
 	float myAccelerationModifier;
 
-	float myDriftRate;
-	float myDriftTimer;
-	float myDriftSteerModifier;
 	float myBoostSpeedDecay;
-	float myDriftSteeringModifier;
-	float myMaxDriftRate;
-	float myTimeMultiplier;
-	float myMaxDriftSteerAffection;
 
 	eCurrentAction myCurrentAction;
 
-	int myLeftWheelDriftEmmiterHandle;
-	int myRightWheelDriftEmmiterHandle;
-	int myLeftDriftBoostEmitterhandle;
-	int myRightDriftBoostEmitterhandle;
+	//struct SDriftEmitter
+	//{
+		int myLeftWheelDriftEmmiterHandle;
+		int myRightWheelDriftEmmiterHandle;
+		int myLeftDriftBoostEmitterhandle;
+		int myRightDriftBoostEmitterhandle;
+	//} myDriftEmitter;
 
-	bool myIsDrifting;
 	Physics::CPhysicsScene* myPhysicsScene;
 
 	float myPreviousHeight[static_cast<int>(AxisPos::Size)];
 	float myCurrentHeight[static_cast<int>(AxisPos::Size)];
 	bool myFirstMovingPass;
 };
-

@@ -1,15 +1,15 @@
 #pragma once
 #include "ItemTypes.h"
 
-class ItemFactory
+class CItemFactory
 {
 public:
-	ItemFactory();
-	~ItemFactory();
+	CItemFactory();
+	~CItemFactory();
 
 	eItemTypes RandomizeItem();
 
-	int CreateItem(const eItemTypes aItemType);
+	int CreateItem(const eItemTypes aItemType, CComponent* userComponent);
 
 };
 
