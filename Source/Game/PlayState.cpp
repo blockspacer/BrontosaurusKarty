@@ -310,7 +310,7 @@ void CPlayState::CreateManagersAndFactories()
 	myPlayerControllerManager = new CPlayerControllerManager;
 	myBoostPadComponentManager = new CBoostPadComponentManager();
 	myItemFactory = new CItemFactory();
-	CKartSpawnPointManager::GetInstance().Create();
+	CKartSpawnPointManager::GetInstance()->Create();
 	CPickupComponentManager::Create();
 }
 
