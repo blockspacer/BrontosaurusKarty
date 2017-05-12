@@ -305,6 +305,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameEventMessenger.cpp" />
     <ClCompile Include="GlobalLuaFunctions.cpp" />
+    <ClCompile Include="ItemFactory.cpp" />
     <ClCompile Include="KartSpawnPoint.cpp" />
     <ClCompile Include="KartSpawnPointManager.cpp" />
     <ClCompile Include="LoadingAnimation.cpp" />
@@ -324,6 +325,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameEventMessenger.h" />
     <ClInclude Include="GlobalLuaFunctions.h" />
+    <ClInclude Include="ItemFactory.h" />
     <ClInclude Include="KartSpawnPoint.h" />
     <ClInclude Include="KartSpawnPointManager.h" />
     <ClInclude Include="LoadingAnimation.h" />
