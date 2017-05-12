@@ -377,6 +377,8 @@
     <ClInclude Include="ConcaveMeshCollider.h" />
     <ClInclude Include="Drifter.h" />
     <ClInclude Include="IPickupComponent.h" />
+    <ClInclude Include="ItemHolderComponent.h" />
+    <ClInclude Include="ItemTypes.h" />
     <ClInclude Include="KartComponent.h" />
     <ClInclude Include="KartComponentManager.h" />
     <ClInclude Include="KartControllerComponentManager.h" />
@@ -433,6 +435,7 @@
     <ClCompile Include="Drifter.cpp" />
     <ClCompile Include="FireComponent.cpp" />
     <ClCompile Include="IPickupComponent.cpp" />
+    <ClCompile Include="ItemHolderComponent.cpp" />
     <ClCompile Include="KartComponent.cpp" />
     <ClCompile Include="KartComponentManager.cpp" />
     <ClCompile Include="KartControllerComponentManager.cpp" />

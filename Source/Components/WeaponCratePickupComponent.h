@@ -1,11 +1,11 @@
 #pragma once
 #include "IPickupComponent.h"
-class CWeaponCratePickupComponent :
+class CItemPickupComponent :
 	public IPickupComponent
 {
 public:
-	CWeaponCratePickupComponent();
-	~CWeaponCratePickupComponent();
+	CItemPickupComponent();
+	~CItemPickupComponent();
 	void DoMyEffect() override;
 private:
 };
