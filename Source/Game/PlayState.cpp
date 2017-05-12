@@ -359,6 +359,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	crystalMeshColliderData.material.aDynamicFriction = 0.5f;
 	crystalMeshColliderData.material.aRestitution = 0.5f;
 	crystalMeshColliderData.material.aStaticFriction = 0.5f;
+	crystalMeshColliderData.myLayer;
 	CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&crystalMeshColliderData, playerObject->GetId());
 	CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
 	CU::Vector3f offset = playerObject->GetWorldPosition();

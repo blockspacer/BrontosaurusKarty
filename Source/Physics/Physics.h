@@ -48,6 +48,7 @@ namespace Physics
 		CShape* CreateShape(physx::PxGeometry& aGeometry, const SMaterialData & aMaterialData);
 		CShape* CreateShape(physx::PxTriangleMesh& aMesh, const SMaterialData & aMaterialData);
 		CShape* CreateShape(physx::PxConvexMesh& aMesh, const SMaterialData & aMaterialData, const CU::Vector3f& aScale);
+		CShape* CreateShape(physx::PxTriangleMesh& aMesh, const SMaterialData & aMaterialData, const CU::Vector3f& aScale);
 
 	private:
 		physx::PxPhysics* myPxPhysics;
