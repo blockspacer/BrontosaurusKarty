@@ -16,6 +16,7 @@ namespace CU
 		void Subscribe(IInputListener& aListener);
 		void Subscribe(IInputListener& aListener, const int aPriority);
 		void Unsubscribe(IInputListener& aListener);
+		int AddXboxController();
 
 		virtual eInputReturn RecieveInput(const SInputMessage& aInputMessage);
 

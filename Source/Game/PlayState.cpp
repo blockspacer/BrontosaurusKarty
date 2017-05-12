@@ -42,8 +42,7 @@
 
 #include "CommonUtilities/InputMessage.h"
 #include <CommonUtilities/EKeyboardKeys.h>
-
-
+#include <ThreadPool.h>
 
 //PHYSICS
 #include "../Physics/Foundation.h"
@@ -84,11 +83,21 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex)
 	, myModelComponentManager(nullptr)
 	, myColliderComponentManager(nullptr)
 	, myScriptComponentManager(nullptr)
-	, myCameraComponent(nullptr)
-	,myItemFactory(nullptr)
+	, myItemFactory(nullptr)
+	, myCameraComponents(4)
+	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
 {
+	CommandLineManager* commandLineManager = CommandLineManager::GetInstance();
+	if (commandLineManager)
+	{
+		const std::string& playerCountStr = commandLineManager->GetArgument("-playerCount");
+		if (!playerCountStr.empty())
+		{
+			myPlayerCount = std::atoi(playerCountStr.c_str());
+		}
+	}
 }
 
 CPlayState::~CPlayState()
@@ -118,6 +127,11 @@ void CPlayState::Load()
 {
 	CU::CStopWatch loadPlaystateTimer;
 	loadPlaystateTimer.Start();
+
+	myTimerManager = new CU::TimerManager();
+	myCountdownTimerHandle = myTimerManager->CreateTimer();
+	myTimerManager->StopTimer(myCountdownTimerHandle);
+	myTimerManager->ResetTimer(myCountdownTimerHandle);
 
 	srand(static_cast<unsigned int>(time(nullptr)));
 
@@ -180,13 +194,18 @@ void CPlayState::Load()
 	dirLight.direction = { -1.0f, -1.0f, 1.0f, 1.0f };
 	dirLight.shadowIndex = 0;
 	myScene->AddDirectionalLight(dirLight);
-	myScene->AddCamera(CScene::eCameraType::ePlayerOneCamera);
-	CRenderCamera& playerCamera = myScene->GetRenderCamera(CScene::eCameraType::ePlayerOneCamera);
-	playerCamera.InitPerspective(90, WINDOW_SIZE_F.x, WINDOW_SIZE_F.y, 0.1f, 500.f);
-	myScene->InitPlayerCameras(2);
 
 
-	CreatePlayer(playerCamera/*myScene->GetPlayerCamera(0)*/.GetCamera());
+	//myScene->AddCamera(CScene::eCameraType::ePlayerOneCamera);
+	//CRenderCamera& playerCamera = myScene->GetRenderCamera(CScene::eCameraType::ePlayerOneCamera);
+	//playerCamera.InitPerspective(90, WINDOW_SIZE_F.x, WINDOW_SIZE_F.y, 0.1f, 500.f);
+
+	myScene->InitPlayerCameras(myPlayerCount);
+	for (int i = 0; i < myPlayerCount; ++i)
+	{
+		CreatePlayer(myScene->GetPlayerCamera(i).GetCamera());
+	}
+
 	myScene->SetSkybox("default_cubemap.dds");
 	myScene->SetCubemap("purpleCubemap.dds");
 
@@ -220,9 +239,9 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	myKartComponentManager->Update(aDeltaTime.GetSeconds());
 	myKartControllerComponentManager->Update(aDeltaTime.GetSeconds());
 	
-	if(myCameraComponent != nullptr)
+	for (CCameraComponent* camera : myCameraComponents)
 	{
-		myCameraComponent->Update(aDeltaTime.GetSeconds());
+		camera->Update(aDeltaTime.GetSeconds());
 	}
 
 	if (CSpeedHandlerManager::GetInstance() != nullptr)
@@ -238,14 +257,14 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 
 void CPlayState::Render()
 {
-	myScene->Render();
-	//myScene->RenderSplitScreen(2);
+	myScene->RenderSplitScreen(myPlayerCount);
 }
 
 void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
 {
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eChangeLevel);
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eNetworkMessage);
+	InitiateRace();
 }
 
 void CPlayState::OnExit(const bool /*aLetThroughRender*/)
@@ -302,17 +321,19 @@ void CPlayState::CreateManagersAndFactories()
 	myPlayerControllerManager = new CPlayerControllerManager;
 	myBoostPadComponentManager = new CBoostPadComponentManager();
 	myItemFactory = new CItemFactory();
-	CKartSpawnPointManager::GetInstance().Create();
+	CKartSpawnPointManager::GetInstance()->Create();
 }
 
 void CPlayState::CreatePlayer(CU::Camera& aCamera)
 {
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
+	CU::Matrix44f kartTransformation = CKartSpawnPointManager::GetInstance()->PopSpawnPoint().mySpawnTransformaion;
+	playerObject->SetWorldTransformation(kartTransformation);
 	playerObject->Move(CU::Vector3f::UnitY);
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
-	myCameraComponent = new CCameraComponent();
-	CComponentManager::GetInstance().RegisterComponent(myCameraComponent);
-	myCameraComponent->SetCamera(aCamera);
+	CCameraComponent* cameraComponent = new CCameraComponent();
+	CComponentManager::GetInstance().RegisterComponent(cameraComponent);
+	cameraComponent->SetCamera(aCamera);
 
 	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent();
 	CKeyboardController* controls = myPlayerControllerManager->CreateKeyboardController(*kartComponent);
@@ -322,10 +343,6 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 		playerObject->AddComponent(speedHandlerComponent);
 	}
 	CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent);
-	//CXboxControllerComponent* xboxInput = new CXboxControllerComponent();
-	//Subscribe(*keyBoardInput);
-	//Subscribe(*xboxInput);
-	Subscribe(*controls);
 
 	playerObject->AddComponent(playerModel);
 
@@ -340,15 +357,43 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&crystalMeshColliderData, playerObject->GetId());
 	CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
 	CU::Vector3f offset = playerObject->GetWorldPosition();
-	colliderObject->SetWorldPosition({offset.x,offset.y+0.1f,offset.z});
+	colliderObject->SetWorldPosition({ offset.x, offset.y + 0.1f, offset.z });
 	colliderObject->AddComponent(playerColliderComponent);
 
 	playerObject->AddComponent(colliderObject);
 
-	playerObject->AddComponent(myCameraComponent);
+	playerObject->AddComponent(cameraComponent);
+	myCameraComponents.Add(cameraComponent);
+}
+
+void CPlayState::InitiateRace()
+{
+	auto countdownLambda = [this]() {
+
+		const CU::Timer& CDTimer = myTimerManager->GetTimer(myCountdownTimerHandle);
+		unsigned char startCountdownTime = 0;
+
+		if (CDTimer.GetIsActive() == false)
+			((CU::Timer&)CDTimer).Start();
+
+		while (startCountdownTime < 4)
+		{
+			myTimerManager->UpdateTimers();
+
+			float newTime = CDTimer.GetLifeTime().GetSeconds();
+			if ((char)newTime <= 4 && (char)newTime != startCountdownTime)
+				startCountdownTime = newTime;
+		}
+	};
+
+	CU::Work work(countdownLambda);
+	work.SetName("Countdown thread");
+	std::function<void(void)> callback = [this]() { myKartControllerComponentManager->ShouldUpdate(true); };
+	work.SetFinishedCallback(callback);
+	CU::ThreadPool::GetInstance()->AddWork(work);
 }
 
 void CPlayState::SetCameraComponent(CCameraComponent* aCameraComponent)
 {
-	myCameraComponent = aCameraComponent;
+	DL_ASSERT("cant add camera component like this right now,,,,,,");
 }

@@ -61,6 +61,19 @@ namespace CU
 		myListeners.Remove(&aListener);
 	}
 
+	int CInputMessenger::AddXboxController()
+	{
+		int index = -1;
+
+		CInputManager* inputManager = CInputManager::GetInstance();
+		if (inputManager)
+		{
+			index = inputManager->AddXboxController();
+		}
+
+		return index;
+	}
+
 	eInputReturn CInputMessenger::RecieveInput(const SInputMessage& aInputMessage)
 	{
 		for (IInputListener* listener : myListeners)

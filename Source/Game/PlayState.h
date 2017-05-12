@@ -4,9 +4,12 @@
 
 namespace CU
 {
+	class TimerManager;
 	class Time;
 	class Camera;
 }
+
+typedef unsigned int TimerHandle;
 
 namespace Physics
 {
@@ -63,6 +66,8 @@ public:
 	inline CBoostPadComponentManager* GetBoostPadComponentManager();
 private:
 	void CreatePlayer(CU::Camera& aCamera);
+	void InitiateRace();
+
 private:
 	Physics::CPhysicsScene* myPhysicsScene;
 	Physics::CPhysics* myPhysics;
@@ -80,8 +85,12 @@ private:
 	CPlayerControllerManager* myPlayerControllerManager;
 	CItemFactory* myItemFactory;
 
-	CCameraComponent* myCameraComponent;
+	CU::GrowingArray<CCameraComponent*> myCameraComponents;
 
+	CU::TimerManager* myTimerManager;
+	TimerHandle myCountdownTimerHandle;
+
+	int myPlayerCount;
 	int myLevelIndex;
 	std::atomic_bool myIsLoaded;
 };
@@ -101,12 +110,12 @@ inline CScriptComponentManager* CPlayState::GetScriptComponentManager()
 	return myScriptComponentManager;
 }
 
-inline CItemFactory * CPlayState::GetItemFactory()
-{
-	return myItemFactory;
-}
-
 inline CBoostPadComponentManager* CPlayState::GetBoostPadComponentManager()
 {
 	return myBoostPadComponentManager;
+}
+
+inline CItemFactory* CPlayState::GetItemFactory()
+{
+	return myItemFactory;
 }

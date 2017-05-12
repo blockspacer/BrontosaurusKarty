@@ -20,6 +20,6 @@ public:
 
 private:
 	StateStack myStateStack;
-	CClient myClient;
+	//CClient myClient;
 	CGameEventMessenger myGameEventMessenger;
 };

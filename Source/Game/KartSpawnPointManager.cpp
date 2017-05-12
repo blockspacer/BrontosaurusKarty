@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "KartSpawnPointManager.h"
-#include "KartSpawnPoint.h"
 
 CKartSpawnPointManager* CKartSpawnPointManager::ourInstance = nullptr;
 
@@ -21,14 +20,22 @@ void CKartSpawnPointManager::Destroy()
 	SAFE_DELETE(ourInstance);
 }
 
-CKartSpawnPointManager& CKartSpawnPointManager::GetInstance()
+CKartSpawnPointManager* CKartSpawnPointManager::GetInstance()
 {
-	return *ourInstance;
+	return ourInstance;
 }
 
-void CKartSpawnPointManager::AddSpawnPoint(CKartSpawnPoint* aSpawnPoint)
+void CKartSpawnPointManager::PushSpawnPoint(SKartSpawnPoint* aSpawnPoint)
 {
 	mySpawnPoints.Add(aSpawnPoint);
+}
+
+SKartSpawnPoint CKartSpawnPointManager::PopSpawnPoint()
+{
+	if (mySpawnPoints.Size() == 0) { DL_MESSAGE_BOX("There were no (or too few) spawnpoints placed in the unity level you tried to load."); return SKartSpawnPoint(); }
+	SKartSpawnPoint tempKartPoint = *mySpawnPoints.GetLast();
+	SAFE_DELETE(mySpawnPoints.GetLast());
+	return tempKartPoint;
 }
 
 CKartSpawnPointManager::CKartSpawnPointManager()
