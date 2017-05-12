@@ -77,11 +77,8 @@ void CXboxController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 		myControllerComponent.Drift();
 		break;
 	case CU::GAMEPAD::LEFT_SHOULDER:
-		boostData->accerationBoost = 5;
-		boostData->duration = 4.0f;
-		boostData->maxSpeedBoost = 2.0f;
-		boostData->hashedName = std::hash<std::string>()("TempBoost");
-		boostMessageData.myBoostData = boostData;
+		SComponentMessageData boostMessageData;
+		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("BoostPad"));
 		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
 		break;
 	}
