@@ -21,7 +21,7 @@ public:
 
 	virtual const bool GetShouldReset() const;
 
-	virtual void DoMyEffect() = 0;
+	virtual void DoMyEffect(CComponent* theCollider) = 0;
 
 	void Update(const float aDeltaTime);
 protected:

@@ -4,9 +4,12 @@
 
 namespace CU
 {
+	class TimerManager;
 	class Time;
 	class Camera;
 }
+
+typedef unsigned int TimerHandle;
 
 namespace Physics
 {
@@ -29,6 +32,7 @@ class CKartComponentManager;
 class CKartControllerComponentManager;
 class CPlayerControllerManager;
 class CBoostPadComponentManager;
+class CItemFactory;
 
 class CPlayState : public State , public Postmaster::ISubscriber
 {
@@ -52,6 +56,7 @@ public:
 	CGameObjectManager* GetGameObjectManager();
 	inline CColliderComponentManager* GetColliderComponentManager();
 	inline CScriptComponentManager* GetScriptComponentManager();
+	inline CItemFactory* GetItemFactory();
 
 	inline bool IsLoaded() const;
 
@@ -61,6 +66,8 @@ public:
 	inline CBoostPadComponentManager* GetBoostPadComponentManager();
 private:
 	void CreatePlayer(CU::Camera& aCamera);
+	void InitiateRace();
+
 private:
 	Physics::CPhysicsScene* myPhysicsScene;
 	Physics::CPhysics* myPhysics;
@@ -76,10 +83,13 @@ private:
 
 	CKartControllerComponentManager* myKartControllerComponentManager;
 	CPlayerControllerManager* myPlayerControllerManager;
+	CItemFactory* myItemFactory;
 
 	CU::GrowingArray<CCameraComponent*> myCameraComponents;
 
-	int myPlayerCount;
+	CU::TimerManager* myTimerManager;
+	TimerHandle myCountdownTimerHandle;
+
 	int myLevelIndex;
 	std::atomic_bool myIsLoaded;
 };
@@ -102,4 +112,9 @@ inline CScriptComponentManager* CPlayState::GetScriptComponentManager()
 inline CBoostPadComponentManager* CPlayState::GetBoostPadComponentManager()
 {
 	return myBoostPadComponentManager;
+}
+
+inline CItemFactory* CPlayState::GetItemFactory()
+{
+	return myItemFactory;
 }

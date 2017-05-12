@@ -32,11 +32,10 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Precompiled</Filter>
     </ClCompile>
-    <ClCompile Include="KartSpawnPoint.cpp">
+    <ClCompile Include="PollingStation.cpp" />
+    <ClCompile Include="KartSpawnPointManager.cpp">
       <Filter>KartSpawnPoint</Filter>
     </ClCompile>
-    <ClCompile Include="KartSpawnPointManager.cpp" />
-    <ClCompile Include="PollingStation.cpp" />
     <ClCompile Include="ItemFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -73,9 +72,6 @@
     </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Precompiled</Filter>
-    </ClInclude>
-    <ClInclude Include="KartSpawnPoint.h">
-      <Filter>KartSpawnPoint</Filter>
     </ClInclude>
     <ClInclude Include="KartSpawnPointManager.h">
       <Filter>KartSpawnPoint</Filter>

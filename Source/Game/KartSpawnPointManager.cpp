@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "KartSpawnPointManager.h"
-#include "KartSpawnPoint.h"
 
 CKartSpawnPointManager* CKartSpawnPointManager::ourInstance = nullptr;
 
@@ -21,14 +20,21 @@ void CKartSpawnPointManager::Destroy()
 	SAFE_DELETE(ourInstance);
 }
 
-CKartSpawnPointManager& CKartSpawnPointManager::GetInstance()
+CKartSpawnPointManager* CKartSpawnPointManager::GetInstance()
 {
-	return *ourInstance;
+	return ourInstance;
 }
 
-void CKartSpawnPointManager::AddSpawnPoint(CKartSpawnPoint* aSpawnPoint)
+void CKartSpawnPointManager::PushSpawnPoint(SKartSpawnPoint* aSpawnPoint)
 {
 	mySpawnPoints.Add(aSpawnPoint);
+}
+
+SKartSpawnPoint CKartSpawnPointManager::PopSpawnPoint()
+{
+	SKartSpawnPoint tempKartPoint = *mySpawnPoints.GetLast();
+	SAFE_DELETE(mySpawnPoints.GetLast());
+	return tempKartPoint;
 }
 
 CKartSpawnPointManager::CKartSpawnPointManager()

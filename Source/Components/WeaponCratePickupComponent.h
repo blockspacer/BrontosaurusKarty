@@ -1,12 +1,17 @@
 #pragma once
 #include "IPickupComponent.h"
+
+class CItemFactory;
+
 class CItemPickupComponent :
 	public IPickupComponent
 {
 public:
-	CItemPickupComponent();
+	CItemPickupComponent(CItemFactory& aItemFactory);
 	~CItemPickupComponent();
-	void DoMyEffect() override;
+	void DoMyEffect(CComponent* theCollider) override;
 private:
+	CItemFactory& myItemFactory;
+
 };
 

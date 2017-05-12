@@ -4,6 +4,8 @@ class CWeaponPickupComponent;
 
 class CItemPickupComponent;
 
+class CItemFactory;
+
 class CPickupComponentManager
 {
 public:
@@ -11,7 +13,7 @@ public:
 	static void Destroy();
 	static CPickupComponentManager* GetInstance();
 
-	CItemPickupComponent* CreateWeaponCratePickupComponent(const float aRespawnTime);
+	CItemPickupComponent* CreateWeaponCratePickupComponent(const float aRespawnTime, CItemFactory& aItemFactory);
 	CItemPickupComponent* GetWeaponCratePickupComponent(const int aId);
 	void DeactivateWeaponCratePickup(const int aId);
 
