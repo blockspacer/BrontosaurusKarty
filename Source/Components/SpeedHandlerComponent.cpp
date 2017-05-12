@@ -20,6 +20,15 @@ void CSpeedHandlerComponent::Receive(const eComponentMessageType aMessageType, c
 	{
 	case eComponentMessageType::eGiveBoost:
 	{
+		for(unsigned int i = 0; i < myBoostList.Size(); i++)
+		{
+			if(myBoostList[i].data->hashedName == aMessageData.myBoostData->hashedName)
+			{
+				myBoostList[i].elapsedBoostingTime = 0.0f;
+				return;
+			}
+		}
+
 		SBoostListData boostdata;
 		boostdata.data = aMessageData.myBoostData;
 		boostdata.elapsedBoostingTime = 0.0f;

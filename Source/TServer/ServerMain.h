@@ -76,10 +76,15 @@ public:
 	void PrintDebugInfo();
 	void Shutdown();
 	bool IsClosed();
+
+private:
+	void UpdateStartCountdown();
+
 private:
 
 	CU::TimerManager myTimerManager;
 	CU::TimerHandle myTimerHandle;
+	CU::TimerHandle myStartCountdownHandle;
 
 	TShared_NetworkWrapper myNetworkWrapper;
 
@@ -103,5 +108,7 @@ private:
 	bool myCanQuit;
 	bool myFinishedLoading;
 	bool myIsClosed;
+	bool myStartCountdownStarted;
+	unsigned char myStartCountdownTime;
 };
 

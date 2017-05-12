@@ -15,6 +15,7 @@ enum class ePackageType: __int8
 	eServerReady,
 	eDisconected,
 	eAnimationStart,
+	eStartCountdown,
 	eSize,
 	
 };
