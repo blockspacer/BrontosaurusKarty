@@ -33,7 +33,7 @@ namespace Physics
 			// let triggers through
 			if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1))
 			{
-				pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
+				pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT | PxPairFlag::eDETECT_CCD_CONTACT;
 				return physx::PxFilterFlag::eDEFAULT;
 			}
 			// generate contacts for all that were not filtered above
@@ -45,7 +45,7 @@ namespace Physics
 			}
 			// trigger the contact callback for pairs (A,B) where 
 			// the filtermask of A contains the ID of B and vice versa.
-			if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1) /*&& filterData0.word2 != filterData1.word2*/)
+			if ((filterData0.word0 & filterData1.word1) != 0 && (filterData1.word0 & filterData0.word1) != 0/*&& filterData0.word2 != filterData1.word2*/)
 			{
 				//std::cout << "First object: " << filterData0.word2 << "\t\tSecond object: " << filterData1.word2 << std::endl;
 				pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND | physx::PxPairFlag::eNOTIFY_TOUCH_LOST | physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS;
@@ -246,13 +246,11 @@ namespace Physics
 		}
 
 		PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
-		PxTriangleMesh* triangleMesh = myPxPhysics->createTriangleMesh(readBuffer);
+		physx::PxTriangleMesh* triangleMesh = myPxPhysics->createTriangleMesh(readBuffer);
 
-		PxMaterial* material = CreateMaterial(aMaterialData);
-
-		PxTriangleMeshGeometry* meshGeometry = new PxTriangleMeshGeometry(triangleMesh); // TODO: create on stack?? or delete?? or release?? or both???
-		PxShape* shape = myPxPhysics->createShape(*meshGeometry, *material);
-		return new CShape(shape);
+		//PxTriangleMeshGeometry* meshGeometry = new PxTriangleMeshGeometry(triangleMesh); // TODO: create on stack?? or delete?? or release?? or both???
+		//PxShape* shape = myPxPhysics->createShape(*meshGeometry, *material);
+		return CreateShape(*triangleMesh, aMaterialData, aScale);//new CShape(shape);
 	}
 
 	CShape* CPhysics::CreateShape(PxGeometry& aGeometry, const SMaterialData & aMaterialData)
@@ -265,11 +263,7 @@ namespace Physics
 
 	CShape* CPhysics::CreateShape(physx::PxTriangleMesh& aMesh, const SMaterialData & aMaterialData)
 	{
-		PxMaterial* material = CreateMaterial(aMaterialData);
-
-		PxTriangleMeshGeometry* meshGeometry = new PxTriangleMeshGeometry(&aMesh);
-		PxShape* shape = myPxPhysics->createShape(*meshGeometry,*material);
-		return new CShape(shape);
+		return CreateShape(aMesh, aMaterialData, CU::Vector3f::One);
 	}
 
 	CShape* CPhysics::CreateShape(physx::PxConvexMesh& aMesh, const SMaterialData& aMaterialData, const CU::Vector3f& aScale)
@@ -277,6 +271,19 @@ namespace Physics
 		PxMaterial* material = CreateMaterial(aMaterialData);
 
 		PxConvexMeshGeometry* meshGeometry = new PxConvexMeshGeometry(&aMesh);
+		PxMeshScale& scale = meshGeometry->scale;
+		scale.scale.x = aScale.x;
+		scale.scale.y = aScale.y;
+		scale.scale.z = aScale.z;
+		PxShape* shape = myPxPhysics->createShape(*meshGeometry, *material);
+		return new CShape(shape);
+	}
+
+	CShape* CPhysics::CreateShape(physx::PxTriangleMesh& aMesh, const SMaterialData& aMaterialData, const CU::Vector3f& aScale)
+	{
+		PxMaterial* material = CreateMaterial(aMaterialData);
+
+		PxTriangleMeshGeometry* meshGeometry = new PxTriangleMeshGeometry(&aMesh);
 		PxMeshScale& scale = meshGeometry->scale;
 		scale.scale.x = aScale.x;
 		scale.scale.y = aScale.y;

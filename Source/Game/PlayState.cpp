@@ -24,10 +24,13 @@
 #include "KevinLoader/KevinLoader.h"
 
 #include "CameraComponent.h"
+#include "ItemHolderComponent.h"
+
 #include "KartComponentManager.h"
 #include "SpeedHandlerManager.h"
 #include "BoostPadComponentManager.h"
 #include "ItemFactory.h"
+#include "../Components/PickupComponentManager.h"
 
 //Networking
 #include "TClient/Client.h"
@@ -39,7 +42,7 @@
 #include "ThreadedPostmaster/PostOffice.h"
 #include "ThreadedPostmaster/SendNetowrkMessageMessage.h"
 
-
+// Common Utilities
 #include "CommonUtilities/InputMessage.h"
 #include <CommonUtilities/EKeyboardKeys.h>
 #include <ThreadPool.h>
@@ -61,6 +64,7 @@
 #include "BrontosaurusEngine/SpriteInstance.h"
 #include "ThreadedPostmaster/GameEventMessage.h"
 #include <LuaWrapper/SSlua/SSlua.h>
+#include <GUIElement.h>
 
 // player creationSpeciifcIncludes
 #include "KartComponent.h"
@@ -125,10 +129,15 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myItemFactory);
 }
 
+// Runs on its own thread.
 void CPlayState::Load()
 {
 	CU::CStopWatch loadPlaystateTimer;
 	loadPlaystateTimer.Start();
+
+	//SRenderMessage* msg = new SRenderMessage(SRenderMessage::eRenderMessageType::eCreateGuiElement);
+	//SRenderToGUI* guiRenderThing = new SRenderToGUI(L"Sprites/GUI/countdown.dds",msg);
+	
 
 	myTimerManager = new CU::TimerManager();
 	myCountdownTimerHandle = myTimerManager->CreateTimer();
@@ -324,6 +333,7 @@ void CPlayState::CreateManagersAndFactories()
 	myBoostPadComponentManager = new CBoostPadComponentManager();
 	myItemFactory = new CItemFactory();
 	CKartSpawnPointManager::GetInstance()->Create();
+	CPickupComponentManager::Create();
 }
 
 void CPlayState::CreatePlayer(CU::Camera& aCamera)
@@ -348,6 +358,9 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 
 	playerObject->AddComponent(playerModel);
 
+	CItemHolderComponent* itemHolder = new CItemHolderComponent(*myItemFactory);
+	playerObject->AddComponent(itemHolder);
+
 	playerObject->AddComponent(kartComponent);
 	SConcaveMeshColliderData crystalMeshColliderData;
 	crystalMeshColliderData.IsTrigger = false;
@@ -355,6 +368,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	crystalMeshColliderData.material.aDynamicFriction = 0.5f;
 	crystalMeshColliderData.material.aRestitution = 0.5f;
 	crystalMeshColliderData.material.aStaticFriction = 0.5f;
+	crystalMeshColliderData.myLayer;
 	CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&crystalMeshColliderData, playerObject->GetId());
 	CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
 	CU::Vector3f offset = playerObject->GetWorldPosition();
