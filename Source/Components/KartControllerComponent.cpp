@@ -17,10 +17,8 @@
 #include "SmoothRotater.h"
 
 
-CKartControllerComponent::CKartControllerComponent(): myPhysicsScene(nullptr), myFirstMovingPass(true), myMainSpeed(0)
+CKartControllerComponent::CKartControllerComponent(): myPhysicsScene(nullptr), myMainSpeed(0)
 {
-	ClearHeight();
-	ClearSpeed();
 	
 	CU::CJsonValue levelsFile;
 	std::string errorString = levelsFile.Parse("Json/KartStats.json");
@@ -221,12 +219,7 @@ void CKartControllerComponent::CheckZKill()
 		GetParent()->SetWorldTransformation(CU::Matrix44f());
 		GetParent()->SetWorldPosition(CU::Vector3f(0.f, 1.f, 0.f));
 		myFowrardSpeed = 0.f;
-		for(int i  = 0; i < static_cast<int>(AxisPos::Size); ++i)
-		{
-			myAxisSpeed[i] = 0;
-		}
-		ClearSpeed();
-		ClearHeight();
+		GetParent()->NotifyComponents(eComponentMessageType::eKill, SComponentMessageData());
 	}
 }
 
@@ -281,57 +274,10 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 			CParticleEmitterManager::GetInstance().Activate(myRightDriftBoostEmitterhandle);
 		}
 	}
-
-	GetParent()->NotifyComponents(eComponentMessageType::eMoving, SComponentMessageData());
-}
-
-void CKartControllerComponent::ClearHeight()
-{
-	
-
-	for(int i = 0; i < static_cast<int>(AxisPos::Size); ++i)
-	{
-		ClearHeight(i);
-	}
-}
-
-void CKartControllerComponent::ClearHeight(const int anIndex)
-{
-	float height = 0.f;
-	if (GetParent() != nullptr)
-	{
-		height = GetParent()->GetWorldPosition().y;
-	}
-	SetHeight(anIndex, height, 1.f);
-	SetHeight(anIndex, height, 1.f);
-}
-
-
-void CKartControllerComponent::SetHeight(int aWheelIndex, float aHeight, const float aDt)
-{
-	myPreviousHeight[aWheelIndex] = myCurrentHeight[aWheelIndex];
-	myCurrentHeight[aWheelIndex] = aHeight;
-}
-
-float CKartControllerComponent::GetHeightSpeed(int anIndex)
-{
-	const float heightDelta = myCurrentHeight[anIndex] - myPreviousHeight[anIndex];
-
-	if (heightDelta < 0.f)
-	{
-		return 0.f;
-	}
-
-	if (heightDelta > 0.f)
-	{
-		int i = 0;
-	}
-
-	return heightDelta;
-}
-
-void CKartControllerComponent::ApplyNormalityBias(const float aDt)
-{
+	SComponentMessageData messageData;
+	messageData.myFloat = aDeltaTime;
+	GetParent()->NotifyComponents(eComponentMessageType::eUpdate, messageData);
+	GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
 }
 
 void CKartControllerComponent::Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData)
@@ -339,17 +285,8 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 	switch (aMessageType)
 	{
 	case eComponentMessageType::eAddComponent:
-		if (aMessageData.myComponent == this)
-		{
-			ClearHeight();
-		}
 		break;
 	case eComponentMessageType::eObjectDone:
-		if (myFirstMovingPass == true)
-		{
-			myFirstMovingPass = false;
-			ClearHeight();
-		}
 		break;
 	case eComponentMessageType::eSetBoost:
 		myMaxSpeedModifier = 1.0f + aMessageData.myBoostData->maxSpeedBoost;
@@ -363,106 +300,24 @@ void CKartControllerComponent::Init(Physics::CPhysicsScene* aPhysicsScene)
 	myPhysicsScene = aPhysicsScene;
 }
 
-void CKartControllerComponent::ClearSpeed()
-{
-	for (int i = 0; i < static_cast<int>(AxisPos::Size); ++i)
-	{
-		myAxisSpeed[i] = 0.f;
-	}
-}
-
 const float gravity = 9.82f;
 const float upDist = 0.5f;
 void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 {
-	//Get necessary data, such as global down, local right, local front, and position
-	SComponentQuestionData questionData;
-	GetParent()->AskComponents(eComponentQuestionType::eGetRotatorObject, questionData);
-
-	const CU::Matrix44f rotatorRotation = questionData.myGameObject->GetToWorldTransform().GetRotation();
-
+	const CU::Matrix44f transformation = GetParent()->GetToWorldTransform();
 	const CU::Vector3f down = -CU::Vector3f::UnitY;
-	const CU::Vector3f right = rotatorRotation.myRightVector;
-	const CU::Vector3f front = rotatorRotation.myForwardVector;
-	const CU::Vector3f pos = GetParent()->GetWorldPosition();
+	const CU::Vector3f right = transformation.myRightVector;
+	const CU::Vector3f front = transformation.myForwardVector;
+	const CU::Vector3f pos = transformation.GetPosition();
 
 	const float halfWidth = myAxisDescription.width / 2.f;
 	const float halfLength = myAxisDescription.length / 2.f;
 
 	const CU::Vector3f rxhw = halfWidth * right;
 
-	
-
-	//Check if on ground (once per "wheel")
-
 	CU::Vector3f axees[static_cast<int>(AxisPos::Size)];
 
 	myIsOnGround = false;
-
-	for(int i = 0; i < static_cast<int>(AxisPos::Size); ++i)
-	{
-		//Update fall speed per wheel
-		
-		CU::Vector3f examineVector = pos;
-
-		if(i % 2 != 0)
-		{
-			examineVector += front * myAxisDescription.length;
-		}
-		if(i < 2)
-		{
-			examineVector += rxhw;
-		}
-		else
-		{
-			examineVector -= rxhw;
-		}
-
-		Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(examineVector, down, 1);
-
-		const float heightSpeed = GetHeightSpeed(i);
-		if (raycastHitData.hit == true)
-		{
-			if(raycastHitData.distance < upDist * 2.f)
-			{
-				myIsOnGround = true;
-
-				SetHeight(i, examineVector.y, aDeltaTime);
-			}
-			if(raycastHitData.distance < upDist)
-			{
-				myAxisSpeed[i] = 0;
-
-				const float disp = upDist - raycastHitData.distance;
-
-				examineVector -= down * (disp < 0.f ? 0.f : disp);
-			}
-		}
-		else
-		{
-
-			
-			ClearHeight(i);
-		}
-
-
-		myAxisSpeed[i] += gravity * aDeltaTime;
-
-		if(heightSpeed > 0.f)
-		{
-			int i = 0; 
-
-		}
-	
-		//When not on ground, do fall
-		const CU::Vector3f disp = down * myAxisSpeed[i] * aDeltaTime/* + CU::Vector3f::UnitY * heightSpeed * aDeltaTime*/;
-	
-		
-		examineVector += disp;
-
-		axees[i] = examineVector;
-	}
-	//End ground checks
 
 
 	//Update fall speed per wheel
@@ -471,14 +326,14 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 
 	Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(examineVector, down, 1);
 
-	//const float heightSpeed = GetHeightSpeed();
+	//const float heightSpeed = GetHeightSpeed(i);
 	if (raycastHitData.hit == true)
 	{
 		if (raycastHitData.distance < upDist * 2.f)
 		{
 			myIsOnGround = true;
 
-			//SetHeight(examineVector.y, aDeltaTime);
+			//SetHeight(i, examineVector.y, aDeltaTime);
 		}
 		if (raycastHitData.distance < upDist)
 		{
@@ -493,87 +348,24 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 	{
 
 
-		//ClearHeight();
+		//ClearHeight(i);
 	}
 
 
 	myMainSpeed += gravity * aDeltaTime;
 
-	
 
 	//When not on ground, do fall
 	const CU::Vector3f disp = down * myMainSpeed * aDeltaTime/* + CU::Vector3f::UnitY * heightSpeed * aDeltaTime*/;
 
 
 	examineVector += disp;
-
-	const CU::Vector3f mainPos = examineVector;
 	
 
-	//Find average position of wheels
-	CU::Vector3f avgPos = CU::Vector3f::Zero;
-
-	for(int i = 0; i < static_cast<int>(AxisPos::Size);++i)
-	{
-		avgPos += axees[i];
-	}
-
-	avgPos /= static_cast<int>(AxisPos::Size);
-
-	avgPos -= front * halfLength;
-	//End
-
-	//Find new rotation stuff
-	const CU::Vector3f avgRVec = (axees[static_cast<int>(AxisPos::RightFront)] + axees[static_cast<int>(AxisPos::RightBack)]) / 2.f;
-	const CU::Vector3f avgLVec = (axees[static_cast<int>(AxisPos::LeftFront)] + axees[static_cast<int>(AxisPos::LeftBack)]) / 2.f;
-
-	const CU::Vector3f avgFVec = (axees[static_cast<int>(AxisPos::RightFront)] + axees[static_cast<int>(AxisPos::LeftFront)]) / 2.f;
-	const CU::Vector3f avgBVec = (axees[static_cast<int>(AxisPos::RightBack)] + axees[static_cast<int>(AxisPos::LeftBack)]) / 2.f;
-
-	const CU::Vector3f newRight = (avgRVec - avgLVec).Normalize();
-	CU::Vector3f newFront = (avgFVec - avgBVec).Normalize();
-
-	const CU::Vector3f newUp = newFront.Cross(newRight).Normalize();
-
-	newFront = newRight.Cross(newUp);
-
-	CU::Matrix33f newRotation;
-	newRotation.myRightVector = newRight;
-	newRotation.myForwardVector = newFront;
-	newRotation.myUpVector = newUp;
-	//End
-	
-	
-	if(myIsOnGround == false)
-	{
-		ApplyNormalityBias(aDeltaTime);
-	}
-
-	//transform.SetRotation(newRotation);
-
-	//Set the object position
-	CU::Matrix44f transform = GetParent()->GetToWorldTransform();
-	transform.SetPosition(avgPos);
-	GetParent()->SetWorldTransformation(transform);
+	GetParent()->SetWorldPosition(examineVector);
 
 	//Set model rotation
 	SComponentMessageData messageData;
-
-	Component::CSmoothRotater::SRotationData rotationData;
-	if (myIsOnGround == false)
-	{
-		rotationData.target = CU::Matrix33f::Identity;
-		rotationData.stepSize = TAU / 10.f;
-	}
-	else
-	{
-		rotationData.target = newRotation * CU::Matrix33f(GetParent()->GetToWorldTransform().GetRotation().GetInverted());
-		rotationData.stepSize = TAU;
-		messageData.myVoidPointer = &rotationData;
-
-		//NotifyParent(eComponentMessageType::eRotateTowards, messageData);
-	}
-	//End
 
 	NotifyParent(eComponentMessageType::eMoving, messageData);
 }

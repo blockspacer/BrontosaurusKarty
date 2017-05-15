@@ -51,6 +51,7 @@
     <ClCompile Include="XboxController.cpp" />
     <ClCompile Include="KeyboardController.cpp" />
     <ClCompile Include="SmoothRotater.cpp" />
+    <ClCompile Include="KartModelComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -110,5 +111,6 @@
     <ClInclude Include="XboxController.h" />
     <ClInclude Include="KeyboardController.h" />
     <ClInclude Include="SmoothRotater.h" />
+    <ClInclude Include="KartModelComponent.h" />
   </ItemGroup>
 </Project>

@@ -382,6 +382,7 @@
     <ClInclude Include="KartComponent.h" />
     <ClInclude Include="KartComponentManager.h" />
     <ClInclude Include="KartControllerComponentManager.h" />
+    <ClInclude Include="KartModelComponent.h" />
     <ClInclude Include="KeyboardControllerComponent.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="KartControllerComponent.h" />
@@ -441,6 +442,7 @@
     <ClCompile Include="KartComponent.cpp" />
     <ClCompile Include="KartComponentManager.cpp" />
     <ClCompile Include="KartControllerComponentManager.cpp" />
+    <ClCompile Include="KartModelComponent.cpp" />
     <ClCompile Include="KeyboardControllerComponent.cpp" />
     <ClCompile Include="KartControllerComponent.cpp" />
     <ClCompile Include="MeshColliderComponent.cpp" />
