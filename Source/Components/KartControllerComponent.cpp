@@ -567,7 +567,7 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 	}
 	else
 	{
-		rotationData.target = CU::Matrix33f(GetParent()->GetToWorldTransform().GetRotation().GetInverted()) * newRotation;
+		rotationData.target = newRotation * CU::Matrix33f(GetParent()->GetToWorldTransform().GetRotation().GetInverted());
 		rotationData.stepSize = TAU;
 		messageData.myVoidPointer = &rotationData;
 
