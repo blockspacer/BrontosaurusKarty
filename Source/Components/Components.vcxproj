@@ -391,6 +391,7 @@
     <ClInclude Include="PlayerControllerManager.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RigidBodyComponent.h" />
+    <ClInclude Include="SmoothRotater.h" />
     <ClInclude Include="SpeedHandlerManager.h" />
     <ClInclude Include="BoostData.h" />
     <ClInclude Include="SpeedHandlerComponent.h" />
@@ -459,6 +460,7 @@
     <ClCompile Include="GameObjectManager.cpp" />
     <ClCompile Include="ParticleEmitterComponent.cpp" />
     <ClCompile Include="ParticleEmitterComponentManager.cpp" />
+    <ClCompile Include="SmoothRotater.cpp" />
     <ClCompile Include="SpeedHandlerManager.cpp" />
     <ClCompile Include="SpeedHandlerComponent.cpp" />
     <ClCompile Include="SphereColliderComponent.cpp" />

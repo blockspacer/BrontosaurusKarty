@@ -77,6 +77,7 @@
 #include "KeyboardController.h"
 #include "SpeedHandlerComponent.h"
 #include "XboxController.h"
+#include "SmoothRotater.h"
 
 CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -338,11 +339,19 @@ void CPlayState::CreateManagersAndFactories()
 
 void CPlayState::CreatePlayer(CU::Camera& aCamera)
 {
+	//Create sub player object
+	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
+	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
+	secondPlayerObject->AddComponent(playerModel);
+	secondPlayerObject->AddComponent(new Component::CSmoothRotater());
+
+	//Create top player object
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
+	playerObject->AddComponent(secondPlayerObject);
+
 	CU::Matrix44f kartTransformation = CKartSpawnPointManager::GetInstance()->PopSpawnPoint().mySpawnTransformaion;
 	playerObject->SetWorldTransformation(kartTransformation);
 	playerObject->Move(CU::Vector3f::UnitY);
-	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
 	CCameraComponent* cameraComponent = new CCameraComponent();
 	CComponentManager::GetInstance().RegisterComponent(cameraComponent);
 	cameraComponent->SetCamera(aCamera);
@@ -356,7 +365,6 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	}
 	CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent);
 
-	playerObject->AddComponent(playerModel);
 
 	CItemHolderComponent* itemHolder = new CItemHolderComponent(*myItemFactory);
 	playerObject->AddComponent(itemHolder);
