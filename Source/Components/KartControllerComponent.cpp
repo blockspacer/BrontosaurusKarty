@@ -14,6 +14,7 @@
 #include "../TServer/GameServer.h"
 #include "CommonUtilities.h"
 #include "Drifter.h"
+#include "SmoothRotater.h"
 
 
 CKartControllerComponent::CKartControllerComponent(): myPhysicsScene(nullptr), myFirstMovingPass(true)
@@ -370,7 +371,7 @@ void CKartControllerComponent::ClearSpeed()
 }
 
 const float gravity = 9.82f;
-const float upDist = 0.05f;
+const float upDist = 0.5f;
 void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 {
 	const CU::Vector3f down = -CU::Vector3f::UnitY;
@@ -459,8 +460,6 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 		examineVector += disp;
 
 		axees[i] = examineVector;
-
-		
 	}
 
 	CU::Vector3f avgPos = CU::Vector3f::Zero;
@@ -473,6 +472,12 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 	avgPos /= static_cast<int>(AxisPos::Size);
 
 	avgPos -= front * halfLength;
+
+
+	SComponentQuestionData questionData;
+	GetParent()->AskComponents(eComponentQuestionType::eGetRotatorObject, questionData);
+
+	CU::Matrix44f rotatorRotation = questionData.myGameObject->GetToWorldTransform().GetRotation();
 
 	CU::Matrix44f transform = GetParent()->GetToWorldTransform();
 
@@ -501,9 +506,25 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 		//ApplyNormalityBias(aDeltaTime);
 	}
 
-	transform.SetRotation(newRotation);
+	//transform.SetRotation(newRotation);
 
 	transform.SetPosition(avgPos);
 	GetParent()->SetWorldTransformation(transform);
-	NotifyParent(eComponentMessageType::eMoving, SComponentMessageData());
+	SComponentMessageData messageData;
+
+	Component::CSmoothRotater::SRotationData rotationData;
+	if (myIsOnGround == false)
+	{
+		rotationData.target = CU::Matrix33f::Identity;
+		rotationData.stepSize = TAU;
+	}
+	else
+	{
+		rotationData.target = newRotation * CU::Matrix33f(GetParent()->GetToWorldTransform().GetRotation().GetInverted());
+		rotationData.stepSize = TAU;
+		messageData.myVoidPointer = &rotationData;
+		NotifyParent(eComponentMessageType::eRotateTowards, messageData);
+	}
+
+	NotifyParent(eComponentMessageType::eMoving, messageData);
 }

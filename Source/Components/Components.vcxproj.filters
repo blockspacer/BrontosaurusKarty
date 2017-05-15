@@ -50,6 +50,7 @@
     <ClCompile Include="Drifter.cpp" />
     <ClCompile Include="XboxController.cpp" />
     <ClCompile Include="KeyboardController.cpp" />
+    <ClCompile Include="SmoothRotater.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -108,5 +109,6 @@
     <ClInclude Include="Drifter.h" />
     <ClInclude Include="XboxController.h" />
     <ClInclude Include="KeyboardController.h" />
+    <ClInclude Include="SmoothRotater.h" />
   </ItemGroup>
 </Project>

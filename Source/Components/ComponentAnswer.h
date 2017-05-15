@@ -37,6 +37,7 @@ enum class eComponentQuestionType
 	eHitPosition,
 	eLastHitNormal,
 	eLastHitPosition,
+	eGetRotatorObject,
 	eLength,
 };
 struct SComponentQuestionData
