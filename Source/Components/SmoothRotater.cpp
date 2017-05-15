@@ -47,6 +47,13 @@ void Component::CSmoothRotater::Destroy()
 
 void Component::CSmoothRotater::DoRotation(const SRotationData& aData)
 {
+	const float step = aData.stepSize;
+	const CU::Matrix44f& target = aData.target;
+	const CU::Vector3f targetRight = target.myRightVector;
+	const CU::Vector3f targetForward = target.myForwardVector;
+	const CU::Vector3f targetUp = target.myUpVector;
+
+	const CU::Matrix44f& current = GetParent()->GetLocalTransform();
 	GetParent()->GetLocalTransform().SetRotation(aData.target);
 	GetParent()->NotifyParent(eComponentMessageType::eMoving, SComponentMessageData());
 }
