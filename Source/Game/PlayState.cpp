@@ -78,6 +78,7 @@
 #include "SpeedHandlerComponent.h"
 #include "XboxController.h"
 #include "SmoothRotater.h"
+#include "KartModelComponent.h"
 
 CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -342,8 +343,9 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	//Create sub player object
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
+
 	secondPlayerObject->AddComponent(playerModel);
-	secondPlayerObject->AddComponent(new Component::CSmoothRotater());
+	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
 
 	//Create top player object
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();

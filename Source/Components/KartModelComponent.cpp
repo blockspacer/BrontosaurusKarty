@@ -2,9 +2,11 @@
 #include "KartModelComponent.h"
 #include "CommonUtilities.h"
 #include "../Physics/PhysicsScene.h"
+#include "../Physics/PhysXHelper.h"
+#include <foundation/PxQuat.h>
 
 
-Component::CKartModelComponent::CKartModelComponent()
+Component::CKartModelComponent::CKartModelComponent(Physics::CPhysicsScene* aPhysicsScene): myPhysicsScene(aPhysicsScene)
 {
 	ClearHeight();
 	ClearSpeed();
@@ -103,12 +105,23 @@ void Component::CKartModelComponent::SetHeight(int anIndex, float aHeight, float
 	myCurrentHeight[anIndex] = aHeight;
 }
 
+const float sleprVal = 0.1f;
+
+void Component::CKartModelComponent::NormalizeRotation(const float aDeltaTime)
+{
+	CU::Matrix44f result = Physics::Slerp(GetParent()->GetLocalTransform(), CU::Matrix44f::Identity, sleprVal * aDeltaTime);
+	GetParent()->GetLocalTransform() = result;
+}
+
 
 const float gravity = 9.82f;
 const float upDist = 0.5f;
 
 void Component::CKartModelComponent::Update(const float aDeltaTime)
 {
+
+	NormalizeRotation(aDeltaTime);
+
 	const CU::Matrix44f transformation = GetParent()->GetToWorldTransform();
 	const CU::Vector3f down = -CU::Vector3f::UnitY;
 	const CU::Vector3f right = transformation.myRightVector;
@@ -195,11 +208,12 @@ void Component::CKartModelComponent::Update(const float aDeltaTime)
 	const CU::Vector3f avgFVec = (axees[static_cast<int>(AxisPos::RightFront)] + axees[static_cast<int>(AxisPos::LeftFront)]) / 2.f;
 	const CU::Vector3f avgBVec = (axees[static_cast<int>(AxisPos::RightBack)] + axees[static_cast<int>(AxisPos::LeftBack)]) / 2.f;
 
-	const CU::Vector3f newRight = (avgRVec - avgLVec).Normalize();
+	CU::Vector3f newRight = (avgRVec - avgLVec).Normalize();
 	const CU::Vector3f newFront = (avgFVec - avgBVec).Normalize();
 
 	const CU::Vector3f newUp = newFront.Cross(newRight).Normalize();
 
+	newRight = newUp.Cross(newFront).Normalize();
 
 	CU::Matrix33f newRotation;
 	newRotation.myRightVector = newRight;
@@ -228,6 +242,10 @@ void Component::CKartModelComponent::Update(const float aDeltaTime)
 	//	NotifyParent(eComponentMessageType::eRotateTowards, messageData);
 	//}
 	////End
+
+	//if(myIsOnGround == false)
+	{
+	}
 
 	NotifyParent(eComponentMessageType::eMoving, messageData);
 }

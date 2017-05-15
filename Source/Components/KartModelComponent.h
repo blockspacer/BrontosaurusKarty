@@ -8,7 +8,7 @@ namespace Component
 	class CKartModelComponent : public CComponent
 	{
 	public:
-		CKartModelComponent();
+		explicit CKartModelComponent(Physics::CPhysicsScene*);
 		~CKartModelComponent();
 		void Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData) override;
 		bool Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData) override;
@@ -32,6 +32,8 @@ namespace Component
 
 		float GetHeightSpeed(int anIndex) const;
 		void SetHeight(int anIndex, float aHeight, float aDeltaTime);
+
+		void NormalizeRotation(const float aDeltaTime);
 		void Update(const float aFloat);
 
 		void Reset();
