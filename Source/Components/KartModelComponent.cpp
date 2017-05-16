@@ -105,7 +105,7 @@ void Component::CKartModelComponent::SetHeight(int anIndex, float aHeight, float
 	myCurrentHeight[anIndex] = aHeight;
 }
 
-const float sleprVal = 0.1f;
+const float sleprVal = 1.f;
 
 void Component::CKartModelComponent::NormalizeRotation(const float aDeltaTime)
 {
@@ -258,4 +258,7 @@ void Component::CKartModelComponent::Reset()
 	}
 	ClearSpeed();
 	ClearHeight();
+	GetParent()->GetLocalTransform().SetRotation(CU::Matrix33f::Identity);
+
+	NotifyParent(eComponentMessageType::eMoving, SComponentMessageData());
 }
