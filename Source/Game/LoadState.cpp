@@ -12,14 +12,26 @@
 #include "ThreadedPostmaster/Postmaster.h"
 #include "ThreadedPostmaster/PostOffice.h"
 #include "../Audio/AudioInterface.h"
-
 //#include "LoadingAnimation.h"
 
-CLoadState::CLoadState(StateStack& aStateStack, const int aLevelIndex)
+CLoadState::CLoadState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::eLoadState)
 	, myLevelIndex(aLevelIndex)
 {
 	myPlayState = nullptr;
+	myPlayers.Init(1);
+}
+
+CLoadState::CLoadState(StateStack& aStateStack, const int aLevelIndex, const CU::GrowingArray<SParticipant> aPlayers)
+	: State(aStateStack, eInputMessengerType::eLoadState)
+	, myLevelIndex(aLevelIndex)
+{
+	myPlayState = nullptr;
+	myPlayers.Init(aPlayers.Size());
+	for (unsigned int i = 0; i< aPlayers.Size(); ++i)
+	{
+		myPlayers.Add(aPlayers[i]);
+	}
 }
 
 CLoadState::~CLoadState()
@@ -46,13 +58,13 @@ void CLoadState::Init()
 		}
 		else
 		{
-			myPlayState = new CPlayState(myStateStack, myLevelIndex);
+			myPlayState = new CPlayState(myStateStack, myLevelIndex,myPlayers);
 			bLM.LoadAnotherState(myPlayState);
 		}
 	}
 	else
 	{
-		bLM.CreateStateToLoad(myStateStack, myLevelIndex);
+		bLM.CreateStateToLoad(myStateStack, myLevelIndex,myPlayers);
 		myPlayState = bLM.GetPlaystate();
 	}
 }

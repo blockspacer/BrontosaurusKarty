@@ -74,7 +74,28 @@
 #include "SmoothRotater.h"
 #include "KartModelComponent.h"
 
-CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex)
+CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
+	: State(aStateStack, eInputMessengerType::ePlayState, 1)
+	, myPhysicsScene(nullptr)
+	, myPhysics(nullptr)
+	, myGameObjectManager(nullptr)
+	, myScene(nullptr)
+	, myModelComponentManager(nullptr)
+	, myColliderComponentManager(nullptr)
+	, myScriptComponentManager(nullptr)
+	, myItemFactory(nullptr)
+	, myCameraComponents(4)
+	, myPlayerCount(1)
+	, myLevelIndex(aLevelIndex)
+	, myIsLoaded(false)
+{
+	myPlayers.Init(1);
+	myPlayerCount = 1;
+	myPlayers.Add(SParticipant());
+	myPlayers[0].myInputDevice = SParticipant::eInputDevice::eKeyboard;
+}
+
+CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU::GrowingArray<SParticipant> aPlayers)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
 	, myPhysicsScene(nullptr)
 	, myPhysics(nullptr)
@@ -98,7 +119,22 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex)
 			myPlayerCount = std::atoi(playerCountStr.c_str());
 		}
 	}
-
+	if (aPlayers.Size() > 0)
+	{
+		myPlayers.Init(aPlayers.Size());
+		myPlayerCount = aPlayers.Size();
+		for (unsigned int i = 0; i < aPlayers.Size(); ++i)
+		{
+			myPlayers.Add(aPlayers[i]);
+		}
+	}
+	else
+	{
+		myPlayers.Init(1);
+		myPlayerCount = 1;
+		myPlayers.Add(SParticipant());
+		myPlayers[0].myInputDevice = SParticipant::eInputDevice::eKeyboard;
+	}
 	DL_PRINT("started with %d players", myPlayerCount);
 }
 
@@ -135,10 +171,10 @@ void CPlayState::Load()
 	//SRenderToGUI* guiRenderThing = new SRenderToGUI(L"Sprites/GUI/countdown.dds",msg);
 	
 
-	myTimerManager = new CU::TimerManager();
-	myCountdownTimerHandle = myTimerManager->CreateTimer();
-	myTimerManager->StopTimer(myCountdownTimerHandle);
-	myTimerManager->ResetTimer(myCountdownTimerHandle);
+	//myTimerManager = new CU::TimerManager();
+	//myCountdownTimerHandle = myTimerManager->CreateTimer();
+	//myTimerManager->StopTimer(myCountdownTimerHandle);
+	//myTimerManager->ResetTimer(myCountdownTimerHandle);
 
 	srand(static_cast<unsigned int>(time(nullptr)));
 
@@ -210,7 +246,7 @@ void CPlayState::Load()
 	myScene->InitPlayerCameras(myPlayerCount);
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
-		CreatePlayer(myScene->GetPlayerCamera(i).GetCamera());
+		CreatePlayer(myScene->GetPlayerCamera(i).GetCamera(),myPlayers[i].myInputDevice);
 	}
 
 	myScene->SetSkybox("default_cubemap.dds");
@@ -334,7 +370,7 @@ void CPlayState::CreateManagersAndFactories()
 	CPickupComponentManager::Create();
 }
 
-void CPlayState::CreatePlayer(CU::Camera& aCamera)
+void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDevice aIntputDevice)
 {
 	//Create sub player object
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
@@ -355,13 +391,24 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	cameraComponent->SetCamera(aCamera);
 
 	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent();
-	CKeyboardController* controls = myPlayerControllerManager->CreateKeyboardController(*kartComponent);
+	if (aIntputDevice == SParticipant::eInputDevice::eKeyboard)
+	{
+		CKeyboardController* controls = myPlayerControllerManager->CreateKeyboardController(*kartComponent);
+		if (myPlayerCount < 2)
+		{
+			AddXboxController();
+			CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent, static_cast<short>(SParticipant::eInputDevice::eController1));
+		}
+	}
+	else
+	{
+		CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent, static_cast<short>(aIntputDevice));
+	}
 	if(CSpeedHandlerManager::GetInstance() != nullptr)
 	{
 		CSpeedHandlerComponent* speedHandlerComponent = CSpeedHandlerManager::GetInstance()->CreateAndRegisterComponent();
 		playerObject->AddComponent(speedHandlerComponent);
 	}
-	CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent);
 
 
 	CItemHolderComponent* itemHolder = new CItemHolderComponent(*myItemFactory);
@@ -398,21 +445,31 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 
 void CPlayState::InitiateRace()
 {
-	auto countdownLambda = [this]() {
+	auto countdownLambda = []() {
 
-		const CU::Timer& CDTimer = myTimerManager->GetTimer(myCountdownTimerHandle);
-		unsigned char startCountdownTime = 0;
+		CU::TimerManager timerManager;
+		TimerHandle timer = timerManager.CreateTimer();
+		//const CU::Timer& CDTimer = myTimerManager->GetTimer(myCountdownTimerHandle);
+		float startCountdownTime = 0.f;
 
-		if (CDTimer.GetIsActive() == false)
-			((CU::Timer&)CDTimer).Start();
+		//if (CDTimer.GetIsActive() == false)
+		//	((CU::Timer&)CDTimer).Start();
 
-		while (startCountdownTime < 4)
+		while (startCountdownTime < 4.f)
 		{
-			myTimerManager->UpdateTimers();
-
-			float newTime = CDTimer.GetLifeTime().GetSeconds();
-			if ((char)newTime <= 4 && (char)newTime != startCountdownTime)
+			timerManager.UpdateTimers();
+			float newTime = timerManager.GetTimer(timer).GetLifeTime().GetSeconds();
+			newTime = std::floor(newTime);
+			if (newTime > startCountdownTime)
+			{
 				startCountdownTime = newTime;
+			}
+
+			//myTimerManager->UpdateTimers();
+
+			//float newTime = CDTimer.GetLifeTime().GetSeconds();
+			//if ((char)newTime <= 4 && (char)newTime != startCountdownTime)
+			//	startCountdownTime = newTime;
 		}
 	};
 

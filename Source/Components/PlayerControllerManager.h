@@ -12,7 +12,7 @@ public:
 	~CPlayerControllerManager();
 
 	CKeyboardController* CreateKeyboardController(CKartControllerComponent& aKartComponent);
-	CXboxController* CreateXboxController(CKartControllerComponent& aKartComponent);
+	CXboxController* CreateXboxController(CKartControllerComponent& aKartComponent, short aControllerIndex);
 
 	void Update();
 

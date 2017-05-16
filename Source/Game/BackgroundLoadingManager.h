@@ -1,5 +1,6 @@
 #pragma once
 #include "PlayState.h"
+#include "SParticipant.h"
 
 class CBackgroundLoadingManager
 {
@@ -8,7 +9,7 @@ public:
 	static CBackgroundLoadingManager& GetInstance();//WHY
 	static void DestroyInstance(); //THIS ENGINE IS BROKEN WE SAID A FEW SINGLETONS!!!!!!!!!!!!!!!!!
 
-	void CreateStateToLoad(StateStack& aStateStack, const int aLevelIndex);
+	void CreateStateToLoad(StateStack& aStateStack, const int aLevelIndex, const CU::GrowingArray<SParticipant>& aParticipants);
 	CPlayState* GetPlaystate();
 
 	bool GetIfActive();

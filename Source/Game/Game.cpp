@@ -8,6 +8,7 @@
 #include "BackgroundLoadingManager.h"
 #include "ThreadedPostmaster/Postmaster.h"
 #include "ThreadedPostmaster/PostOffice.h"
+#include "MenuState.h"
 
 #include "LoadState.h"
 #include "../Game/PollingStation.h"
@@ -33,7 +34,7 @@ void CGame::Init()
 	myGameEventMessenger.Init({ 0.5f, 0.1f });
 	//myClient.StartClient();
 	//myClient.Connect("127.0.0.1", "temp.cccp");
-	myStateStack.PushState(new CLoadState(myStateStack, 0));
+	myStateStack.PushState(new CMenuState(myStateStack,"Json/Menu/MainMenu.json"));
 }
 
 bool CGame::Update(const CU::Time& aDeltaTime)
