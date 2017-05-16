@@ -309,6 +309,7 @@
     <ClCompile Include="KartSpawnPointManager.cpp" />
     <ClCompile Include="LoadingAnimation.cpp" />
     <ClCompile Include="LoadState.cpp" />
+    <ClCompile Include="NavigationSpline.cpp" />
     <ClCompile Include="ParticleEffectManager.cpp" />
     <ClCompile Include="PlayState.cpp" />
     <ClCompile Include="PollingStation.cpp" />
@@ -328,6 +329,7 @@
     <ClInclude Include="KartSpawnPointManager.h" />
     <ClInclude Include="LoadingAnimation.h" />
     <ClInclude Include="LoadState.h" />
+    <ClInclude Include="NavigationSpline.h" />
     <ClInclude Include="ParticleEffectManager.h" />
     <ClInclude Include="PlayState.h" />
     <ClInclude Include="PollingStation.h" />

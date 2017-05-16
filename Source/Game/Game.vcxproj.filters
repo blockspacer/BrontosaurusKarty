@@ -37,6 +37,9 @@
       <Filter>KartSpawnPoint</Filter>
     </ClCompile>
     <ClCompile Include="ItemFactory.cpp" />
+    <ClCompile Include="NavigationSpline.cpp">
+      <Filter>AI\NavigationSpline</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -79,6 +82,9 @@
     <ClInclude Include="PollingStation.h" />
     <ClInclude Include="KartSpawnPointManager.h" />
     <ClInclude Include="ItemFactory.h" />
+    <ClInclude Include="NavigationSpline.h">
+      <Filter>AI\NavigationSpline</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="States">
@@ -101,6 +107,12 @@
     </Filter>
     <Filter Include="KartSpawnPoint">
       <UniqueIdentifier>{9a24e5d1-ee05-461d-bb44-22f7b68fa5a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI">
+      <UniqueIdentifier>{79e1fe9f-a515-4e81-a270-59a5e45ce2ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\NavigationSpline">
+      <UniqueIdentifier>{8c96ddd1-fd42-4701-9e48-39877422d4be}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
