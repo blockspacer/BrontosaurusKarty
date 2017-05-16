@@ -1,5 +1,4 @@
 #pragma once
-#include <map>
 
 class CScene;
 using InstanceID = unsigned int;

@@ -1,9 +1,6 @@
 ﻿// 
 // 2016-07-08
 #pragma once
-#include <functional>
-
-#include <map>
 #include "../SSArgument/SSArgument.h"
 
 #include "../file_watcher.h"

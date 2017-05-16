@@ -4,7 +4,7 @@
 #include "EffectHelper.h"
 #include "Engine.h"
 
-CShaderManager::CShaderManager() //precompiled shaders later
+CShaderManager::CShaderManager()
 {
 }
 

@@ -1,6 +1,4 @@
 #pragma once
-#include <string>
-#include <map>
 #include "../Particles/Typedefs.h"
 #include "../BrontosaurusEngine/ParticleEmitter.h"
 

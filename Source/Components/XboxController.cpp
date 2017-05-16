@@ -10,7 +10,7 @@
 #include "..\CommonUtilities\XInputWrapper.h"
 #include "..\CommonUtilities\EKeyboardKeys.h"
 
-#include "..\PostMaster\SetVibrationOnController.h"
+#include "..\ThreadedPostmaster\SetVibrationOnController.h"
 #include "..\ThreadedPostmaster\Postmaster.h"
 
 CXboxController::CXboxController(CKartControllerComponent& aKartComponent)
