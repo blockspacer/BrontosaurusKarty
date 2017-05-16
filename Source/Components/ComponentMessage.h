@@ -78,6 +78,8 @@ enum class eComponentMessageType
 	eGiveItem,
 	eUseItem,
 	eRotateTowards,
+	eUpdate,
+	eKill,
 	eLength,
 };
 
