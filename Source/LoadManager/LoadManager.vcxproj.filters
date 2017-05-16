@@ -34,7 +34,6 @@
     <ClInclude Include="LoadCamera.h">
       <Filter>LoadThings\LoadCamera</Filter>
     </ClInclude>
-    <ClInclude Include="ServerLoadManager.h" />
     <ClInclude Include="LoadParticleEmitterComponent.h">
       <Filter>LoadThings\LoadParticleComponent</Filter>
     </ClInclude>
@@ -88,7 +87,6 @@
     <ClCompile Include="LoadCamera.cpp">
       <Filter>LoadThings\LoadCamera</Filter>
     </ClCompile>
-    <ClCompile Include="ServerLoadManager.cpp" />
     <ClCompile Include="LoadParticleEmitterComponent.cpp">
       <Filter>LoadThings\LoadParticleComponent</Filter>
     </ClCompile>

@@ -357,7 +357,6 @@
     <ClInclude Include="LoadVertexInstanceStream.h" />
     <ClInclude Include="LoadWeaponCrate.h" />
     <ClInclude Include="LuaFunctions.h" />
-    <ClInclude Include="ServerLoadManager.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -378,7 +377,6 @@
     <ClCompile Include="LoadVertexInstanceStream.cpp" />
     <ClCompile Include="LoadWeaponCrate.cpp" />
     <ClCompile Include="LuaFunctions.cpp" />
-    <ClCompile Include="ServerLoadManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ModelViewer|Win32'">Create</PrecompiledHeader>

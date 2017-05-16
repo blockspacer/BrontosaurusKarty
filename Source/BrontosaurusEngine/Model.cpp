@@ -10,7 +10,7 @@
 #include "FBXLoader.h"
 #include "../CommonUtilities/Intersection.h"
 
-#include "../TShared/AnimationState.h"
+#include "AnimationState.h"
 #include "EffectsManager.h"
 DECLARE_ANIMATION_ENUM_AND_STRINGS;
 

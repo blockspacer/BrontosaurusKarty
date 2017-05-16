@@ -20,7 +20,6 @@
 #include "ComponentManager.h"
 
 #include "LoadManager.h"
-#include "ServerLoadManager.h"
 
 #ifndef SAFE_DELETE
 #define SAFE_DELETE(ptr) delete ptr; ptr = nullptr

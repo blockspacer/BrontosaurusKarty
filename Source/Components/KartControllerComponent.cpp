@@ -11,7 +11,6 @@
 #include "../Physics/PhysicsCallbackActor.h"
 #include "../Physics/PhysXManager.h"
 #include "../Physics/PhysicsScene.h"
-#include "../TServer/GameServer.h"
 #include "CommonUtilities.h"
 #include "Drifter.h"
 #include "SmoothRotater.h"

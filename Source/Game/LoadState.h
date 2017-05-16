@@ -12,24 +12,19 @@ public:
 	CLoadState(StateStack& aStateStack, const int aLevelIndex);
 	~CLoadState();
 
-	void Init() override;
-	eStateStatus Update(const CU::Time& aDeltaTime) override;
-	void Render() override;
+	virtual void Init() override;
+	virtual eStateStatus Update(const CU::Time& aDeltaTime) override;
+	virtual void Render() override;
 
-	void OnEnter(const bool aLetThroughRender) override;
-	void OnExit(const bool aLetThroughRender) override;
+	virtual void OnEnter(const bool aLetThroughRender) override;
+	virtual void OnExit(const bool aLetThroughRender) override;
 
-	eMessageReturn DoEvent(const CServerReadyMessage& aSendNetowrkMessageMessage) override;
 private:
-
 	CPlayState* myPlayState;
 	//CLoadingAnimation myLoadingAnimation;
 	CSpriteInstance* myControlSchemeSprite;
 	CSpriteInstance* myTDLogoSprite;
 
 	const int myLevelIndex;
-	bool myGotOkFromServer;
-
-	short myNumberOfPlayersToSpawnBeforeStarting;
 };
 

@@ -33,14 +33,9 @@
 #include "../Components/PickupComponentManager.h"
 
 //Networking
-#include "TClient/Client.h"
-#include "TShared/NetworkMessage_ClientReady.h"
-#include "TClient/ClientMessageManager.h"
-#include "PostMaster/SendNetworkMessage.h"
 #include "PostMaster/MessageType.h"
 #include "ThreadedPostmaster/Postmaster.h"
 #include "ThreadedPostmaster/PostOffice.h"
-#include "ThreadedPostmaster/SendNetowrkMessageMessage.h"
 
 // Common Utilities
 #include "CommonUtilities/InputMessage.h"
