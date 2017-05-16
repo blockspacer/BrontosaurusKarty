@@ -90,7 +90,7 @@ private:
 	CU::GrowingArray<CCameraComponent*> myCameraComponents;
 	CU::GrowingArray<SParticipant> myPlayers;
 
-	CU::TimerManager* myTimerManager;
+	//CU::TimerManager* myTimerManager;
 	TimerHandle myCountdownTimerHandle;
 
 	int myPlayerCount;

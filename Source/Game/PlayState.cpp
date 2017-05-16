@@ -171,10 +171,10 @@ void CPlayState::Load()
 	//SRenderToGUI* guiRenderThing = new SRenderToGUI(L"Sprites/GUI/countdown.dds",msg);
 	
 
-	myTimerManager = new CU::TimerManager();
-	myCountdownTimerHandle = myTimerManager->CreateTimer();
-	myTimerManager->StopTimer(myCountdownTimerHandle);
-	myTimerManager->ResetTimer(myCountdownTimerHandle);
+	//myTimerManager = new CU::TimerManager();
+	//myCountdownTimerHandle = myTimerManager->CreateTimer();
+	//myTimerManager->StopTimer(myCountdownTimerHandle);
+	//myTimerManager->ResetTimer(myCountdownTimerHandle);
 
 	srand(static_cast<unsigned int>(time(nullptr)));
 
@@ -445,21 +445,31 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 
 void CPlayState::InitiateRace()
 {
-	auto countdownLambda = [this]() {
+	auto countdownLambda = []() {
 
-		const CU::Timer& CDTimer = myTimerManager->GetTimer(myCountdownTimerHandle);
-		unsigned char startCountdownTime = 0;
+		CU::TimerManager timerManager;
+		TimerHandle timer = timerManager.CreateTimer();
+		//const CU::Timer& CDTimer = myTimerManager->GetTimer(myCountdownTimerHandle);
+		float startCountdownTime = 0.f;
 
-		if (CDTimer.GetIsActive() == false)
-			((CU::Timer&)CDTimer).Start();
+		//if (CDTimer.GetIsActive() == false)
+		//	((CU::Timer&)CDTimer).Start();
 
-		while (startCountdownTime < 4)
+		while (startCountdownTime < 4.f)
 		{
-			myTimerManager->UpdateTimers();
-
-			float newTime = CDTimer.GetLifeTime().GetSeconds();
-			if ((char)newTime <= 4 && (char)newTime != startCountdownTime)
+			timerManager.UpdateTimers();
+			float newTime = timerManager.GetTimer(timer).GetLifeTime().GetSeconds();
+			newTime = std::floor(newTime);
+			if (newTime > startCountdownTime)
+			{
 				startCountdownTime = newTime;
+			}
+
+			//myTimerManager->UpdateTimers();
+
+			//float newTime = CDTimer.GetLifeTime().GetSeconds();
+			//if ((char)newTime <= 4 && (char)newTime != startCountdownTime)
+			//	startCountdownTime = newTime;
 		}
 	};
 

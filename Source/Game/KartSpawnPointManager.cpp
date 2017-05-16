@@ -40,7 +40,7 @@ SKartSpawnPoint CKartSpawnPointManager::PopSpawnPoint()
 		return defaultSpawnPoint;
 	}
 	SKartSpawnPoint tempKartPoint = *mySpawnPoints.GetLast();
-	SAFE_DELETE(mySpawnPoints.GetLast());
+	delete mySpawnPoints.Pop();
 	return tempKartPoint;
 }
 
