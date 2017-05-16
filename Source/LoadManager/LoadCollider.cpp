@@ -10,6 +10,7 @@
 #include "Physics\PhysicsCharacterController.h"
 #include "CharacterControllerComponent.h"
 #include "ConcaveMeshCollider.h"
+#include "Physics/CollisionLayers.h"
 
 #define TO_RADIANS(x) (x) * (3.1415f / 180.f)
 
@@ -43,7 +44,10 @@ int LoadSphereCollider(KLoader::SLoadedComponentData someData)
 
 	SSphereColliderData data;
 	data.IsTrigger = someData.myData.at("isTrigger").GetBool();
-	
+
+	data.myLayer = Physics::GetLayerFromUnity(someData.myData.at("layer").GetUInt());
+	data.myCollideAgainst = Physics::GetCollideAgainst(data.myLayer);
+
 	CU::Vector3f material = someData.myData.at("material").GetVector3f("xyz");
 	data.material.aStaticFriction = material.x;
 	data.material.aDynamicFriction = material.y;
@@ -67,6 +71,9 @@ int LoadCapsuleCollider(KLoader::SLoadedComponentData someData)
 
 	SCapsuleColliderData data;
 	data.IsTrigger = someData.myData.at("isTrigger").GetBool();
+
+	data.myLayer = Physics::GetLayerFromUnity(someData.myData.at("layer").GetUInt());
+	data.myCollideAgainst = Physics::GetCollideAgainst(data.myLayer);
 
 	CU::Vector3f material = someData.myData.at("material").GetVector3f("xyz");
 	data.material.aStaticFriction = material.x;
@@ -93,6 +100,10 @@ int LoadBoxCollider(KLoader::SLoadedComponentData someData)
 	SBoxColliderData data;
 	data.IsTrigger = someData.myData.at("isTrigger").GetBool();
 	
+	data.myLayer = Physics::GetLayerFromUnity(someData.myData.at("layer").GetUInt());
+	data.myCollideAgainst = Physics::GetCollideAgainst(data.myLayer);
+
+
 	CU::Vector3f material = someData.myData.at("material").GetVector3f("xyz");
 	data.material.aStaticFriction = material.x;
 	data.material.aDynamicFriction = material.y;
@@ -116,6 +127,10 @@ int LoadMeshCollider(KLoader::SLoadedComponentData someData)
 
 	SConcaveMeshColliderData data;
 	data.IsTrigger = someData.myData.at("isTrigger").GetBool();
+
+	data.myLayer = Physics::GetLayerFromUnity(someData.myData.at("layer").GetUInt());
+	data.myCollideAgainst = Physics::GetCollideAgainst(data.myLayer);
+
 
 	CU::Vector3f material = someData.myData.at("material").GetVector3f("xyz");
 	data.material.aStaticFriction = material.x;
@@ -145,6 +160,9 @@ int LoadConcaveCollider(KLoader::SLoadedComponentData someData)
 
 	SConcaveMeshColliderData data;
 	data.IsTrigger = someData.myData.at("isTrigger").GetBool();
+
+	data.myLayer = Physics::GetLayerFromUnity(someData.myData.at("layer").GetUInt());
+	data.myCollideAgainst = Physics::GetCollideAgainst(data.myLayer);
 
 	CU::Vector3f material = someData.myData.at("material").GetVector3f("xyz");
 	data.material.aStaticFriction = material.x;
@@ -176,6 +194,10 @@ int LoadRigidBody(KLoader::SLoadedComponentData someData)
 	data.useGravity = someData.myData.at("useGravity").GetBool();
 	data.isKinematic = someData.myData.at("isKinematic").GetBool();
 
+	data.myLayer = Physics::GetLayerFromUnity(someData.myData.at("layer").GetUInt());
+	data.myCollideAgainst = Physics::GetCollideAgainst(data.myLayer);
+
+
 	CColliderComponent* component = CreateComponent(data);
 	return component->GetId();
 }
@@ -185,6 +207,8 @@ int LoadCharacterController(KLoader::SLoadedComponentData someData)
 	CGameObject* parent = GetCurrentObject();
 	CColliderComponentManager* colliderMgr = LoadManager::GetInstance()->GetCurrentPLaystate().GetColliderComponentManager();
 	Physics::SCharacterControllerDesc data;
+
+
 
 	data.slopeLimit = someData.myData.at("slopeLimit").GetFloat();
 	data.stepOffset = someData.myData.at("stepOffset").GetFloat();
