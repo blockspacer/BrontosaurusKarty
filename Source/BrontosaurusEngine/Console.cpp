@@ -4,15 +4,12 @@
 
 #include "../LuaWrapper/SSlua/SSlua.h"
 
-#include "../PostMaster/Event.h"
-#include "../PostMaster/Message.h"
-#include "../PostMaster/ConsoleCalledUpon.h"
-#include "../PostMaster/KeyCharPressed.h"
+#include "../ThreadedPostmaster/ConsoleCalledUpon.h"
+#include "../ThreadedPostmaster/KeyCharPressed.h"
 #include "../ThreadedPostmaster/Postmaster.h"
+#include "../ThreadedPostmaster/MessageType.h"
 
 #include "../CommonUtilities/EKeyboardKeys.h"
-#include "../Game/stdafx.h"
-
 #include "../CommonUtilities/InputMessage.h"
 #include "../CommonUtilities/InputMessenger.h"
 #include "../CommonUtilities/EInputReturn.h"

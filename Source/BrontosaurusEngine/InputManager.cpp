@@ -10,16 +10,14 @@
 #include "../CommonUtilities/EMouseButtons.h"
 #include "../CommonUtilities/EInputMessage.h"
 
-#include "../PostMaster/Message.h"
-#include "../PostMaster/Event.h"
-
 #include "../CommonUtilities/InputMessenger.h"
 #include "../CommonUtilities/InputMessage.h"
 #include "../CommonUtilities/EInputReturn.h"
 #include "../ThreadedPostmaster/Postmaster.h"
-#include "../PostMaster/FocusChange.h"
-#include "../PostMaster/SetVibrationOnController.h"
-#include "../PostMaster/StopVibrationOnController.h"
+#include "../ThreadedPostmaster/FocusChange.h"
+#include "../ThreadedPostmaster/SetVibrationOnController.h"
+#include "../ThreadedPostmaster/StopVibrationOnController.h"
+#include "../ThreadedPostmaster/MessageType.h"
 
 CInputManager* CInputManager::ourInstance = nullptr;
 

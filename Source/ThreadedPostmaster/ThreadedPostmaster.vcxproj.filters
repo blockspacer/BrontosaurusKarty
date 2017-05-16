@@ -25,9 +25,6 @@
     <Filter Include="Narrowcast">
       <UniqueIdentifier>{07d5e4a1-cece-4bb3-973a-410afca7d6d3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Message\Print">
-      <UniqueIdentifier>{05fedbef-0ccc-481b-bb28-2c9fc0350e73}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Message\ConnectMessage">
       <UniqueIdentifier>{d2feedd4-f20e-4879-9a79-94b6c5883ca5}</UniqueIdentifier>
     </Filter>
@@ -46,6 +43,33 @@
     <Filter Include="Message\GameEventMessage">
       <UniqueIdentifier>{c263562d-6a4e-4286-9460-75a81e6906f7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Message\DrawCallsCount">
+      <UniqueIdentifier>{6c02e1c6-addc-4641-9984-b65c517db634}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Message\DroppedFile">
+      <UniqueIdentifier>{0c7f4786-c4dc-4d09-bcf8-f3fef94c5826}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Message\FocusChanged">
+      <UniqueIdentifier>{57a255b0-4735-47ce-b4ab-8b2f53505b04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Message\KeyCharPressed">
+      <UniqueIdentifier>{1398b1ec-b46a-4afc-9483-23f8c323c3af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Message\SetVibrationOnController">
+      <UniqueIdentifier>{45f6e66e-600f-42dd-a57c-e2438ea2931f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Message\ConsoleCalledUpon">
+      <UniqueIdentifier>{cceb4a49-38a8-4b2d-8806-b4b3538c79ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Message\PushState">
+      <UniqueIdentifier>{9579c79a-b1fd-4e9e-a4b1-33b4ab6efa9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Message\QuitGame">
+      <UniqueIdentifier>{63e2c453-b02f-4494-90d1-57a7598e4364}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Message\PopCurrentState">
+      <UniqueIdentifier>{e77277db-8a9b-43a4-8fcc-0e17ff3e81b4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Postmaster.cpp">
@@ -63,9 +87,6 @@
     <ClCompile Include="ConectedMessage.cpp">
       <Filter>Message\ConectedMessage</Filter>
     </ClCompile>
-    <ClCompile Include="PrintMessage.cpp">
-      <Filter>Message\Print</Filter>
-    </ClCompile>
     <ClCompile Include="LoadLevelMessage.cpp">
       <Filter>Message\LoadLevelMessage</Filter>
     </ClCompile>
@@ -79,6 +100,36 @@
       <Filter>Message\GameEventMessage</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="ConsoleCalledUpon.cpp">
+      <Filter>Message\ConsoleCalledUpon</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawCallsCount.cpp">
+      <Filter>Message\DrawCallsCount</Filter>
+    </ClCompile>
+    <ClCompile Include="DroppedFile.cpp">
+      <Filter>Message\DroppedFile</Filter>
+    </ClCompile>
+    <ClCompile Include="FocusChange.cpp">
+      <Filter>Message\FocusChanged</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyCharPressed.cpp">
+      <Filter>Message\KeyCharPressed</Filter>
+    </ClCompile>
+    <ClCompile Include="QuitGame.cpp">
+      <Filter>Message\QuitGame</Filter>
+    </ClCompile>
+    <ClCompile Include="PushState.cpp">
+      <Filter>Message\PushState</Filter>
+    </ClCompile>
+    <ClCompile Include="SetVibrationOnController.cpp">
+      <Filter>Message\SetVibrationOnController</Filter>
+    </ClCompile>
+    <ClCompile Include="StopVibrationOnController.cpp">
+      <Filter>Message\SetVibrationOnController</Filter>
+    </ClCompile>
+    <ClCompile Include="PopCurrentState.cpp">
+      <Filter>Message\PopCurrentState</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Postmaster.h">
@@ -105,9 +156,6 @@
     <ClInclude Include="ConectedMessage.h">
       <Filter>Message\ConectedMessage</Filter>
     </ClInclude>
-    <ClInclude Include="PrintMessage.h">
-      <Filter>Message\Print</Filter>
-    </ClInclude>
     <ClInclude Include="LoadLevelMessage.h">
       <Filter>Message\LoadLevelMessage</Filter>
     </ClInclude>
@@ -121,5 +169,41 @@
       <Filter>Message\GameEventMessage</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="EMessageReturn.h">
+      <Filter>Message\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageType.h">
+      <Filter>Message\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleCalledUpon.h">
+      <Filter>Message\ConsoleCalledUpon</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawCallsCount.h">
+      <Filter>Message\DrawCallsCount</Filter>
+    </ClInclude>
+    <ClInclude Include="DroppedFile.h">
+      <Filter>Message\DroppedFile</Filter>
+    </ClInclude>
+    <ClInclude Include="FocusChange.h">
+      <Filter>Message\FocusChanged</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyCharPressed.h">
+      <Filter>Message\KeyCharPressed</Filter>
+    </ClInclude>
+    <ClInclude Include="QuitGame.h">
+      <Filter>Message\QuitGame</Filter>
+    </ClInclude>
+    <ClInclude Include="PushState.h">
+      <Filter>Message\PushState</Filter>
+    </ClInclude>
+    <ClInclude Include="SetVibrationOnController.h">
+      <Filter>Message\SetVibrationOnController</Filter>
+    </ClInclude>
+    <ClInclude Include="StopVibrationOnController.h">
+      <Filter>Message\SetVibrationOnController</Filter>
+    </ClInclude>
+    <ClInclude Include="PopCurrentState.h">
+      <Filter>Message\PopCurrentState</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -3,6 +3,9 @@
 #include <string>
 #include <map>
 #include <unordered_map>
+#include <array>
+#include <vector>
+#include <queue>
 
 #include <cassert>
 #include <cstdio>

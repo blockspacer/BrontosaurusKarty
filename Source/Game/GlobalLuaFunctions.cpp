@@ -1,7 +1,8 @@
-#pragma once
 #include "stdafx.h"
 #include "GlobalLuaFunctions.h"
 #include "ScriptHelperFunctions.h"
+#include "ComponentMessageTypeToLua.h"
+#include "ParticleEffectManager.h"
 
 #include "../LuaWrapper/SSlua/SSlua.h"
 #include "../LuaWrapper/SSArgument/SSArgument.h"
@@ -12,13 +13,10 @@
 #include "../Components/GameObject.h"
 #include "../Components/ComponentMessageCallback.h"
 
-#include "ComponentMessageTypeToLua.h"
-#include "ParticleEffectManager.h"
-
 #include "../CommonUtilities/JsonValue.h"
-#include "../PostMaster/MessageType.h"
+#include "../ThreadedPostMaster/MessageType.h"
 #include "../ThreadedPostmaster/Postmaster.h"
-#include "../PostMaster/QuitGame.h"
+#include "../ThreadedPostMaster/QuitGame.h"
 
 #define GLOBAL_LUA_FUNCTION_ERROR DL_MESSAGE_BOX
 #define RETURN_VOID() return SSlua::ArgumentList()

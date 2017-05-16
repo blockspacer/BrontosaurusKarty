@@ -1,13 +1,10 @@
 #include "stdafx.h"
 #include "StopVibrationOnController.h"
-#include "ThreadedPostmaster\Subscriber.h"
-
 
 StopVibrationOnController::StopVibrationOnController(const unsigned int aJoyStickIndex) : IMessage(eMessageType::eSetVibration)
 {
 	myJoystickIndex = aJoyStickIndex;
 }
-
 
 StopVibrationOnController::~StopVibrationOnController()
 {

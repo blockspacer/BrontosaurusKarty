@@ -1,7 +1,5 @@
 #pragma once
-#include "../PostMaster/EMessageReturn.h"
-#include "../PostMaster/NetworkPosMessageEvent.h"
-#include <thread>
+#include "EMessageReturn.h"
 
 class PushState;
 class PopCurrentState;
@@ -10,7 +8,6 @@ class FocusChange;
 class DroppedFile;
 class ConsoleCalledUpon;
 class DrawCallsCount;
-class CServerReadyMessage;
 class CSendNetworkMessageMessage;
 class CConectMessage;
 class CConectedMessage;
@@ -43,9 +40,7 @@ namespace Postmaster
 		virtual eMessageReturn DoEvent(const KeyCharPressed& aCharPressed);
 		virtual eMessageReturn DoEvent(const PopCurrentState& aPopCurrent);
 		virtual eMessageReturn DoEvent(const PushState& aPushState);
-		virtual eMessageReturn DoEvent(const CNetworkPosMessageEvent& aPositionEvent);
 		virtual eMessageReturn DoEvent(const CSendNetworkMessageMessage& aSendNetowrkMessageMessage);
-		virtual eMessageReturn DoEvent(const CServerReadyMessage& aSendNetowrkMessageMessage);
 		virtual eMessageReturn DoEvent(const Message::CPrintMessage& aPrintMessage);
 		virtual eMessageReturn DoEvent(const CConectMessage& aConectMessage);
 		virtual eMessageReturn DoEvent(const CConectedMessage& aConectedMessage);

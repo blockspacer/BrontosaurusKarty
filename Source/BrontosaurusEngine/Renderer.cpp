@@ -19,10 +19,9 @@
 #include <Camera.h>
 
 #include "ModelInstance.h"
-#include "../PostMaster/Message.h"
-#include "../PostMaster/DrawCallsCount.h"
-
 #include "LineDrawer.h"
+
+#include "../ThreadedPostmaster/DrawCallsCount.h"
 #include "../ThreadedPostmaster/Postmaster.h"
 #include "../ThreadedPostmaster/PostOffice.h"
 #include "TextureManager.h"

@@ -1,5 +1,4 @@
 #pragma once
-#include <vector>
 
 //FORWARD DECLERATION BEGIN
 //std::string and std::wstring

@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "PushState.h"
 
-#include "StateStack/StateStack.h"
-#include "Game/PlayState.h"
-#include "Game/LoadState.h"
+#include "../StateStack/StateStack.h"
+#include "../Game/PlayState.h"
+#include "../Game/LoadState.h"
 
 PushState::PushState(eState aState, const int aLevelIndex) : IMessage(eMessageType::eStateStackMessage)
 	,myState(aState)

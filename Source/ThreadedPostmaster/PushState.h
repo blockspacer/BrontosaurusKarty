@@ -1,5 +1,4 @@
 #pragma once
-#include "Event.h"
 #include "../ThreadedPostmaster/Message.h"
 
 class PushState : public Postmaster::Message::IMessage
@@ -10,7 +9,6 @@ public:
 		ePlayState,
 		eDeathScreen,
 		eCreditScreen,
-		//eOptionsMenu,
 		eLevelEndScreen,
 		ePauseScreen,
 		eLevelSelect,

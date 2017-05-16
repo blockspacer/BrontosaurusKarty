@@ -187,40 +187,55 @@
   <ItemGroup>
     <ClInclude Include="ConectedMessage.h" />
     <ClInclude Include="ConetctMessage.h" />
+    <ClInclude Include="ConsoleCalledUpon.h" />
+    <ClInclude Include="DrawCallsCount.h" />
+    <ClInclude Include="DroppedFile.h" />
+    <ClInclude Include="EMessageReturn.h" />
+    <ClInclude Include="FocusChange.h" />
     <ClInclude Include="GameEventMessage.h" />
+    <ClInclude Include="KeyCharPressed.h" />
     <ClInclude Include="LoadLevelMessage.h" />
     <ClInclude Include="Message.h" />
+    <ClInclude Include="MessageType.h" />
     <ClInclude Include="NarrowcastStruct.h" />
     <ClInclude Include="NetworkDebugInfo.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="PopCurrentState.h" />
     <ClInclude Include="Postmaster.h" />
     <ClInclude Include="PostOffice.h" />
-    <ClInclude Include="PrintMessage.h" />
+    <ClInclude Include="PushState.h" />
+    <ClInclude Include="QuitGame.h" />
     <ClInclude Include="SetClientIDMessage.h" />
+    <ClInclude Include="SetVibrationOnController.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StopVibrationOnController.h" />
     <ClInclude Include="Subscriber.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConectedMessage.cpp" />
     <ClCompile Include="ConetctMessage.cpp" />
+    <ClCompile Include="ConsoleCalledUpon.cpp" />
+    <ClCompile Include="DrawCallsCount.cpp" />
+    <ClCompile Include="DroppedFile.cpp" />
+    <ClCompile Include="FocusChange.cpp" />
     <ClCompile Include="GameEventMessage.cpp" />
+    <ClCompile Include="KeyCharPressed.cpp" />
     <ClCompile Include="LoadLevelMessage.cpp" />
     <ClCompile Include="NetworkDebugInfo.cpp" />
+    <ClCompile Include="PopCurrentState.cpp" />
     <ClCompile Include="Postmaster.cpp" />
     <ClCompile Include="PostOffice.cpp" />
-    <ClCompile Include="PrintMessage.cpp" />
+    <ClCompile Include="PushState.cpp" />
+    <ClCompile Include="QuitGame.cpp" />
     <ClCompile Include="SetClientIDMessage.cpp" />
+    <ClCompile Include="SetVibrationOnController.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Retail|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="StopVibrationOnController.cpp" />
     <ClCompile Include="Subscriber.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TClient\TClient.vcxproj">
-      <Project>{df7198ab-1f25-4ce1-baed-6a8ba762a249}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
