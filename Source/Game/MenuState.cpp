@@ -6,7 +6,6 @@
 #include "EMouseButtons.h"
 #include "EKeyboardKeys.h"
 #include "StateStack/StateStack.h"
-#include "PostMaster/QuitGame.h"
 #include "ThreadedPostmaster/Postmaster.h"
 //#include "TempLobbyState.h"
 #include "RenderMessages.h"
@@ -18,10 +17,6 @@
 #include "WindowsHelper.h"
 #include "WindowsWindow.h"
 #include "ThreadedPostmaster/ConetctMessage.h"
-#include "TShared/NetworkMessage_LoadLevel.h"
-#include "TClient/ClientMessageManager.h"
-#include "ThreadedPostmaster/SendNetowrkMessageMessage.h"
-#include "PostMaster/KeyCharPressed.h"
 #include "ThreadedPostmaster/LoadLevelMessage.h"
 #include "SplitScreenSelection.h"
 
@@ -29,20 +24,12 @@ char CMenuState::ourMenuesToPop = 0;
 
 CMenuState::CMenuState(StateStack& aStateStack, std::string aFile) : State(aStateStack, eInputMessengerType::eMainMenu), myTextInputs(2), myCurrentTextInput(-1), myShowStateBelow(false), myPointerSprite(nullptr), myIsInFocus(false), myBlinkeyBool(true), myBlinkeyTimer(0)
 {
-	std::function<bool(std::string)> temp = [this](std::string string)-> bool { return PushTempLobby(string); };
 
 	myManager.AddAction("ExitGame", bind(&CMenuState::ExitGame, std::placeholders::_1));
-	myManager.AddAction("PushTempLobby", [this](std::string string)-> bool { return PushTempLobby(string); });
 	myManager.AddAction("PushMenu", [this](std::string string)-> bool { return PushMenu(string); });
 	myManager.AddAction("PopMenues", [this](std::string string)-> bool { return PopMenues(string); });
 	myManager.AddAction("PushLevel", [this](std::string string)-> bool { return PushLevel(string); });
-	myManager.AddAction("StartServer", [this](std::string string)-> bool { return StartServer(string); });
-	myManager.AddAction("ConectLocal", [this](std::string string)-> bool { return ConnectLocal(string); });
 	myManager.AddAction("SelectTextInput", [this](std::string string)-> bool { return SetCurrentTextInput(string); });
-	myManager.AddAction("CheckIp", [this](std::string string)-> bool { return CheckIp(string); });
-	myManager.AddAction("SetName", [this](std::string string)-> bool { return SetName(string); });
-	myManager.AddAction("Conect", [this](std::string string)-> bool { return Conect(string); });
-	myManager.AddAction("SetIp", [this](std::string string)-> bool { return SetIp(string); });
 	myManager.AddAction("PushSplitScreenSelection", [this](std::string string)-> bool { return PushSplitScreenSelection();});
 	MenuLoad(aFile);
 }
@@ -156,10 +143,6 @@ CU::eInputReturn CMenuState::RecieveInput(const CU::SInputMessage& aInputMessage
 		break;
 	case CU::eInputType::eScrollWheelChanged: break;
 	case CU::eInputType::eKeyboardPressed:
-		if (aInputMessage.myKey == CU::eKeys::F7)
-		{
-			PushTempLobby("");
-		}
 		if (aInputMessage.myKey == CU::eKeys::BACK && myCurrentTextInput > -1)
 		{
 			CTextInstance& currentTextInput = *myTextInputs[myCurrentTextInput].myTextInstance;
@@ -183,12 +166,12 @@ eMessageReturn CMenuState::DoEvent(const KeyCharPressed& aCharPressed)
 	CTextInstance* textInstance = myTextInputs.At(myCurrentTextInput).myTextInstance;
 
 
-	if (aCharPressed.GetKey() != 0x08 && aCharPressed.GetKey() != 0x0D)
-	{
-		std::string blä;
-		blä = aCharPressed.GetKey();
-		textInstance->SetTextLine(0, textInstance->GetTextLines().At(0) + CU::StringToWString(blä));
-	}
+	//if (aCharPressed.GetKey() != 0x08 && aCharPressed.GetKey() != 0x0D)
+	//{
+	//	std::string blä;
+	//	blä = aCharPressed.GetKey();
+	//	textInstance->SetTextLine(0, textInstance->GetTextLines().At(0) + CU::StringToWString(blä));
+	//}
 
 	return eMessageReturn::eContinue;
 }
@@ -289,7 +272,6 @@ void CMenuState::LoadElement(const CU::CJsonValue& aJsonValue, const std::string
 			}
 			else if (subString == L"IP")
 			{
-				GetIPAddress();
 				myManager.GetTextInstance(myManager.CreateText(fontName, textPosition, myThisComputersIP, 2, alignment))->SetColor({0.f, 0.f, 0.f , 1.f});
 			}
 		}
@@ -324,19 +306,13 @@ bool CMenuState::PushMenu(std::string aMenu)
 
 bool CMenuState::ExitGame(std::string /* not used*/)
 {
-	Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CQuitGame);
+	//Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CQuitGame);
 	return true;
 }
 
 bool CMenuState::PushSplitScreenSelection()
 {
 	myStateStack.PushState(new CSplitScreenSelection(myStateStack));
-	return true;
-}
-
-bool CMenuState::PushTempLobby(std::string /*notUsed*/) 
-{
-	//myStateStack.PushState(new CTempLobbyState(myStateStack));
 	return true;
 }
 
@@ -353,148 +329,9 @@ bool CMenuState::PushLevel(std::string aLevelIndexString)
 	return true;
 }
 
-bool CMenuState::StartServer(std::string /*notUsed*/)
-{
-	std::string processName = "TServer_Applictaion_x64_";
-
-#ifdef _DEBUG
-	processName += "Debug";
-#elif defined(RETAIL)
-	processName = "HighDoomServer";
-#elif defined(RELEASE)
-	processName += "Release";
-#endif
-
-	processName += ".exe";
-
-	if (WindowsHelper::ProgramIsActive(processName))
-	{
-		return true;
-	}
-
-	if (!WindowsHelper::StartProgram(processName))
-	{
-		DL_MESSAGE_BOX("Failed to start server, failed to build TServer_Application?\n%s", processName.c_str());
-	}
-	std::this_thread::sleep_for(std::chrono::milliseconds(500));
-	WindowsHelper::SetFocus(CEngine::GetInstance()->GetWindow()->GetHWND());
-	return true;
-}
-
-bool CMenuState::ConnectLocal(std::string anIp)
-{
-	Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CConectMessage(myName, "127.0.0.1"));
-	return true;
-}
-
 bool CMenuState::SetCurrentTextInput(std::string aTexINputIndex)
 {
 	myCurrentTextInput = stoi(aTexINputIndex);
 	myTextInputs[myCurrentTextInput].myInputIsValid = true;
 	return true;
-}
-
-bool CMenuState::CheckIp(std::string aTextInput)
-{
-	const std::wstring ipCheck = L"1234567890.";
-
-	const int index = stoi(aTextInput);
-
-	CTextInstance& textInstance = *myTextInputs[index].myTextInstance;
-
-	for (int i = 0; i < textInstance.GetTextLines()[0].length(); ++i)
-	{
-		if (ipCheck.find(textInstance.GetTextLines()[0].at(i)) == std::wstring::npos)
-		{
-			myTextInputs[index].myInputIsValid = false;
-			myCurrentTextInput = -1;
-			return false;
-		}
-	}
-
-	return true;
-}
-
-bool CMenuState::SetName(std::string aTextInput)
-{
-	const int index = stoi(aTextInput);
-	myName = CU::StringHelper::WStringToString(myTextInputs[index].myTextInstance->GetTextLines()[0]);
-	return true;
-}
-
-bool CMenuState::SetIp(std::string aTextInput)
-{
-	const int index = stoi(aTextInput);
-	myIp = CU::StringHelper::WStringToString(myTextInputs[index].myTextInstance->GetTextLines()[0]);
-	return true;
-}
-
-bool CMenuState::Conect(std::string aTextInput)
-{
-	Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CConectMessage(myName, myIp));
-	return true;
-}
-
-
-#include <Iphlpapi.h>
-#pragma comment(lib, "IPHLPAPI.lib")
-
-void CMenuState::GetIPAddress()
-{
-	PIP_ADAPTER_ADDRESSES addresses = nullptr;
-	ULONG bufferSize = sizeof(IP_ADAPTER_ADDRESSES);
-	ULONG result = ERROR_SUCCESS;
-	bool errorOccured = false;
-
-	do
-	{
-		addresses = (PIP_ADAPTER_ADDRESSES)malloc(bufferSize);
-		if (addresses == nullptr)
-		{
-			break;
-		}
-
-		result = GetAdaptersAddresses(AF_INET,
-			GAA_FLAG_SKIP_ANYCAST |
-			GAA_FLAG_SKIP_MULTICAST |
-			GAA_FLAG_SKIP_DNS_SERVER |
-			GAA_FLAG_SKIP_FRIENDLY_NAME, nullptr, addresses, &bufferSize);
-
-		if (result == ERROR_BUFFER_OVERFLOW)
-		{
-			free(addresses);
-			addresses = nullptr;
-		}
-	} while (result == ERROR_BUFFER_OVERFLOW);
-	//addresses->FirstUnicastAddress->Address.lpSockaddr->sa_family;
-
-	do
-	{
-		if (result == ERROR_SUCCESS)
-		{
-			if (!addresses || !addresses->FirstUnicastAddress || !addresses->FirstUnicastAddress->Address.lpSockaddr)
-			{
-				errorOccured = true;
-				break;
-			}
-
-			SOCKADDR_IN* ipv4 = reinterpret_cast<SOCKADDR_IN*>(addresses->FirstUnicastAddress->Address.lpSockaddr);
-
-			char strBuffer[INET_ADDRSTRLEN] = {};
-			if (inet_ntop(AF_INET, &(ipv4->sin_addr), strBuffer, INET_ADDRSTRLEN) == nullptr)
-			{
-				errorOccured = true;
-				//WSAGetLastError();
-				break;
-			}
-
-			myThisComputersIP = std::wstring(std::begin(strBuffer), std::end(strBuffer));
-		}
-	} while (false);
-
-	if (errorOccured)
-	{
-		myThisComputersIP.clear();
-		myThisComputersIP = L"error";
-	}
 }

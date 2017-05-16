@@ -48,18 +48,10 @@ private:
 
 	static bool ExitGame(std::string notUsed);
 	bool PushSplitScreenSelection();
-	bool PushTempLobby(std::string);
 	bool PopMenues(std::string aNumberOfMenues);
 	bool PushLevel(std::string aLevelIndexString);
-	static bool StartServer(std::string notUsed);
-	bool ConnectLocal(std::string anIp);
 	bool SetCurrentTextInput(std::string aTexINputIndex);
-	bool CheckIp(std::string aTextInput);
-	bool SetName(std::string aTextInput);
-	bool SetIp(std::string aTextInput);
-	bool Conect(std::string notusese);
 
-	void GetIPAddress();
 	CU::GrowingArray<STextInput> myTextInputs;
 	int myCurrentTextInput;
 

@@ -119,7 +119,7 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 			myPlayerCount = std::atoi(playerCountStr.c_str());
 		}
 	}
-	if (myPlayers.Size() > 0)
+	if (aPlayers.Size() > 0)
 	{
 		myPlayers.Init(aPlayers.Size());
 		myPlayerCount = aPlayers.Size();
