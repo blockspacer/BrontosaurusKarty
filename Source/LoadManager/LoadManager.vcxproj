@@ -341,6 +341,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="LoadBezierCurve.h" />
     <ClInclude Include="LoadBoostPad.h" />
     <ClInclude Include="LoadCamera.h" />
     <ClInclude Include="LoadCollider.h" />
@@ -360,6 +361,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="LoadBezierCurve.cpp" />
     <ClCompile Include="LoadBoostPad.cpp" />
     <ClCompile Include="LoadCamera.cpp" />
     <ClCompile Include="LoadCollider.cpp" />

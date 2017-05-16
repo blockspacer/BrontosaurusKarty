@@ -1,18 +1,21 @@
 #pragma once
 #include "Component.h"
 
+
 namespace Physics
 {
 	class CPhysicsScene;
 }
 
 class CParticleEmitterInstance;
+class CKartControllerComponentManager;
 class CDrifter;
 
 class CKartControllerComponent : public CComponent
 {
 public:
-	CKartControllerComponent();
+
+	CKartControllerComponent(CKartControllerComponentManager* aManager);
 	~CKartControllerComponent();
 
 	void Turn(float aDirectionX);
@@ -24,6 +27,7 @@ public:
 	void StopTurning();
 	void Drift();
 	void StopDrifting();
+	void GetHit();
 
 	void CheckZKill();
 	void Update(const float aDeltaTime);
@@ -52,6 +56,8 @@ private:
 		LeftFront,
 		Size
 	};
+
+
 
 	//std::function<bool(const CU::Vector3f&, const CU::Vector3f&, float)> myIsGrounded;
 	
@@ -93,12 +99,20 @@ private:
 		int myRightWheelDriftEmmiterHandle;
 		int myLeftDriftBoostEmitterhandle;
 		int myRightDriftBoostEmitterhandle;
+		int myBoostEmmiterhandle;
 	//} myDriftEmitter;
 
 	Physics::CPhysicsScene* myPhysicsScene;
 
 	bool myIsOnGround;
+	bool myIsBoosting;
+
+	bool myHasGottenHit;
+	float myTimeToBeStunned;
+	float myElapsedStunTime;
 	
 	//Experimental part
 	float myMainSpeed;
+
+	CKartControllerComponentManager* myManager;
 };
