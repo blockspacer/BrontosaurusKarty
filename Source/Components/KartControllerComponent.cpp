@@ -208,7 +208,7 @@ void CKartControllerComponent::StopDrifting()
 }
 
 //TODO: Hard coded, not good, change soon
-const float killHeight = -25;
+const float killHeight = -50;
 
 void CKartControllerComponent::CheckZKill()
 {

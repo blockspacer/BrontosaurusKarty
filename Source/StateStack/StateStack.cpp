@@ -66,6 +66,7 @@ eMessageReturn StateStack::DoEvent(const ::PushState& aPushState)
 	switch (aPushState.GetStateType())
 	{
 	case PushState::eState::ePlayState:
+
 		PushState(new CLoadState(*this, aPushState.GetLevelIndex()));
 		break;
 	//case PushState::eState::eCreditScreen:
