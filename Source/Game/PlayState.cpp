@@ -260,6 +260,8 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	{
 		myBoostPadComponentManager->Update();
 	}
+
+	CPickupComponentManager::GetInstance()->Update(aDeltaTime.GetSeconds());
 	return myStatus;
 }
 

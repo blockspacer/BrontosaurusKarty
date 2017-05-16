@@ -69,7 +69,7 @@ void LoadManager::RegisterFunctions()
 	//loader.RegisterComponentLoadFunction("ScriptComponent", LoadScriptComponent);
 	loader.RegisterComponentLoadFunction("HighlightComponent",LoadHighlightComponent);
 	loader.RegisterComponentLoadFunction("Light", LoadPointLightComponent);
-	loader.RegisterComponentLoadFunction("WeaponCrateComponent", LoadWeapoCrateComponent);
+	loader.RegisterComponentLoadFunction("Pickup", LoadWeapoCrateComponent);
 	loader.RegisterComponentLoadFunction("BoostpadComponent", LoadBoostPadComponent);
 	//loader.RegisterComponentLoadFunction("CircleCollider", LoadCircleCollider);
 	//loader.RegisterComponentLoadFunction("SoundComponent", LoadSoundComponent);
