@@ -6,7 +6,7 @@
 #include <ThreadPool.h>
 #include "FBXLoader.h"
 
-#include "../TShared/AnimationState.h"
+#include "AnimationState.h"
 DECLARE_ANIMATION_ENUM_AND_STRINGS;
 
 CModelManager::CModelManager()

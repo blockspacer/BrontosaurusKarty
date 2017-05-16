@@ -1,10 +1,5 @@
 #pragma once
-#include <vector>
-#include <array>
-#include <math.h>
 #include <..\CommonUtilities\Camera.h>
-#include "..\CommonUtilities\matrix44.h"
-
 
 #include "RenderCamera.h"
 #include "RenderPackage.h"

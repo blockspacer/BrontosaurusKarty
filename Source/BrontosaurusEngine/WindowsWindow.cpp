@@ -1,12 +1,12 @@
 #include "stdafx.h"
 #include "WindowsWindow.h"
 #include "Engine.h"
-#include "../PostMaster/Message.h"
-#include "../PostMaster/FocusChange.h"
-#include "../PostMaster/KeyCharPressed.h"
-#include "../PostMaster/DroppedFile.h"
 
 #include <Shellapi.h>
+
+#include "../ThreadedPostmaster/FocusChange.h"
+#include "../ThreadedPostmaster/KeyCharPressed.h"
+#include "../ThreadedPostmaster/DroppedFile.h"
 #include "../ThreadedPostmaster/Postmaster.h"
 
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);

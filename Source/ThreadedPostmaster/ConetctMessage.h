@@ -1,6 +1,5 @@
 #pragma once
 #include "Message.h"
-#include <string>
 
 class CConectMessage : public Postmaster::Message::IMessage
 {

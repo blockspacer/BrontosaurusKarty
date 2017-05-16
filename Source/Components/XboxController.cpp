@@ -10,7 +10,7 @@
 #include "..\CommonUtilities\XInputWrapper.h"
 #include "..\CommonUtilities\EKeyboardKeys.h"
 
-#include "..\PostMaster\SetVibrationOnController.h"
+#include "..\ThreadedPostmaster\SetVibrationOnController.h"
 #include "..\ThreadedPostmaster\Postmaster.h"
 
 CXboxController::CXboxController(CKartControllerComponent& aKartComponent)
@@ -82,10 +82,18 @@ void CXboxController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 	case CU::GAMEPAD::RIGHT_SHOULDER:
 		myControllerComponent.Drift();
 		break;
-	case CU::GAMEPAD::LEFT_SHOULDER:
+	case CU::GAMEPAD::LEFT_THUMB:
+	{
 		SComponentMessageData boostMessageData;
-		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("BoostPad"));
+		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("BoostPowerUp"));
 		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+	}
+	case CU::GAMEPAD::LEFT_SHOULDER:
+		/*SComponentMessageData boostMessageData;
+		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("BoostPad"));
+		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);*/
+
+		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eUseItem, SComponentMessageData());
 		break;
 	}
 }
@@ -139,14 +147,16 @@ void CXboxController::MovedJoystick(const CU::SInputMessage& aInputMessage)
 
 void CXboxController::GamePadLeftTrigger(const CU::SInputMessage& aInputMessage)
 {
-	SComponentMessageData boostMessageData;
+	/*SComponentMessageData boostMessageData;
 	SBoostData* boostData = new SBoostData();
 	boostData->accerationBoost = 5;
 	boostData->duration = 4.0f;
 	boostData->maxSpeedBoost = 2.0f;
 	boostData->hashedName = std::hash<std::string>()("TempBoost");
 	boostMessageData.myBoostData = boostData;
-	myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+	myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);*/
+
+	myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eUseItem, SComponentMessageData());
 }
 
 void CXboxController::GamePadRightTrigger(const CU::SInputMessage& aInputMessage)

@@ -1,10 +1,7 @@
 #pragma once
-#include <vector>
-#include <array>
-#include "../PostMaster/MessageType.h"
 #include "../CommonUtilities/LocklessQueue.h"
 #include "NarrowcastStruct.h"
-#include <map>
+#include "MessageType.h"
 
 namespace Postmaster
 {

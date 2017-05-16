@@ -1,9 +1,8 @@
 #include "stdafx.h"
 #include "GameEventMessenger.h"
-#include "PostMaster/Message.h"
-#include "PostMaster/Event.h"
 #include "ThreadedPostmaster/Postmaster.h"
 #include "ThreadedPostmaster/GameEventMessage.h"
+#include "ThreadedPostmaster/MessageType.h"
 
 
 CGameEventMessenger::CGameEventMessenger() : myInTweener(nullptr), myOutTweener(nullptr), myCurrentTime(0), myWaitTime(0.75f)

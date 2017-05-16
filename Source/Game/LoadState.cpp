@@ -8,14 +8,9 @@
 
 #include "Renderer.h"
 #include "BackgroundLoadingManager.h"
-//#include "Game/Game.h"
 
-#include "TShared/NetworkMessage_ClientReady.h"
-#include "TClient/ClientMessageManager.h"
 #include "ThreadedPostmaster/Postmaster.h"
 #include "ThreadedPostmaster/PostOffice.h"
-#include "ThreadedPostmaster/SendNetowrkMessageMessage.h"
-#include "TClient/ServerReadyMessage.h"
 #include "../Audio/AudioInterface.h"
 //#include "LoadingAnimation.h"
 
@@ -72,11 +67,6 @@ void CLoadState::Init()
 		bLM.CreateStateToLoad(myStateStack, myLevelIndex,myPlayers);
 		myPlayState = bLM.GetPlaystate();
 	}
-
-	//Audio::CAudioInterface::GetInstance()->PostEvent("Stop_Music");
-	//std::string BGMusic;
-	//BGMusic = "Music_Level" + std::to_string(myLevelIndex + 1);
-	//Audio::CAudioInterface::GetInstance()->PostEvent(BGMusic.c_str());
 }
 
 eStateStatus CLoadState::Update(const CU::Time& aDeltaTime)
@@ -87,22 +77,6 @@ eStateStatus CLoadState::Update(const CU::Time& aDeltaTime)
 
 	if (myPlayState->IsLoaded() == true)
 	{
-		//CClientMessageManager* const messageManagerInstance = CClientMessageManager::GetInstance();
-
-		//	if (messageManagerInstance == nullptr)ö
-		//	{
-		//		DL_ASSERT("message manager is not created");
-		//	}
-
-		//	CNetworkMessage_ClientReady* readyMessage = messageManagerInstance->CreateMessage<CNetworkMessage_ClientReady>("__Server");
-
-		//	Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CSendNetworkMessageMessage(readyMessage));
-		//	myGotOkFromServer = true; // Remove me!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		//	myNumberOfPlayersToSpawnBeforeStarting = 0; // Remove me!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		//}
-
-	//if (myGotOkFromServer == true && myNumberOfPlayersToSpawnBeforeStarting == 0)
-	//{
 		myStateStack.SwapState(myPlayState);
 		CBackgroundLoadingManager::GetInstance().Clear();
 	}
@@ -128,17 +102,8 @@ void CLoadState::Render()
 
 void CLoadState::OnEnter(const bool /*aLetThroughRender*/)
 {
-	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eNetworkMessage);
 }
 
 void CLoadState::OnExit(const bool /*aLetThroughRender*/)
 {
-	Postmaster::Threaded::CPostmaster::GetInstance().Unsubscribe(this);
-}
-
-eMessageReturn CLoadState::DoEvent(const CServerReadyMessage& aServerReadyMessageMessageMessage)
-{
-	myGotOkFromServer = true;
-	myNumberOfPlayersToSpawnBeforeStarting = aServerReadyMessageMessageMessage.myNumberOfPlayers;
-	return eMessageReturn::eContinue;
 }

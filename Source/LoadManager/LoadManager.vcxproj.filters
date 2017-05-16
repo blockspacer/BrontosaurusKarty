@@ -7,9 +7,6 @@
     <ClInclude Include="stdafx.h">
       <Filter>Precompiled</Filter>
     </ClInclude>
-    <ClInclude Include="LuaFunctions.h">
-      <Filter>LuaFunctions</Filter>
-    </ClInclude>
     <ClInclude Include="LoadManager.h">
       <Filter>LoadManager</Filter>
     </ClInclude>
@@ -34,7 +31,6 @@
     <ClInclude Include="LoadCamera.h">
       <Filter>LoadThings\LoadCamera</Filter>
     </ClInclude>
-    <ClInclude Include="ServerLoadManager.h" />
     <ClInclude Include="LoadParticleEmitterComponent.h">
       <Filter>LoadThings\LoadParticleComponent</Filter>
     </ClInclude>
@@ -61,9 +57,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Precompiled</Filter>
     </ClCompile>
-    <ClCompile Include="LuaFunctions.cpp">
-      <Filter>LuaFunctions</Filter>
-    </ClCompile>
     <ClCompile Include="LoadManager.cpp">
       <Filter>LoadManager</Filter>
     </ClCompile>
@@ -88,7 +81,6 @@
     <ClCompile Include="LoadCamera.cpp">
       <Filter>LoadThings\LoadCamera</Filter>
     </ClCompile>
-    <ClCompile Include="ServerLoadManager.cpp" />
     <ClCompile Include="LoadParticleEmitterComponent.cpp">
       <Filter>LoadThings\LoadParticleComponent</Filter>
     </ClCompile>
@@ -112,9 +104,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="LuaFunctions">
-      <UniqueIdentifier>{a33c0251-8964-432b-b372-abd7d6fcdcf0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="LoadManager">
       <UniqueIdentifier>{f56e17b2-c60a-469e-afa0-9e5d0cc30d3b}</UniqueIdentifier>
     </Filter>

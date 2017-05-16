@@ -5,6 +5,7 @@
 
 CItemHolderComponent::CItemHolderComponent(CItemFactory& aItemFactory): myItemFactory(aItemFactory)
 {
+	myItem = eItemTypes::eNone;
 }
 
 
@@ -22,7 +23,8 @@ void CItemHolderComponent::Receive(const eComponentMessageType aMessageType, con
 		myItem = static_cast<eItemTypes>(aMessageData.myInt);
 		break;
 	case eComponentMessageType::eUseItem:
-		myItemFactory.CreateItem(myItem,this);
+ 		myItemFactory.CreateItem(myItem,this);
+		myItem = eItemTypes::eNone;
 		break;
 	default:
 		break;

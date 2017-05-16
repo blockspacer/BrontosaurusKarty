@@ -1,11 +1,7 @@
 #pragma once
 #include "Work.h"
 #include "Worker.h"
-#include <queue>
-#include <vector>
-#include <thread>
-#include <mutex>
-#include <condition_variable> // might be cooleo, otherwise removeio
+//#include <condition_variable> // might be cooleo, otherwise removeio
 
 namespace CU
 {

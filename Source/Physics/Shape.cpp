@@ -36,7 +36,7 @@ namespace Physics
 		myShape->setSimulationFilterData(filterData);
 	}
 
-	void CShape::SetCollisionLayers(const ECollisionLayer& aLayer, const ECollisionLayer& aLayerToCollideWith)
+	void CShape::SetCollisionLayers(const ECollisionLayer& aLayer, const unsigned int aLayerToCollideWith)
 	{
 		physx::PxFilterData filterData = myShape->getSimulationFilterData();;
 

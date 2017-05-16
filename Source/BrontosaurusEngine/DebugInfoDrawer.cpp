@@ -12,9 +12,10 @@
 #include "../CommonUtilities/InputMessenger.h"
 #include "../CommonUtilities/EInputReturn.h"
 
-#include "../PostMaster/Message.h"
-#include "../PostMaster/DrawCallsCount.h"
 #include "../ThreadedPostmaster/Postmaster.h"
+#include "../ThreadedPostmaster/MessageType.h"
+#include "../ThreadedPostmaster/Message.h"
+#include "../ThreadedPostmaster/DrawCallsCount.h"
 #include "../ThreadedPostmaster/NetworkDebugInfo.h"
 
 CDebugInfoDrawer::CDebugInfoDrawer(unsigned int aDebugFlags)

@@ -99,16 +99,13 @@ const bool IPickupComponent::GetIsActive() const
 void IPickupComponent::DoMyEffect(CComponent* theCollider)
 {
 	SetActive(false);
-	SComponentMessageData data;
-	data.myBool = false;
-	GetParent()->NotifyComponents(eComponentMessageType::eSetVisibility, data);
 }
 
 void IPickupComponent::Update(const float aDeltaTime)
 {
 	if (myRespawnTime != 0.0f)
 	{
-		if (GetIsActive() == false)
+		if (GetIsActive() == true)
 		{
 			myRespawnTimer += aDeltaTime;
 			if (myRespawnTimer >= myRespawnTime)

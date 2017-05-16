@@ -1,7 +1,5 @@
-﻿
-#pragma once
-#include "../ThreadedPostmaster/Message.h"
-#include <string>
+﻿#pragma once
+#include "Message.h"
 
 class CGameEventMessage: public Postmaster::Message::IMessage
 {

@@ -10,6 +10,7 @@
 #include "Physics\PhysicsCharacterController.h"
 #include "CharacterControllerComponent.h"
 #include "ConcaveMeshCollider.h"
+#include "Physics/CollisionLayers.h"
 
 #define TO_RADIANS(x) (x) * (3.1415f / 180.f)
 
@@ -27,13 +28,13 @@ CColliderComponent* CreateComponent(SColliderData& aColData)
 }
 
 
-CColliderComponent* CreateComponentServer(SColliderData& aColData)
-{
-	CGameObject* parent = GetCurrentObject();
-	GET_SERVERLOADMANAGER(loadManager);
-	CColliderComponentManager* colliderMan = loadManager.GetCurrentGameServer().GetColliderComponentManager();
-	return colliderMan->CreateComponent(&aColData, parent->GetId());
-}
+//CColliderComponent* CreateComponentServer(SColliderData& aColData)
+//{
+//	CGameObject* parent = GetCurrentObject();
+//	GET_SERVERLOADMANAGER(loadManager);
+//	CColliderComponentManager* colliderMan = loadManager.GetCurrentGameServer().GetColliderComponentManager();
+//	return colliderMan->CreateComponent(&aColData, parent->GetId());
+//}
 
 int LoadSphereCollider(KLoader::SLoadedComponentData someData)
 {
@@ -43,7 +44,10 @@ int LoadSphereCollider(KLoader::SLoadedComponentData someData)
 
 	SSphereColliderData data;
 	data.IsTrigger = someData.myData.at("isTrigger").GetBool();
-	
+
+	data.myLayer = Physics::GetLayerFromUnity(someData.myData.at("layer").GetUInt());
+	data.myCollideAgainst = Physics::GetCollideAgainst(data.myLayer);
+
 	CU::Vector3f material = someData.myData.at("material").GetVector3f("xyz");
 	data.material.aStaticFriction = material.x;
 	data.material.aDynamicFriction = material.y;
@@ -67,6 +71,9 @@ int LoadCapsuleCollider(KLoader::SLoadedComponentData someData)
 
 	SCapsuleColliderData data;
 	data.IsTrigger = someData.myData.at("isTrigger").GetBool();
+
+	data.myLayer = Physics::GetLayerFromUnity(someData.myData.at("layer").GetUInt());
+	data.myCollideAgainst = Physics::GetCollideAgainst(data.myLayer);
 
 	CU::Vector3f material = someData.myData.at("material").GetVector3f("xyz");
 	data.material.aStaticFriction = material.x;
@@ -93,6 +100,10 @@ int LoadBoxCollider(KLoader::SLoadedComponentData someData)
 	SBoxColliderData data;
 	data.IsTrigger = someData.myData.at("isTrigger").GetBool();
 	
+	data.myLayer = Physics::GetLayerFromUnity(someData.myData.at("layer").GetUInt());
+	data.myCollideAgainst = Physics::GetCollideAgainst(data.myLayer);
+
+
 	CU::Vector3f material = someData.myData.at("material").GetVector3f("xyz");
 	data.material.aStaticFriction = material.x;
 	data.material.aDynamicFriction = material.y;
@@ -116,6 +127,10 @@ int LoadMeshCollider(KLoader::SLoadedComponentData someData)
 
 	SConcaveMeshColliderData data;
 	data.IsTrigger = someData.myData.at("isTrigger").GetBool();
+
+	data.myLayer = Physics::GetLayerFromUnity(someData.myData.at("layer").GetUInt());
+	data.myCollideAgainst = Physics::GetCollideAgainst(data.myLayer);
+
 
 	CU::Vector3f material = someData.myData.at("material").GetVector3f("xyz");
 	data.material.aStaticFriction = material.x;
@@ -145,6 +160,9 @@ int LoadConcaveCollider(KLoader::SLoadedComponentData someData)
 
 	SConcaveMeshColliderData data;
 	data.IsTrigger = someData.myData.at("isTrigger").GetBool();
+
+	data.myLayer = Physics::GetLayerFromUnity(someData.myData.at("layer").GetUInt());
+	data.myCollideAgainst = Physics::GetCollideAgainst(data.myLayer);
 
 	CU::Vector3f material = someData.myData.at("material").GetVector3f("xyz");
 	data.material.aStaticFriction = material.x;
@@ -176,6 +194,10 @@ int LoadRigidBody(KLoader::SLoadedComponentData someData)
 	data.useGravity = someData.myData.at("useGravity").GetBool();
 	data.isKinematic = someData.myData.at("isKinematic").GetBool();
 
+	data.myLayer = Physics::GetLayerFromUnity(someData.myData.at("layer").GetUInt());
+	data.myCollideAgainst = Physics::GetCollideAgainst(data.myLayer);
+
+
 	CColliderComponent* component = CreateComponent(data);
 	return component->GetId();
 }
@@ -185,6 +207,8 @@ int LoadCharacterController(KLoader::SLoadedComponentData someData)
 	CGameObject* parent = GetCurrentObject();
 	CColliderComponentManager* colliderMgr = LoadManager::GetInstance()->GetCurrentPLaystate().GetColliderComponentManager();
 	Physics::SCharacterControllerDesc data;
+
+
 
 	data.slopeLimit = someData.myData.at("slopeLimit").GetFloat();
 	data.stepOffset = someData.myData.at("stepOffset").GetFloat();
@@ -202,145 +226,145 @@ int LoadCharacterController(KLoader::SLoadedComponentData someData)
 	return component->GetId();
 }
 
-int LoadSphereColliderServer(KLoader::SLoadedComponentData someData)
-{
-	CGameObject* parent = GetCurrentObject();
-	CU::Vector3f scale = parent->GetToWorldTransform().GetScale();
-	CU::Vector3f parentPos = parent->GetToWorldTransform().GetPosition();
+//int LoadSphereColliderServer(KLoader::SLoadedComponentData someData)
+//{
+//	CGameObject* parent = GetCurrentObject();
+//	CU::Vector3f scale = parent->GetToWorldTransform().GetScale();
+//	CU::Vector3f parentPos = parent->GetToWorldTransform().GetPosition();
+//
+//	SSphereColliderData data;
+//	data.IsTrigger = someData.myData.at("isTrigger").GetBool();
+//	
+//	CU::Vector3f material = someData.myData.at("material").GetVector3f("xyz");
+//	data.material.aStaticFriction = material.x;
+//	data.material.aDynamicFriction = material.y;
+//	data.material.aRestitution = material.z;
+//
+//	data.center = someData.myData.at("center").GetVector3f("xyz");
+//	data.center.x *= -1;
+//	data.center.z *= -1;
+//	data.center = data.center * parent->GetToWorldTransform().GetRotation();
+//	data.myRadius = someData.myData.at("radius").GetFloat() * scale.x;
+//
+//	CColliderComponent* component = CreateComponentServer(data);
+//	return component->GetId();
+//}
 
-	SSphereColliderData data;
-	data.IsTrigger = someData.myData.at("isTrigger").GetBool();
-	
-	CU::Vector3f material = someData.myData.at("material").GetVector3f("xyz");
-	data.material.aStaticFriction = material.x;
-	data.material.aDynamicFriction = material.y;
-	data.material.aRestitution = material.z;
+//int LoadCapsuleColliderServer(KLoader::SLoadedComponentData someData)
+//{
+//	CGameObject* parent = GetCurrentObject();
+//	CU::Vector3f scale = parent->GetToWorldTransform().GetScale();
+//	CU::Vector3f parentPos = parent->GetToWorldTransform().GetPosition();
+//
+//	SCapsuleColliderData data;
+//	data.IsTrigger = someData.myData.at("isTrigger").GetBool();
+//	
+//	CU::Vector3f material = someData.myData.at("material").GetVector3f("xyz");
+//	data.material.aStaticFriction = material.x;
+//	data.material.aDynamicFriction = material.y;
+//	data.material.aRestitution = material.z;
+//
+//	data.center = someData.myData.at("center").GetVector3f("xyz");
+//	data.center.x *= -1;
+//	data.center.z *= -1;
+//	data.center = data.center * parent->GetToWorldTransform().GetRotation();
+//	data.myRadius = someData.myData.at("radius").GetFloat() * scale.x;
+//	data.myHeight = someData.myData.at("height").GetFloat() * scale.x;
+//
+//	CColliderComponent* component = CreateComponentServer(data);
+//	return component->GetId();
+//}
 
-	data.center = someData.myData.at("center").GetVector3f("xyz");
-	data.center.x *= -1;
-	data.center.z *= -1;
-	data.center = data.center * parent->GetToWorldTransform().GetRotation();
-	data.myRadius = someData.myData.at("radius").GetFloat() * scale.x;
+//int LoadBoxColliderServer(KLoader::SLoadedComponentData someData)
+//{
+//	CGameObject* parent = GetCurrentObject();
+//	CU::Vector3f scale = parent->GetToWorldTransform().GetScale();
+//	CU::Vector3f parentPos = parent->GetToWorldTransform().GetPosition();
+//	parent->GetLocalTransform().GetPosition().z += 20.0f;
+//	GET_SERVERLOADMANAGER(loadManager);
+//	short levelIndex = loadManager.GetCurrentGameServer().GetCurrentLevelIndex();
+//
+//	SBoxColliderData data;
+//	data.IsTrigger = someData.myData.at("isTrigger").GetBool();
+//	
+//	CU::Vector3f material = someData.myData.at("material").GetVector3f("xyz");
+//	data.material.aStaticFriction = material.x;
+//	data.material.aDynamicFriction = material.y;
+//	data.material.aRestitution = material.z;
+//
+//	data.center = someData.myData.at("center").GetVector3f("xyz");
+//	data.center.x *= -1;
+//	data.center.z *= -1;
+//
+//	if(levelIndex < 3)
+//	{
+//		parent->GetLocalTransform().GetPosition().z -= 20.0f;
+//	}
+//
+//	data.center = data.center * parent->GetToWorldTransform().GetRotation();
+//	data.myHalfExtent = someData.myData.at("size").GetVector3f("xyz") * scale * 0.5f;
+//
+//	CColliderComponent* component = CreateComponentServer(data);
+//	return component->GetId();
+//}
 
-	CColliderComponent* component = CreateComponentServer(data);
-	return component->GetId();
-}
+//int LoadMeshColliderServer(KLoader::SLoadedComponentData someData)
+//{
+//	CGameObject* parent = GetCurrentObject();
+//	CU::Vector3f scale = parent->GetToWorldTransform().GetScale();
+//	CU::Vector3f parentPos = parent->GetToWorldTransform().GetPosition();
+//
+//	SMeshColliderData data;
+//	data.IsTrigger = someData.myData.at("isTrigger").GetBool();
+//	
+//	CU::Vector3f material = someData.myData.at("material").GetVector3f("xyz");
+//	data.material.aStaticFriction = material.x;
+//	data.material.aDynamicFriction = material.y;
+//	data.material.aRestitution = material.z;
+//	//data.center = someData.myData.at("center").GetVector3f("xyz");
+//	data.center.x *= -1;
+//	data.center.z *= -1;
+//	data.center = data.center * parent->GetToWorldTransform().GetRotation();
+//	data.myPath = someData.myData.at("meshPath").GetString().c_str();
+//
+//	CColliderComponent* component = CreateComponentServer(data);
+//	return component->GetId();
+//}
+//
+//int LoadRigidBodyServer(KLoader::SLoadedComponentData someData)
+//{
+//	CGameObject* parent = GetCurrentObject();
+//
+//	SRigidBodyData data;
+//	data.mass = someData.myData.at("mass").GetFloat();
+//	data.angularDrag = someData.myData.at("angularDrag").GetFloat();
+//	data.useGravity = someData.myData.at("useGravity").GetBool();
+//	data.isKinematic = someData.myData.at("isKinematic").GetBool();
+//
+//	CColliderComponent* component = CreateComponentServer(data);
+//	return component->GetId();
+//}
 
-int LoadCapsuleColliderServer(KLoader::SLoadedComponentData someData)
-{
-	CGameObject* parent = GetCurrentObject();
-	CU::Vector3f scale = parent->GetToWorldTransform().GetScale();
-	CU::Vector3f parentPos = parent->GetToWorldTransform().GetPosition();
-
-	SCapsuleColliderData data;
-	data.IsTrigger = someData.myData.at("isTrigger").GetBool();
-	
-	CU::Vector3f material = someData.myData.at("material").GetVector3f("xyz");
-	data.material.aStaticFriction = material.x;
-	data.material.aDynamicFriction = material.y;
-	data.material.aRestitution = material.z;
-
-	data.center = someData.myData.at("center").GetVector3f("xyz");
-	data.center.x *= -1;
-	data.center.z *= -1;
-	data.center = data.center * parent->GetToWorldTransform().GetRotation();
-	data.myRadius = someData.myData.at("radius").GetFloat() * scale.x;
-	data.myHeight = someData.myData.at("height").GetFloat() * scale.x;
-
-	CColliderComponent* component = CreateComponentServer(data);
-	return component->GetId();
-}
-
-int LoadBoxColliderServer(KLoader::SLoadedComponentData someData)
-{
-	CGameObject* parent = GetCurrentObject();
-	CU::Vector3f scale = parent->GetToWorldTransform().GetScale();
-	CU::Vector3f parentPos = parent->GetToWorldTransform().GetPosition();
-	parent->GetLocalTransform().GetPosition().z += 20.0f;
-	GET_SERVERLOADMANAGER(loadManager);
-	short levelIndex = loadManager.GetCurrentGameServer().GetCurrentLevelIndex();
-
-	SBoxColliderData data;
-	data.IsTrigger = someData.myData.at("isTrigger").GetBool();
-	
-	CU::Vector3f material = someData.myData.at("material").GetVector3f("xyz");
-	data.material.aStaticFriction = material.x;
-	data.material.aDynamicFriction = material.y;
-	data.material.aRestitution = material.z;
-
-	data.center = someData.myData.at("center").GetVector3f("xyz");
-	data.center.x *= -1;
-	data.center.z *= -1;
-
-	if(levelIndex < 3)
-	{
-		parent->GetLocalTransform().GetPosition().z -= 20.0f;
-	}
-
-	data.center = data.center * parent->GetToWorldTransform().GetRotation();
-	data.myHalfExtent = someData.myData.at("size").GetVector3f("xyz") * scale * 0.5f;
-
-	CColliderComponent* component = CreateComponentServer(data);
-	return component->GetId();
-}
-
-int LoadMeshColliderServer(KLoader::SLoadedComponentData someData)
-{
-	CGameObject* parent = GetCurrentObject();
-	CU::Vector3f scale = parent->GetToWorldTransform().GetScale();
-	CU::Vector3f parentPos = parent->GetToWorldTransform().GetPosition();
-
-	SMeshColliderData data;
-	data.IsTrigger = someData.myData.at("isTrigger").GetBool();
-	
-	CU::Vector3f material = someData.myData.at("material").GetVector3f("xyz");
-	data.material.aStaticFriction = material.x;
-	data.material.aDynamicFriction = material.y;
-	data.material.aRestitution = material.z;
-	//data.center = someData.myData.at("center").GetVector3f("xyz");
-	data.center.x *= -1;
-	data.center.z *= -1;
-	data.center = data.center * parent->GetToWorldTransform().GetRotation();
-	data.myPath = someData.myData.at("meshPath").GetString().c_str();
-
-	CColliderComponent* component = CreateComponentServer(data);
-	return component->GetId();
-}
-
-int LoadRigidBodyServer(KLoader::SLoadedComponentData someData)
-{
-	CGameObject* parent = GetCurrentObject();
-
-	SRigidBodyData data;
-	data.mass = someData.myData.at("mass").GetFloat();
-	data.angularDrag = someData.myData.at("angularDrag").GetFloat();
-	data.useGravity = someData.myData.at("useGravity").GetBool();
-	data.isKinematic = someData.myData.at("isKinematic").GetBool();
-
-	CColliderComponent* component = CreateComponentServer(data);
-	return component->GetId();
-}
-
-int LoadCharacterControllerServer(KLoader::SLoadedComponentData someData)
-{
-	CGameObject* parent = GetCurrentObject();
-	GET_SERVERLOADMANAGER(loadManager);
-	CColliderComponentManager* colliderMan = loadManager.GetCurrentGameServer().GetColliderComponentManager();
-	Physics::SCharacterControllerDesc data;
-
-	data.slopeLimit = TO_RADIANS(someData.myData.at("slopeLimit").GetFloat());
-	data.stepOffset = someData.myData.at("stepOffset").GetFloat();
-	data.skinWidth = someData.myData.at("skinWidth").GetFloat();
-	data.minMoveDistance = someData.myData.at("minMoveDistance").GetFloat();
-	data.center = someData.myData.at("center").GetVector3f("xyz");
-	data.center.x *= -1;
-	data.center.z *= -1; // ska vara med?
-	data.center = data.center * parent->GetToWorldTransform().GetRotation();
-	data.radius = someData.myData.at("radius").GetFloat();
-	data.radius -= 0.5f;
-	data.halfHeight = someData.myData.at("height").GetFloat() / 2.0f;
-
-	CCharacterControllerComponent* component = colliderMan->CreateCharacterControllerComponent(data, parent->GetId());
-	return component->GetId();
-}
+//int LoadCharacterControllerServer(KLoader::SLoadedComponentData someData)
+//{
+//	CGameObject* parent = GetCurrentObject();
+//	GET_SERVERLOADMANAGER(loadManager);
+//	CColliderComponentManager* colliderMan = loadManager.GetCurrentGameServer().GetColliderComponentManager();
+//	Physics::SCharacterControllerDesc data;
+//
+//	data.slopeLimit = TO_RADIANS(someData.myData.at("slopeLimit").GetFloat());
+//	data.stepOffset = someData.myData.at("stepOffset").GetFloat();
+//	data.skinWidth = someData.myData.at("skinWidth").GetFloat();
+//	data.minMoveDistance = someData.myData.at("minMoveDistance").GetFloat();
+//	data.center = someData.myData.at("center").GetVector3f("xyz");
+//	data.center.x *= -1;
+//	data.center.z *= -1; // ska vara med?
+//	data.center = data.center * parent->GetToWorldTransform().GetRotation();
+//	data.radius = someData.myData.at("radius").GetFloat();
+//	data.radius -= 0.5f;
+//	data.halfHeight = someData.myData.at("height").GetFloat() / 2.0f;
+//
+//	CCharacterControllerComponent* component = colliderMan->CreateCharacterControllerComponent(data, parent->GetId());
+//	return component->GetId();
+//}
 

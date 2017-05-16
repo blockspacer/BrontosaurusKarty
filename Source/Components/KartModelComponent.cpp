@@ -156,7 +156,7 @@ void Component::CKartModelComponent::Update(const float aDeltaTime)
 			examineVector -= rxhw;
 		}
 
-		Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(examineVector, down, 1);
+		Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(examineVector, down, 1, Physics::eGround);
 
 		const float heightSpeed = GetHeightSpeed(i);
 		if (raycastHitData.hit == true)
