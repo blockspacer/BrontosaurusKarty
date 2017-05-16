@@ -1,6 +1,5 @@
 #pragma once
-#include "Event.h"
-#include "../ThreadedPostmaster/Message.h"
+#include "Message.h"
 
 class DrawCallsCount : public Postmaster::Message::IMessage
 {

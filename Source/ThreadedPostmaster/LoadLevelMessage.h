@@ -1,5 +1,5 @@
 #pragma once
-#include "../ThreadedPostmaster/Message.h"
+#include "Message.h"
 
 class CLoadLevelMessage: public Postmaster::Message::IMessage
 {

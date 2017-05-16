@@ -1,6 +1,5 @@
-﻿
-#pragma once
-#include "../ThreadedPostmaster/Message.h"
+﻿#pragma once
+#include "Message.h"
 
 class CNetworkDebugInfo: public Postmaster::Message::IMessage
 {

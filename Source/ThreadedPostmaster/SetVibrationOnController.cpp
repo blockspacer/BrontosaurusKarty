@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "SetVibrationOnController.h"
-#include "ThreadedPostmaster/Subscriber.h"
 
 //intensity range(0-100)
 SetVibrationOnController::SetVibrationOnController(const unsigned int aJoyStickIndex, const float aLeftIntensity, const float aRightIntensity, const float aTimeToRumble, const bool aShouldRumbleForever) : IMessage(eMessageType::eSetVibration)

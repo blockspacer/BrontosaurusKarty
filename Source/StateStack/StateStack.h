@@ -1,6 +1,4 @@
 #pragma once
-#include "../PostMaster/Subscriber.h"
-#include <functional>
 #include "../ThreadedPostmaster/Subscriber.h"
 
 class State;

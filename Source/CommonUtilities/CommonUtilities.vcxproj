@@ -382,7 +382,6 @@
     <ClInclude Include="CommonCU.h" />
     <ClInclude Include="CommonSTL.h" />
     <ClInclude Include="CommonUtilities.h" />
-    <ClInclude Include="ConsolePrinter.h" />
     <ClInclude Include="CopyArray.h" />
     <ClInclude Include="dbtweener.h" />
     <ClInclude Include="DL_Assert.h" />
@@ -492,7 +491,6 @@
     <ClCompile Include="AlarmClock.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CommandLineManager.cpp" />
-    <ClCompile Include="ConsolePrinter.cpp" />
     <ClCompile Include="dbtweener.cpp" />
     <ClCompile Include="DL_Debug.cpp" />
     <ClCompile Include="DL_StackWalker.cpp" />

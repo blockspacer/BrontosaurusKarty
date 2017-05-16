@@ -1,13 +1,8 @@
 #include "stdafx.h"
-#include "Subscriber.h"
-#include "Postmaster.h"
-#include "../CommonUtilities/DL_Debug.h"
-
 
 Postmaster::ISubscriber::ISubscriber()
 {
 }
-
 
 Postmaster::ISubscriber::~ISubscriber()
 {
@@ -49,17 +44,7 @@ eMessageReturn Postmaster::ISubscriber::DoEvent(const PushState& aPushState)
 	return eMessageReturn::eContinue;
 }
 
-eMessageReturn Postmaster::ISubscriber::DoEvent(const CNetworkPosMessageEvent& aPositionEvent)
-{
-	return eMessageReturn::eContinue;
-}
-
 eMessageReturn Postmaster::ISubscriber::DoEvent(const CSendNetworkMessageMessage& aSendNetowrkMessageMessage)
-{
-	return eMessageReturn::eContinue;
-}
-
-eMessageReturn Postmaster::ISubscriber::DoEvent(const CServerReadyMessage& aSendNetowrkMessageMessage)
 {
 	return eMessageReturn::eContinue;
 }

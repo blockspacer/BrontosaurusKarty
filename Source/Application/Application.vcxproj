@@ -430,9 +430,6 @@
     <ProjectReference Include="..\Particles\Particles.vcxproj">
       <Project>{8ff3afbc-ce14-4748-a2b6-6e48fc5761f4}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\PostMaster\PostMaster.vcxproj">
-      <Project>{ff997492-8a34-4e1c-b403-48cabd258797}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\StateStack\StateStack.vcxproj">
       <Project>{11e472e1-7ce9-4029-b340-8c27b6d2e279}</Project>
     </ProjectReference>

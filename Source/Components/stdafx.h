@@ -12,9 +12,6 @@
 #include "../CommonUtilities/CommonCU.h"
 #include "../CommonUtilities/MemoryLeekLogger.h"
 
-#include "../PostMaster/Message.h"
-#include "../PostMaster/Event.h"
-
 #include "GameObject.h"
 #include "ComponentMessage.h"
 #include "ComponentAnswer.h"

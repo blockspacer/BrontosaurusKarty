@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "QuitGame.h"
-#include "ThreadedPostmaster\Subscriber.h"
 
 
 CQuitGame::CQuitGame()

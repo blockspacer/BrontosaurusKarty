@@ -33,7 +33,6 @@
 #include "../Components/PickupComponentManager.h"
 
 //Networking
-#include "PostMaster/MessageType.h"
 #include "ThreadedPostmaster/Postmaster.h"
 #include "ThreadedPostmaster/PostOffice.h"
 

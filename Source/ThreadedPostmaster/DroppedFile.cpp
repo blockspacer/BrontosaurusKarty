@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "DroppedFile.h"
-#include "ThreadedPostmaster/Subscriber.h"
+#include "..\ThreadedPostmaster/Subscriber.h"
 
 DroppedFile::DroppedFile(const std::string& aFilePath) : IMessage(eMessageType::eDroppedFile)
 , myFilePath(aFilePath)
