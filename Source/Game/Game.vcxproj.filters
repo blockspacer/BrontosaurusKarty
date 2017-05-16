@@ -37,6 +37,13 @@
       <Filter>KartSpawnPoint</Filter>
     </ClCompile>
     <ClCompile Include="ItemFactory.cpp" />
+    <ClCompile Include="MenuManager.cpp" />
+    <ClCompile Include="SplitScreenSelection.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuState.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -79,6 +86,14 @@
     <ClInclude Include="PollingStation.h" />
     <ClInclude Include="KartSpawnPointManager.h" />
     <ClInclude Include="ItemFactory.h" />
+    <ClInclude Include="MenuManager.h" />
+    <ClInclude Include="SplitScreenSelection.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuState.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="SParticipant.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="States">

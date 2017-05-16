@@ -1,6 +1,7 @@
 #pragma once
 #include "../StateStack/State.h"
 #include "../ThreadedPostmaster/Subscriber.h"
+#include "SParticipant.h"
 
 namespace CU
 {
@@ -38,6 +39,7 @@ class CPlayState : public State , public Postmaster::ISubscriber
 {
 public:
 	CPlayState(StateStack& aStateStack, const int aLevelIndex);
+	CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU::GrowingArray<SParticipant> aPlayers);
 	~CPlayState();
 
 	void Load();
@@ -65,7 +67,7 @@ public:
 	void SetCameraComponent(CCameraComponent* aCameraComponent);
 	inline CBoostPadComponentManager* GetBoostPadComponentManager();
 private:
-	void CreatePlayer(CU::Camera& aCamera);
+	void CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDevice aIntputDevice);
 	void InitiateRace();
 
 private:
@@ -86,8 +88,9 @@ private:
 	CItemFactory* myItemFactory;
 
 	CU::GrowingArray<CCameraComponent*> myCameraComponents;
+	CU::GrowingArray<SParticipant> myPlayers;
 
-	CU::TimerManager* myTimerManager;
+	//CU::TimerManager* myTimerManager;
 	TimerHandle myCountdownTimerHandle;
 
 	int myPlayerCount;
