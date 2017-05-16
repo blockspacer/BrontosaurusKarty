@@ -3,7 +3,6 @@
 #include "../ThreadedPostmaster/Postmaster.h"
 #include "../PostMaster/ConsoleCalledUpon.h"
 #include "../PostMaster/PushState.h"
-#include "../PostMaster/ChangeLevel.h"
 #include "../Game/LoadState.h"
 
 StateStack::StateStack()
@@ -79,13 +78,6 @@ eMessageReturn StateStack::DoEvent(const ::PushState& aPushState)
 		break;
 	}
 
-	return eMessageReturn::eStop;
-}
-
-eMessageReturn StateStack::DoEvent(const CChangeLevel& aChangeLevelMessage)
-{
-	SwapState(aChangeLevelMessage.CreateLoadState(*this));
-	
 	return eMessageReturn::eStop;
 }
 

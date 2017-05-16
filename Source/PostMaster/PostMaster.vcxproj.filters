@@ -19,9 +19,6 @@
     <ClCompile Include="PushState.cpp" />
     <ClCompile Include="PushState.cpp" />
     <ClCompile Include="PushState.cpp" />
-    <ClCompile Include="ChangeLevel.cpp">
-      <Filter>Events\ChangeLevel</Filter>
-    </ClCompile>
     <ClCompile Include="PushState.cpp" />
     <ClCompile Include="PushState.cpp" />
     <ClCompile Include="PushState.cpp" />
@@ -49,9 +46,6 @@
     </ClCompile>
     <ClCompile Include="NetworkPosMessageEvent.cpp">
       <Filter>Events\NetworkPositionMessageEvent</Filter>
-    </ClCompile>
-    <ClCompile Include="SendNetworkMessage.cpp">
-      <Filter>Events\SendNetworkMessage</Filter>
     </ClCompile>
     <ClCompile Include="QuitGame.cpp" />
     <ClCompile Include="SetVibrationOnController.cpp">
@@ -96,14 +90,10 @@
     <ClInclude Include="PopCurrentState.h" />
     <ClInclude Include="PushState.h" />
     <ClInclude Include="PopCurrentState.h" />
-    <ClInclude Include="PostMaster.h" />
     <ClInclude Include="PushState.h" />
     <ClInclude Include="PopCurrentState.h" />
     <ClInclude Include="PostMaster.h" />
     <ClInclude Include="PushState.h" />
-    <ClInclude Include="ChangeLevel.h">
-      <Filter>Events\ChangeLevel</Filter>
-    </ClInclude>
     <ClInclude Include="PopCurrentState.h" />
     <ClInclude Include="PostMaster.h" />
     <ClInclude Include="PushState.h" />
@@ -194,9 +184,6 @@
     </ClInclude>
     <ClInclude Include="PopCurrentState.h" />
     <ClInclude Include="PostMaster.h" />
-    <ClInclude Include="SendNetworkMessage.h">
-      <Filter>Events\SendNetworkMessage</Filter>
-    </ClInclude>
     <ClInclude Include="PopCurrentState.h" />
     <ClInclude Include="PostMaster.h" />
     <ClInclude Include="PopCurrentState.h" />
@@ -211,6 +198,7 @@
     <ClInclude Include="StopVibrationOnController.h">
       <Filter>Events\SetVibrationOnController</Filter>
     </ClInclude>
+    <ClInclude Include="PopCurrentState.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Events">
@@ -237,9 +225,6 @@
     <Filter Include="Events\WindowSizeChanged">
       <UniqueIdentifier>{c05a9295-47ba-420c-8437-b15ba0dd1ebb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Events\ChangeLevel">
-      <UniqueIdentifier>{05022f39-b2a0-4da8-9eac-0d6341726143}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Events\KeyCharPressed">
       <UniqueIdentifier>{a4ddbb42-71f7-432a-aecb-ff030a240365}</UniqueIdentifier>
     </Filter>
@@ -251,9 +236,6 @@
     </Filter>
     <Filter Include="Events\NetworkPositionMessageEvent">
       <UniqueIdentifier>{bd679b4b-3735-472e-8d46-02b10137e280}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Events\SendNetworkMessage">
-      <UniqueIdentifier>{16ca5ba6-f79f-4a89-b650-f830f24cf8fc}</UniqueIdentifier>
     </Filter>
     <Filter Include="Events\SetVibrationOnController">
       <UniqueIdentifier>{02e08a38-4e99-4b22-9d9e-00066f06da75}</UniqueIdentifier>

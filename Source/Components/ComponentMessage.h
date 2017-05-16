@@ -77,6 +77,9 @@ enum class eComponentMessageType
 	eSetBoost,
 	eGiveItem,
 	eUseItem,
+	eRotateTowards,
+	eUpdate,
+	eKill,
 	eLength,
 };
 

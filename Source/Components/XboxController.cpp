@@ -60,10 +60,6 @@ CU::eInputReturn CXboxController::TakeInput(const CU::SInputMessage& aInputMessa
 			break;
 		}
 	}
-	else
-	{
-		DL_PRINT("my index is : %d", myControllerIndex);
-	}
 
 	return CU::eInputReturn::ePassOn;
 }

@@ -5,8 +5,8 @@
 #include <map>
 #include <unordered_map>
 
-#define MIN(A,B) ((A) < (B)) ? A : B
-#define MAX(A,B) ((A) > (B)) ? A : B
+#define MIN(A,B) ((A) < (B)) ? (A) : (B)
+#define MAX(A,B) ((A) > (B)) ? (A) : (B)
 #define SWAP(A,B) A^=B^=A^=B
 #define RANGE(A,B,C) ((A) < (B)) ? B : ((A) > (C)) ? C : A
 #define CLAMP(V,A_MIN,A_MAX) RANGE(V,A_MIN,A_MAX)

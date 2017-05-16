@@ -3,7 +3,6 @@
 #include "TextInstance.h"
 
 #include "../LuaWrapper/SSlua/SSlua.h"
-#include "../LoadManager/LuaFunctions.h"
 
 #include "../PostMaster/Event.h"
 #include "../PostMaster/Message.h"

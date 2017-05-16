@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "BrontosaurusEngine\Brontosaurus.vcxproj", "{C5AC5F58-5B84-4A09-8E0A-0FFBA117FADE}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -86,15 +86,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Fullscreen", "Fullscreen", 
 		..\Bin\Shaders\Fullscreen\vertex.fx = ..\Bin\Shaders\Fullscreen\vertex.fx
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TClient_Application", "Application\Application.vcxproj", "{6E47AED6-24EF-438B-80F4-70F41F899959}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TServer", "TServer\TServer.vcxproj", "{62EA3AFE-A11B-43D0-86A3-1E29AA057693}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TClient", "TClient\TClient.vcxproj", "{77ACE5E5-0296-48A8-AF80-02538F7188C5}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TShared", "TShared\TShared.vcxproj", "{36F61D67-C746-4D60-9BDD-313641057E23}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TServer_Applictaion", "TServer_Applictaion\TServer_Applictaion.vcxproj", "{DA850603-0B3F-4FFC-AB52-FDD5A852EA54}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Application", "Application\Application.vcxproj", "{6E47AED6-24EF-438B-80F4-70F41F899959}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ThreadedPostmaster", "ThreadedPostmaster\ThreadedPostmaster.vcxproj", "{2E206E26-7C71-4D89-9A90-2A3D0C132C9D}"
 EndProject
@@ -217,30 +209,6 @@ Global
 		{6E47AED6-24EF-438B-80F4-70F41F899959}.Release|x64.Build.0 = Release|x64
 		{6E47AED6-24EF-438B-80F4-70F41F899959}.Retail|x64.ActiveCfg = Retail|x64
 		{6E47AED6-24EF-438B-80F4-70F41F899959}.Retail|x64.Build.0 = Retail|x64
-		{62EA3AFE-A11B-43D0-86A3-1E29AA057693}.Debug|x64.ActiveCfg = Debug|x64
-		{62EA3AFE-A11B-43D0-86A3-1E29AA057693}.Debug|x64.Build.0 = Debug|x64
-		{62EA3AFE-A11B-43D0-86A3-1E29AA057693}.Release|x64.ActiveCfg = Release|x64
-		{62EA3AFE-A11B-43D0-86A3-1E29AA057693}.Release|x64.Build.0 = Release|x64
-		{62EA3AFE-A11B-43D0-86A3-1E29AA057693}.Retail|x64.ActiveCfg = Retail|x64
-		{62EA3AFE-A11B-43D0-86A3-1E29AA057693}.Retail|x64.Build.0 = Retail|x64
-		{77ACE5E5-0296-48A8-AF80-02538F7188C5}.Debug|x64.ActiveCfg = Debug|x64
-		{77ACE5E5-0296-48A8-AF80-02538F7188C5}.Debug|x64.Build.0 = Debug|x64
-		{77ACE5E5-0296-48A8-AF80-02538F7188C5}.Release|x64.ActiveCfg = Release|x64
-		{77ACE5E5-0296-48A8-AF80-02538F7188C5}.Release|x64.Build.0 = Release|x64
-		{77ACE5E5-0296-48A8-AF80-02538F7188C5}.Retail|x64.ActiveCfg = Retail|x64
-		{77ACE5E5-0296-48A8-AF80-02538F7188C5}.Retail|x64.Build.0 = Retail|x64
-		{36F61D67-C746-4D60-9BDD-313641057E23}.Debug|x64.ActiveCfg = Debug|x64
-		{36F61D67-C746-4D60-9BDD-313641057E23}.Debug|x64.Build.0 = Debug|x64
-		{36F61D67-C746-4D60-9BDD-313641057E23}.Release|x64.ActiveCfg = Release|x64
-		{36F61D67-C746-4D60-9BDD-313641057E23}.Release|x64.Build.0 = Release|x64
-		{36F61D67-C746-4D60-9BDD-313641057E23}.Retail|x64.ActiveCfg = Retail|x64
-		{36F61D67-C746-4D60-9BDD-313641057E23}.Retail|x64.Build.0 = Retail|x64
-		{DA850603-0B3F-4FFC-AB52-FDD5A852EA54}.Debug|x64.ActiveCfg = Debug|x64
-		{DA850603-0B3F-4FFC-AB52-FDD5A852EA54}.Debug|x64.Build.0 = Debug|x64
-		{DA850603-0B3F-4FFC-AB52-FDD5A852EA54}.Release|x64.ActiveCfg = Release|x64
-		{DA850603-0B3F-4FFC-AB52-FDD5A852EA54}.Release|x64.Build.0 = Release|x64
-		{DA850603-0B3F-4FFC-AB52-FDD5A852EA54}.Retail|x64.ActiveCfg = Retail|x64
-		{DA850603-0B3F-4FFC-AB52-FDD5A852EA54}.Retail|x64.Build.0 = Retail|x64
 		{2E206E26-7C71-4D89-9A90-2A3D0C132C9D}.Debug|x64.ActiveCfg = Debug|x64
 		{2E206E26-7C71-4D89-9A90-2A3D0C132C9D}.Debug|x64.Build.0 = Debug|x64
 		{2E206E26-7C71-4D89-9A90-2A3D0C132C9D}.Release|x64.ActiveCfg = Release|x64

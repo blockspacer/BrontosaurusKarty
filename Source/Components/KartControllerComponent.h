@@ -39,12 +39,9 @@ public:
 	};
 
 private:
-	void ClearSpeed();
-	void ClearHeight();
-	void ClearHeight(const int anIndex);
-	void SetHeight(int aWheelIndex, float aHeight, const float aDt);
-	float GetHeightSpeed(int anIndex);
-	void ApplyNormalityBias(const float aDt);
+
+	//void SetHeight(float aHeight, const float aDt);
+	//float GetHeightSpeed();
 	void DoPhysics(const float aDeltaTime);
 
 	enum class AxisPos
@@ -58,7 +55,6 @@ private:
 
 	//std::function<bool(const CU::Vector3f&, const CU::Vector3f&, float)> myIsGrounded;
 	
-	float myAxisSpeed[static_cast<int>(AxisPos::Size)];
 
 	std::unique_ptr<CDrifter> myDrifter;
 
@@ -101,8 +97,8 @@ private:
 
 	Physics::CPhysicsScene* myPhysicsScene;
 
-	float myPreviousHeight[static_cast<int>(AxisPos::Size)];
-	float myCurrentHeight[static_cast<int>(AxisPos::Size)];
-	bool myFirstMovingPass;
 	bool myIsOnGround;
+	
+	//Experimental part
+	float myMainSpeed;
 };

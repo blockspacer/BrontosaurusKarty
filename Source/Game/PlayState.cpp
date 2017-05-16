@@ -33,14 +33,9 @@
 #include "../Components/PickupComponentManager.h"
 
 //Networking
-#include "TClient/Client.h"
-#include "TShared/NetworkMessage_ClientReady.h"
-#include "TClient/ClientMessageManager.h"
-#include "PostMaster/SendNetworkMessage.h"
 #include "PostMaster/MessageType.h"
 #include "ThreadedPostmaster/Postmaster.h"
 #include "ThreadedPostmaster/PostOffice.h"
-#include "ThreadedPostmaster/SendNetowrkMessageMessage.h"
 
 // Common Utilities
 #include "CommonUtilities/InputMessage.h"
@@ -77,6 +72,8 @@
 #include "KeyboardController.h"
 #include "SpeedHandlerComponent.h"
 #include "XboxController.h"
+#include "SmoothRotater.h"
+#include "KartModelComponent.h"
 
 CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -102,6 +99,8 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex)
 			myPlayerCount = std::atoi(playerCountStr.c_str());
 		}
 	}
+
+	DL_PRINT("started with %d players", myPlayerCount);
 }
 
 CPlayState::~CPlayState()
@@ -336,11 +335,20 @@ void CPlayState::CreateManagersAndFactories()
 
 void CPlayState::CreatePlayer(CU::Camera& aCamera)
 {
+	//Create sub player object
+	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
+	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
+
+	secondPlayerObject->AddComponent(playerModel);
+	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
+
+	//Create top player object
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
+	playerObject->AddComponent(secondPlayerObject);
+
 	CU::Matrix44f kartTransformation = CKartSpawnPointManager::GetInstance()->PopSpawnPoint().mySpawnTransformaion;
 	playerObject->SetWorldTransformation(kartTransformation);
 	playerObject->Move(CU::Vector3f::UnitY);
-	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
 	CCameraComponent* cameraComponent = new CCameraComponent();
 	CComponentManager::GetInstance().RegisterComponent(cameraComponent);
 	cameraComponent->SetCamera(aCamera);
@@ -354,7 +362,6 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	}
 	CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent);
 
-	playerObject->AddComponent(playerModel);
 
 	CItemHolderComponent* itemHolder = new CItemHolderComponent(*myItemFactory);
 	playerObject->AddComponent(itemHolder);
