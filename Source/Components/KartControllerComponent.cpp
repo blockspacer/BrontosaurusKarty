@@ -20,7 +20,7 @@
 #include "../CommonUtilities/CommonUtilities.h"
 
 
-CKartControllerComponent::CKartControllerComponent(): myPhysicsScene(nullptr), myMainSpeed(0)
+CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager): myPhysicsScene(nullptr), myIsOnGround(true), myMainSpeed(0), myManager(aManager)
 {
 	CU::CJsonValue levelsFile;
 	std::string errorString = levelsFile.Parse("Json/KartStats.json");

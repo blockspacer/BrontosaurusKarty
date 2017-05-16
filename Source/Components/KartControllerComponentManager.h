@@ -1,4 +1,6 @@
 #pragma once
+#include "NavigationSpline.h"
+
 namespace Physics {
 	class CPhysicsScene;
 }
@@ -18,8 +20,14 @@ public:
 
 	void ShouldUpdate(const bool aShouldUpdate);
 
+	void LoadNavigationSpline(const CU::CJsonValue& aJsonValue);
+
+	const CNavigationSpline& GetNavigationSpline() const;
+	
 private:
 	CU::GrowingArray<CKartControllerComponent*> myComponents;
 	Physics::CPhysicsScene* myPhysicsScene;
 	bool myShouldUpdate;
+
+	CNavigationSpline myNavigationSpline;
 };

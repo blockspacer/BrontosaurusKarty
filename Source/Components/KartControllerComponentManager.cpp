@@ -3,7 +3,7 @@
 #include "KartControllerComponent.h"
 #include "PollingStation.h"
 
-CKartControllerComponentManager::CKartControllerComponentManager()
+CKartControllerComponentManager::CKartControllerComponentManager(): myPhysicsScene(nullptr)
 {
 	myComponents.Init(4);
 	myShouldUpdate = false;
@@ -16,7 +16,7 @@ CKartControllerComponentManager::~CKartControllerComponentManager()
 
 CKartControllerComponent * CKartControllerComponentManager::CreateAndRegisterComponent()
 {
-	CKartControllerComponent* kartController = new CKartControllerComponent();
+	CKartControllerComponent* kartController = new CKartControllerComponent(this);
 	kartController->Init(myPhysicsScene);
 	CComponentManager::GetInstance().RegisterComponent(kartController);
 	myComponents.Add(kartController);
@@ -37,6 +37,16 @@ void CKartControllerComponentManager::Update(const float aDeltaTime)
 void CKartControllerComponentManager::ShouldUpdate(const bool aShouldUpdate)
 {
 	myShouldUpdate = aShouldUpdate;
+}
+
+void CKartControllerComponentManager::LoadNavigationSpline(const CU::CJsonValue& aJsonValue)
+{
+	myNavigationSpline.LoadFromJson(aJsonValue);
+}
+
+const CNavigationSpline& CKartControllerComponentManager::GetNavigationSpline() const
+{
+	return myNavigationSpline;
 }
 
 void CKartControllerComponentManager::Init(Physics::CPhysicsScene* aPhysicsScene)
