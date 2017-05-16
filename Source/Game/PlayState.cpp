@@ -366,6 +366,9 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	playerObject->AddComponent(itemHolder);
 
 	playerObject->AddComponent(kartComponent);
+	SBoxColliderData box;
+	box.myHalfExtent = CU::Vector3f(1.0f, 1.0f, 1.0f);
+	box.center.y = 1.05f;
 	SConcaveMeshColliderData crystalMeshColliderData;
 	crystalMeshColliderData.IsTrigger = false;
 	crystalMeshColliderData.myPath = "Models/Meshes/M_Kart_01.fbx";
@@ -373,12 +376,18 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera)
 	crystalMeshColliderData.material.aRestitution = 0.5f;
 	crystalMeshColliderData.material.aStaticFriction = 0.5f;
 	crystalMeshColliderData.myLayer;
-	CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&crystalMeshColliderData, playerObject->GetId());
+	CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&box, playerObject->GetId());
 	CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
 	CU::Vector3f offset = playerObject->GetWorldPosition();
-	colliderObject->SetWorldPosition({ offset.x, offset.y + 0.1f, offset.z });
+
+	SRigidBodyData rigidbodah;
+	rigidbodah.isKinematic = true;
+	rigidbodah.useGravity = false;
+	CColliderComponent* rigidComponent = myColliderComponentManager->CreateComponent(&rigidbodah, playerObject->GetId());
+//	colliderObject->SetWorldPosition({ offset.x, offset.y + 0.1f, offset.z });
 	colliderObject->AddComponent(playerColliderComponent);
 
+	colliderObject->AddComponent(rigidComponent);
 	playerObject->AddComponent(colliderObject);
 
 	playerObject->AddComponent(cameraComponent);

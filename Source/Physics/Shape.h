@@ -22,7 +22,7 @@ namespace Physics
 		~CShape();
 
 		void SetCollisionLayers(const ECollisionLayer& aLayer);
-		void SetCollisionLayers(const ECollisionLayer& aLayer, const ECollisionLayer& aLayerToCollideWith);
+		void SetCollisionLayers(const ECollisionLayer& aLayer, const unsigned int aLayerToCollideWith);
 		void SetObjectId(unsigned int aI);
 		physx::PxShape* GetShape();
 	private:
