@@ -20,7 +20,7 @@
 #include "../CommonUtilities/CommonUtilities.h"
 
 
-CKartControllerComponent::CKartControllerComponent(): myPhysicsScene(nullptr), myMainSpeed(0)
+CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager): myPhysicsScene(nullptr), myIsOnGround(true), myMainSpeed(0), myManager(aManager)
 {
 	CU::CJsonValue levelsFile;
 	std::string errorString = levelsFile.Parse("Json/KartStats.json");
@@ -384,39 +384,31 @@ void CKartControllerComponent::Init(Physics::CPhysicsScene* aPhysicsScene)
 }
 
 const float gravity = 9.82f;
-const float upDist = 0.5f;
+const float upDistConst = 0.01f;
+const float testLength = 2.f;
 void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 {
 	const CU::Matrix44f transformation = GetParent()->GetToWorldTransform();
 	const CU::Vector3f down = -CU::Vector3f::UnitY;
-	const CU::Vector3f right = transformation.myRightVector;
-	const CU::Vector3f front = transformation.myForwardVector;
+	const CU::Vector3f upMove = CU::Vector3f::UnitY;
+	const float upMoveLength = upMove.Length();
+	const float upDist = upDistConst + upMoveLength;
+	const float onGroundDist = upDistConst * 2.f + upMoveLength;
 	const CU::Vector3f pos = transformation.GetPosition();
 
-	const float halfWidth = myAxisDescription.width / 2.f;
-	const float halfLength = myAxisDescription.length / 2.f;
-
-	const CU::Vector3f rxhw = halfWidth * right;
-
-	CU::Vector3f axees[static_cast<int>(AxisPos::Size)];
-
 	myIsOnGround = false;
-
 
 	//Update fall speed per wheel
 
 	CU::Vector3f examineVector = pos;
 
-	Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(examineVector, down, 1, Physics::eGround);
+	Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(examineVector + upMove, down, testLength, Physics::eGround);
 
-	//const float heightSpeed = GetHeightSpeed(i);
 	if (raycastHitData.hit == true)
 	{
-		if (raycastHitData.distance < upDist * 2.f)
+		if (raycastHitData.distance < onGroundDist)
 		{
 			myIsOnGround = true;
-
-			//SetHeight(i, examineVector.y, aDeltaTime);
 		}
 		if (raycastHitData.distance < upDist)
 		{
@@ -427,19 +419,13 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 			examineVector -= down * (disp < 0.f ? 0.f : disp);
 		}
 	}
-	else
-	{
-
-
-		//ClearHeight(i);
-	}
 
 
 	myMainSpeed += gravity * aDeltaTime;
 
 
 	//When not on ground, do fall
-	const CU::Vector3f disp = down * myMainSpeed * aDeltaTime/* + CU::Vector3f::UnitY * heightSpeed * aDeltaTime*/;
+	const CU::Vector3f disp = down * myMainSpeed * aDeltaTime;
 
 
 	examineVector += disp;

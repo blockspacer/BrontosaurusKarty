@@ -115,21 +115,23 @@ void Component::CKartModelComponent::NormalizeRotation(const float aDeltaTime)
 
 
 const float gravity = 9.82f;
-const float upDist = 0.5f;
+const float upDistConst = 0.01f;
+const float testLength = 5.f;
 
 void Component::CKartModelComponent::Update(const float aDeltaTime)
 {
-
 	NormalizeRotation(aDeltaTime);
 
 	const CU::Matrix44f transformation = GetParent()->GetToWorldTransform();
 	const CU::Vector3f down = -CU::Vector3f::UnitY;
+	const CU::Vector3f upMove = CU::Vector3f::UnitY;
+	const float upMoveLength = upMove.Length();
+	const float upDist = upDistConst + upMoveLength;
 	const CU::Vector3f right = transformation.myRightVector;
 	const CU::Vector3f front = transformation.myForwardVector;
 	const CU::Vector3f pos = transformation.GetPosition();
 
 	const float halfWidth = myAxisDescription.width / 2.f;
-	const float halfLength = myAxisDescription.length / 2.f;
 
 	const CU::Vector3f rxhw = halfWidth * right;
 
@@ -156,7 +158,7 @@ void Component::CKartModelComponent::Update(const float aDeltaTime)
 			examineVector -= rxhw;
 		}
 
-		Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(examineVector, down, 1, Physics::eGround);
+		Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(examineVector + upMove, down, testLength, Physics::eGround);
 
 		const float heightSpeed = GetHeightSpeed(i);
 		if (raycastHitData.hit == true)

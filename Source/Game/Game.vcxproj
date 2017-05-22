@@ -311,6 +311,7 @@
     <ClCompile Include="LoadState.cpp" />
     <ClCompile Include="MenuManager.cpp" />
     <ClCompile Include="MenuState.cpp" />
+    <ClCompile Include="NavigationSpline.cpp" />
     <ClCompile Include="ParticleEffectManager.cpp" />
     <ClCompile Include="PlayState.cpp" />
     <ClCompile Include="PollingStation.cpp" />
@@ -333,6 +334,7 @@
     <ClInclude Include="LoadState.h" />
     <ClInclude Include="MenuManager.h" />
     <ClInclude Include="MenuState.h" />
+    <ClInclude Include="NavigationSpline.h" />
     <ClInclude Include="ParticleEffectManager.h" />
     <ClInclude Include="PlayState.h" />
     <ClInclude Include="PollingStation.h" />

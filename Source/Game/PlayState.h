@@ -2,6 +2,7 @@
 #include "../StateStack/State.h"
 #include "../ThreadedPostmaster/Subscriber.h"
 #include "SParticipant.h"
+#include "NavigationSpline.h"
 
 namespace CU
 {
@@ -66,6 +67,8 @@ public:
 	CU::eInputReturn RecieveInput(const CU::SInputMessage& aInputMessage) override;
 	void SetCameraComponent(CCameraComponent* aCameraComponent);
 	inline CBoostPadComponentManager* GetBoostPadComponentManager();
+
+	void LoadNavigationSpline(const CU::CJsonValue &splineData);
 private:
 	void CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDevice aIntputDevice);
 	void InitiateRace();
@@ -96,6 +99,7 @@ private:
 	int myPlayerCount;
 	int myLevelIndex;
 	std::atomic_bool myIsLoaded;
+
 };
 
 inline bool CPlayState::IsLoaded() const

@@ -1,18 +1,21 @@
 #pragma once
 #include "Component.h"
 
+
 namespace Physics
 {
 	class CPhysicsScene;
 }
 
 class CParticleEmitterInstance;
+class CKartControllerComponentManager;
 class CDrifter;
 
 class CKartControllerComponent : public CComponent
 {
 public:
-	CKartControllerComponent();
+
+	CKartControllerComponent(CKartControllerComponentManager* aManager);
 	~CKartControllerComponent();
 
 	void Turn(float aDirectionX);
@@ -110,4 +113,6 @@ private:
 	
 	//Experimental part
 	float myMainSpeed;
+
+	CKartControllerComponentManager* myManager;
 };

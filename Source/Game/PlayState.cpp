@@ -370,6 +370,11 @@ void CPlayState::CreateManagersAndFactories()
 	CPickupComponentManager::Create();
 }
 
+void CPlayState::LoadNavigationSpline(const CU::CJsonValue& splineData)
+{
+	myKartControllerComponentManager->LoadNavigationSpline(splineData);
+}
+
 void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDevice aIntputDevice)
 {
 	//Create sub player object
