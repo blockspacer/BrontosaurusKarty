@@ -3,9 +3,6 @@
 #pragma comment (lib, "dxguid.lib")
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
-#include <string>
-#include <vector>
-
 
 namespace CU
 {

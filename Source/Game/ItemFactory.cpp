@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ItemFactory.h"
+#include "Components/SpeedHandlerManager.h"
 
 
 CItemFactory::CItemFactory()
@@ -30,9 +31,13 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 		//Create shell that homes in on the leader
 		break;
 	case eItemTypes::eMushroom:
-
+	{
+		SComponentMessageData boostMessageData;
+		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("BoostPowerUp"));
+		userComponent->GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
 		//userComponent->GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost,)
 		break;
+	}
 	case eItemTypes::eGoldenMushroom:
 		//boost and have some form of cooldown before 
 		break;

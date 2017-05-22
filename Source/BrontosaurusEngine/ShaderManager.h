@@ -1,8 +1,7 @@
 #pragma once
-#include <vector>
-#include <unordered_map>
-#include <d3dcommon.h>
+//#include <d3dcommon.h>
 
+struct ID3D10Blob;
 struct ID3D11VertexShader;
 struct ID3D11PixelShader;
 struct ID3D11GeometryShader;

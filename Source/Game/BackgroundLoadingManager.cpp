@@ -30,10 +30,10 @@ void CBackgroundLoadingManager::DestroyInstance()
 	ourInstance = nullptr;
 }
 
-void CBackgroundLoadingManager::CreateStateToLoad(StateStack& aStateStack, const int aLevelIndex)
+void CBackgroundLoadingManager::CreateStateToLoad(StateStack& aStateStack, const int aLevelIndex, const CU::GrowingArray<SParticipant>& aParticipants)
 {
 	myLevelIndex = aLevelIndex;
-	myCurrentPlayState = new CPlayState(aStateStack, aLevelIndex);
+	myCurrentPlayState = new CPlayState(aStateStack, aLevelIndex, aParticipants);
 
 	CU::Work myWork(std::bind(&CPlayState::Load, myCurrentPlayState));
 	myWork.SetName("Load thread");

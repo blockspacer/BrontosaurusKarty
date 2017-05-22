@@ -11,8 +11,8 @@
 #include "Intersection.h"
 #define HIGH_ENUF 10
 
-#include "../TShared/AnimationState.h"
 #include "TextureManager.h"
+#include "AnimationState.h"
 DECLARE_ANIMATION_ENUM_AND_STRINGS;
 
 #include "../CommonUtilities/CommonUtilities.h"

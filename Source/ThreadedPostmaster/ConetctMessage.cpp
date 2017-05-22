@@ -1,10 +1,5 @@
 #include "stdafx.h"
 #include "ConetctMessage.h"
-#include "../PostMaster/MessageType.h"
-#include "Subscriber.h"
-
-
-
 
 
 CConectMessage::CConectMessage(const std::string& aName, const std::string& aIp) : IMessage(eMessageType::eNetworkMessage), myName(aName), myIP(aIp)

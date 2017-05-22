@@ -1,18 +1,21 @@
 #pragma once
 #include "Component.h"
 
+
 namespace Physics
 {
 	class CPhysicsScene;
 }
 
 class CParticleEmitterInstance;
+class CKartControllerComponentManager;
 class CDrifter;
 
 class CKartControllerComponent : public CComponent
 {
 public:
-	CKartControllerComponent();
+
+	CKartControllerComponent(CKartControllerComponentManager* aManager);
 	~CKartControllerComponent();
 
 	void Turn(float aDirectionX);
@@ -24,6 +27,7 @@ public:
 	void StopTurning();
 	void Drift();
 	void StopDrifting();
+	void GetHit();
 
 	void CheckZKill();
 	void Update(const float aDeltaTime);
@@ -39,12 +43,9 @@ public:
 	};
 
 private:
-	void ClearSpeed();
-	void ClearHeight();
-	void ClearHeight(const int anIndex);
-	void SetHeight(int aWheelIndex, float aHeight, const float aDt);
-	float GetHeightSpeed(int anIndex);
-	void ApplyNormalityBias(const float aDt);
+
+	//void SetHeight(float aHeight, const float aDt);
+	//float GetHeightSpeed();
 	void DoPhysics(const float aDeltaTime);
 
 	enum class AxisPos
@@ -56,9 +57,10 @@ private:
 		Size
 	};
 
+
+
 	//std::function<bool(const CU::Vector3f&, const CU::Vector3f&, float)> myIsGrounded;
 	
-	float myAxisSpeed[static_cast<int>(AxisPos::Size)];
 
 	std::unique_ptr<CDrifter> myDrifter;
 
@@ -97,12 +99,20 @@ private:
 		int myRightWheelDriftEmmiterHandle;
 		int myLeftDriftBoostEmitterhandle;
 		int myRightDriftBoostEmitterhandle;
+		int myBoostEmmiterhandle;
 	//} myDriftEmitter;
 
 	Physics::CPhysicsScene* myPhysicsScene;
 
-	float myPreviousHeight[static_cast<int>(AxisPos::Size)];
-	float myCurrentHeight[static_cast<int>(AxisPos::Size)];
-	bool myFirstMovingPass;
 	bool myIsOnGround;
+	bool myIsBoosting;
+
+	bool myHasGottenHit;
+	float myTimeToBeStunned;
+	float myElapsedStunTime;
+	
+	//Experimental part
+	float myMainSpeed;
+
+	CKartControllerComponentManager* myManager;
 };

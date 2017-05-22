@@ -309,11 +309,15 @@
     <ClCompile Include="KartSpawnPointManager.cpp" />
     <ClCompile Include="LoadingAnimation.cpp" />
     <ClCompile Include="LoadState.cpp" />
+    <ClCompile Include="MenuManager.cpp" />
+    <ClCompile Include="MenuState.cpp" />
+    <ClCompile Include="NavigationSpline.cpp" />
     <ClCompile Include="ParticleEffectManager.cpp" />
     <ClCompile Include="PlayState.cpp" />
     <ClCompile Include="PollingStation.cpp" />
     <ClCompile Include="ScriptHelperFunctions.cpp" />
     <ClCompile Include="ScriptLoader.cpp" />
+    <ClCompile Include="SplitScreenSelection.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ModelViewer|x64'">Create</PrecompiledHeader>
@@ -328,11 +332,16 @@
     <ClInclude Include="KartSpawnPointManager.h" />
     <ClInclude Include="LoadingAnimation.h" />
     <ClInclude Include="LoadState.h" />
+    <ClInclude Include="MenuManager.h" />
+    <ClInclude Include="MenuState.h" />
+    <ClInclude Include="NavigationSpline.h" />
     <ClInclude Include="ParticleEffectManager.h" />
     <ClInclude Include="PlayState.h" />
     <ClInclude Include="PollingStation.h" />
     <ClInclude Include="ScriptHelperFunctions.h" />
     <ClInclude Include="ScriptLoader.h" />
+    <ClInclude Include="SParticipant.h" />
+    <ClInclude Include="SplitScreenSelection.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -351,9 +360,6 @@
     </ProjectReference>
     <ProjectReference Include="..\Physics\Physics.vcxproj">
       <Project>{eace5a51-158e-4e6b-9d38-1a4597e76a67}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\TClient\TClient.vcxproj">
-      <Project>{77ace5e5-0296-48a8-af80-02538f7188c5}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

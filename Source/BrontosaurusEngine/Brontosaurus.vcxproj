@@ -381,6 +381,7 @@
   <ItemGroup>
     <ClInclude Include="Allignment.h" />
     <ClInclude Include="AnimationController.h" />
+    <ClInclude Include="AnimationState.h" />
     <ClInclude Include="C2DGUIRenderer.h" />
     <ClInclude Include="CascadeBuffer.h" />
     <ClInclude Include="CascadeShadowMap.h" />

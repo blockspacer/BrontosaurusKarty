@@ -7,9 +7,6 @@
     <ClInclude Include="stdafx.h">
       <Filter>Precompiled</Filter>
     </ClInclude>
-    <ClInclude Include="LuaFunctions.h">
-      <Filter>LuaFunctions</Filter>
-    </ClInclude>
     <ClInclude Include="LoadManager.h">
       <Filter>LoadManager</Filter>
     </ClInclude>
@@ -17,7 +14,7 @@
       <Filter>LoadObject</Filter>
     </ClInclude>
     <ClInclude Include="LoadModel.h">
-      <Filter>LoadThings\LoadModels</Filter>
+      <Filter>LoadThings\LoadKartSpawn\LoadModels</Filter>
     </ClInclude>
     <ClInclude Include="LoadScriptComponent.h">
       <Filter>LoadThings\LoadScriptComponent</Filter>
@@ -34,7 +31,6 @@
     <ClInclude Include="LoadCamera.h">
       <Filter>LoadThings\LoadCamera</Filter>
     </ClInclude>
-    <ClInclude Include="ServerLoadManager.h" />
     <ClInclude Include="LoadParticleEmitterComponent.h">
       <Filter>LoadThings\LoadParticleComponent</Filter>
     </ClInclude>
@@ -56,13 +52,13 @@
     <ClInclude Include="LoadBoostPad.h">
       <Filter>LoadThings\LoadBoostPads</Filter>
     </ClInclude>
+    <ClInclude Include="LoadBezierCurve.h">
+      <Filter>LoadThings\LoadBezierCurve</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Precompiled</Filter>
-    </ClCompile>
-    <ClCompile Include="LuaFunctions.cpp">
-      <Filter>LuaFunctions</Filter>
     </ClCompile>
     <ClCompile Include="LoadManager.cpp">
       <Filter>LoadManager</Filter>
@@ -71,7 +67,7 @@
       <Filter>LoadObject</Filter>
     </ClCompile>
     <ClCompile Include="LoadModel.cpp">
-      <Filter>LoadThings\LoadModels</Filter>
+      <Filter>LoadThings\LoadKartSpawn\LoadModels</Filter>
     </ClCompile>
     <ClCompile Include="LoadScriptComponent.cpp">
       <Filter>LoadThings\LoadScriptComponent</Filter>
@@ -88,7 +84,6 @@
     <ClCompile Include="LoadCamera.cpp">
       <Filter>LoadThings\LoadCamera</Filter>
     </ClCompile>
-    <ClCompile Include="ServerLoadManager.cpp" />
     <ClCompile Include="LoadParticleEmitterComponent.cpp">
       <Filter>LoadThings\LoadParticleComponent</Filter>
     </ClCompile>
@@ -110,11 +105,11 @@
     <ClCompile Include="LoadBoostPad.cpp">
       <Filter>LoadThings\LoadBoostPads</Filter>
     </ClCompile>
+    <ClCompile Include="LoadBezierCurve.cpp">
+      <Filter>LoadThings\LoadBezierCurve</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="LuaFunctions">
-      <UniqueIdentifier>{a33c0251-8964-432b-b372-abd7d6fcdcf0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="LoadManager">
       <UniqueIdentifier>{f56e17b2-c60a-469e-afa0-9e5d0cc30d3b}</UniqueIdentifier>
     </Filter>
@@ -123,9 +118,6 @@
     </Filter>
     <Filter Include="LoadThings">
       <UniqueIdentifier>{8ffe0ed9-1a47-4dbf-ab22-ab09a7fa988b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="LoadThings\LoadModels">
-      <UniqueIdentifier>{acf9c7cc-2225-46d8-8cac-522e2bd15445}</UniqueIdentifier>
     </Filter>
     <Filter Include="LoadThings\LoadScriptComponent">
       <UniqueIdentifier>{17024182-1998-45ac-a4d3-c73267c647e2}</UniqueIdentifier>
@@ -165,6 +157,12 @@
     </Filter>
     <Filter Include="LoadThings\LoadBoostPads">
       <UniqueIdentifier>{8f7c1513-285d-4625-a021-2fabb9ee0f8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LoadThings\LoadBezierCurve">
+      <UniqueIdentifier>{3e1150fc-b48e-42a4-951c-43db55bd64b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LoadThings\LoadKartSpawn\LoadModels">
+      <UniqueIdentifier>{acf9c7cc-2225-46d8-8cac-522e2bd15445}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

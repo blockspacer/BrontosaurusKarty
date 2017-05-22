@@ -1,6 +1,8 @@
 #pragma once
 #include "../StateStack/State.h"
 #include "../ThreadedPostmaster/Subscriber.h"
+#include "SParticipant.h"
+#include "NavigationSpline.h"
 
 namespace CU
 {
@@ -38,6 +40,7 @@ class CPlayState : public State , public Postmaster::ISubscriber
 {
 public:
 	CPlayState(StateStack& aStateStack, const int aLevelIndex);
+	CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU::GrowingArray<SParticipant> aPlayers);
 	~CPlayState();
 
 	void Load();
@@ -64,8 +67,10 @@ public:
 	CU::eInputReturn RecieveInput(const CU::SInputMessage& aInputMessage) override;
 	void SetCameraComponent(CCameraComponent* aCameraComponent);
 	inline CBoostPadComponentManager* GetBoostPadComponentManager();
+
+	void LoadNavigationSpline(const CU::CJsonValue &splineData);
 private:
-	void CreatePlayer(CU::Camera& aCamera);
+	void CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDevice aIntputDevice);
 	void InitiateRace();
 
 private:
@@ -86,13 +91,15 @@ private:
 	CItemFactory* myItemFactory;
 
 	CU::GrowingArray<CCameraComponent*> myCameraComponents;
+	CU::GrowingArray<SParticipant> myPlayers;
 
-	CU::TimerManager* myTimerManager;
+	//CU::TimerManager* myTimerManager;
 	TimerHandle myCountdownTimerHandle;
 
 	int myPlayerCount;
 	int myLevelIndex;
 	std::atomic_bool myIsLoaded;
+
 };
 
 inline bool CPlayState::IsLoaded() const

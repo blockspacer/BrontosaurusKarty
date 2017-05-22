@@ -34,7 +34,7 @@ CKeyboardController* CPlayerControllerManager::CreateKeyboardController(CKartCon
 	return controller;
 }
 
-CXboxController* CPlayerControllerManager::CreateXboxController(CKartControllerComponent& aKartComponent)
+CXboxController* CPlayerControllerManager::CreateXboxController(CKartControllerComponent& aKartComponent, short aControllerIndex)
 {
 	CXboxController* controller = new CXboxController(aKartComponent);
 
@@ -46,7 +46,7 @@ CXboxController* CPlayerControllerManager::CreateXboxController(CKartControllerC
 	}
 
 	playState->Subscribe(*controller);
-	controller->SetIndex(playState->AddXboxController());
+	controller->SetIndex(aControllerIndex);
 
 	myPlayerControllers.Add(controller);
 

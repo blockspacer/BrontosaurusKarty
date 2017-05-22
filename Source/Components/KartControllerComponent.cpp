@@ -4,23 +4,24 @@
 #include "BoostData.h"
 #include "ParticleEmitterInstance.h"
 #include "ParticleEmitterManager.h"
+#include "Drifter.h"
+#include "SmoothRotater.h"
+
 #include "../CommonUtilities/JsonValue.h"
-#include "../PostMaster/SetVibrationOnController.h"
-#include "../PostMaster/StopVibrationOnController.h"
+
+#include "../ThreadedPostmaster/SetVibrationOnController.h"
+#include "../ThreadedPostmaster/StopVibrationOnController.h"
 #include "../ThreadedPostmaster/Postmaster.h"
+
 #include "../Physics/PhysicsCallbackActor.h"
 #include "../Physics/PhysXManager.h"
 #include "../Physics/PhysicsScene.h"
-#include "../TServer/GameServer.h"
-#include "CommonUtilities.h"
-#include "Drifter.h"
+
+#include "../CommonUtilities/CommonUtilities.h"
 
 
-CKartControllerComponent::CKartControllerComponent(): myPhysicsScene(nullptr), myFirstMovingPass(true)
+CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager): myPhysicsScene(nullptr), myIsOnGround(true), myMainSpeed(0), myManager(aManager)
 {
-	ClearHeight();
-	ClearSpeed();
-	
 	CU::CJsonValue levelsFile;
 	std::string errorString = levelsFile.Parse("Json/KartStats.json");
 	if (!errorString.empty()) DL_MESSAGE_BOX(errorString.c_str());
@@ -48,6 +49,12 @@ CKartControllerComponent::CKartControllerComponent(): myPhysicsScene(nullptr), m
 	myMaxSpeedModifier = 1.0f;
 	myAccelerationModifier = 1.0f;
 
+	myIsBoosting = false;
+	myHasGottenHit = false;
+	myTimeToBeStunned = 1.5f;
+	myElapsedStunTime = 0.f;
+
+
 	myBoostSpeedDecay = myMaxAcceleration * myAccelerationModifier * 1.25f;
 
 	myDrifter = std::make_unique<CDrifter>();
@@ -57,6 +64,7 @@ CKartControllerComponent::CKartControllerComponent(): myPhysicsScene(nullptr), m
 	myRightWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("DriftParticle").GetString());
 	myLeftDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("FirstStageBoostParticle").GetString());
 	myRightDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("FirstStageBoostParticle").GetString());
+	myBoostEmmiterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GunFire");
 
 	myCurrentAction = eCurrentAction::eDefault;
 }
@@ -68,6 +76,10 @@ CKartControllerComponent::~CKartControllerComponent()
 
 void CKartControllerComponent::Turn(float aDirectionX)
 {
+	if (myHasGottenHit == true)
+	{
+		return;
+	}
 	if (aDirectionX < 0.f)
 	{
 		if (aDirectionX < -1.f)
@@ -90,6 +102,10 @@ void CKartControllerComponent::Turn(float aDirectionX)
 
 void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 {
+	if (myHasGottenHit == true)
+	{
+		return;
+	}
 	assert(aNormalizedModifier <= 1.f && aNormalizedModifier >= -1.f && "normalized modifier not normalized mvh carl");
 	myCurrentAction = eCurrentAction::eTurningRight;
 
@@ -105,6 +121,10 @@ void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 
 void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 {
+	if (myHasGottenHit == true)
+	{
+		return;
+	}
 	myCurrentAction = eCurrentAction::eTurningLeft;
 	if (myDrifter->IsDrifting() == false)
 	{
@@ -123,11 +143,19 @@ void CKartControllerComponent::StopMoving()
 
 void CKartControllerComponent::MoveFoward()
 {
+	if (myHasGottenHit == true)
+	{
+		return;
+	}
 	myAcceleration = myMaxAcceleration;
 }
 
 void CKartControllerComponent::MoveBackWards()
 {
+	if (myHasGottenHit == true)
+	{
+		return;
+	}
 	myAcceleration = myMinAcceleration;
 }
 
@@ -147,6 +175,10 @@ void CKartControllerComponent::StopTurning()
 //Checks if the player is turning left or right and then sets the drift values accordingly
 void CKartControllerComponent::Drift()
 {
+	if (myHasGottenHit == true)
+	{
+		return;
+	}
 	myDrifter->StartDrifting(mySteering);
 	if (mySteering > 0)
 	{
@@ -208,8 +240,15 @@ void CKartControllerComponent::StopDrifting()
 	}
 }
 
+void CKartControllerComponent::GetHit()
+{
+	myHasGottenHit = true;
+	StopDrifting();
+	//myAcceleration = 0;
+}
+
 //TODO: Hard coded, not good, change soon
-const float killHeight = -25;
+const float killHeight = -50;
 
 void CKartControllerComponent::CheckZKill()
 {
@@ -220,12 +259,7 @@ void CKartControllerComponent::CheckZKill()
 		GetParent()->SetWorldTransformation(CU::Matrix44f());
 		GetParent()->SetWorldPosition(CU::Vector3f(0.f, 1.f, 0.f));
 		myFowrardSpeed = 0.f;
-		for(int i  = 0; i < static_cast<int>(AxisPos::Size); ++i)
-		{
-			myAxisSpeed[i] = 0;
-		}
-		ClearSpeed();
-		ClearHeight();
+		GetParent()->NotifyComponents(eComponentMessageType::eKill, SComponentMessageData());
 	}
 }
 
@@ -234,102 +268,80 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	DoPhysics(aDeltaTime);
 	CheckZKill();
 
-	float way = 1.f;
-	if (myFowrardSpeed > 0.f)
-	{
-		way = -1.f;
-	}
-
-	const float onGroundModifier = (myIsOnGround == true ? 1.f : 0.f);
-	myFowrardSpeed += myFriction * way * aDeltaTime * onGroundModifier;
-	myFowrardSpeed += myAcceleration * aDeltaTime * myAccelerationModifier * onGroundModifier;
-	if (myFowrardSpeed > myMaxSpeed * myMaxSpeedModifier)
-	{
-		myFowrardSpeed -= myBoostSpeedDecay * aDeltaTime;
-	}
-	if (myFowrardSpeed < myMinSpeed)
-	{
-		myFowrardSpeed = myMinSpeed;
-	}
-
-	float steerAngle = (mySteering + /*myDrifting.myDriftSteerModifier*/myDrifter->GetSteerModifier()) * myAngularAcceleration * -way * onGroundModifier;
-	CU::Matrix44f& parentTransform = GetParent()->GetLocalTransform();
-	parentTransform.RotateAroundAxis(steerAngle * aDeltaTime, CU::Axees::Y);
-
-	GetParent()->GetLocalTransform().Move(CU::Vector3f(0.0f, 0.0f, myFowrardSpeed * aDeltaTime));
-
-	if (myDrifter->IsDrifting())
-	{
-		myDrifter->ApplySteering(mySteering, aDeltaTime);
-
-		GetParent()->GetLocalTransform().Move(CU::Vector3f(/*myDrifting.myDriftRate*/myDrifter->GetDriftRate()  * aDeltaTime, 0.0f, 0.0f));
-
-		CU::Matrix44f particlePosition = GetParent()->GetLocalTransform();
-
-		particlePosition.Move(CU::Vector3f(-0.45f, 0, 0));
-		CParticleEmitterManager::GetInstance().SetPosition(myLeftWheelDriftEmmiterHandle, particlePosition.GetPosition());
-		CParticleEmitterManager::GetInstance().SetPosition(myLeftDriftBoostEmitterhandle, particlePosition.GetPosition());
-		particlePosition.Move(CU::Vector3f(0.9f, 0, 0));
-		CParticleEmitterManager::GetInstance().SetPosition(myRightWheelDriftEmmiterHandle, particlePosition.GetPosition());
-		CParticleEmitterManager::GetInstance().SetPosition(myRightDriftBoostEmitterhandle, particlePosition.GetPosition());
-
-		static bool driftParticlesActivated = false;
-		if (myDrifter->WheelsAreBurning() && driftParticlesActivated == false)
-		{
-			CParticleEmitterManager::GetInstance().Activate(myLeftDriftBoostEmitterhandle);
-			CParticleEmitterManager::GetInstance().Activate(myRightDriftBoostEmitterhandle);
-		}
-	}
-
-	GetParent()->NotifyComponents(eComponentMessageType::eMoving, SComponentMessageData());
-}
-
-void CKartControllerComponent::ClearHeight()
-{
 	
+		float way = 1.f;
+		if (myFowrardSpeed > 0.f)
+		{
+			way = -1.f;
+		}
 
-	for(int i = 0; i < static_cast<int>(AxisPos::Size); ++i)
-	{
-		ClearHeight(i);
-	}
-}
+		const float onGroundModifier = (myIsOnGround == true ? 1.f : 0.f);
+		myFowrardSpeed += myFriction * way * aDeltaTime * onGroundModifier;
 
-void CKartControllerComponent::ClearHeight(const int anIndex)
-{
-	float height = 0.f;
-	if (GetParent() != nullptr)
-	{
-		height = GetParent()->GetWorldPosition().y;
-	}
-	SetHeight(anIndex, height, 1.f);
-	SetHeight(anIndex, height, 1.f);
-}
+		if (myHasGottenHit == false)
+		{
+			myFowrardSpeed += myAcceleration * aDeltaTime * myAccelerationModifier * onGroundModifier;
+		}
 
-void CKartControllerComponent::SetHeight(int aWheelIndex, float aHeight, const float aDt)
-{
-	myPreviousHeight[aWheelIndex] = myCurrentHeight[aWheelIndex];
-	myCurrentHeight[aWheelIndex] = aHeight;
-}
+		if (myFowrardSpeed > myMaxSpeed * myMaxSpeedModifier)
+		{
+			myFowrardSpeed -= myBoostSpeedDecay * aDeltaTime;
+		}
+		if (myFowrardSpeed < myMinSpeed)
+		{
+			myFowrardSpeed = myMinSpeed;
+		}
 
-float CKartControllerComponent::GetHeightSpeed(int anIndex)
-{
-	const float heightDelta = myCurrentHeight[anIndex] - myPreviousHeight[anIndex];
+		float steerAngle = (mySteering + /*myDrifting.myDriftSteerModifier*/myDrifter->GetSteerModifier()) * myAngularAcceleration * -way * onGroundModifier;
+		CU::Matrix44f& parentTransform = GetParent()->GetLocalTransform();
+		parentTransform.RotateAroundAxis(steerAngle * aDeltaTime, CU::Axees::Y);
 
-	if (heightDelta < 0.f)
-	{
-		return 0.f;
-	}
+		GetParent()->GetLocalTransform().Move(CU::Vector3f(0.0f, 0.0f, myFowrardSpeed * aDeltaTime));
 
-	if (heightDelta > 0.f)
-	{
-		int i = 0;
-	}
+		if (myIsBoosting == true)
+		{
+			CU::Matrix44f particlePosition = GetParent()->GetLocalTransform();
 
-	return heightDelta;
-}
+			particlePosition.Move(CU::Vector3f(0.f, 0, 0));
+			CParticleEmitterManager::GetInstance().SetPosition(myBoostEmmiterhandle, particlePosition.GetPosition());
+		}
 
-void CKartControllerComponent::ApplyNormalityBias(const float aDt)
-{
+		if (myDrifter->IsDrifting())
+		{
+			myDrifter->ApplySteering(mySteering, aDeltaTime);
+
+			GetParent()->GetLocalTransform().Move(CU::Vector3f(/*myDrifting.myDriftRate*/myDrifter->GetDriftRate()  * aDeltaTime, 0.0f, 0.0f));
+
+			CU::Matrix44f particlePosition = GetParent()->GetLocalTransform();
+
+			particlePosition.Move(CU::Vector3f(-0.45f, 0, 0));
+			CParticleEmitterManager::GetInstance().SetPosition(myLeftWheelDriftEmmiterHandle, particlePosition.GetPosition());
+			CParticleEmitterManager::GetInstance().SetPosition(myLeftDriftBoostEmitterhandle, particlePosition.GetPosition());
+			particlePosition.Move(CU::Vector3f(0.9f, 0, 0));
+			CParticleEmitterManager::GetInstance().SetPosition(myRightWheelDriftEmmiterHandle, particlePosition.GetPosition());
+			CParticleEmitterManager::GetInstance().SetPosition(myRightDriftBoostEmitterhandle, particlePosition.GetPosition());
+
+			static bool driftParticlesActivated = false;
+			if (myDrifter->WheelsAreBurning() && driftParticlesActivated == false)
+			{
+				CParticleEmitterManager::GetInstance().Activate(myLeftDriftBoostEmitterhandle);
+				CParticleEmitterManager::GetInstance().Activate(myRightDriftBoostEmitterhandle);
+			}
+		}
+		if (myHasGottenHit == true)
+		{
+			myElapsedStunTime += aDeltaTime;
+			if (myElapsedStunTime >= myTimeToBeStunned)
+			{
+				myElapsedStunTime = 0;
+				myHasGottenHit = false;
+			}
+		}
+
+	SComponentMessageData messageData;
+	messageData.myFloat = aDeltaTime;
+	GetParent()->NotifyComponents(eComponentMessageType::eUpdate, messageData);
+	GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
 }
 
 void CKartControllerComponent::Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData)
@@ -337,22 +349,26 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 	switch (aMessageType)
 	{
 	case eComponentMessageType::eAddComponent:
-		if (aMessageData.myComponent == this)
-		{
-			ClearHeight();
-		}
 		break;
 	case eComponentMessageType::eObjectDone:
-		if (myFirstMovingPass == true)
-		{
-			myFirstMovingPass = false;
-			ClearHeight();
-		}
 		break;
 	case eComponentMessageType::eSetBoost:
+
+		if (aMessageData.myBoostData->maxSpeedBoost > 0)
+		{
+			myIsBoosting = true;
+			CParticleEmitterManager::GetInstance().Activate(myBoostEmmiterhandle);
+		}
+		else
+		{
+			myIsBoosting = false;
+			CParticleEmitterManager::GetInstance().Deactivate(myBoostEmmiterhandle);
+		}
+
 		myMaxSpeedModifier = 1.0f + aMessageData.myBoostData->maxSpeedBoost;
 		myAccelerationModifier = 1.0f + aMessageData.myBoostData->accerationBoost;
 		myBoostSpeedDecay = myMaxAcceleration * myAccelerationModifier * 1.25f;
+		break;
 	}
 }
 
@@ -361,149 +377,58 @@ void CKartControllerComponent::Init(Physics::CPhysicsScene* aPhysicsScene)
 	myPhysicsScene = aPhysicsScene;
 }
 
-void CKartControllerComponent::ClearSpeed()
-{
-	for (int i = 0; i < static_cast<int>(AxisPos::Size); ++i)
-	{
-		myAxisSpeed[i] = 0.f;
-	}
-}
-
 const float gravity = 9.82f;
-const float upDist = 0.05f;
+const float upDistConst = 0.01f;
+const float testLength = 2.f;
 void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 {
+	const CU::Matrix44f transformation = GetParent()->GetToWorldTransform();
 	const CU::Vector3f down = -CU::Vector3f::UnitY;
-	const CU::Vector3f right = GetParent()->GetToWorldTransform().myRightVector;
-	const CU::Vector3f front = GetParent()->GetToWorldTransform().myForwardVector;
-	const CU::Vector3f pos = GetParent()->GetWorldPosition();
-
-	const float halfWidth = myAxisDescription.width / 2.f;
-	const float halfLength = myAxisDescription.length / 2.f;
-
-	const CU::Vector3f rxhw = halfWidth * right;
-
-	
-
-	//Check if on ground (once per axis)
-
-	CU::Vector3f axees[static_cast<int>(AxisPos::Size)];
+	const CU::Vector3f upMove = CU::Vector3f::UnitY;
+	const float upMoveLength = upMove.Length();
+	const float upDist = upDistConst + upMoveLength;
+	const float onGroundDist = upDistConst * 2.f + upMoveLength;
+	const CU::Vector3f pos = transformation.GetPosition();
 
 	myIsOnGround = false;
 
-	for(int i = 0; i < static_cast<int>(AxisPos::Size); ++i)
+	//Update fall speed per wheel
+
+	CU::Vector3f examineVector = pos;
+
+	Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(examineVector + upMove, down, testLength, Physics::eGround);
+
+	if (raycastHitData.hit == true)
 	{
-		//Update fall speed
-		
-		CU::Vector3f examineVector = pos;
-
-		if(i % 2 != 0)
+		if (raycastHitData.distance < onGroundDist)
 		{
-			examineVector += front * myAxisDescription.length;
+			myIsOnGround = true;
 		}
-		if(i < 2)
+		if (raycastHitData.distance < upDist)
 		{
-			examineVector += rxhw;
+			myMainSpeed = 0;
+
+			const float disp = upDist - raycastHitData.distance;
+
+			examineVector -= down * (disp < 0.f ? 0.f : disp);
 		}
-		else
-		{
-			examineVector -= rxhw;
-		}
-
-		Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(examineVector, down, 1);
-
-		const float heightSpeed = GetHeightSpeed(i);
-		if (raycastHitData.hit == true)
-		{
-			if(raycastHitData.distance < upDist * 2.f)
-			{
-				myIsOnGround = true;
-
-				SetHeight(i, examineVector.y, aDeltaTime);
-			}
-			if(raycastHitData.distance < upDist)
-			{
-				myAxisSpeed[i] = 0;
-
-				const float disp = upDist - raycastHitData.distance;
-
-				examineVector -= down * (disp < 0.f ? 0.f : disp);
-			}
-			
-
-		}
-		
-		
-		else
-		{
-
-			
-			ClearHeight(i);
-		}
-
-
-		myAxisSpeed[i] += gravity * aDeltaTime;
-
-		if(heightSpeed > 0.f)
-		{
-			int i = 0; 
-
-		}
-
-		//myAxisSpeed[i] -= CLAMP(heightSpeed, 0.f, 1000.f);
-
-		//When not on ground, do fall
-		const CU::Vector3f disp = down * myAxisSpeed[i] * aDeltaTime/* + CU::Vector3f::UnitY * heightSpeed * aDeltaTime*/;
-
-		
-		examineVector += disp;
-
-		axees[i] = examineVector;
-
-		
 	}
 
-	CU::Vector3f avgPos = CU::Vector3f::Zero;
 
-	for(int i = 0; i < static_cast<int>(AxisPos::Size);++i)
-	{
-		avgPos += axees[i];
-	}
+	myMainSpeed += gravity * aDeltaTime;
 
-	avgPos /= static_cast<int>(AxisPos::Size);
 
-	avgPos -= front * halfLength;
+	//When not on ground, do fall
+	const CU::Vector3f disp = down * myMainSpeed * aDeltaTime;
 
-	CU::Matrix44f transform = GetParent()->GetToWorldTransform();
 
-	const CU::Vector3f avgRVec = (axees[static_cast<int>(AxisPos::RightFront)] + axees[static_cast<int>(AxisPos::RightBack)]) / 2.f;
-	const CU::Vector3f avgLVec = (axees[static_cast<int>(AxisPos::LeftFront)] + axees[static_cast<int>(AxisPos::LeftBack)]) / 2.f;
-
-	const CU::Vector3f avgFVec = (axees[static_cast<int>(AxisPos::RightFront)] + axees[static_cast<int>(AxisPos::LeftFront)]) / 2.f;
-	const CU::Vector3f avgBVec = (axees[static_cast<int>(AxisPos::RightBack)] + axees[static_cast<int>(AxisPos::LeftBack)]) / 2.f;
-
-	const CU::Vector3f newRight = (avgRVec - avgLVec).Normalize();
-	CU::Vector3f newFront = (avgFVec - avgBVec).Normalize();
-
-	const CU::Vector3f newUp = newFront.Cross(newRight).Normalize();
-
-	newFront = newRight.Cross(newUp);
-
-	CU::Matrix33f newRotation;
-	newRotation.myRightVector = newRight;
-	newRotation.myForwardVector = newFront;
-	newRotation.myUpVector = newUp;
-
+	examineVector += disp;
 	
-	
-	if(myIsOnGround == false)
-	{
-		//ApplyNormalityBias(aDeltaTime);
-	}
 
-	transform.SetRotation(newRotation);
+	GetParent()->SetWorldPosition(examineVector);
 
-	transform.SetPosition(avgPos);
-	GetParent()->SetWorldTransformation(transform);
-	NotifyParent(eComponentMessageType::eMoving, SComponentMessageData());
+	//Set model rotation
+	SComponentMessageData messageData;
+
+	NotifyParent(eComponentMessageType::eMoving, messageData);
 }

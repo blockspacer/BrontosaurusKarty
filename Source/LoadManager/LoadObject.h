@@ -6,5 +6,5 @@ namespace KLoader
 }
 
 int LoadObject(KLoader::SLoadedComponentData someData);
-int LoadServerObject(KLoader::SLoadedComponentData someData);
+//int LoadServerObject(KLoader::SLoadedComponentData someData);
 void LinkObject(const int target,const int otherComponent);

@@ -8,6 +8,6 @@ int LoadWeapoCrateComponent(KLoader::SLoadedComponentData someData)
 {
 	GET_LOADMANAGER(loadManager);
 	CItemFactory* ItemFactory = loadManager.GetCurrentPLaystate().GetItemFactory();
-	CItemPickupComponent* pickup = CPickupComponentManager::GetInstance()->CreateWeaponCratePickupComponent(someData.myData.at("RespawnTime").GetFloat(), *ItemFactory);
+	CItemPickupComponent* pickup = CPickupComponentManager::GetInstance()->CreateWeaponCratePickupComponent(2, *ItemFactory);
 	return pickup->GetId();
 }

@@ -1,11 +1,5 @@
 #pragma once
-#include <functional>
 #include <windows.h>
-#include <thread>
-#include <mutex>
-#include <vector>
-#include <map>
-
 
 	typedef std::function<void(const std::wstring&)> callback_function_file;
 	class CFileWatcher

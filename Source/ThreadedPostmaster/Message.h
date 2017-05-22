@@ -1,8 +1,6 @@
 #pragma once
-#include "../PostMaster/EMessageReturn.h"
+#include "EMessageReturn.h"
 enum class eMessageType;
-
-class CClient;
 
 namespace Postmaster
 {
@@ -33,11 +31,6 @@ inline Postmaster::Message::IMessage::IMessage(eMessageType aType) : myType(aTyp
 inline Postmaster::Message::IMessage::~IMessage()
 {
 }
-
-//inline Postmaster::Message::IMessage* Postmaster::Message::IMessage::Copy()
-//{
-//	return nullptr;
-//}
 
 inline eMessageType Postmaster::Message::IMessage::GetType() const
 {

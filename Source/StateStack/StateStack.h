@@ -1,6 +1,4 @@
 #pragma once
-#include "../PostMaster/Subscriber.h"
-#include <functional>
 #include "../ThreadedPostmaster/Subscriber.h"
 
 class State;
@@ -34,8 +32,6 @@ public:
 	eMessageReturn DoEvent(const ConsoleCalledUpon& aConsoleCalledUpon) override;
 	eMessageReturn DoEvent(const PopCurrentState& aPopCurrent) override;
 	eMessageReturn DoEvent(const ::PushState& aPushState) override;
-
-	eMessageReturn DoEvent(const CChangeLevel& aChangeLevelMessage) override;
 	eMessageReturn DoEvent(const CQuitGame& aQuitGameMessage) override;
 
 private:

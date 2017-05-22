@@ -1,9 +1,6 @@
 #include "stdafx.h"
 #include "../ThreadedPostmaster/Postmaster.h"
-#include "../Physics/SharedPhysicsPointer.h"
-#include "../Physics/PhysXManager.h"
 #include "ParticleEmitterManager.h"
-#include "ParticleEmitterComponentManager.h"
 
 
 void Init(int argc, char* argv[]);
@@ -41,14 +38,10 @@ void InitAudio();
 
 void Init(int argc, char* argv[])
 {
-
-
+	DL_Debug::Debug::CreateInstance();
 	Postmaster::Threaded::CPostmaster::Create();
 	CommandLineManager::CreateInstance(argc, argv);
 
-
-
-	DL_Debug::Debug::CreateInstance();
 	//InitAudio();
 
 	{
@@ -88,12 +81,10 @@ void Init(int argc, char* argv[])
 			if (fullscreen == "False")
 			{
 				Bfullscreen = false;
-				//std::cout << "false" << std::endl;
 			}
 			else if (fullscreen == "True")
 			{
 				Bfullscreen = true;
-				//std::cout << "True" << std::endl;
 			}
 			engineParams.myWindowParams.Fullscreen = Bfullscreen;
 		}
@@ -113,11 +104,6 @@ void Init(int argc, char* argv[])
 		engineParams.myDebugFlags = DebugDrawerFlags();
 
 		CEngine::GetInstance()->Init(engineParams);
-
-		//CParticleEmitterManager::Create();
-	//	CParticleEmitterManager::GetInstance().LoadParticleLibrary("Json/Particles.json");
-		//CParticleEmitterManager::GetInstance().Run();
-		//Physics::CPhysXManager::Create();
 		CEngine::GetInstance()->Start();
 	}
 
@@ -129,7 +115,6 @@ void Init(int argc, char* argv[])
 	CommandLineManager::DestroyInstance();
 
 	Postmaster::Threaded::CPostmaster::Destroy();
-	PostQuitMessage(0);
 	//DumpMemoryLeeks();
 }
 
@@ -162,5 +147,4 @@ void InitAudio()
 
 	bankPath = "Audio/Feedback.bnk";
 	result = Audio::CAudioInterface::GetInstance()->LoadBank(bankPath.c_str());
-
 }

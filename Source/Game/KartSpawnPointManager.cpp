@@ -32,9 +32,15 @@ void CKartSpawnPointManager::PushSpawnPoint(SKartSpawnPoint* aSpawnPoint)
 
 SKartSpawnPoint CKartSpawnPointManager::PopSpawnPoint()
 {
-	if (mySpawnPoints.Size() == 0) { DL_MESSAGE_BOX("There were no (or too few) spawnpoints placed in the unity level you tried to load."); return SKartSpawnPoint(); }
+	if (mySpawnPoints.Size() == 0)
+	{
+		DL_MESSAGE_BOX("There were no (or too few) spawnpoints placed in the unity level you tried to load\nPress ignore to continue with default spawn position.");
+		SKartSpawnPoint defaultSpawnPoint;
+		defaultSpawnPoint.mySpawnTransformaion = CU::Matrix44f::Identity;
+		return defaultSpawnPoint;
+	}
 	SKartSpawnPoint tempKartPoint = *mySpawnPoints.GetLast();
-	SAFE_DELETE(mySpawnPoints.GetLast());
+	delete mySpawnPoints.Pop();
 	return tempKartPoint;
 }
 

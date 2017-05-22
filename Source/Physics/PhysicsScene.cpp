@@ -38,7 +38,7 @@ namespace Physics
 		return false;
 	}
 
-	Physics::SRaycastHitData CPhysicsScene::Raycast(const CU::Vector3f& aOrigin, const CU::Vector3f& aDirection, float aRayLength)
+	Physics::SRaycastHitData CPhysicsScene::Raycast(const CU::Vector3f& aOrigin, const CU::Vector3f& aDirection, float aRayLength, Physics::ECollisionLayer aLayerToCollideAgainst /*= Physics::ECollisionLayer::eEverything*/)
 	{
 		SRaycastHitData outData;
 		physx::PxRaycastBuffer hit;
@@ -48,6 +48,7 @@ namespace Physics
 
 		physx::PxHitFlags flags = physx::PxHitFlag::eDEFAULT;
 		physx::PxQueryFilterData filter;
+		filter.data.word0 = aLayerToCollideAgainst;
 
 		if (myPxScene->raycast(origin, dir, dist, hit, flags, filter))
 		{

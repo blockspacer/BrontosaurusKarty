@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "StateStack.h"
 #include "../ThreadedPostmaster/Postmaster.h"
-#include "../PostMaster/ConsoleCalledUpon.h"
-#include "../PostMaster/PushState.h"
-#include "../PostMaster/ChangeLevel.h"
+#include "../ThreadedPostMaster/MessageType.h"
+#include "../ThreadedPostMaster/ConsoleCalledUpon.h"
+#include "../ThreadedPostMaster/PushState.h"
 #include "../Game/LoadState.h"
 
 StateStack::StateStack()
@@ -12,19 +12,14 @@ StateStack::StateStack()
 	, myStateToSwapTo(nullptr)
 	, myShouldUpdate(true)
 {
-	//PostMaster::GetInstance().Subscribe(this, eMessageType::eStateStackMessage);
-	//PostMaster::GetInstance().Subscribe(this, eMessageType::eConsoleCalledUpon);
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eStateStackMessage);
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eConsoleCalledUpon);
-	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eChangeLevel);
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eQuitGame);
 
 }
 
 StateStack::~StateStack()
 {
-	//PostMaster::GetInstance().UnSubscribe(this, eMessageType::eStateStackMessage);
-	//PostMaster::GetInstance().UnSubscribe(this, eMessageType::eConsoleCalledUpon);
 	Postmaster::Threaded::CPostmaster::GetInstance().Unsubscribe(this);
 	Clear();
 }
@@ -66,26 +61,11 @@ eMessageReturn StateStack::DoEvent(const ::PushState& aPushState)
 	switch (aPushState.GetStateType())
 	{
 	case PushState::eState::ePlayState:
+
 		PushState(new CLoadState(*this, aPushState.GetLevelIndex()));
-		break;
-	//case PushState::eState::eCreditScreen:
-	//	PushState(new CreditsState(*this, static_cast<bool>(aPushState.GetLevelIndex())));
-	//	break;
-	//case PushState::eState::eLevelSelect:
-	//	static_cast<MainMenuState*>(GetCurrentState())->SetIsGoingToLevelSelect(true);
-	//	PushState(new LevelSelectState(*this));
-	//	break;
-	default: 
 		break;
 	}
 
-	return eMessageReturn::eStop;
-}
-
-eMessageReturn StateStack::DoEvent(const CChangeLevel& aChangeLevelMessage)
-{
-	SwapState(aChangeLevelMessage.CreateLoadState(*this));
-	
 	return eMessageReturn::eStop;
 }
 

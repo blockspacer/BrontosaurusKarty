@@ -341,6 +341,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="LoadBezierCurve.h" />
     <ClInclude Include="LoadBoostPad.h" />
     <ClInclude Include="LoadCamera.h" />
     <ClInclude Include="LoadCollider.h" />
@@ -356,12 +357,11 @@
     <ClInclude Include="LoadSoundComponent.h" />
     <ClInclude Include="LoadVertexInstanceStream.h" />
     <ClInclude Include="LoadWeaponCrate.h" />
-    <ClInclude Include="LuaFunctions.h" />
-    <ClInclude Include="ServerLoadManager.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="LoadBezierCurve.cpp" />
     <ClCompile Include="LoadBoostPad.cpp" />
     <ClCompile Include="LoadCamera.cpp" />
     <ClCompile Include="LoadCollider.cpp" />
@@ -377,8 +377,6 @@
     <ClCompile Include="LoadSoundComponent.cpp" />
     <ClCompile Include="LoadVertexInstanceStream.cpp" />
     <ClCompile Include="LoadWeaponCrate.cpp" />
-    <ClCompile Include="LuaFunctions.cpp" />
-    <ClCompile Include="ServerLoadManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ModelViewer|Win32'">Create</PrecompiledHeader>

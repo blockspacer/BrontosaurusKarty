@@ -106,11 +106,21 @@ void CKeyboardController::PressedKey(const CU::SInputMessage & aInputMessage)
 		myControllerComponent.TurnRight();
 		myIsTurningRight = true;
 		break;
-	case CU::eKeys::SPACE:
+
+	case CU::eKeys::B:
 	{
 		SComponentMessageData boostMessageData;
-		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("BoostPad"));
+		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("BoostPowerUp"));
 		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+	}
+	case CU::eKeys::SPACE:
+	{
+		/*SComponentMessageData boostMessageData;
+		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("BoostPad"));
+		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);*/
+
+		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eUseItem, SComponentMessageData());
+
 		break;
 	}
 	case CU::eKeys::LCONTROL:

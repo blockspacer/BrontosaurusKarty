@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "WindowsHelper.h"
 
-#include <map>
 #include <Windows.h>
 #include <shellapi.h>
 #include <tlhelp32.h>

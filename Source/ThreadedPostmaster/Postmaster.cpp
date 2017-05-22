@@ -1,15 +1,10 @@
 #include "stdafx.h"
-#include "Postmaster.h"
-#include "Message.h"
-#include "PostOffice.h"
-#include "Subscriber.h"
 
 Postmaster::Threaded::CPostmaster* Postmaster::Threaded::CPostmaster::ourInstance = nullptr;
 
 Postmaster::Threaded::CPostOffice&  Postmaster::Threaded::CPostmaster::AddThreadOffice()
 {
 	return AddThreadOffice(std::this_thread::get_id());
-
 }
 
 Postmaster::Threaded::CPostOffice& Postmaster::Threaded::CPostmaster::AddThreadOffice(std::thread::id aId)

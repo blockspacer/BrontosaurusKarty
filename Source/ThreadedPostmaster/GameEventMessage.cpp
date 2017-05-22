@@ -1,7 +1,5 @@
 ﻿#include "stdafx.h"
 #include "GameEventMessage.h"
-#include "../PostMaster/MessageType.h"
-#include "../ThreadedPostmaster/Subscriber.h"
 
 
 CGameEventMessage::CGameEventMessage(const std::wstring& aMessage) : IMessage(eMessageType::eGameEventMessage), myMessage(aMessage)

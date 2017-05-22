@@ -11,4 +11,5 @@ enum class eItemTypes
 	eBulletBill,
 	eLightning,
 	eBanana,
+	eNone,
 };
