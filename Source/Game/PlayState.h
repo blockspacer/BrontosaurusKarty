@@ -36,6 +36,8 @@ class CPlayerControllerManager;
 class CBoostPadComponentManager;
 class CItemFactory;
 
+struct SGUIElement;
+
 class CPlayState : public State , public Postmaster::ISubscriber
 {
 public:
@@ -95,6 +97,10 @@ private:
 
 	//CU::TimerManager* myTimerManager;
 	TimerHandle myCountdownTimerHandle;
+
+	CSpriteInstance* myCountdownSprite;
+	SGUIElement* myCountdownElement;
+	bool myCountdownShouldRender;
 
 	int myPlayerCount;
 	int myLevelIndex;
