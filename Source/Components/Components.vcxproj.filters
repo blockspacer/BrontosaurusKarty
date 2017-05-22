@@ -52,6 +52,8 @@
     <ClCompile Include="KeyboardController.cpp" />
     <ClCompile Include="SmoothRotater.cpp" />
     <ClCompile Include="KartModelComponent.cpp" />
+    <ClCompile Include="HazardComponent.cpp" />
+    <ClCompile Include="ItemWeaponBehaviourComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -112,5 +114,7 @@
     <ClInclude Include="KeyboardController.h" />
     <ClInclude Include="SmoothRotater.h" />
     <ClInclude Include="KartModelComponent.h" />
+    <ClInclude Include="HazardComponent.h" />
+    <ClInclude Include="ItemWeaponBehaviourComponent.h" />
   </ItemGroup>
 </Project>

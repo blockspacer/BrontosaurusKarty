@@ -80,6 +80,7 @@ enum class eComponentMessageType
 	eRotateTowards,
 	eUpdate,
 	eKill,
+	eGotHit,
 	eLength,
 };
 
