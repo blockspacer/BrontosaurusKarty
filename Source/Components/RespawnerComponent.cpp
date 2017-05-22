@@ -21,7 +21,11 @@ void CRespawnerComponent::UpdateGroundedPosition()
 	SComponentQuestionData groundedPositionData;
 	if(GetParent()->AskComponents(eComponentQuestionType::eGetIsGrounded, groundedPositionData) == true)
 	{
+		CU::Vector3f direction = myLastGroundedPosition - GetParent()->GetWorldPosition();
+		direction.Normalize();
+		direction *= 3;
 		myLastGroundedPosition = GetParent()->GetWorldPosition();
+		myLastGroundedPosition += direction;
 	}
 }
 
