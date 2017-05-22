@@ -1,5 +1,5 @@
 #pragma once
-#include "../StateStack/State.h"
+#include "State.h"
 #include "../ThreadedPostmaster/Subscriber.h"
 #include "SParticipant.h"
 
@@ -11,7 +11,7 @@ class CLoadState :public State, Postmaster::ISubscriber
 {
 public:
 	CLoadState(StateStack& aStateStack, const int aLevelIndex);
-	CLoadState(StateStack& aStateStack, const int aLevelIndex,const CU::GrowingArray<SParticipant> aPlayers);
+	CLoadState(StateStack& aStateStack, const int aLevelIndex,const CU::GrowingArray<SParticipant>& aPlayers);
 	~CLoadState();
 
 	virtual void Init() override;

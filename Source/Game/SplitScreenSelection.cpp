@@ -6,7 +6,7 @@
 #include "CommonUtilities/XInputWrapper.h"
 #include "CommonUtilities/EKeyboardKeys.h"
 #include "CommonUtilities/JsonValue.h"
-#include "StateStack/StateStack.h"
+#include "StateStack.h"
 #include "LoadState.h"
 
 CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aStateStack,eInputMessengerType::eSplitScreenSelectionMenu, 1)

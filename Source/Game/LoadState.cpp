@@ -4,7 +4,7 @@
 #include "Engine.h"
 #include "ThreadPool.h"
 #include "SpriteInstance.h"
-#include "StateStack/StateStack.h"
+#include "StateStack.h"
 
 #include "Renderer.h"
 #include "BackgroundLoadingManager.h"
@@ -22,7 +22,7 @@ CLoadState::CLoadState(StateStack & aStateStack, const int aLevelIndex)
 	myPlayers.Init(1);
 }
 
-CLoadState::CLoadState(StateStack& aStateStack, const int aLevelIndex, const CU::GrowingArray<SParticipant> aPlayers)
+CLoadState::CLoadState(StateStack& aStateStack, const int aLevelIndex, const CU::GrowingArray<SParticipant>& aPlayers)
 	: State(aStateStack, eInputMessengerType::eLoadState)
 	, myLevelIndex(aLevelIndex)
 {

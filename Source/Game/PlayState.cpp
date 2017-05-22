@@ -7,7 +7,7 @@
 #include <EInputReturn.h>
 #include <Scene.h>
 
-#include "StateStack/StateStack.h"
+#include "StateStack.h"
 
 //#include "Skybox.h"
 #include "../Audio/AudioInterface.h"

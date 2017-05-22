@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "PushState.h"
 
-#include "../StateStack/StateStack.h"
+#include "../Game/StateStack.h"
 #include "../Game/PlayState.h"
 #include "../Game/LoadState.h"
 
