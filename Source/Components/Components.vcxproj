@@ -393,6 +393,8 @@
     <ClInclude Include="KeyboardController.h" />
     <ClInclude Include="PlayerControllerManager.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="RespawnComponentManager.h" />
+    <ClInclude Include="RespawnerComponent.h" />
     <ClInclude Include="RigidBodyComponent.h" />
     <ClInclude Include="SmoothRotater.h" />
     <ClInclude Include="SpeedHandlerManager.h" />
@@ -455,6 +457,8 @@
     <ClCompile Include="PlayerControllerManager.cpp" />
     <ClCompile Include="PointLightComponent.cpp" />
     <ClCompile Include="PointLightComponentManager.cpp" />
+    <ClCompile Include="RespawnComponentManager.cpp" />
+    <ClCompile Include="RespawnerComponent.cpp" />
     <ClCompile Include="RigidBodyComponent.cpp" />
     <ClCompile Include="ScriptComponent.cpp" />
     <ClCompile Include="ScriptComponentManager.cpp" />
