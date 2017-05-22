@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include "JsonValue.h"
 
 
 namespace Physics
@@ -70,8 +71,9 @@ private:
 		float length = 1.f;
 	} myAxisDescription;
 
+	CU::Vector3f myVelocity;
 
-	float myFowrardSpeed;
+	//float myFowrardSpeed;
 	float myMaxSpeed;
 	float myMinSpeed;
 
@@ -81,8 +83,8 @@ private:
 
 	float myTurnRate;
 
-	float myFriction;
-
+	float myGrip;
+	float myWeight;
 	float mySteering;
 	float myAngularAcceleration;
 
@@ -111,8 +113,7 @@ private:
 	float myTimeToBeStunned;
 	float myElapsedStunTime;
 	
-	//Experimental part
-	float myMainSpeed;
 
 	CKartControllerComponentManager* myManager;
+	
 };
