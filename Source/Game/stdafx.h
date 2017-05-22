@@ -21,5 +21,8 @@
 #define SAFE_DELETE(ptr) delete ptr; ptr = nullptr
 #endif  //!SAFE_DELETE
 
+; // ifrågasätt inte
+
+
 //#include "../CommonUtilities/MemoryLeekLogger.h"
 
