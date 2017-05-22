@@ -331,6 +331,7 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 		if (myHasGottenHit == true)
 		{
 			myElapsedStunTime += aDeltaTime;
+
 			if (myElapsedStunTime >= myTimeToBeStunned)
 			{
 				myElapsedStunTime = 0;
@@ -352,6 +353,11 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 		break;
 	case eComponentMessageType::eObjectDone:
 		break;
+	case eComponentMessageType::eGotHit:
+	{
+		GetHit();
+	}
+	break;
 	case eComponentMessageType::eSetBoost:
 
 		if (aMessageData.myBoostData->maxSpeedBoost > 0)
