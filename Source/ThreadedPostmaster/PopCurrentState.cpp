@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "PopCurrentState.h"
-#include "../StateStack/StateStack.h"
+#include "../Game/StateStack.h"
 
 PopCurrentState::PopCurrentState() : IMessage(eMessageType::eStateStackMessage)
 {

@@ -1,5 +1,5 @@
 #pragma once
-#include "../StateStack/State.h"
+#include "../Game/State.h"
 #include "../ThreadedPostmaster/Subscriber.h"
 #include "SParticipant.h"
 #include "NavigationSpline.h"

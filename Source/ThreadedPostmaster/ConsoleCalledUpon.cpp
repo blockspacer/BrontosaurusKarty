@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "ConsoleCalledUpon.h"
-#include "..\StateStack\StateStack.h"
+#include "..\Game\StateStack.h"
 
 ConsoleCalledUpon::ConsoleCalledUpon(bool aIsConsoleActive) : IMessage(eMessageType::eConsoleCalledUpon)
 {

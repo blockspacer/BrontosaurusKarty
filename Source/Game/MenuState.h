@@ -1,6 +1,6 @@
 #pragma once
-#include "../StateStack/State.h"
-#include "../Game/MenuManager.h"
+#include "State.h"
+#include "MenuManager.h"
 #include "../ThreadedPostmaster/Subscriber.h"
 
 namespace CU 

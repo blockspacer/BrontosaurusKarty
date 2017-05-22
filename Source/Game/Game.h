@@ -1,5 +1,5 @@
 #pragma once
-#include "../StateStack/StateStack.h"
+#include "StateStack.h"
 #include "GameEventMessenger.h"
 
 namespace CU
