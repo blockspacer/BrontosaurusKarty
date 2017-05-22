@@ -132,6 +132,10 @@ void CPlayState::Load()
 
 	//SRenderMessage* msg = new SRenderMessage(SRenderMessage::eRenderMessageType::eCreateGuiElement);
 	//SRenderToGUI* guiRenderThing = new SRenderToGUI(L"Sprites/GUI/countdown.dds",msg);
+
+	//SGUIElement guiElement;
+	//guiElement.myAnchor = eAnchors::eTop | eAnchors::eLeft;
+	//SCreateOrClearGuiElement* guiMsg = new SCreateOrClearGuiElement("countdown",)
 	
 
 	myTimerManager = new CU::TimerManager();
