@@ -18,7 +18,7 @@
 #include "../Physics/PhysicsScene.h"
 
 #include "../CommonUtilities/CommonUtilities.h"
-
+#include "KartControllerComponentManager.h"
 
 CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager): myPhysicsScene(nullptr), myIsOnGround(true), myManager(aManager)
 {
@@ -461,6 +461,10 @@ bool CKartControllerComponent::Answer(const eComponentQuestionType aQuestionType
 		{
 			return true;
 		}
+		break;
+	case eComponentQuestionType::eGetSplineDirection:
+		aQuestionData.myVector3f = myManager->GetClosestSpinesDirection(GetParent()->GetWorldPosition());
+		return true;
 		break;
 	default:
 		break;
