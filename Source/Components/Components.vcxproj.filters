@@ -92,7 +92,6 @@
     <ClInclude Include="SpeedHandlerComponent.h" />
     <ClInclude Include="SphereColliderComponent.h" />
     <ClInclude Include="FireComponent.h" />
-    <ClInclude Include="PlayerControls.h" />
     <ClInclude Include="PointLightComponent.h" />
     <ClInclude Include="PointLightComponentManager.h" />
     <ClInclude Include="ScriptComponent.h" />

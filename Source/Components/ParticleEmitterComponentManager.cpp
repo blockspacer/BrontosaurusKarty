@@ -1,14 +1,10 @@
 #include "stdafx.h"
 #include "ParticleEmitterComponentManager.h"
-#include "ComponentManager.h"
 #include "ParticleEmitterComponent.h"
-
-#include "..\CommonUtilities\DL_Debug.h"
-#include "..\CommonUtilities\CUTime.h"
+#include "ParticleEmitterManager.h"
 
 #include "..\BrontosaurusEngine\Scene.h"
 #include "..\BrontosaurusEngine\ParticleEmitterInstance.h"
-#include "ParticleEmitterManager.h"
 
 
 CParticleEmitterComponentManager* CParticleEmitterComponentManager::myInstance = nullptr;

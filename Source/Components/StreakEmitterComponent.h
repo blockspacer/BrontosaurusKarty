@@ -1,8 +1,7 @@
-
 #pragma once
-#include "../CommonUtilities/TimerManager.h"
 #include "Component.h"
-#include "../BrontosaurusEngine/StreakEmitterInstance.h"
+
+class CStreakEmitterInstance;
 
 class CStreakEmitterComponent : public CComponent
 {

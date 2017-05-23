@@ -1,5 +1,4 @@
 #pragma once
-#include "../CommonUtilities/TimerManager.h"
 #include "Component.h"
 
 class CParticleEmitterInstance;

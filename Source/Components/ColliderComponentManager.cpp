@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "ColliderComponentManager.h"
-#include "ComponentManager.h"
-#include "Component.h"
+#include "CharacterControllerComponent.h"
+#include "EffectHelper.h"
+#include "ConcaveMeshCollider.h"
 
 #include "..\Physics\Physics.h"
 #include "..\Physics\PhysicsScene.h"
@@ -10,11 +11,8 @@
 #include "..\Physics\PhysicsActorDynamic.h"
 #include "..\Physics\CharacterControllerManager.h"
 #include "..\Physics\PhysicsCharacterController.h"
-#include "CharacterControllerComponent.h"
 #include "..\Physics\CollisionLayers.h"
-#include "../Physics/Collection.h"
-#include "EffectHelper.h"
-#include "ConcaveMeshCollider.h"
+#include "..\Physics\Collection.h"
 
 const std::nullptr_t nopeptr_constant = 0x0;
 #define nopeptr nopeptr_constant

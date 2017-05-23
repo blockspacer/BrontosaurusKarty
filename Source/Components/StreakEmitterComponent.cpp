@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "StreakEmitterComponent.h"
-#include "GameObject.h"
+#include "../BrontosaurusEngine/StreakEmitterInstance.h"
 
 CStreakEmitterComponent::CStreakEmitterComponent()
 	: myStreakEmitterInstance(nullptr)

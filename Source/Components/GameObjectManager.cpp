@@ -1,8 +1,5 @@
 #include "stdafx.h"
 #include "GameObjectManager.h"
-#include "GameObject.h"
-#include "ComponentManager.h"
-#include "ComponentMessage.h"
 
 CGameObjectManager::CGameObjectManager()
 {

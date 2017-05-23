@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "AudioSourceComponentManager.h"
-#include "ComponentManager.h"
 
 
 CAudioSourceComponentManager* CAudioSourceComponentManager::myInstance = nullptr;
