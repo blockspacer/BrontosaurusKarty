@@ -1,3 +1,4 @@
+#pragma once
 #ifdef _WIN32
     #ifndef DL_ASSERT_HEADER
     	#define DL_ASSERT_HEADER

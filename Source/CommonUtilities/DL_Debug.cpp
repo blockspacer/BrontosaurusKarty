@@ -1,29 +1,13 @@
 #include "stdafx.h"
-#include <stdlib.h>
 #include "DL_Debug.h"
-#include <stdio.h>
-#include <stdarg.h>
-#include <ctime>
-#include <iomanip>
-#include "DL_Assert.h"
-#include <iostream>
-#include <fstream>
 
 #include "StringHelper.h"
 #include "CommandLineManager.h"
-#include "WindowsHelper.h"
 
-#pragma warning(disable : 4091)
-#include "DL_StackWalker.h"
-#pragma warning(default : 4091)
+#include <Windows.h>
+#include <iostream>
 
-#ifdef __APPLE__
-#define VSPRINTF vsprintf
-#elif defined _WIN32 || defined _WIN64
 #define VSPRINTF vsprintf_s
-#else
-#error "Is this debian?"
-#endif
 
 #define SUPRESS_UNUSED_WARNING(variable) variable
 const unsigned int MAX_STRING_BUFFER_SIZE = 1024u;
@@ -212,8 +196,6 @@ namespace DL_Debug
 		va_end(args);
 
 #ifdef _WIN32
-		StackWalker myStackWalker;
-		//myDebugFile << myStackWalker.ShowCallstack() << std::endl << std::endl;
 		wchar_t fileNameBuffer[MAX_STRING_BUFFER_SIZE];
 		wchar_t bufferBuffer[MAX_STRING_BUFFER_SIZE];
 		_wassert(CU::CharToWChar(bufferBuffer, buffer), CU::CharToWChar(fileNameBuffer, aFileName), aLine);
@@ -231,8 +213,6 @@ namespace DL_Debug
 		va_end(args);
 
 #ifdef _WIN32
-		StackWalker myStackWalker;
-		//myDebugFile << myStackWalker.ShowCallstack() << std::endl << std::endl;
 		wchar_t fileNameBuffer[MAX_STRING_BUFFER_SIZE];
 		_wassert(buffer, CU::CharToWChar(fileNameBuffer, aFileName), aLine);
 #else
@@ -299,7 +279,6 @@ namespace DL_Debug
 			exit(1);
 			break;
 		case IDRETRY:
-			WindowsHelper::GoogleIt(buffer);
 			DL_ASSERT(buffer);
 			break;
 		case IDIGNORE:
@@ -328,7 +307,6 @@ namespace DL_Debug
 			exit(1);
 			break;
 		case IDRETRY:
-			WindowsHelper::GoogleIt(buffer);
 			DL_ASSERT(buffer);
 			break;
 		case IDIGNORE:

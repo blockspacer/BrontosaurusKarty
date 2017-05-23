@@ -1,9 +1,5 @@
 #pragma once
 
-#ifndef assert
-#include <assert.h>
-#endif // !assert
-
 #define INDEX_TO_BIT(A_INDEX) (static_cast<Type>(1) << A_INDEX)
 #define self (*this)
 

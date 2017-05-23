@@ -1,5 +1,6 @@
 #pragma once
 
+#include <initializer_list>
 #include <string>
 #include <map>
 #include <unordered_map>
@@ -13,6 +14,7 @@
 #include <cstdint>
 #include <cstring>
 #include <ctime>
+#include <cmath>
 
 #include <stdexcept>
 #include <mutex>

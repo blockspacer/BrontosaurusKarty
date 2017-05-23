@@ -7,9 +7,6 @@
     <Filter Include="Debulogger">
       <UniqueIdentifier>{0b73e33d-ed8b-4ab8-8848-ff560c0e8683}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Debulogger\Stackwalker">
-      <UniqueIdentifier>{59b84345-4ddd-4b15-9ac2-0c89e4cd0d3a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Math">
       <UniqueIdentifier>{5df6b5df-1553-4dec-8d9e-6b9463e93e4a}</UniqueIdentifier>
     </Filter>
@@ -102,14 +99,8 @@
     <ClInclude Include="TimerManager.h">
       <Filter>Timer</Filter>
     </ClInclude>
-    <ClInclude Include="DL_StackWalker.h">
-      <Filter>Debulogger</Filter>
-    </ClInclude>
     <ClInclude Include="DL_Assert.h">
       <Filter>Debulogger</Filter>
-    </ClInclude>
-    <ClInclude Include="StackWalker.h">
-      <Filter>Debulogger\Stackwalker</Filter>
     </ClInclude>
     <ClInclude Include="DL_Debug.h">
       <Filter>Debulogger</Filter>
@@ -332,9 +323,6 @@
     </ClInclude>
     <ClInclude Include="StaticTypeTraits.h" />
     <ClInclude Include="Line3D.h" />
-    <ClInclude Include="ReverseGrowingArray.h">
-      <Filter>Containers</Filter>
-    </ClInclude>
     <ClInclude Include="Tween.h">
       <Filter>Tweener</Filter>
     </ClInclude>
@@ -398,9 +386,6 @@
       <Filter>Colour</Filter>
     </ClInclude>
     <ClInclude Include="WindowsHelper.h" />
-    <ClInclude Include="growingvector.h">
-      <Filter>Containers</Filter>
-    </ClInclude>
     <ClInclude Include="CommonSTL.h" />
     <ClInclude Include="CommonCU.h" />
     <ClInclude Include="IQueue.h">
@@ -417,12 +402,6 @@
     </ClCompile>
     <ClCompile Include="TimerManager.cpp">
       <Filter>Timer</Filter>
-    </ClCompile>
-    <ClCompile Include="DL_StackWalker.cpp">
-      <Filter>Debulogger</Filter>
-    </ClCompile>
-    <ClCompile Include="StackWalker.cpp">
-      <Filter>Debulogger\Stackwalker</Filter>
     </ClCompile>
     <ClCompile Include="DL_Debug.cpp">
       <Filter>Debulogger</Filter>

@@ -1,8 +1,6 @@
 #pragma once
-
 #include "CUTime.h"
 #include "StopWatch.h"
-#include <functional>
 
 namespace CU
 {

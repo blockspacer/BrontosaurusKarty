@@ -1,8 +1,5 @@
 #pragma once
-
 #include "Timer.h"
-//#include <iostream>
-
 
 namespace CU
 {

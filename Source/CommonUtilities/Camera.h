@@ -1,6 +1,4 @@
 #pragma once
-#include "Vector3.h"
-#include "matrix44.h"
 #include "Frustum.h"
 
 namespace CU
