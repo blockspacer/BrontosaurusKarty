@@ -79,3 +79,12 @@ const CU::Vector3f CKartControllerComponentManager::GetClosestSpinesDirection(co
 	direction.z = myNavigationSpline.GetPoint(index).myForwardDirection.y;
 	return direction;
 }
+
+const SNavigationPoint* CKartControllerComponentManager::GetNavigationPoint(const int aIndex)
+{
+	if(aIndex < myNavigationSpline.GetNumberOfPoints())
+	{
+		return &myNavigationSpline.GetPoint(aIndex);
+	}
+	return nullptr;
+}
