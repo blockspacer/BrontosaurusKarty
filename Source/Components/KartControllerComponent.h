@@ -43,6 +43,8 @@ public:
 	};
 
 private:
+	void UpdateMovement(const float aDeltaTime);
+	void DoDriftingParticles();
 
 	//void SetHeight(float aHeight, const float aDt);
 	//float GetHeightSpeed();
