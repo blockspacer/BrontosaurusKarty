@@ -1,6 +1,7 @@
 #pragma once
 
 class CColliderComponent;
+struct SNavigationPoint;
 
 namespace CU
 {
@@ -40,6 +41,7 @@ enum class eComponentQuestionType
 	eGetRotatorObject,
 	eGetIsGrounded,
 	eGetSplineDirection,
+	eGetSplineWithIndex,
 	eLength,
 };
 struct SComponentQuestionData
@@ -59,6 +61,7 @@ struct SComponentQuestionData
 
 		const char* myString;
 		CGameObject* myGameObject;
+		const SNavigationPoint* myNavigationPoint;
 	};
 };
 
