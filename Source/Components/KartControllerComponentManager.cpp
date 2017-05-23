@@ -77,6 +77,7 @@ const CU::Vector3f CKartControllerComponentManager::GetClosestSpinesDirection(co
 	direction.x = myNavigationSpline.GetPoint(index).myForwardDirection.x;
 	direction.y = 0.0f;
 	direction.z = myNavigationSpline.GetPoint(index).myForwardDirection.y;
+	DL_PRINT("index %u", index);
 	return direction;
 }
 
