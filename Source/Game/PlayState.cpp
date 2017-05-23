@@ -311,6 +311,11 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 		myRespawnComponentManager->Update();
 	}
 
+	if (myItemBehaviourManager != nullptr)
+	{
+		myItemBehaviourManager->Update(aDeltaTime.GetSeconds());
+	}
+
 	CPickupComponentManager::GetInstance()->Update(aDeltaTime.GetSeconds());
 	return myStatus;
 }
@@ -464,6 +469,8 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	box.center.y = 1.05f;
 	SConcaveMeshColliderData crystalMeshColliderData;
 	crystalMeshColliderData.IsTrigger = false;
+	crystalMeshColliderData.myLayer = Physics::eKart;
+	crystalMeshColliderData.myCollideAgainst = Physics::GetCollideAgainst(crystalMeshColliderData.myLayer);
 	crystalMeshColliderData.myPath = "Models/Meshes/M_Kart_01.fbx";
 	crystalMeshColliderData.material.aDynamicFriction = 0.5f;
 	crystalMeshColliderData.material.aRestitution = 0.5f;

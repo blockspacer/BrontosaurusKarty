@@ -46,35 +46,39 @@ void CItemFactory::CreateShellBuffer()
 		CGameObject* shell = myGameObjectManager->CreateGameObject();
 
 		CModelComponent* model = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_shell_green_01.fbx");
+		shell->AddComponent(model);
 
-		CItemWeaponBehaviourComponent* beheviour = myItemBeheviourComponentManager->CreateAndRegisterComponent();
+		/*	CItemWeaponBehaviourComponent* beheviour = myItemBeheviourComponentManager->CreateAndRegisterComponent();
+			shell->AddComponent(beheviour);*/
 
 		CHazardComponent* hazardous = new CHazardComponent;
 		CComponentManager::GetInstance().RegisterComponent(hazardous);
+		shell->AddComponent(hazardous);
 
 		//adds collider
-		SBoxColliderData box;
-		box.myHalfExtent = CU::Vector3f(1.0f, 1.0f, 1.0f);
-		box.center.y = 1.05f;
-		SConcaveMeshColliderData crystalMeshColliderData;
+		SSphereColliderData crystalMeshColliderData;
 		crystalMeshColliderData.IsTrigger = true;
-		crystalMeshColliderData.myPath = "Models/Meshes/M_shell_green_01.fbx";
+		crystalMeshColliderData.myLayer = Physics::eHazzard;
+		crystalMeshColliderData.myCollideAgainst = Physics::GetCollideAgainst(crystalMeshColliderData.myLayer);
 		crystalMeshColliderData.material.aDynamicFriction = 0.5f;
 		crystalMeshColliderData.material.aRestitution = 0.5f;
 		crystalMeshColliderData.material.aStaticFriction = 0.5f;
 		crystalMeshColliderData.myLayer;
-		CColliderComponent* shellColliderComponent = myColliderManager->CreateComponent(&box, shell->GetId());
+		CColliderComponent* shellColliderComponent = myColliderManager->CreateComponent(&crystalMeshColliderData, shell->GetId());
 		CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
 		CU::Vector3f offset = shell->GetWorldPosition();
 
 		SRigidBodyData rigidbodah;
 		rigidbodah.isKinematic = true;
 		rigidbodah.useGravity = false;
+		rigidbodah.myLayer = Physics::eHazzard;
+		rigidbodah.myCollideAgainst = Physics::GetCollideAgainst(crystalMeshColliderData.myLayer);
+
 		CColliderComponent* rigidComponent = myColliderManager->CreateComponent(&rigidbodah, shell->GetId());
 		//	colliderObject->SetWorldPosition({ offset.x, offset.y + 0.1f, offset.z });
 		colliderObject->AddComponent(shellColliderComponent);
-
 		colliderObject->AddComponent(rigidComponent);
+
 		shell->AddComponent(colliderObject);
 		//collider added
 

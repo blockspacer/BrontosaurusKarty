@@ -9,6 +9,7 @@ namespace Physics
 	CShape::CShape(physx::PxShape* aShape)
 	{
 		myShape = aShape;
+		SetCollisionLayers(ECollisionLayer::eDefault, ECollisionLayer::eEverything);
 	}
 
 	CShape::CShape(const CShape& aShape)
@@ -34,6 +35,12 @@ namespace Physics
 
 		myShape->setQueryFilterData(filterData);
 		myShape->setSimulationFilterData(filterData);
+
+#ifdef _DEBUG
+		myLayer = aLayer;
+		myCollideAgainst = static_cast<ECollisionLayer>( collideAll);
+#endif
+
 	}
 
 	void CShape::SetCollisionLayers(const ECollisionLayer& aLayer, const unsigned int aLayerToCollideWith)
@@ -45,6 +52,11 @@ namespace Physics
 
 		myShape->setQueryFilterData(filterData);
 		myShape->setSimulationFilterData(filterData);
+
+#ifdef _DEBUG
+		myLayer = aLayer;
+		myCollideAgainst = static_cast<ECollisionLayer>(aLayerToCollideWith);
+#endif
 	}
 
 	void CShape::SetObjectId(unsigned int aI)

@@ -11,6 +11,7 @@ namespace Physics
 		eItemBox = 1 << 9,
 		eBoostpad = 1 << 10,
 		eGround = 1 << 11,
+		eHazzard = 1 << 12,
 
 		eEverything = CollideEverything,
 	};
@@ -29,13 +30,15 @@ namespace Physics
 		case Physics::eDefault:
 			return CollideEverything;
 		case Physics::eKart:
-			return eDefault | eItemBox | eBoostpad | eKart;
+			return eDefault | eItemBox | eBoostpad | eKart | eHazzard;
 		case Physics::eItemBox:
 			return eKart;
 		case Physics::eBoostpad:
 			return eKart;
 		case Physics::eGround:
 			return 0;
+		case Physics::eHazzard:
+			return eKart | eHazzard;
 		default:
 			return CollideEverything;
 		}	
