@@ -108,6 +108,7 @@ private:
 	Physics::CPhysicsScene* myPhysicsScene;
 
 	bool myIsOnGround;
+	bool myCanAccelerate;
 	bool myIsBoosting;
 
 	bool myHasGottenHit;
@@ -116,5 +117,4 @@ private:
 	
 
 	CKartControllerComponentManager* myManager;
-	
 };

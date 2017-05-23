@@ -343,7 +343,7 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 		way = -1.f;
 	}
 
-	const float onGroundModifier = (myIsOnGround == true ? 1.f : 0.f);
+	const float onGroundModifier = (myCanAccelerate == true ? 1.f : 0.f);
 	myVelocity -= (1.25f - abs(myVelocity.GetNormalized().Dot(forwardVector))) *
 		myVelocity * (myGrip / myWeight)  * aDeltaTime * onGroundModifier;
 
@@ -384,7 +384,7 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 	GetParent()->Move(CU::Vector3f::UnitY * myVelocity.y * aDeltaTime);
 
 	//Steering
-	float steerAngle = (mySteering + myDrifter->GetSteerModifier()) * myAngularAcceleration * -way * onGroundModifier;
+	float steerAngle = (mySteering + myDrifter->GetSteerModifier()) * myAngularAcceleration * -way * (myIsOnGround == true ? 1.f : 0.f);
 	CU::Matrix44f& parentTransform = GetParent()->GetLocalTransform();
 	parentTransform.RotateAroundAxis(steerAngle * (abs(speed2) < 0.001f ? 0.f : 1.f) * aDeltaTime, CU::Axees::Y);
 }
@@ -423,6 +423,7 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 	const CU::Vector3f pos = transformation.GetPosition();
 
 	myIsOnGround = false;
+	myCanAccelerate = false;
 
 	//Update fall speed per wheel
 
@@ -445,6 +446,7 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 
 			downAccl = norm.Cross(down.Cross(norm));
 			friction = norm.Dot(-down);
+			myCanAccelerate = true;
 			
 		}
 		if (raycastHitData.distance < upDist)
@@ -459,7 +461,7 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 	}
 
 
-	myVelocity += downAccl * (friction / (myIsOnGround == true ? myGrip / myWeight : 1.f)) *gravity * aDeltaTime;
+	myVelocity += downAccl * (friction / (myCanAccelerate == true ? myGrip / myWeight : 1.f)) *gravity * aDeltaTime;
 
 
 }

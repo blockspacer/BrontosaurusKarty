@@ -143,6 +143,10 @@ CU::eInputReturn CMenuState::RecieveInput(const CU::SInputMessage& aInputMessage
 			CTextInstance& currentTextInput = *myTextInputs[myCurrentTextInput].myTextInstance;
 			currentTextInput.SetTextLine(0, currentTextInput.GetTextLines()[0].substr(0, currentTextInput.GetTextLines()[0].length() - 1));
 		}
+		else if(aInputMessage.myKey == CU::eKeys::F10)
+		{
+			PushLevel("0");
+		}
 		break;
 	case CU::eInputType::eKeyboardReleased: break;
 	default: break;
