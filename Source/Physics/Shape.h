@@ -28,5 +28,12 @@ namespace Physics
 	private:
 		physx::PxShape* myShape;
 
+
+#ifdef _DEBUG
+		ECollisionLayer myLayer;
+		ECollisionLayer myCollideAgainst;
+#endif
+
+
 	};
 }
