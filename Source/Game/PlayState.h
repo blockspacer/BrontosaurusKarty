@@ -36,6 +36,9 @@ class CPlayerControllerManager;
 class CBoostPadComponentManager;
 class CItemFactory;
 class CItemWeaponBehaviourComponentManager;
+class CRespawnComponentManager;
+
+struct SGUIElement;
 
 class CPlayState : public State , public Postmaster::ISubscriber
 {
@@ -91,12 +94,17 @@ private:
 	CPlayerControllerManager* myPlayerControllerManager;
 	CItemFactory* myItemFactory;
 	CItemWeaponBehaviourComponentManager* myItemBehaviourManager;
+	CRespawnComponentManager* myRespawnComponentManager;
 
 	CU::GrowingArray<CCameraComponent*> myCameraComponents;
 	CU::GrowingArray<SParticipant> myPlayers;
 
 	//CU::TimerManager* myTimerManager;
 	TimerHandle myCountdownTimerHandle;
+
+	CSpriteInstance* myCountdownSprite;
+	SGUIElement* myCountdownElement;
+	bool myCountdownShouldRender;
 
 	int myPlayerCount;
 	int myLevelIndex;

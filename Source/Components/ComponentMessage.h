@@ -81,6 +81,7 @@ enum class eComponentMessageType
 	eUpdate,
 	eKill,
 	eGotHit,
+	eRespawn,
 	eLength,
 };
 

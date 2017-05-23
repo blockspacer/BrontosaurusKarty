@@ -257,11 +257,12 @@ void CKartControllerComponent::CheckZKill()
 
 	if(height < killHeight)
 	{
-		GetParent()->SetWorldTransformation(CU::Matrix44f());
-		GetParent()->SetWorldPosition(CU::Vector3f(0.f, 1.f, 0.f));
+		/*GetParent()->SetWorldTransformation(CU::Matrix44f());
+		GetParent()->SetWorldPosition(CU::Vector3f(0.f, 1.f, 0.f));*/
 		//myFowrardSpeed = 0.f;
 		myVelocity = CU::Vector3f::Zero;
 		GetParent()->NotifyComponents(eComponentMessageType::eKill, SComponentMessageData());
+		GetParent()->NotifyComponents(eComponentMessageType::eRespawn, SComponentMessageData());
 	}
 }
 
@@ -449,4 +450,20 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 	myVelocity += downAccl * (friction / (myIsOnGround == true ? myGrip / myWeight : 1.f)) *gravity * aDeltaTime;
 
 
+}
+
+bool CKartControllerComponent::Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData)
+{
+	switch (aQuestionType)
+	{
+	case eComponentQuestionType::eGetIsGrounded:
+		if(myIsOnGround == true)
+		{
+			return true;
+		}
+		break;
+	default:
+		break;
+	}
+	return false;
 }

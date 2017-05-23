@@ -32,6 +32,7 @@
 #include "ItemFactory.h"
 #include "../Components/PickupComponentManager.h"
 #include "ItemWeaponBehaviourComponentManager.h"
+#include "RespawnComponentManager.h"
 
 //Networking
 #include "ThreadedPostmaster/Postmaster.h"
@@ -74,6 +75,7 @@
 #include "XboxController.h"
 #include "SmoothRotater.h"
 #include "KartModelComponent.h"
+#include "RespawnerComponent.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -85,10 +87,12 @@ CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	, myColliderComponentManager(nullptr)
 	, myScriptComponentManager(nullptr)
 	, myItemFactory(nullptr)
+	, myRespawnComponentManager(nullptr)
 	, myCameraComponents(4)
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
+	, myCountdownShouldRender(false)
 {
 	myPlayers.Init(1);
 	myPlayerCount = 1;
@@ -106,10 +110,12 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	, myColliderComponentManager(nullptr)
 	, myScriptComponentManager(nullptr)
 	, myItemFactory(nullptr)
+	, myRespawnComponentManager(nullptr)
 	, myCameraComponents(4)
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
+	, myCountdownShouldRender(false)
 {
 	CommandLineManager* commandLineManager = CommandLineManager::GetInstance();
 	if (commandLineManager)
@@ -160,6 +166,7 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myPlayerControllerManager);
 	SAFE_DELETE(myBoostPadComponentManager);
 	SAFE_DELETE(myItemFactory);
+	SAFE_DELETE(myRespawnComponentManager);
 }
 
 // Runs on its own thread.
@@ -168,18 +175,17 @@ void CPlayState::Load()
 	CU::CStopWatch loadPlaystateTimer;
 	loadPlaystateTimer.Start();
 
-	//SRenderMessage* msg = new SRenderMessage(SRenderMessage::eRenderMessageType::eCreateGuiElement);
-	//SRenderToGUI* guiRenderThing = new SRenderToGUI(L"Sprites/GUI/countdown.dds",msg);
+	myCountdownSprite = new CSpriteInstance("Sprites/GUI/countdown.dds");
+	myCountdownSprite->SetPivot({ 0.5f,0.5f });
+	myCountdownSprite->SetSize({ 0.25f,0.25f });
+	myCountdownSprite->SetRect({ 0.f,0.75f,1.f,1.f });
+	myCountdownSprite->SetPosition({ 0.5f,0.5f });
 
-	//SGUIElement guiElement;
-	//guiElement.myAnchor = eAnchors::eTop | eAnchors::eLeft;
-	//SCreateOrClearGuiElement* guiMsg = new SCreateOrClearGuiElement("countdown",)
-	
+	myCountdownElement = new SGUIElement();
+	myCountdownElement->myAnchor = (char)eAnchors::eTop | (char)eAnchors::eLeft;
+	// Render in Renderfunc.
 
-	//myTimerManager = new CU::TimerManager();
-	//myCountdownTimerHandle = myTimerManager->CreateTimer();
-	//myTimerManager->StopTimer(myCountdownTimerHandle);
-	//myTimerManager->ResetTimer(myCountdownTimerHandle);
+
 
 	srand(static_cast<unsigned int>(time(nullptr)));
 
@@ -300,6 +306,10 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	{
 		myBoostPadComponentManager->Update();
 	}
+	if(myRespawnComponentManager != nullptr)
+	{
+		myRespawnComponentManager->Update();
+	}
 
 	CPickupComponentManager::GetInstance()->Update(aDeltaTime.GetSeconds());
 	return myStatus;
@@ -308,6 +318,23 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 void CPlayState::Render()
 {
 	myScene->RenderSplitScreen(myPlayerCount);
+
+	if (myCountdownShouldRender)
+	{
+		SCreateOrClearGuiElement* createOrClear = new SCreateOrClearGuiElement(L"countdown", *myCountdownElement, CU::Vector2ui(WINDOW_SIZE.x, WINDOW_SIZE.y));
+		RENDERER.AddRenderMessage(createOrClear);
+
+		SChangeStatesMessage* const changeStatesMessage = new SChangeStatesMessage();
+		changeStatesMessage->myBlendState = eBlendState::eAddBlend;
+		changeStatesMessage->myDepthStencilState = eDepthStencilState::eDisableDepth;
+		changeStatesMessage->myRasterizerState = eRasterizerState::eNoCulling;
+		changeStatesMessage->mySamplerState = eSamplerState::eClamp;
+
+		SRenderToGUI* const guiChangeState = new SRenderToGUI(L"countdown", changeStatesMessage);
+		RENDERER.AddRenderMessage(guiChangeState);
+
+		myCountdownSprite->RenderToGUI(L"countdown");
+	}
 }
 
 void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
@@ -374,6 +401,7 @@ void CPlayState::CreateManagersAndFactories()
 	myItemBehaviourManager->Init(myPhysicsScene);
 	myItemFactory = new CItemFactory();
 	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager);
+	myRespawnComponentManager = new CRespawnComponentManager();
 	CKartSpawnPointManager::GetInstance()->Create();
 	CPickupComponentManager::Create();
 }
@@ -402,6 +430,9 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	CCameraComponent* cameraComponent = new CCameraComponent();
 	CComponentManager::GetInstance().RegisterComponent(cameraComponent);
 	cameraComponent->SetCamera(aCamera);
+
+	CRespawnerComponent* respawnComponent = myRespawnComponentManager->CreateAndRegisterComponent();
+	playerObject->AddComponent(respawnComponent);
 
 	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent();
 	if (aIntputDevice == SParticipant::eInputDevice::eKeyboard)
@@ -458,15 +489,14 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 
 void CPlayState::InitiateRace()
 {
-	auto countdownLambda = []() {
+	auto countdownLambda = [this]() {
 
 		CU::TimerManager timerManager;
 		TimerHandle timer = timerManager.CreateTimer();
-		//const CU::Timer& CDTimer = myTimerManager->GetTimer(myCountdownTimerHandle);
 		float startCountdownTime = 0.f;
 
-		//if (CDTimer.GetIsActive() == false)
-		//	((CU::Timer&)CDTimer).Start();
+
+		myCountdownShouldRender = true;
 
 		while (startCountdownTime < 4.f)
 		{
@@ -476,19 +506,29 @@ void CPlayState::InitiateRace()
 			if (newTime > startCountdownTime)
 			{
 				startCountdownTime = newTime;
+
+				if		(startCountdownTime == 0) 	myCountdownSprite->SetRect({ 0.f,0.75f,1.f,1.00f });
+				else if (startCountdownTime == 1) 	myCountdownSprite->SetRect({ 0.f,0.50f,1.f,0.75f });
+				else if (startCountdownTime == 2) 	myCountdownSprite->SetRect({ 0.f,0.25f,1.f,0.50f });
+				else if (startCountdownTime == 3) 	myCountdownSprite->SetRect({ 0.f,0.00f,1.f,0.25f });
 			}
+		}
 
-			//myTimerManager->UpdateTimers();
+		while (timerManager.GetTimer(timer).GetLifeTime().GetSeconds() < 4.1f)
+		{
+			timerManager.UpdateTimers(); // ifrågasätt inte..
+			myCountdownSprite->SetAlpha(0);
 
-			//float newTime = CDTimer.GetLifeTime().GetSeconds();
-			//if ((char)newTime <= 4 && (char)newTime != startCountdownTime)
-			//	startCountdownTime = newTime;
 		}
 	};
 
 	CU::Work work(countdownLambda);
 	work.SetName("Countdown thread");
-	std::function<void(void)> callback = [this]() { myKartControllerComponentManager->ShouldUpdate(true); };
+	std::function<void(void)> callback = [this]() 
+	{ 
+		myKartControllerComponentManager->ShouldUpdate(true);
+		myCountdownShouldRender = false;
+	};
 	work.SetFinishedCallback(callback);
 	CU::ThreadPool::GetInstance()->AddWork(work);
 }
