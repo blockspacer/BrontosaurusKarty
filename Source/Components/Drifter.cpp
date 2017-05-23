@@ -22,8 +22,8 @@ bool CDrifter::Init(const CU::CJsonValue& aJsonValue)
 	myTimeMultiplier = aJsonValue.at("DriftOverTimeMultiplier").GetFloat();
 	myMaxDriftSteerAffection = aJsonValue.at("MaxDriftTurnRate").GetFloat();
 
-	myLongDriftTime = 5.f;
-	myShortDriftTime = 2.f;
+	myLongDriftTime = aJsonValue.at("LargeBoostAt").GetFloat();
+	myShortDriftTime = aJsonValue.at("SmallBoostAt").GetFloat();
 
 	return true;
 }
@@ -53,11 +53,13 @@ void CDrifter::StartDrifting(const float aSteering)
 	{
 		myIsDrifting = true;
 		myDriftRate = -myMaxDriftRate;
+		myDriftTimer = 0.0f;
 	}
 	else if (aSteering < 0.f)
 	{
 		myIsDrifting = true;
 		myDriftRate = myMaxDriftRate;
+		myDriftTimer = 0.0f;
 	}
 }
 

@@ -22,7 +22,10 @@ CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aS
 	for (int i = 0; i < 4; ++i)
 	{
 		AddXboxController();
+		SParticipant::eInputDevice input = SParticipant::eInputDevice::eNone;
+		myPlayerInputDevices.Insert(i, input);
 	}
+	
 }
 
 
@@ -192,6 +195,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 				SParticipant participant;
 				participant.myInputDevice = static_cast<SParticipant::eInputDevice>(aInputMessage.myGamepadIndex);
 				myPlayers.Add(participant);
+				myPlayerInputDevices[myPlayers.Size() - 1] = static_cast<SParticipant::eInputDevice>(aInputMessage.myGamepadIndex);
 			}
 			break;
 		case CU::GAMEPAD::B:
@@ -199,6 +203,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 			{
 				if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
 				{
+					myPlayerInputDevices[i] = SParticipant::eInputDevice::eNone;
 					myPlayers.RemoveAtIndex(i);
 				}
 			}
@@ -224,6 +229,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 					SParticipant participant;
 					participant.myInputDevice = SParticipant::eInputDevice::eKeyboard;
 					myPlayers.Add(participant);
+					myPlayerInputDevices[myPlayers.Size() - 1] = static_cast<SParticipant::eInputDevice>(aInputMessage.myGamepadIndex);
 				}
 			}
 			break;		
@@ -235,6 +241,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 					if (myPlayers[i].myInputDevice == SParticipant::eInputDevice::eKeyboard)
 					{
 						myHasKeyboardResponded = false;
+						myPlayerInputDevices[i] = SParticipant::eInputDevice::eNone;
 						myPlayers.RemoveAtIndex(i);
 					}
 				}
@@ -265,6 +272,52 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 	else if (aInputMessage.myType == CU::eInputType::eMouseReleased)
 	{
 		myMenuManager.MouseReleased();
+	}
+
+	for (unsigned int i = 0; i < myPlayerInputDevices.Size(); ++i)
+	{
+		if (myPlayerInputDevices[i] == static_cast<SParticipant::eInputDevice>(aInputMessage.myGamePad))
+		{
+			if (aInputMessage.myType == CU::eInputType::eGamePadButtonPressed)
+			{
+				switch (aInputMessage.myGamePad)
+				{
+				case CU::GAMEPAD::DPAD_LEFT:
+					myMenuManager.LeftPressed(static_cast<short>(myPlayerInputDevices[i]));
+					break;
+				case CU::GAMEPAD::DPAD_RIGHT:
+					myMenuManager.RightPressed(static_cast<short>(myPlayerInputDevices[i]));
+					break;
+				default:
+					break;
+				}
+			}
+			else if (aInputMessage.myType == CU::eInputType::eGamePadLeftJoyStickChanged)
+			{
+				if (aInputMessage.myJoyStickPosition.x > 0.5f)
+				{
+					myMenuManager.LeftPressed(static_cast<short>(myPlayerInputDevices[i]));
+				}
+				else if (aInputMessage.myJoyStickPosition.x < 0.5f)
+				{
+					myMenuManager.RightPressed(static_cast<short>(myPlayerInputDevices[i]));
+				}
+			}
+			else if (aInputMessage.myType == CU::eInputType::eKeyboardPressed)
+			{
+				switch (aInputMessage.myKey)
+				{
+				case CU::eKeys::A:
+				case CU::eKeys::LEFT:
+					myMenuManager.LeftPressed(static_cast<short>(myPlayerInputDevices[i]));
+					break;
+				case CU::eKeys::D:
+				case CU::eKeys::RIGHT:
+					myMenuManager.RightPressed(static_cast<short>(myPlayerInputDevices[i]));
+					break;
+				}
+			}
+		}
 	}
 	return CU::eInputReturn::eKeepSecret;
 }

@@ -86,21 +86,11 @@ void CKartControllerComponent::Turn(float aDirectionX)
 	}
 	if (aDirectionX < 0.f)
 	{
-		if (aDirectionX < -1.f)
-		{
-			aDirectionX = -1.f;
-		}
-
-		TurnLeft(aDirectionX);
+		TurnLeft(aDirectionX * aDirectionX);
 	}
 	else if (aDirectionX > 0.f)
 	{
-		if (aDirectionX > 1.f)
-		{
-			aDirectionX = 1.f;
-		}
-
-		TurnRight(aDirectionX);
+		TurnRight(aDirectionX * aDirectionX);
 	}
 }
 
@@ -132,7 +122,7 @@ void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 	myCurrentAction = eCurrentAction::eTurningLeft;
 	if (myDrifter->IsDrifting() == false)
 	{
-		mySteering = -myTurnRate;
+		mySteering = -myTurnRate * aNormalizedModifier;
 	}
 	else
 	{

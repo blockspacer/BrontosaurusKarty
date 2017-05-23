@@ -69,6 +69,11 @@ public:
 	void MousePressed();
 	void MouseReleased();
 
+	void LeftPressed(const short aPlayerIndex = 0);
+	void RightPressed(const short aPlayerIndex = 0);
+	void LeftReleased(const short aPlayerIndex = 0);
+	void RightReleased(const short aPlayerIndex = 0);
+
 	const SMenuSprite& GetSprite(unsigned aSpriteId);
 
 	void AddAction(const std::string& aActionName, const std::function<bool(std::string)>& aFunction);
@@ -83,6 +88,7 @@ private:
 	CU::GrowingArray<SClickArea> myClickAreas;
 	CU::GrowingArray<SLayerData> myLayers;
 
+
 	static CU::Vector2f ourMousePosition;
 	CSpriteInstance* myPointerSprite;
 
@@ -90,7 +96,12 @@ private:
 
 	SGUIElement myGUIElement;
 	int myCurentlyHoveredClickarea;
+
+	short myPlayerThatpressed;
+
 	bool myMouseIsPressed;
+	bool myIsLeftPressed;
+	bool myIsRightPressed;
 	bool myHasPlayedHoverSound;
 	bool myHasPlayedClickSound;
 };

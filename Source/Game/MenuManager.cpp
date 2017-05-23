@@ -21,6 +21,10 @@ CMenuManager::CMenuManager() : myPointerSprite(nullptr), myShouldRender(true), m
 	myTextInstances.Init(1);
 	myLayers.Init(1);
 
+	myPlayerThatpressed = -1;
+	myIsLeftPressed = false;
+	myIsRightPressed = false;
+
 	myGUIElement.myOrigin = CU::Vector2f(0.5f, 0.5f);
 	myGUIElement.myScreenRect = CU::Vector4f(0.5f, 0.5f, 1.5f, 1.5f);
 	myHasPlayedHoverSound = false;
@@ -276,6 +280,28 @@ void CMenuManager::MouseReleased()
 			}
 		}
 	}
+}
+
+void CMenuManager::LeftPressed(const short aPlayerIndex)
+{
+	myIsLeftPressed = true;
+	myPlayerThatpressed = aPlayerIndex;
+}
+
+void CMenuManager::RightPressed(const short aPlayerIndex)
+{
+	myIsRightPressed = true;
+	myPlayerThatpressed = aPlayerIndex;
+}
+
+void CMenuManager::LeftReleased(const short aPlayerIndex)
+{
+	myIsLeftPressed = false;
+}
+
+void CMenuManager::RightReleased(const short aPlayerIndex)
+{
+	myIsRightPressed = false;
 }
 
 const SMenuSprite& CMenuManager::GetSprite(unsigned aSpriteId)
