@@ -1,6 +1,7 @@
 #include "stdafx.h"
-#include <string>
 #include "ParticleEmitter.h"
+
+#include "Engine.h"
 
 #include "JsonValue.h"
 #include "EmitterData.h"

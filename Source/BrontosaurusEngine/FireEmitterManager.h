@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../CommonUtilities/stack.h"
-
 using FireEmitterID = int;
 
 class CFireEmitter;
@@ -23,5 +21,5 @@ private:
 	~CFireEmitterManager();
 
 	CU::GrowingArray<CFireEmitter, FireEmitterID> myFireEmitters;
-	CU::Stack<FireEmitterID> myFreeIDs;
+	CU::GrowingArray<FireEmitterID> myFreeIDs;
 };

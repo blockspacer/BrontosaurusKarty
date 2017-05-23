@@ -1,8 +1,5 @@
 #pragma once
 
-#include "../CommonUtilities/StaticArray.h"
-
-#include <atomic>
 #include "../CommonUtilities/BitSet.h"
 #include "../ThreadedPostmaster/Subscriber.h"
 #include "../CommonUtilities/InputMessenger.h"

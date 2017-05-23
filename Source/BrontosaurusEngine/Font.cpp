@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "Font.h"
 
-#include <fstream>
-#include <string>
 #include "Texture.h"
 #include "Engine.h"
 #include "TextureManager.h"

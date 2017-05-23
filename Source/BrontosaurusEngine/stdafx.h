@@ -34,5 +34,3 @@
 
 #include "Engine.h"
 #include "DXFramework.h"
-
-// TODO: reference additional headers your program requires here

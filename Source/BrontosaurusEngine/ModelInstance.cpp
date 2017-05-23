@@ -15,6 +15,7 @@
 #include "AnimationState.h"
 DECLARE_ANIMATION_ENUM_AND_STRINGS;
 
+#include "../CommonUtilities/Sphere.h"
 #include "../CommonUtilities/CommonUtilities.h"
 
 CModelInstance::CModelInstance(const std::string& aModelPath): myVertexTexture(nullptr)

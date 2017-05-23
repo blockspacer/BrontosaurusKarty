@@ -49,7 +49,7 @@ int CFireEmitterManager::DestroyFireEmitter(const FireEmitterID aFireEmitter)
 	if (refCount <= 0)
 	{
 		myFireEmitters[aFireEmitter].Destroy();
-		myFreeIDs.Push(aFireEmitter);
+		myFreeIDs.Add(aFireEmitter);
 	}
 
 	return refCount;

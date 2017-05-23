@@ -1,9 +1,6 @@
 #pragma once
 #include <functional>
-#include "../CommonUtilities/vector2.h"
 #include "../FontEngine/FontEngineFacade.h"
-#include "ParticleEmitterManager.h"
-//#include "TextInstance.h"
 
 class CParticleEmitterManager;
 class CFireEmitterManager;
@@ -96,7 +93,6 @@ public:
 	inline CLightManager * GetLightManager();
 	inline CU::TimerManager* GetTimerManager();
 	inline CU::ThreadPool* GetThreadPool();
-	inline CParticleEmitterManager& GetParticleEmitterManager();
 	inline CFireEmitterManager& GetFireEmitterManager();
 	inline CConsole* GetConsole();
 
@@ -199,11 +195,6 @@ inline CU::ThreadPool* CEngine::GetThreadPool()
 inline CConsole* CEngine::GetConsole()
 {
 	return myConsole;
-}
-
-inline CParticleEmitterManager& CEngine::GetParticleEmitterManager()
-{
-	return CParticleEmitterManager::GetInstance();
 }
 
 inline CFireEmitterManager& CEngine::GetFireEmitterManager()
