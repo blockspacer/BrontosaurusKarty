@@ -25,9 +25,11 @@ void CNavigationSpline::LoadFromJson(const CU::CJsonValue& aJsonData)
 
 		SNavigationPoint navigationPoint;
 		navigationPoint.myPosition = pontData.at("position").GetVector2f();
+		navigationPoint.myPosition *= -1;
 
 		const float direction = pontData.at("rotation").GetFloat() / 180 * PI + PI / 2;
 		navigationPoint.myForwardDirection = CU::Vector2f(cos(direction), sin(direction));
+		navigationPoint.myForwardDirection.y *= -1;
 
 		navigationPoint.myWidth = pontData.at("width").GetFloat();
 
