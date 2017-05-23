@@ -23,7 +23,7 @@ public:
 	void LoadNavigationSpline(const CU::CJsonValue& aJsonValue);
 
 	const CNavigationSpline& GetNavigationSpline() const;
-	
+	const CU::Vector3f GetClosestSpinesDirection(const CU::Vector3f& aKartPosition);
 private:
 	CU::GrowingArray<CKartControllerComponent*> myComponents;
 	Physics::CPhysicsScene* myPhysicsScene;

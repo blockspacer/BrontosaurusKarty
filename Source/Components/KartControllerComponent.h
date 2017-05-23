@@ -34,6 +34,7 @@ public:
 	void Update(const float aDeltaTime);
 	
 	void Receive(const eComponentMessageType, const SComponentMessageData&) override;
+	bool Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData) override;
 	void Init(Physics::CPhysicsScene* aPhysicsScene);
 
 	enum class eCurrentAction

@@ -381,6 +381,7 @@
     <ClInclude Include="ItemHolderComponent.h" />
     <ClInclude Include="ItemTypes.h" />
     <ClInclude Include="ItemWeaponBehaviourComponent.h" />
+    <ClInclude Include="ItemWeaponBehaviourComponentManager.h" />
     <ClInclude Include="KartComponent.h" />
     <ClInclude Include="KartComponentManager.h" />
     <ClInclude Include="KartControllerComponentManager.h" />
@@ -393,6 +394,8 @@
     <ClInclude Include="KeyboardController.h" />
     <ClInclude Include="PlayerControllerManager.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="RespawnComponentManager.h" />
+    <ClInclude Include="RespawnerComponent.h" />
     <ClInclude Include="RigidBodyComponent.h" />
     <ClInclude Include="SmoothRotater.h" />
     <ClInclude Include="SpeedHandlerManager.h" />
@@ -443,6 +446,7 @@
     <ClCompile Include="IPickupComponent.cpp" />
     <ClCompile Include="ItemHolderComponent.cpp" />
     <ClCompile Include="ItemWeaponBehaviourComponent.cpp" />
+    <ClCompile Include="ItemWeaponBehaviourComponentManager.cpp" />
     <ClCompile Include="KartComponent.cpp" />
     <ClCompile Include="KartComponentManager.cpp" />
     <ClCompile Include="KartControllerComponentManager.cpp" />
@@ -455,6 +459,8 @@
     <ClCompile Include="PlayerControllerManager.cpp" />
     <ClCompile Include="PointLightComponent.cpp" />
     <ClCompile Include="PointLightComponentManager.cpp" />
+    <ClCompile Include="RespawnComponentManager.cpp" />
+    <ClCompile Include="RespawnerComponent.cpp" />
     <ClCompile Include="RigidBodyComponent.cpp" />
     <ClCompile Include="ScriptComponent.cpp" />
     <ClCompile Include="ScriptComponentManager.cpp" />

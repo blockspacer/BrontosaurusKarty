@@ -35,6 +35,8 @@ class CKartControllerComponentManager;
 class CPlayerControllerManager;
 class CBoostPadComponentManager;
 class CItemFactory;
+class CItemWeaponBehaviourComponentManager;
+class CRespawnComponentManager;
 
 struct SGUIElement;
 
@@ -91,6 +93,8 @@ private:
 	CKartControllerComponentManager* myKartControllerComponentManager;
 	CPlayerControllerManager* myPlayerControllerManager;
 	CItemFactory* myItemFactory;
+	CItemWeaponBehaviourComponentManager* myItemBehaviourManager;
+	CRespawnComponentManager* myRespawnComponentManager;
 
 	CU::GrowingArray<CCameraComponent*> myCameraComponents;
 	CU::GrowingArray<SParticipant> myPlayers;

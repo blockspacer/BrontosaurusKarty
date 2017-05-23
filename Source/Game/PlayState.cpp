@@ -31,6 +31,8 @@
 #include "BoostPadComponentManager.h"
 #include "ItemFactory.h"
 #include "../Components/PickupComponentManager.h"
+#include "ItemWeaponBehaviourComponentManager.h"
+#include "RespawnComponentManager.h"
 
 //Networking
 #include "ThreadedPostmaster/Postmaster.h"
@@ -73,6 +75,7 @@
 #include "XboxController.h"
 #include "SmoothRotater.h"
 #include "KartModelComponent.h"
+#include "RespawnerComponent.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -84,6 +87,7 @@ CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	, myColliderComponentManager(nullptr)
 	, myScriptComponentManager(nullptr)
 	, myItemFactory(nullptr)
+	, myRespawnComponentManager(nullptr)
 	, myCameraComponents(4)
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
@@ -106,6 +110,7 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	, myColliderComponentManager(nullptr)
 	, myScriptComponentManager(nullptr)
 	, myItemFactory(nullptr)
+	, myRespawnComponentManager(nullptr)
 	, myCameraComponents(4)
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
@@ -161,6 +166,7 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myPlayerControllerManager);
 	SAFE_DELETE(myBoostPadComponentManager);
 	SAFE_DELETE(myItemFactory);
+	SAFE_DELETE(myRespawnComponentManager);
 }
 
 // Runs on its own thread.
@@ -300,6 +306,10 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	{
 		myBoostPadComponentManager->Update();
 	}
+	if(myRespawnComponentManager != nullptr)
+	{
+		myRespawnComponentManager->Update();
+	}
 
 	CPickupComponentManager::GetInstance()->Update(aDeltaTime.GetSeconds());
 	return myStatus;
@@ -387,7 +397,11 @@ void CPlayState::CreateManagersAndFactories()
 	myKartControllerComponentManager->Init(myPhysicsScene);
 	myPlayerControllerManager = new CPlayerControllerManager;
 	myBoostPadComponentManager = new CBoostPadComponentManager();
+	myItemBehaviourManager = new CItemWeaponBehaviourComponentManager();
+	myItemBehaviourManager->Init(myPhysicsScene);
 	myItemFactory = new CItemFactory();
+	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager);
+	myRespawnComponentManager = new CRespawnComponentManager();
 	CKartSpawnPointManager::GetInstance()->Create();
 	CPickupComponentManager::Create();
 }
@@ -416,6 +430,9 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	CCameraComponent* cameraComponent = new CCameraComponent();
 	CComponentManager::GetInstance().RegisterComponent(cameraComponent);
 	cameraComponent->SetCamera(aCamera);
+
+	CRespawnerComponent* respawnComponent = myRespawnComponentManager->CreateAndRegisterComponent();
+	playerObject->AddComponent(respawnComponent);
 
 	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent();
 	if (aIntputDevice == SParticipant::eInputDevice::eKeyboard)

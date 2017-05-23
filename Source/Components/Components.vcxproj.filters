@@ -54,6 +54,9 @@
     <ClCompile Include="KartModelComponent.cpp" />
     <ClCompile Include="HazardComponent.cpp" />
     <ClCompile Include="ItemWeaponBehaviourComponent.cpp" />
+    <ClCompile Include="RespawnerComponent.cpp" />
+    <ClCompile Include="RespawnComponentManager.cpp" />
+    <ClCompile Include="ItemWeaponBehaviourComponentManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -116,5 +119,8 @@
     <ClInclude Include="KartModelComponent.h" />
     <ClInclude Include="HazardComponent.h" />
     <ClInclude Include="ItemWeaponBehaviourComponent.h" />
+    <ClInclude Include="RespawnerComponent.h" />
+    <ClInclude Include="RespawnComponentManager.h" />
+    <ClInclude Include="ItemWeaponBehaviourComponentManager.h" />
   </ItemGroup>
 </Project>
