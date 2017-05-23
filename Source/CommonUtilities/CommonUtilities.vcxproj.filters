@@ -385,7 +385,6 @@
     <ClInclude Include="Colour.h">
       <Filter>Colour</Filter>
     </ClInclude>
-    <ClInclude Include="WindowsHelper.h" />
     <ClInclude Include="CommonSTL.h" />
     <ClInclude Include="CommonCU.h" />
     <ClInclude Include="IQueue.h">
@@ -395,6 +394,9 @@
       <Filter>Queue</Filter>
     </ClInclude>
     <ClInclude Include="PICarlApproved.h" />
+    <ClInclude Include="WindowsHelper.h">
+      <Filter>WindowsHelper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -482,7 +484,9 @@
     <ClCompile Include="SerializerSaver.cpp">
       <Filter>Serializer</Filter>
     </ClCompile>
-    <ClCompile Include="WindowsHelper.cpp" />
+    <ClCompile Include="WindowsHelper.cpp">
+      <Filter>WindowsHelper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CommonUtilities.rc" />
