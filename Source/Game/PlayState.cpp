@@ -6,6 +6,7 @@
 #include <StopWatch.h>
 #include <EInputReturn.h>
 #include <Scene.h>
+#include <ParticleEmitterManager.h>
 
 #include "StateStack.h"
 
@@ -78,7 +79,6 @@
 #include "KartModelComponent.h"
 #include "RespawnerComponent.h"
 #include "LapTrackerComponent.h"
-#include "BrontosaurusEngine/ParticleEmitterManager.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
