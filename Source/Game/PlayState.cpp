@@ -315,11 +315,16 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	}
 	if(myRespawnComponentManager != nullptr)
 	{
-		myRespawnComponentManager->Update();
+		myRespawnComponentManager->Update(aDeltaTime.GetSeconds());
 	}
 	if(myLapTrackerComponentManager != nullptr)
 	{
 		myLapTrackerComponentManager->Update();
+	}
+
+	if (myItemBehaviourManager != nullptr)
+	{
+		myItemBehaviourManager->Update(aDeltaTime.GetSeconds());
 	}
 
 	CPickupComponentManager::GetInstance()->Update(aDeltaTime.GetSeconds());
@@ -483,6 +488,8 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	box.myLayer = Physics::eKart;
 	SConcaveMeshColliderData crystalMeshColliderData;
 	crystalMeshColliderData.IsTrigger = false;
+	crystalMeshColliderData.myLayer = Physics::eKart;
+	crystalMeshColliderData.myCollideAgainst = Physics::GetCollideAgainst(crystalMeshColliderData.myLayer);
 	crystalMeshColliderData.myPath = "Models/Meshes/M_Kart_01.fbx";
 	crystalMeshColliderData.material.aDynamicFriction = 0.5f;
 	crystalMeshColliderData.material.aRestitution = 0.5f;
@@ -512,42 +519,50 @@ void CPlayState::InitiateRace()
 
 		CU::TimerManager timerManager;
 		TimerHandle timer = timerManager.CreateTimer();
-		float startCountdownTime = 0.f;
-
+		unsigned char startCountdownTime = 0;
+		float floatTime = 0.f;
 
 		myCountdownShouldRender = true;
 
-		while (startCountdownTime < 4.f)
+		while (floatTime <= 3.5)
 		{
 			timerManager.UpdateTimers();
-			float newTime = timerManager.GetTimer(timer).GetLifeTime().GetSeconds();
-			newTime = std::floor(newTime);
-			if (newTime > startCountdownTime)
+			floatTime = timerManager.GetTimer(timer).GetLifeTime().GetSeconds();
+
+			if ((unsigned char)floatTime > startCountdownTime)
 			{
-				startCountdownTime = newTime;
+				startCountdownTime = std::floor(floatTime);
 
 				if		(startCountdownTime == 0) 	myCountdownSprite->SetRect({ 0.f,0.75f,1.f,1.00f });
 				else if (startCountdownTime == 1) 	myCountdownSprite->SetRect({ 0.f,0.50f,1.f,0.75f });
 				else if (startCountdownTime == 2) 	myCountdownSprite->SetRect({ 0.f,0.25f,1.f,0.50f });
-				else if (startCountdownTime == 3) 	myCountdownSprite->SetRect({ 0.f,0.00f,1.f,0.25f });
+				else if (startCountdownTime == 3)
+				{
+					myCountdownSprite->SetRect({ 0.f,0.00f,1.f,0.25f });
+					myKartControllerComponentManager->ShouldUpdate(true);
+				}
 			}
-		}
-
-		while (timerManager.GetTimer(timer).GetLifeTime().GetSeconds() < 4.1f)
-		{
-			timerManager.UpdateTimers(); // ifrågasätt inte..
-			myCountdownSprite->SetAlpha(0);
-
 		}
 	};
 
 	CU::Work work(countdownLambda);
 	work.SetName("Countdown thread");
+
 	std::function<void(void)> callback = [this]() 
 	{ 
-		myKartControllerComponentManager->ShouldUpdate(true);
+		CU::TimerManager timerManager;
+		TimerHandle timer = timerManager.CreateTimer();
+
+		while (timerManager.GetTimer(timer).GetLifeTime().GetSeconds() < .05f)
+		{
+			timerManager.UpdateTimers(); // för att komma runt att trippelbuffringen slänger bort meddelanden.
+			myCountdownSprite->SetAlpha(0);
+		}
+
 		myCountdownShouldRender = false;
+
 	};
+
 	work.SetFinishedCallback(callback);
 	CU::ThreadPool::GetInstance()->AddWork(work);
 }

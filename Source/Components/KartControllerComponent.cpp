@@ -498,6 +498,10 @@ bool CKartControllerComponent::Answer(const eComponentQuestionType aQuestionType
 		aQuestionData.myVector3f = myManager->GetClosestSpinesDirection(GetParent()->GetWorldPosition());
 		return true;
 		break;
+	case eComponentQuestionType::eGetSplineWithIndex:
+		aQuestionData.myNavigationPoint = myManager->GetNavigationPoint(aQuestionData.myInt);
+		return true;
+		break;
 	default:
 		break;
 	}

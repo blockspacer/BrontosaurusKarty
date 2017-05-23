@@ -1,5 +1,12 @@
 #pragma once
 #include "Component.h"
+
+struct SLastGroundData
+{
+	CU::Vector3f lastGroundPosition;
+	float timeSinceCreated = 0;
+};
+
 class CRespawnerComponent : public CComponent
 {
 public:
@@ -7,11 +14,11 @@ public:
 	~CRespawnerComponent();
 
 	void Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData) override;
-	void Update();
+	void Update(float aDeltaTime);
 private:
-	void UpdateGroundedPosition();
+	void UpdateGroundedPosition(float aDeltaTime);
 private:
-	CU::Vector3f myLastGroundedPosition;
-
+	CU::GrowingArray<SLastGroundData> myGroundData;
+	float myTakeNewGroundCountDown;
 };
 

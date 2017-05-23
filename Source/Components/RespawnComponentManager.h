@@ -6,7 +6,7 @@ public:
 	CRespawnComponentManager();
 	~CRespawnComponentManager();
 
-	void Update();
+	void Update(float aDeltaTime);
 	CRespawnerComponent* CreateAndRegisterComponent();
 private:
 	CU::GrowingArray<CRespawnerComponent*> myComponents;
