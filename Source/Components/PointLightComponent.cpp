@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "PointLightComponent.h"
 #include "PointLightInstance.h"
+#include "../BrontosaurusEngine/Scene.h"
 
 float fLerp(float aStart, float aEnd, float aTime)
 {
