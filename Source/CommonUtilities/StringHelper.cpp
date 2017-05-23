@@ -1,11 +1,6 @@
 #include "stdafx.h"
 #include "StringHelper.h"
-#include <sstream>
 #include <iomanip>
-#include <algorithm>
-
-//#include <stdlib.h> // mbstowcs_s
-//#include <string.h> // strlen
 
 namespace CU
 {

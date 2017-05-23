@@ -37,6 +37,7 @@ class CBoostPadComponentManager;
 class CItemFactory;
 class CItemWeaponBehaviourComponentManager;
 class CRespawnComponentManager;
+class CLapTrackerComponentManager;
 
 struct SGUIElement;
 
@@ -95,6 +96,7 @@ private:
 	CItemFactory* myItemFactory;
 	CItemWeaponBehaviourComponentManager* myItemBehaviourManager;
 	CRespawnComponentManager* myRespawnComponentManager;
+	CLapTrackerComponentManager* myLapTrackerComponentManager;
 
 	CU::GrowingArray<CCameraComponent*> myCameraComponents;
 	CU::GrowingArray<SParticipant> myPlayers;

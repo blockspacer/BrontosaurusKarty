@@ -6,7 +6,6 @@
 
 #include "StringHelper.h"
 #include "DL_Debug.h"
-#include "CUTime.h"
 
 #include "cuvector.h"
 #include "matrix.h"

@@ -386,7 +386,6 @@
     <ClInclude Include="dbtweener.h" />
     <ClInclude Include="DL_Assert.h" />
     <ClInclude Include="DL_Debug.h" />
-    <ClInclude Include="DL_StackWalker.h" />
     <ClInclude Include="double_linked_list.h" />
     <ClInclude Include="DynamicMemoryPool.h" />
     <ClInclude Include="EInputMessage.h" />
@@ -397,7 +396,6 @@
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="Function.h" />
     <ClInclude Include="GrowingArray.h" />
-    <ClInclude Include="growingvector.h" />
     <ClInclude Include="Heap.h" />
     <ClInclude Include="InputListener.h" />
     <ClInclude Include="InputMessage.h" />
@@ -418,7 +416,6 @@
     <ClInclude Include="MoveArray.h" />
     <ClInclude Include="Octree.h" />
     <ClInclude Include="PICarlApproved.h" />
-    <ClInclude Include="ReverseGrowingArray.h" />
     <ClInclude Include="Serializer.h" />
     <ClInclude Include="SerializerLoader.h" />
     <ClInclude Include="SerializerSaver.h" />
@@ -464,7 +461,6 @@
     <ClInclude Include="rapidjson\writer.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="StackWalker.h" />
     <ClInclude Include="StaticArray.h" />
     <ClInclude Include="StaticTypeTraits.h" />
     <ClInclude Include="stdafx.h" />
@@ -493,7 +489,6 @@
     <ClCompile Include="CommandLineManager.cpp" />
     <ClCompile Include="dbtweener.cpp" />
     <ClCompile Include="DL_Debug.cpp" />
-    <ClCompile Include="DL_StackWalker.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="InputListener.cpp" />
     <ClCompile Include="InputMessenger.cpp" />
@@ -508,7 +503,6 @@
     <ClCompile Include="Serializer.cpp" />
     <ClCompile Include="SerializerLoader.cpp" />
     <ClCompile Include="SerializerSaver.cpp" />
-    <ClCompile Include="StackWalker.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ModelViewer|Win32'">Create</PrecompiledHeader>

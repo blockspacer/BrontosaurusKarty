@@ -1,9 +1,5 @@
 #pragma once
 
-#ifndef assert
-#include <assert.h>
-#endif // !assert
-
 namespace CU
 {
 	template<typename ObjectType>

@@ -1,5 +1,4 @@
 #pragma once
-#include "vector2.h"
 #define LINE_TEMPLATE template<typename TYPE>
 
 namespace CU

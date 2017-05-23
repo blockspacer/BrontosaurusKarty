@@ -1,5 +1,6 @@
 #pragma once
-namespace Physics {
+namespace Physics
+{
 	class CPhysicsScene;
 }
 

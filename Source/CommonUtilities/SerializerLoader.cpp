@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "SerializerLoader.h"
-#include "Serializer.h"
 
 namespace CU
 {

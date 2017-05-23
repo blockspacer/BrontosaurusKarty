@@ -1,6 +1,5 @@
 #pragma once
 #include "AudioSourceComponent.h"
-#include <unordered_map>
 
 class CAudioSourceComponentManager
 {

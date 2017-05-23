@@ -1,8 +1,7 @@
-
 #pragma once
-#include "../CommonUtilities/TimerManager.h"
 #include "Component.h"
-#include "../BrontosaurusEngine/StreakEmitterInstance.h"
+
+class CStreakEmitterInstance;
 
 class CStreakEmitterComponent : public CComponent
 {
@@ -14,8 +13,8 @@ public:
 
 	inline CStreakEmitterInstance* GetEmitter();
 
-	inline void Activate();
-	inline void Deactivate();
+	void Activate();
+	void Deactivate();
 
 	void Receive(const eComponentMessageType aMessageType, const SComponentMessageData & aMessageData);
 	void Destroy() override;
@@ -23,16 +22,6 @@ public:
 private:
 	CStreakEmitterInstance* myStreakEmitterInstance;
 };
-
-void CStreakEmitterComponent::Activate()
-{
-	myStreakEmitterInstance->Activate();
-}
-
-void CStreakEmitterComponent::Deactivate()
-{
-	myStreakEmitterInstance->Deactivate();
-}
 
 CStreakEmitterInstance* CStreakEmitterComponent::GetEmitter()
 {

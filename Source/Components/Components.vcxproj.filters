@@ -56,6 +56,8 @@
     <ClCompile Include="ItemWeaponBehaviourComponent.cpp" />
     <ClCompile Include="RespawnerComponent.cpp" />
     <ClCompile Include="RespawnComponentManager.cpp" />
+    <ClCompile Include="LapTrackerComponent.cpp" />
+    <ClCompile Include="LapTrackerComponentManager.cpp" />
     <ClCompile Include="ItemWeaponBehaviourComponentManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -92,7 +94,6 @@
     <ClInclude Include="SpeedHandlerComponent.h" />
     <ClInclude Include="SphereColliderComponent.h" />
     <ClInclude Include="FireComponent.h" />
-    <ClInclude Include="PlayerControls.h" />
     <ClInclude Include="PointLightComponent.h" />
     <ClInclude Include="PointLightComponentManager.h" />
     <ClInclude Include="ScriptComponent.h" />
@@ -121,6 +122,8 @@
     <ClInclude Include="ItemWeaponBehaviourComponent.h" />
     <ClInclude Include="RespawnerComponent.h" />
     <ClInclude Include="RespawnComponentManager.h" />
+    <ClInclude Include="LapTrackerComponent.h" />
+    <ClInclude Include="LapTrackerComponentManager.h" />
     <ClInclude Include="ItemWeaponBehaviourComponentManager.h" />
   </ItemGroup>
 </Project>

@@ -389,6 +389,8 @@
     <ClInclude Include="KeyboardControllerComponent.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="KartControllerComponent.h" />
+    <ClInclude Include="LapTrackerComponent.h" />
+    <ClInclude Include="LapTrackerComponentManager.h" />
     <ClInclude Include="MeshColliderComponent.h" />
     <ClInclude Include="PickupComponentManager.h" />
     <ClInclude Include="KeyboardController.h" />
@@ -403,7 +405,6 @@
     <ClInclude Include="SpeedHandlerComponent.h" />
     <ClInclude Include="SphereColliderComponent.h" />
     <ClInclude Include="FireComponent.h" />
-    <ClInclude Include="PlayerControls.h" />
     <ClInclude Include="PointLightComponent.h" />
     <ClInclude Include="PointLightComponentManager.h" />
     <ClInclude Include="ScriptComponent.h" />
@@ -453,6 +454,8 @@
     <ClCompile Include="KartModelComponent.cpp" />
     <ClCompile Include="KeyboardControllerComponent.cpp" />
     <ClCompile Include="KartControllerComponent.cpp" />
+    <ClCompile Include="LapTrackerComponent.cpp" />
+    <ClCompile Include="LapTrackerComponentManager.cpp" />
     <ClCompile Include="MeshColliderComponent.cpp" />
     <ClCompile Include="PickupComponentManager.cpp" />
     <ClCompile Include="KeyboardController.cpp" />

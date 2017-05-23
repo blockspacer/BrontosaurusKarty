@@ -1,7 +1,9 @@
 #pragma once
 #include "Component.h"
 #include "Lights.h"
-#include "Scene.h"
+
+class CScene;
+typedef unsigned int InstanceID;
 
 class PointLightComponent : public CComponent
 {

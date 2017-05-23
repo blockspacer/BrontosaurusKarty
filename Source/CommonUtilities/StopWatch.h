@@ -1,5 +1,4 @@
 #pragma once
-
 #include "CUTime.h"
 #include <chrono>
 
