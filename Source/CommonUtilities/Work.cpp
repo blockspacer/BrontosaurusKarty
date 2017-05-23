@@ -2,7 +2,6 @@
 #include "Work.h"
 #include "DL_Debug.h"
 #include "ThreadPool.h"
-#include "../BrontosaurusEngine/Engine.h"
 #include "../ThreadedPostmaster/PostOffice.h"
 #include "../ThreadedPostmaster/Postmaster.h"
 #include "ThreadNamer.h"

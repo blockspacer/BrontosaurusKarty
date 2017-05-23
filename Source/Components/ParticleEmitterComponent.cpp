@@ -1,10 +1,9 @@
 #include "stdafx.h"
 #include "ParticleEmitterComponent.h"
-#include "GameObject.h"
-#include "ComponentManager.h"
 #include "ParticleEmitterComponentManager.h"
-#include "../BrontosaurusEngine/ParticleEmitterInstance.h"
 #include "ParticleEmitterManager.h"
+
+#include "../BrontosaurusEngine/ParticleEmitterInstance.h"
 
 CParticleEmitterComponent::CParticleEmitterComponent(int anId)
 {

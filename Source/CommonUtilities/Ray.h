@@ -1,5 +1,4 @@
 #pragma once
-#include "vector3.h"
 
 namespace CU
 {
@@ -21,4 +20,3 @@ namespace CU
 		CU::Vector3f myDirection;
 	};
 }
-

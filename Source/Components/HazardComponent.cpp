@@ -17,7 +17,8 @@ void CHazardComponent::Receive(const eComponentMessageType aMessageType, const S
 	{
 	case eComponentMessageType::eOnTriggerEnter:
 	{
-		GetParent()->NotifyComponents(eComponentMessageType::eGotHit, SComponentMessageData());
+		aMessageData.myComponent->GetParent()->NotifyComponents(eComponentMessageType::eGotHit, SComponentMessageData());
+		GetParent()->NotifyComponents(eComponentMessageType::eDeactivate, SComponentMessageData());
 	}
 	break;
 	default:

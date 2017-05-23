@@ -35,6 +35,7 @@ class CKartControllerComponentManager;
 class CPlayerControllerManager;
 class CBoostPadComponentManager;
 class CItemFactory;
+class CItemWeaponBehaviourComponentManager;
 class CRespawnComponentManager;
 class CLapTrackerComponentManager;
 
@@ -93,6 +94,7 @@ private:
 	CKartControllerComponentManager* myKartControllerComponentManager;
 	CPlayerControllerManager* myPlayerControllerManager;
 	CItemFactory* myItemFactory;
+	CItemWeaponBehaviourComponentManager* myItemBehaviourManager;
 	CRespawnComponentManager* myRespawnComponentManager;
 	CLapTrackerComponentManager* myLapTrackerComponentManager;
 

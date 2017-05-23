@@ -1,5 +1,4 @@
 #pragma once
-#include "vector3.h"
 
 #define PLANE_TEMPLATE template<typename TYPE>
 

@@ -381,6 +381,7 @@
     <ClInclude Include="ItemHolderComponent.h" />
     <ClInclude Include="ItemTypes.h" />
     <ClInclude Include="ItemWeaponBehaviourComponent.h" />
+    <ClInclude Include="ItemWeaponBehaviourComponentManager.h" />
     <ClInclude Include="KartComponent.h" />
     <ClInclude Include="KartComponentManager.h" />
     <ClInclude Include="KartControllerComponentManager.h" />
@@ -404,7 +405,6 @@
     <ClInclude Include="SpeedHandlerComponent.h" />
     <ClInclude Include="SphereColliderComponent.h" />
     <ClInclude Include="FireComponent.h" />
-    <ClInclude Include="PlayerControls.h" />
     <ClInclude Include="PointLightComponent.h" />
     <ClInclude Include="PointLightComponentManager.h" />
     <ClInclude Include="ScriptComponent.h" />
@@ -447,6 +447,7 @@
     <ClCompile Include="IPickupComponent.cpp" />
     <ClCompile Include="ItemHolderComponent.cpp" />
     <ClCompile Include="ItemWeaponBehaviourComponent.cpp" />
+    <ClCompile Include="ItemWeaponBehaviourComponentManager.cpp" />
     <ClCompile Include="KartComponent.cpp" />
     <ClCompile Include="KartComponentManager.cpp" />
     <ClCompile Include="KartControllerComponentManager.cpp" />

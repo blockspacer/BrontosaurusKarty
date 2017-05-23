@@ -1,9 +1,6 @@
 #pragma once
-#include <mutex>
 #include "IQueue.h"
-#include <cassert>
 
-//TODO: Check if there is a way to make this better
 namespace Container
 {
 	template<typename T, unsigned int QueueLimit = 5000>

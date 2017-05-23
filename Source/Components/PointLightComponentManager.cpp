@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "PointLightComponentManager.h"
 #include "PointLightComponent.h"
-#include "ComponentManager.h"
 #include "Scene.h"
 
 CPointLightComponentManager* CPointLightComponentManager::ourInstance = nullptr;

@@ -1,10 +1,6 @@
 #pragma once
-#include "vector2.h"
-#include "vector3.h"
-#include "matrix.h"
 #include "plane.h"
 #include "line.h"
-#include <math.h>
 
 namespace CU
 {

@@ -1,10 +1,4 @@
 #pragma once
-#include "StaticArray.h"
-#include "VectorOnStack.h"
-
-#ifndef assert
-#include <assert.h>
-#endif // !assert
 
 namespace CU
 {

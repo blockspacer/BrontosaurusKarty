@@ -1,11 +1,6 @@
 #include "stdafx.h"
 #include "JsonValue.h"
 #include "picojson.h"
-#include <fstream>
-
-#include "vector2.h"
-#include "vector3.h"
-#include "vector4.h"
 
 //#define JSON_ERROR(ERROR_MESSAGE) assert(ERROR_MESSAGE && false)
 #define JSON_ERROR DL_MESSAGE_BOX
