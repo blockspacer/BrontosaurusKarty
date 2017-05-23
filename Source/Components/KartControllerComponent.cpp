@@ -271,7 +271,7 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	CheckZKill();
 		
 	const CU::Vector3f forwardVector = GetParent()->GetToWorldTransform().myForwardVector;
-	
+	const float speed = forwardVector.Dot(myVelocity);
 	const float dir = myVelocity.Dot(forwardVector);
 
 	float way = 1.f;
@@ -319,8 +319,18 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 		const int i = 0;
 	}
 
-	GetParent()->SetWorldPosition(GetParent()->GetWorldPosition() + myVelocity * aDeltaTime);
+	if(myDrifter->IsDrifting() == true)
+	{
+		DoDriftingParticles();
 
+		myDrifter->ApplySteering(mySteering, aDeltaTime);
+		GetParent()->SetWorldPosition(GetParent()->GetWorldPosition() + myVelocity * aDeltaTime);
+	}
+	else
+	{
+		GetParent()->Move(CU::Vector3f::UnitZ * speed * aDeltaTime);
+	}
+	GetParent()->Move(CU::Vector3f::UnitY * myVelocity.y * aDeltaTime);
 	if (myIsBoosting == true)
 	{
 		CU::Matrix44f particlePosition = GetParent()->GetLocalTransform();
@@ -329,28 +339,6 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 		CParticleEmitterManager::GetInstance().SetPosition(myBoostEmmiterhandle, particlePosition.GetPosition());
 	}
 
-	if (myDrifter->IsDrifting())
-	{
-		myDrifter->ApplySteering(mySteering, aDeltaTime);
-
-		GetParent()->GetLocalTransform().Move(CU::Vector3f(/*myDrifting.myDriftRate*/myDrifter->GetDriftRate()  * aDeltaTime, 0.0f, 0.0f));
-
-		CU::Matrix44f particlePosition = GetParent()->GetLocalTransform();
-
-		particlePosition.Move(CU::Vector3f(-0.45f, 0, 0));
-		CParticleEmitterManager::GetInstance().SetPosition(myLeftWheelDriftEmmiterHandle, particlePosition.GetPosition());
-		CParticleEmitterManager::GetInstance().SetPosition(myLeftDriftBoostEmitterhandle, particlePosition.GetPosition());
-		particlePosition.Move(CU::Vector3f(0.9f, 0, 0));
-		CParticleEmitterManager::GetInstance().SetPosition(myRightWheelDriftEmmiterHandle, particlePosition.GetPosition());
-		CParticleEmitterManager::GetInstance().SetPosition(myRightDriftBoostEmitterhandle, particlePosition.GetPosition());
-
-		static bool driftParticlesActivated = false;
-		if (myDrifter->WheelsAreBurning() && driftParticlesActivated == false)
-		{
-			CParticleEmitterManager::GetInstance().Activate(myLeftDriftBoostEmitterhandle);
-			CParticleEmitterManager::GetInstance().Activate(myRightDriftBoostEmitterhandle);
-		}
-	}
 	if (myHasGottenHit == true)
 	{
 		myElapsedStunTime += aDeltaTime;
@@ -400,6 +388,25 @@ void CKartControllerComponent::Init(Physics::CPhysicsScene* aPhysicsScene)
 	myPhysicsScene = aPhysicsScene;
 }
 
+void CKartControllerComponent::DoDriftingParticles()
+{
+	CU::Matrix44f particlePosition = GetParent()->GetLocalTransform();
+
+	particlePosition.Move(CU::Vector3f(-0.45f, 0, 0));
+	CParticleEmitterManager::GetInstance().SetPosition(myLeftWheelDriftEmmiterHandle, particlePosition.GetPosition());
+	CParticleEmitterManager::GetInstance().SetPosition(myLeftDriftBoostEmitterhandle, particlePosition.GetPosition());
+	particlePosition.Move(CU::Vector3f(0.9f, 0, 0));
+	CParticleEmitterManager::GetInstance().SetPosition(myRightWheelDriftEmmiterHandle, particlePosition.GetPosition());
+	CParticleEmitterManager::GetInstance().SetPosition(myRightDriftBoostEmitterhandle, particlePosition.GetPosition());
+
+	static bool driftParticlesActivated = false;
+	if (myDrifter->WheelsAreBurning() && driftParticlesActivated == false)
+	{
+		CParticleEmitterManager::GetInstance().Activate(myLeftDriftBoostEmitterhandle);
+		CParticleEmitterManager::GetInstance().Activate(myRightDriftBoostEmitterhandle);
+	}
+}
+
 const float gravity = 9.82f;
 const float upDistConst = 0.01f;
 const float testLength = 2.f;
@@ -411,6 +418,7 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 	const float upMoveLength = upMove.Length();
 	const float upDist = upDistConst + upMoveLength;
 	const float onGroundDist = upDistConst * 2.f + upMoveLength;
+	const float controlDist = upDistConst * 100.f + upMoveLength;
 	const CU::Vector3f pos = transformation.GetPosition();
 
 	myIsOnGround = false;
@@ -427,12 +435,16 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 	if (raycastHitData.hit == true)
 	{
 		const CU::Vector3f& norm = raycastHitData.normal;
+		if(raycastHitData.distance < controlDist)
+		{
+			myIsOnGround = true;
+		}
 		if (raycastHitData.distance < onGroundDist)
 		{
 
 			downAccl = norm.Cross(down.Cross(norm));
 			friction = norm.Dot(-down);
-			myIsOnGround = true;
+			
 		}
 		if (raycastHitData.distance < upDist)
 		{

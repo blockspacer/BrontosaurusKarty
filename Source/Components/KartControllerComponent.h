@@ -44,6 +44,7 @@ public:
 	};
 
 private:
+	void DoDriftingParticles();
 
 	//void SetHeight(float aHeight, const float aDt);
 	//float GetHeightSpeed();
