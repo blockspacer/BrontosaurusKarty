@@ -381,6 +381,7 @@
     <ClInclude Include="ItemHolderComponent.h" />
     <ClInclude Include="ItemTypes.h" />
     <ClInclude Include="ItemWeaponBehaviourComponent.h" />
+    <ClInclude Include="ItemWeaponBehaviourComponentManager.h" />
     <ClInclude Include="KartComponent.h" />
     <ClInclude Include="KartComponentManager.h" />
     <ClInclude Include="KartControllerComponentManager.h" />
@@ -443,6 +444,7 @@
     <ClCompile Include="IPickupComponent.cpp" />
     <ClCompile Include="ItemHolderComponent.cpp" />
     <ClCompile Include="ItemWeaponBehaviourComponent.cpp" />
+    <ClCompile Include="ItemWeaponBehaviourComponentManager.cpp" />
     <ClCompile Include="KartComponent.cpp" />
     <ClCompile Include="KartComponentManager.cpp" />
     <ClCompile Include="KartControllerComponentManager.cpp" />
