@@ -17,6 +17,7 @@
 #include "LoadHighlightComponent.h"
 #include "LoadVertexInstanceStream.h"
 #include "LoadBoostPad.h"
+#include "LoadBezierCurve.h"
 
 LoadManager* LoadManager::ourInstance = nullptr;
 
@@ -71,6 +72,7 @@ void LoadManager::RegisterFunctions()
 	loader.RegisterComponentLoadFunction("Light", LoadPointLightComponent);
 	loader.RegisterComponentLoadFunction("Pickup", LoadWeapoCrateComponent);
 	loader.RegisterComponentLoadFunction("BoostpadComponent", LoadBoostPadComponent);
+	loader.RegisterComponentLoadFunction("BezierCurve", LoadBezierCurve);
 	//loader.RegisterComponentLoadFunction("CircleCollider", LoadCircleCollider);
 	//loader.RegisterComponentLoadFunction("SoundComponent", LoadSoundComponent);
 	//loader.RegisterComponentLoadFunction("FireComponent", LoadFireComponent);
