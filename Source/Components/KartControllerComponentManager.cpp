@@ -53,3 +53,29 @@ void CKartControllerComponentManager::Init(Physics::CPhysicsScene* aPhysicsScene
 {
 	myPhysicsScene = aPhysicsScene;
 }
+
+const CU::Vector3f CKartControllerComponentManager::GetClosestSpinesDirection(const CU::Vector3f& aKartPosition)
+{
+	float distance = 999999;
+	unsigned int index = -1;
+	
+	for(unsigned int i = 0; i < myNavigationSpline.GetNumberOfPoints(); i++)
+	{
+		float newDistance = CU::Vector2f(myNavigationSpline.GetPoint(i).myPosition - CU::Vector2f(aKartPosition.x, aKartPosition.z)).Length2();
+		if(newDistance < distance)
+		{
+			distance = newDistance;
+			index = i;
+		}
+	}
+
+	if(index > myNavigationSpline.GetNumberOfPoints())
+	{
+		return CU::Vector3f();
+	}
+	CU::Vector3f direction;
+	direction.x = myNavigationSpline.GetPoint(index).myForwardDirection.x;
+	direction.y = 0.0f;
+	direction.z = myNavigationSpline.GetPoint(index).myForwardDirection.y;
+	return direction;
+}

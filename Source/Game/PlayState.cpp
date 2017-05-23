@@ -31,6 +31,7 @@
 #include "BoostPadComponentManager.h"
 #include "ItemFactory.h"
 #include "../Components/PickupComponentManager.h"
+#include "ItemWeaponBehaviourComponentManager.h"
 #include "RespawnComponentManager.h"
 
 //Networking
@@ -396,7 +397,10 @@ void CPlayState::CreateManagersAndFactories()
 	myKartControllerComponentManager->Init(myPhysicsScene);
 	myPlayerControllerManager = new CPlayerControllerManager;
 	myBoostPadComponentManager = new CBoostPadComponentManager();
+	myItemBehaviourManager = new CItemWeaponBehaviourComponentManager();
+	myItemBehaviourManager->Init(myPhysicsScene);
 	myItemFactory = new CItemFactory();
+	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager);
 	myRespawnComponentManager = new CRespawnComponentManager();
 	CKartSpawnPointManager::GetInstance()->Create();
 	CPickupComponentManager::Create();
