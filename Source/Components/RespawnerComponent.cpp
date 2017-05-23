@@ -41,7 +41,7 @@ void CRespawnerComponent::Receive(const eComponentMessageType aMessageType, cons
 		if (GetParent()->AskComponents(eComponentQuestionType::eGetSplineDirection, spineDirectionQuestionData) == true)
 		{
 			CU::Vector3f direction = spineDirectionQuestionData.myVector3f;
-			CU::Vector3f LookTowardsDirection = direction += myLastGroundedPosition;
+			CU::Vector3f LookTowardsDirection = direction + myLastGroundedPosition;
 			GetParent()->GetLocalTransform().LookAt(LookTowardsDirection);
 		}
 		break;
