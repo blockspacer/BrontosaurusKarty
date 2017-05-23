@@ -1,5 +1,4 @@
 #pragma once
-//#include <d3dcommon.h>
 
 struct ID3D10Blob;
 struct ID3D11VertexShader;

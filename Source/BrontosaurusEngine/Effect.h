@@ -1,6 +1,5 @@
 #pragma once
 #include "BufferStructs.h"
-#include "../CommonUtilities/StaticArray.h"
 
 struct ID3D11VertexShader;
 struct ID3D11PixelShader;

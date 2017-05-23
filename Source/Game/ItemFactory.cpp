@@ -84,7 +84,7 @@ void CItemFactory::CreateShellBuffer()
 
 eItemTypes CItemFactory::RandomizeItem()
 {
-	return eItemTypes::eGreenShell;
+	return eItemTypes::eMushroom;
 }
 
 int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userComponent)

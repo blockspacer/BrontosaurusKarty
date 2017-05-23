@@ -206,9 +206,6 @@
     <ClInclude Include="BufferStructs.h">
       <Filter>ModelManager</Filter>
     </ClInclude>
-    <ClInclude Include="ModelBatch.h">
-      <Filter>Model</Filter>
-    </ClInclude>
     <ClInclude Include="TextBitmap.h">
       <Filter>Bitmap</Filter>
     </ClInclude>
@@ -382,9 +379,6 @@
     </ClCompile>
     <ClCompile Include="StreakEmitter.cpp">
       <Filter>Streaks</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelBatch.cpp">
-      <Filter>Model</Filter>
     </ClCompile>
     <ClCompile Include="TextBitmap.cpp">
       <Filter>Bitmap</Filter>

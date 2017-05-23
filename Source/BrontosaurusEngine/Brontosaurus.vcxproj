@@ -430,7 +430,6 @@
     <ClInclude Include="Lights.h" />
     <ClInclude Include="LineDrawer.h" />
     <ClInclude Include="Model.h" />
-    <ClInclude Include="ModelBatch.h" />
     <ClInclude Include="ModelID.h" />
     <ClInclude Include="ModelInstance.h" />
     <ClInclude Include="ModelLoader.h" />
@@ -503,7 +502,6 @@
     <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="LineDrawer.cpp" />
     <ClCompile Include="Model.cpp" />
-    <ClCompile Include="ModelBatch.cpp" />
     <ClCompile Include="ModelInstance.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="ModelManager.cpp" />

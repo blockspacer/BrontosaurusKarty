@@ -1,5 +1,4 @@
 #pragma once
-#include <assert.h>
 #include <directxmath.h>
 #include <d3d11.h>
 
@@ -60,7 +59,7 @@ ID3D11DeviceContext* CDXFramework::GetDeviceContext()
 	return myDeviceContext;
 }
 
-inline IDXGISwapChain & CDXFramework::GetSwapChain()
+inline IDXGISwapChain& CDXFramework::GetSwapChain()
 {
 	return *mySwapchain;
 }

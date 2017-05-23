@@ -1,5 +1,4 @@
 #pragma once
-#include "../CommonUtilities/Sphere.h"
 #include "Texture.h"
 
 enum class eAnimationState;
@@ -8,6 +7,8 @@ namespace CU
 {
 	template <typename ObjectType, typename SizeType = unsigned int, bool USE_SAFE_MODE = true>
 	class GrowingArray;
+
+	struct Sphere;
 }
 
 namespace Lights

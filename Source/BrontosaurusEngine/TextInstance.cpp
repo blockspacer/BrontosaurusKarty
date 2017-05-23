@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "TextInstance.h"
 
+#include "Text.h"
 #include "Renderer.h"
 
 const CU::Vector4f CTextInstance::Red(1, 0, 0, 1);

@@ -1,9 +1,6 @@
 #pragma once
-#include "../CommonUtilities/vector2.h"
-#include "../CommonUtilities/vector4.h"
 
 class CSprite;
-
 
 class CSpriteInstance
 {

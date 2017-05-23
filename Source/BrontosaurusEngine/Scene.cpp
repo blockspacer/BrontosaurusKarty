@@ -7,11 +7,13 @@
 #include "Camera.h"
 #include "Renderer.h"
 #include "Skybox.h"
+#include "Cubemap.h"
 #include "ParticleEmitterInstance.h"
 #include "FireEmitterInstance.h"
 #include "..\CommonUtilities\Sphere.h"
 #include "../Components/ParticleEmitterComponentManager.h"
 #include "CascadeShadowMap.h"
+#include "ParticleEmitterManager.h"
 
 #define Intify(A_ENUM_CLASS) static_cast<int>(A_ENUM_CLASS)
 #define PlayerOneCamera myRenderCameras[Intify(eCameraType::ePlayerOneCamera)]

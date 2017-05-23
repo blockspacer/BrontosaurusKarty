@@ -1,6 +1,4 @@
 #pragma once
-#include "DXFramework.h"
-#include "Engine.h" 
 
 namespace BSR
 {
