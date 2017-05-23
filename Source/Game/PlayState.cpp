@@ -499,7 +499,7 @@ void CPlayState::InitiateRace()
 
 		while (timerManager.GetTimer(timer).GetLifeTime().GetSeconds() < 4.1f)
 		{
-			timerManager.UpdateTimers(); // ifrågasätt inte..
+			timerManager.UpdateTimers(); // för att komma runt att trippelbuffringen slänger bort meddelanden.
 			myCountdownSprite->SetAlpha(0);
 
 		}
