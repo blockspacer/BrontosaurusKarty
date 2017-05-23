@@ -1,8 +1,5 @@
 #pragma once
 
-#include "../CommonUtilities/vector2.h"
-#include "../CommonUtilities/vector3.h"
-
 enum class eBitmapFormat
 {
 	MONO,

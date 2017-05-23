@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "ModelLoader.h"
 #include "Model.h"
-#include "Sprite.h"
 #include "BufferStructs.h"
 #include "FBXLoader.h"
 #include "Effect.h"

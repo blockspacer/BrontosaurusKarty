@@ -1,5 +1,4 @@
 #pragma once
-#include "../CommonUtilities/StaticArray.h"
 
 #define ENUM_STRING_MACRO(name, ...)											\
 enum class e##name { __VA_ARGS__, eLength };									\

@@ -7,7 +7,6 @@
 #include "Effect.h"
 #include <minwinbase.h>
 #include "Allignment.h"
-#include "binary_tree.h"
 
 struct SVertexConstantBufferType
 {

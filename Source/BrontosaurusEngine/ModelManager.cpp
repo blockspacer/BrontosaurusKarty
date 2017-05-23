@@ -75,7 +75,7 @@ void CModelManager::RemoveModel(const ModelId aModelID)
 	
 	if (myModelList[aModelID].GetRefCount() <= 0)
 	{
-		myFreeModelIDs.Push(aModelID);
+		myFreeModelIDs.Add(aModelID);
 		if (!myModelList[aModelID].mySceneAnimators.empty())
 		{
 			for (auto& garbageNow : myModelList[aModelID].mySceneAnimators)

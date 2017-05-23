@@ -4,7 +4,6 @@
 #include "Engine.h"
 #include <StringHelper.h>
 #include "DXFramework.h"
-//#include <mutex>
 
 CTextureManager::CTextureManager()
 {

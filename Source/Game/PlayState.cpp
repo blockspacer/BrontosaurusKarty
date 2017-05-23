@@ -76,6 +76,7 @@
 #include "SmoothRotater.h"
 #include "KartModelComponent.h"
 #include "RespawnerComponent.h"
+#include "BrontosaurusEngine/ParticleEmitterManager.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)

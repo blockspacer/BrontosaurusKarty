@@ -1,11 +1,8 @@
 #pragma once
-#include <atomic>
 #include "BufferStructs.h"
 #include "AnimationController.h"
 
-#include "../CommonUtilities/StaticArray.h"
 #include "../CommonUtilities/AABB.h"
-#include "stdafx.h"
 #include "EffectsManager.h"
 
 class CEffect;

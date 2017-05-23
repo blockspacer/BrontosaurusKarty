@@ -1,5 +1,4 @@
 #pragma once
-#include "Text.h"
 #include "Allignment.h"
 
 class CText;
