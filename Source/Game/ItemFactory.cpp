@@ -16,6 +16,8 @@
 
 CItemFactory::CItemFactory()
 {
+	myActiveShells.Init(25);
+	myShells.Init(25);
 }
 
 
@@ -29,6 +31,8 @@ void CItemFactory::Init(CGameObjectManager& aGameObjectManager, CItemWeaponBehav
 	myPhysicsScene = aPhysicsScene;
 	myGameObjectManager = &aGameObjectManager;
 	myColliderManager = &aColliderManager;
+
+	CreateShellBuffer();
 }
 
 void CItemFactory::CreateBananaBuffer()
@@ -53,7 +57,7 @@ void CItemFactory::CreateShellBuffer()
 		box.myHalfExtent = CU::Vector3f(1.0f, 1.0f, 1.0f);
 		box.center.y = 1.05f;
 		SConcaveMeshColliderData crystalMeshColliderData;
-		crystalMeshColliderData.IsTrigger = false;
+		crystalMeshColliderData.IsTrigger = true;
 		crystalMeshColliderData.myPath = "Models/Meshes/M_shell_green_01.fbx";
 		crystalMeshColliderData.material.aDynamicFriction = 0.5f;
 		crystalMeshColliderData.material.aRestitution = 0.5f;
@@ -80,7 +84,7 @@ void CItemFactory::CreateShellBuffer()
 
 eItemTypes CItemFactory::RandomizeItem()
 {
-	return eItemTypes::eMushroom;
+	return eItemTypes::eGreenShell;
 }
 
 int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userComponent)
@@ -88,10 +92,16 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 	switch (aItemType)
 	{
 	case eItemTypes::eGreenShell:
+	{
 		CGameObject* shell = myShells.GetLast();
+		myShells.Remove(shell);
 		shell->NotifyComponents(eComponentMessageType::eActivate, SComponentMessageData());
 		myActiveShells.Add(shell);
+		CU::Vector3f position = userComponent->GetParent()->GetWorldPosition();
+		shell->SetWorldPosition(position);
+		shell->Move(CU::Vector3f(0,0,1));
 		break;
+	}
 	case eItemTypes::eRedShell:
 		//Create shell that homes in on the player in front of the user
 		break;
