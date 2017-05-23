@@ -270,68 +270,9 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 {
 	DoPhysics(aDeltaTime);
 	CheckZKill();
-		
-	const CU::Vector3f forwardVector = GetParent()->GetToWorldTransform().myForwardVector;
-	const float speed = forwardVector.Dot(myVelocity);
-	const float dir = myVelocity.Dot(forwardVector);
-
-	float way = 1.f;
-	if (dir > 0.f)
-	{
-		way = -1.f;
-	}
-
-	const float onGroundModifier = (myIsOnGround == true ? 1.f : 0.f);
-	//myFowrardSpeed += myFriction * way * aDeltaTime * onGroundModifier;
-	myVelocity -= (1.25f - abs(myVelocity.GetNormalized().Dot(forwardVector))) *  
-		myVelocity * (myGrip / myWeight)  * aDeltaTime * onGroundModifier;
-
-	if (myHasGottenHit == false)
-	{
-		//myFowrardSpeed += myAcceleration * aDeltaTime * myAccelerationModifier * onGroundModifier;
-		myVelocity += forwardVector * aDeltaTime * myAcceleration * myGrip * myAccelerationModifier * onGroundModifier;
-	}
-
-	const float maxSpeed2 = myMaxSpeed * myMaxSpeed * myMaxSpeedModifier * myMaxSpeedModifier;
-	const float minSpeed2 = myMinSpeed * myMinSpeed;
-	const float speed2 = myVelocity.Length2() * (dir > 0.f ? 1.f : -1.f);
-	if (dir > 0.f && speed2 > maxSpeed2)
-	{
-		float speed = myVelocity.Length();
-		myVelocity.Normalize();
-		
-		speed -= myBoostSpeedDecay * aDeltaTime;
-		myVelocity *= speed;
-	}
-	if (dir < 0.f && speed2 < minSpeed2)
-	{
-		myVelocity.Normalize();
-		myVelocity *= -myMinSpeed;
-
-	}
-
-	float steerAngle = (mySteering + /*myDrifting.myDriftSteerModifier*/myDrifter->GetSteerModifier()) * myAngularAcceleration * -way * onGroundModifier;
-	CU::Matrix44f& parentTransform = GetParent()->GetLocalTransform();
-	parentTransform.RotateAroundAxis(steerAngle * (speed2 < 0.001f ? 0.f : 1.f) * aDeltaTime, CU::Axees::Y);
-
-	const float speedBreak = 10.f;
-	if(speed2 > speedBreak * speedBreak)
-	{
-		const int i = 0;
-	}
-
-	if(myDrifter->IsDrifting() == true)
-	{
-		DoDriftingParticles();
-
-		myDrifter->ApplySteering(mySteering, aDeltaTime);
-		GetParent()->SetWorldPosition(GetParent()->GetWorldPosition() + myVelocity * aDeltaTime);
-	}
-	else
-	{
-		GetParent()->Move(CU::Vector3f::UnitZ * speed * aDeltaTime);
-	}
-	GetParent()->Move(CU::Vector3f::UnitY * myVelocity.y * aDeltaTime);
+	
+	UpdateMovement(aDeltaTime);
+	
 	if (myIsBoosting == true)
 	{
 		CU::Matrix44f particlePosition = GetParent()->GetLocalTransform();
@@ -387,6 +328,65 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 void CKartControllerComponent::Init(Physics::CPhysicsScene* aPhysicsScene)
 {
 	myPhysicsScene = aPhysicsScene;
+}
+
+void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
+{
+	//Position
+	const CU::Vector3f forwardVector = GetParent()->GetToWorldTransform().myForwardVector;
+	const float speed = forwardVector.Dot(myVelocity);
+	const float dir = myVelocity.Dot(forwardVector);
+
+	float way = 1.f;
+	if (dir > 0.f)
+	{
+		way = -1.f;
+	}
+
+	const float onGroundModifier = (myIsOnGround == true ? 1.f : 0.f);
+	myVelocity -= (1.25f - abs(myVelocity.GetNormalized().Dot(forwardVector))) *
+		myVelocity * (myGrip / myWeight)  * aDeltaTime * onGroundModifier;
+
+	if (myHasGottenHit == false)
+	{
+		myVelocity += forwardVector * aDeltaTime * myAcceleration * myGrip * myAccelerationModifier * onGroundModifier;
+	}
+
+	const float maxSpeed2 = myMaxSpeed * myMaxSpeed * myMaxSpeedModifier * myMaxSpeedModifier;
+	const float minSpeed2 = myMinSpeed * myMinSpeed;
+	const float speed2 = myVelocity.Length2() * (dir > 0.f ? 1.f : -1.f);
+	if (dir > 0.f && speed2 > maxSpeed2)
+	{
+		float speed = myVelocity.Length();
+		myVelocity.Normalize();
+
+		speed -= myBoostSpeedDecay * aDeltaTime;
+		myVelocity *= speed;
+	}
+	if (dir < 0.f && speed2 < minSpeed2)
+	{
+		myVelocity.Normalize();
+		myVelocity *= -myMinSpeed;
+
+	}
+
+	if (myDrifter->IsDrifting() == true)
+	{
+		DoDriftingParticles();
+
+		myDrifter->ApplySteering(mySteering, aDeltaTime);
+		GetParent()->SetWorldPosition(GetParent()->GetWorldPosition() + myVelocity * aDeltaTime);
+	}
+	else
+	{
+		GetParent()->Move(CU::Vector3f::UnitZ * speed * aDeltaTime);
+	}
+	GetParent()->Move(CU::Vector3f::UnitY * myVelocity.y * aDeltaTime);
+
+	//Steering
+	float steerAngle = (mySteering + myDrifter->GetSteerModifier()) * myAngularAcceleration * -way * onGroundModifier;
+	CU::Matrix44f& parentTransform = GetParent()->GetLocalTransform();
+	parentTransform.RotateAroundAxis(steerAngle * (abs(speed2) < 0.001f ? 0.f : 1.f) * aDeltaTime, CU::Axees::Y);
 }
 
 void CKartControllerComponent::DoDriftingParticles()

@@ -88,10 +88,13 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 	switch (aItemType)
 	{
 	case eItemTypes::eGreenShell:
+		{
 		CGameObject* shell = myShells.GetLast();
 		shell->NotifyComponents(eComponentMessageType::eActivate, SComponentMessageData());
 		myActiveShells.Add(shell);
 		break;
+		}
+		
 	case eItemTypes::eRedShell:
 		//Create shell that homes in on the player in front of the user
 		break;
