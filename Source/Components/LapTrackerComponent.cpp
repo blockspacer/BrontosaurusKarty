@@ -26,8 +26,8 @@ void CLapTrackerComponent::Update()
 			CU::Vector3f kartPosition = GetParent()->GetWorldPosition();
 			CU::Vector3f splinePosition(splinePosition2D.x, kartPosition.y, splinePosition2D.y);
 			CU::Vector3f splineForwardPosition;
-			splineForwardPosition.x = splinePosition.x + splineQuestionData.myNavigationPoint->myForwardDirection.x;
-			splineForwardPosition.z = splinePosition.z + splineQuestionData.myNavigationPoint->myForwardDirection.y;
+			splineForwardPosition.x = splinePosition.x + splineDirection2D.x;
+			splineForwardPosition.z = splinePosition.z + splineDirection2D.y;
 			splineForwardPosition.y = kartPosition.y;
 
 			float splineDistance = CU::Vector3f(splinePosition - kartPosition).Length2();
