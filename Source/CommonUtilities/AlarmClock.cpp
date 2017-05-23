@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "AlarmClock.h"
 
-#include <thread>
-
 namespace CU
 {
 	CAlarmClock::CAlarmClock()

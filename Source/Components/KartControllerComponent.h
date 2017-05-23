@@ -1,7 +1,5 @@
 #pragma once
 #include "Component.h"
-#include "JsonValue.h"
-
 
 namespace Physics
 {
@@ -45,6 +43,8 @@ public:
 	};
 
 private:
+	void UpdateMovement(const float aDeltaTime);
+	void DoDriftingParticles();
 
 	//void SetHeight(float aHeight, const float aDt);
 	//float GetHeightSpeed();
@@ -108,6 +108,7 @@ private:
 	Physics::CPhysicsScene* myPhysicsScene;
 
 	bool myIsOnGround;
+	bool myCanAccelerate;
 	bool myIsBoosting;
 
 	bool myHasGottenHit;
@@ -116,5 +117,4 @@ private:
 	
 
 	CKartControllerComponentManager* myManager;
-	
 };

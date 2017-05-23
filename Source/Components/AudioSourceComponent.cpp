@@ -1,7 +1,5 @@
 #include "stdafx.h"
 #include "AudioSourceComponent.h"
-#include "GameObject.h"
-#include "ComponentManager.h"
 #include "../Audio/AudioInterface.h"
 
 CAudioSourceComponent::CAudioSourceComponent()

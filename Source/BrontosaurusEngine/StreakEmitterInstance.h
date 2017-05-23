@@ -2,10 +2,6 @@
 #include "InstanceID.h"
 #include "Texture.h"
 #include "EmitterData.h"
-#include "../CommonUtilities/vector4.h"
-#include "../CommonUtilities/vector3.h"
-#include "../CommonUtilities/matrix44.h"
-#include <climits>
 
 namespace CU
 {

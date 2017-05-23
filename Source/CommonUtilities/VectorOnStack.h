@@ -1,6 +1,4 @@
 #pragma once
-#pragma message ("Vector on stack compiled")
-#include <assert.h>
 
 #define self (*this)
 

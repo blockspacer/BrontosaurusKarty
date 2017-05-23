@@ -1,6 +1,4 @@
 #pragma once
-//#include <iostream>
-#include "assert.h"
 
 #define STRING_TEMPLATE_ARGS template<unsigned int SIZE>
 

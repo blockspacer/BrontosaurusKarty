@@ -1,8 +1,4 @@
 #pragma once
-#include <stdlib.h>
-#include <functional>
-#include <atomic>
-#include <thread>
 
 namespace DL_Debug
 {

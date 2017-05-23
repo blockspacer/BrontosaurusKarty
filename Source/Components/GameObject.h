@@ -1,6 +1,5 @@
 #pragma once
 #include "Component.h"
-#include "../CommonUtilities/matrix44.h"
 
 #ifndef _RETAIL_BUILD
 #define NAMED_GAME_OBJECTS

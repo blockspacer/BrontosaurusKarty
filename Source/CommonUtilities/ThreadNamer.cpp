@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "ThreadNamer.h"
+#include "ThreadPool.h"
 
 #include <windows.h>
-#include "ThreadPool.h"
 
 static std::map<uint32_t, std::string> locThreadNames;
 static std::string locUnNamedThread("UnNamed");

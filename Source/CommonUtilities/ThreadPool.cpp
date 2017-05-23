@@ -2,7 +2,6 @@
 #include "ThreadPool.h"
 #include "TimerManager.h"
 #include "ThreadNamer.h"
-#include <sstream>
 #include "StringHelper.h"
 #include <Shlwapi.h>
 #pragma comment(lib, "Shlwapi.lib")

@@ -3,13 +3,13 @@
 enum class eItemTypes
 {
 	eGreenShell,
+	eBanana,
+	eMushroom,
 	eRedShell,
 	eBlueShell,
-	eMushroom,
 	eGoldenMushroom,
 	eStar,
 	eBulletBill,
 	eLightning,
-	eBanana,
 	eNone,
 };

@@ -21,6 +21,7 @@
 #include "../ThreadedPostmaster/Postmaster.h"
 #include "../ThreadedPostmaster/PostOffice.h"
 #include "EffectsManager.h"
+#include "ParticleEmitterManager.h"
 
 CEngine* CEngine::myInstance = nullptr;
 

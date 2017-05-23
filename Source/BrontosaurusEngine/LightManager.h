@@ -1,7 +1,6 @@
 #pragma once
 #include "PointLight.h"
 #include "Lights.h"
-#include <unordered_map>
 
 class CLightManager
 {

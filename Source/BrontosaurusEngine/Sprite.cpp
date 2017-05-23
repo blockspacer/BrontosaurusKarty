@@ -9,8 +9,6 @@
 #include "Surface.h"
 
 #include "ConstBufferTemplate.h"
-#include "../CommonUtilities/vector2.h"
-#include "../CommonUtilities/StringHelper.h"
 #include "EModelBluePrint.h"
 
 struct SVertexConstantBufferType

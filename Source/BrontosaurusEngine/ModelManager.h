@@ -1,7 +1,4 @@
 #pragma once
-#include <unordered_map>
-#include <Stack.h>
-#include <string>
 #include "Model.h"
 
 namespace CU
@@ -38,7 +35,7 @@ private:
 
 private:
 	std::unordered_map<std::string, ModelId> myModels;
-	CU::Stack<ModelId> myFreeModelIDs;
+	CU::GrowingArray<ModelId> myFreeModelIDs;
 	CU::GrowingArray<CModel, ModelId> myModelList;
 };
 

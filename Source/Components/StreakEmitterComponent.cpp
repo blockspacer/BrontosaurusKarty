@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "StreakEmitterComponent.h"
-#include "GameObject.h"
+#include "../BrontosaurusEngine/StreakEmitterInstance.h"
 
 CStreakEmitterComponent::CStreakEmitterComponent()
 	: myStreakEmitterInstance(nullptr)
@@ -24,6 +24,16 @@ void CStreakEmitterComponent::Update(CU::Time aDeltaTime)
 {
 	myStreakEmitterInstance->SetPosition(GetParent()->GetToWorldTransform().GetPosition());
 	myStreakEmitterInstance->Update(aDeltaTime);
+}
+
+void CStreakEmitterComponent::Activate()
+{
+	myStreakEmitterInstance->Activate();
+}
+
+void CStreakEmitterComponent::Deactivate()
+{
+	myStreakEmitterInstance->Deactivate();
 }
 
 void CStreakEmitterComponent::Receive(const eComponentMessageType aMessageType, const SComponentMessageData & aMessageData)

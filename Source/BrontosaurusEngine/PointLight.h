@@ -1,6 +1,4 @@
 #pragma once
-#include <vector4.h>
-#include <StaticArray.h>
 #include "RenderCamera.h"
 struct ID3D11ShaderResourceView;
 

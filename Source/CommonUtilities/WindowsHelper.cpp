@@ -11,7 +11,7 @@ namespace WindowsHelper
 {
 	void GoogleIt(const std::string& aGoogleSearch)
 	{
-		std::string googleString = "https://www.google.se/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=";//stack+overflow+my+pointer+is+null&*";
+		std::string googleString = "https://www.google.se/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=";
 		for (char ch : aGoogleSearch)
 		{
 			if (ch == ' ')

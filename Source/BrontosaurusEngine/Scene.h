@@ -1,14 +1,13 @@
 #pragma once
 
 #include <Stack.h>
-#include <StaticArray.h>
 
 #include "Lights.h" //directional //make forward declaration
 #include "InstanceID.h"
 #include "Camera.h"
 #include "RenderCamera.h"
-#include "Cubemap.h"
 
+class CCubemap;
 class CSkybox;
 class CModelInstance;
 class CPointLightInstance;

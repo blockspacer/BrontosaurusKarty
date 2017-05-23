@@ -1,6 +1,4 @@
 #pragma once
-#pragma message("Growing Array compiled")
-#include <initializer_list>
 #include "QuickSort.h"
 #include "StaticTypeTraits.h"
 #include "CopyArray.h"
