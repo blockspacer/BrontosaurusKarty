@@ -32,6 +32,7 @@
 #include "ItemFactory.h"
 #include "../Components/PickupComponentManager.h"
 #include "RespawnComponentManager.h"
+#include "LapTrackerComponentManager.h"
 
 //Networking
 #include "ThreadedPostmaster/Postmaster.h"
@@ -75,6 +76,7 @@
 #include "SmoothRotater.h"
 #include "KartModelComponent.h"
 #include "RespawnerComponent.h"
+#include "LapTrackerComponent.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -87,6 +89,7 @@ CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	, myScriptComponentManager(nullptr)
 	, myItemFactory(nullptr)
 	, myRespawnComponentManager(nullptr)
+	, myLapTrackerComponentManager(nullptr)
 	, myCameraComponents(4)
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
@@ -110,6 +113,7 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	, myScriptComponentManager(nullptr)
 	, myItemFactory(nullptr)
 	, myRespawnComponentManager(nullptr)
+	, myLapTrackerComponentManager(nullptr)
 	, myCameraComponents(4)
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
@@ -166,6 +170,7 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myBoostPadComponentManager);
 	SAFE_DELETE(myItemFactory);
 	SAFE_DELETE(myRespawnComponentManager);
+	SAFE_DELETE(myLapTrackerComponentManager);
 }
 
 // Runs on its own thread.
@@ -309,6 +314,10 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	{
 		myRespawnComponentManager->Update();
 	}
+	if(myLapTrackerComponentManager != nullptr)
+	{
+		myLapTrackerComponentManager->Update();
+	}
 
 	CPickupComponentManager::GetInstance()->Update(aDeltaTime.GetSeconds());
 	return myStatus;
@@ -398,6 +407,7 @@ void CPlayState::CreateManagersAndFactories()
 	myBoostPadComponentManager = new CBoostPadComponentManager();
 	myItemFactory = new CItemFactory();
 	myRespawnComponentManager = new CRespawnComponentManager();
+	myLapTrackerComponentManager = new CLapTrackerComponentManager();
 	CKartSpawnPointManager::GetInstance()->Create();
 	CPickupComponentManager::Create();
 }
@@ -429,6 +439,9 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 
 	CRespawnerComponent* respawnComponent = myRespawnComponentManager->CreateAndRegisterComponent();
 	playerObject->AddComponent(respawnComponent);
+
+	CLapTrackerComponent* lapTrackerComponent = myLapTrackerComponentManager->CreateAndRegisterComponent();
+	playerObject->AddComponent(lapTrackerComponent);
 
 	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent();
 	if (aIntputDevice == SParticipant::eInputDevice::eKeyboard)
