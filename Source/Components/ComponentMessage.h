@@ -80,6 +80,8 @@ enum class eComponentMessageType
 	eKill,
 	eGotHit,
 	eRespawn,
+	eDoDriftBobbing,
+	eCancelDriftBobbing,
 	eLength,
 };
 

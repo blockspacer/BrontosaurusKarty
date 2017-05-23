@@ -20,7 +20,7 @@
 #include "../CommonUtilities/CommonUtilities.h"
 #include "KartControllerComponentManager.h"
 
-CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager): myPhysicsScene(nullptr), myIsOnGround(true), myManager(aManager)
+CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager): myPhysicsScene(nullptr), myIsOnGround(true), myCanAccelerate(false), myManager(aManager)
 {
 	CU::CJsonValue levelsFile;
 	std::string errorString = levelsFile.Parse("Json/KartStats.json");
@@ -46,6 +46,7 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 
 	mySteering = 0.f;
 	myAngularAcceleration = Karts.at("AngulareAcceleration").GetFloat();
+	myDriftAngle = Karts.at("DriftAngle").GetFloat();
 
 	myMaxSpeedModifier = 1.0f;
 	myAccelerationModifier = 1.0f;
@@ -66,6 +67,8 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myLeftDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("FirstStageBoostParticle").GetString());
 	myRightDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("FirstStageBoostParticle").GetString());
 	myBoostEmmiterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GunFire");
+
+	myAirControl = Karts.at("AirControl").GetFloat();
 
 	myCurrentAction = eCurrentAction::eDefault;
 }
@@ -181,6 +184,8 @@ void CKartControllerComponent::Drift()
 		return;
 	}
 	myDrifter->StartDrifting(mySteering);
+	SComponentMessageData messageData;
+	messageData.myFloat = myDriftAngle;
 	if (mySteering > 0)
 	{
 		CParticleEmitterManager::GetInstance().Activate(myLeftWheelDriftEmmiterHandle);
@@ -190,15 +195,25 @@ void CKartControllerComponent::Drift()
 	}
 	else if (mySteering < 0)
 	{
+		messageData.myFloat *= -1.f;
 		CParticleEmitterManager::GetInstance().Activate(myLeftWheelDriftEmmiterHandle);
 		CParticleEmitterManager::GetInstance().Activate(myRightWheelDriftEmmiterHandle);
 		//SetVibrationOnController* vibrationMessage = new SetVibrationOnController(0, 10, 10);
 		//Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 	}
+	else
+	{
+		messageData.myFloat = 0.f;
+	}
+
+	//myVelocity += CU::Vector3f::UnitY * 5;
+	
+	GetParent()->NotifyComponents(eComponentMessageType::eDoDriftBobbing, messageData);
 }
 
 void CKartControllerComponent::StopDrifting()
 {
+	GetParent()->NotifyComponents(eComponentMessageType::eCancelDriftBobbing, SComponentMessageData());
 	CParticleEmitterManager::GetInstance().Deactivate(myLeftWheelDriftEmmiterHandle);
 	CParticleEmitterManager::GetInstance().Deactivate(myRightWheelDriftEmmiterHandle);
 
@@ -301,6 +316,11 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 {
 	switch (aMessageType)
 	{
+	case eComponentMessageType::eOnCollisionEnter:
+		{
+		int i = 0;
+		}
+		break;
 	case eComponentMessageType::eAddComponent:
 		break;
 	case eComponentMessageType::eObjectDone:
@@ -375,16 +395,16 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 		DoDriftingParticles();
 
 		myDrifter->ApplySteering(mySteering, aDeltaTime);
-		GetParent()->SetWorldPosition(GetParent()->GetWorldPosition() + myVelocity * aDeltaTime);
+		//GetParent()->SetWorldPosition(GetParent()->GetWorldPosition() + myVelocity * aDeltaTime);
 	}
-	else
-	{
+	//else
+	//{
 		GetParent()->Move(CU::Vector3f::UnitZ * speed * aDeltaTime);
-	}
+	//}
 	GetParent()->Move(CU::Vector3f::UnitY * myVelocity.y * aDeltaTime);
 
 	//Steering
-	float steerAngle = (mySteering + myDrifter->GetSteerModifier()) * myAngularAcceleration * -way * (myIsOnGround == true ? 1.f : 0.f);
+	float steerAngle = (mySteering + myDrifter->GetSteerModifier()) * myAngularAcceleration * -way * (myIsOnGround == true ? 1.f : myAirControl);
 	CU::Matrix44f& parentTransform = GetParent()->GetLocalTransform();
 	parentTransform.RotateAroundAxis(steerAngle * (abs(speed2) < 0.001f ? 0.f : 1.f) * aDeltaTime, CU::Axees::Y);
 }
@@ -462,8 +482,6 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 
 
 	myVelocity += downAccl * (friction / (myCanAccelerate == true ? myGrip / myWeight : 1.f)) *gravity * aDeltaTime;
-
-
 }
 
 bool CKartControllerComponent::Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData)
