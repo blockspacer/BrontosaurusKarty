@@ -314,7 +314,7 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	}
 	if(myRespawnComponentManager != nullptr)
 	{
-		myRespawnComponentManager->Update();
+		myRespawnComponentManager->Update(aDeltaTime.GetSeconds());
 	}
 	if(myLapTrackerComponentManager != nullptr)
 	{

@@ -12,11 +12,11 @@ CRespawnComponentManager::~CRespawnComponentManager()
 {
 }
 
-void CRespawnComponentManager::Update()
+void CRespawnComponentManager::Update(float aDeltaTime)
 {
 	for(unsigned int i = 0; i < myComponents.Size(); i++)
 	{
-		myComponents[i]->Update();
+		myComponents[i]->Update(aDeltaTime);
 	}
 }
 CRespawnerComponent* CRespawnComponentManager::CreateAndRegisterComponent()
