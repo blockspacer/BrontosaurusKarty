@@ -27,7 +27,7 @@ struct SColliderData
 	CU::Vector3f center;
 
 	Physics::ECollisionLayer myLayer = Physics::ECollisionLayer::eDefault;
-	unsigned int myCollideAgainst = Physics::CollideEverything;
+	Physics::ECollisionLayer myCollideAgainst = Physics::ECollisionLayer::eEverything;
 
 	bool IsTrigger = false;
 };

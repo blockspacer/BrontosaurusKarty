@@ -5,6 +5,7 @@ namespace Physics
 	static const unsigned int CollideEverything = ~0u;
 	enum ECollisionLayer : unsigned int
 	{
+		eNone = 0,
 		eDefault = 1 << 0,
 		// 1 - 7 unity reserved idk
 		eKart = 1 << 8,
@@ -24,26 +25,26 @@ namespace Physics
 		return static_cast<ECollisionLayer>(1 << aLayer);
 	}
 
-	inline unsigned int GetCollideAgainst(const ECollisionLayer aLayer)
+	inline ECollisionLayer GetCollideAgainst(const ECollisionLayer aLayer)
 	{
 		switch (aLayer)
 		{
 		case Physics::eDefault:
-			return CollideEverything;
+			return eEverything;
 		case Physics::eKart:
-			return eDefault | eItemBox | eBoostpad | eKart | eHazzard | eWall;
+			return static_cast<ECollisionLayer>(eDefault | eItemBox | eBoostpad | eKart | eHazzard);
 		case Physics::eItemBox:
 			return eKart;
 		case Physics::eBoostpad:
 			return eKart;
 		case Physics::eGround:
-			return 0;
+			return eNone;
 		case Physics::eHazzard:
-			return eKart | eHazzard;
+			return static_cast<ECollisionLayer>(eKart | eHazzard);
 		case Physics::eWall:
 			return eKart;
 		default:
-			return CollideEverything;
+			return eEverything;
 		}	
 	}
 }
