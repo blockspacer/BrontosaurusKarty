@@ -63,6 +63,8 @@
 #include "ThreadedPostmaster/GameEventMessage.h"
 #include <LuaWrapper/SSlua/SSlua.h>
 #include <GUIElement.h>
+#include "HUD.h"
+#include "PollingStation.h"
 
 // player creationSpeciifcIncludes
 #include "KartComponent.h"
@@ -270,8 +272,18 @@ void CPlayState::Load()
 	myScene->SetSkybox("default_cubemap.dds");
 	myScene->SetCubemap("purpleCubemap.dds");
 
+	///////////////////
+	//     HUD 
 
+	myHUDs.Init(myPlayerCount);
 
+	for (int i = 0; i < myPlayerCount; ++i)
+	{
+		myHUDs.Add(new CHUD(i));
+		myHUDs[i]->LoadHUD();
+	}
+
+	///////////
 	myIsLoaded = true;
 
 	// Get time to load the level:
@@ -327,6 +339,11 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 		myItemBehaviourManager->Update(aDeltaTime.GetSeconds());
 	}
 
+	for (int i = 0; i < myPlayerCount; ++i)
+	{
+		myHUDs[i]->Update();
+	}
+
 	CPickupComponentManager::GetInstance()->Update(aDeltaTime.GetSeconds());
 	return myStatus;
 }
@@ -336,21 +353,13 @@ void CPlayState::Render()
 	myScene->RenderSplitScreen(myPlayerCount);
 
 	if (myCountdownShouldRender)
+		RenderCountdown();
+
+	for (int i = 0; i < myPlayerCount; ++i)
 	{
-		SCreateOrClearGuiElement* createOrClear = new SCreateOrClearGuiElement(L"countdown", *myCountdownElement, CU::Vector2ui(WINDOW_SIZE.x, WINDOW_SIZE.y));
-		RENDERER.AddRenderMessage(createOrClear);
-
-		SChangeStatesMessage* const changeStatesMessage = new SChangeStatesMessage();
-		changeStatesMessage->myBlendState = eBlendState::eAddBlend;
-		changeStatesMessage->myDepthStencilState = eDepthStencilState::eDisableDepth;
-		changeStatesMessage->myRasterizerState = eRasterizerState::eNoCulling;
-		changeStatesMessage->mySamplerState = eSamplerState::eClamp;
-
-		SRenderToGUI* const guiChangeState = new SRenderToGUI(L"countdown", changeStatesMessage);
-		RENDERER.AddRenderMessage(guiChangeState);
-
-		myCountdownSprite->RenderToGUI(L"countdown");
+		myHUDs[i]->Render();
 	}
+
 }
 
 void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
@@ -499,6 +508,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
 	CU::Vector3f offset = playerObject->GetWorldPosition();
 
+	
 	SRigidBodyData rigidbodah;
 	rigidbodah.isKinematic = true;
 	rigidbodah.useGravity = false;
@@ -511,6 +521,9 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 
 	playerObject->AddComponent(cameraComponent);
 	myCameraComponents.Add(cameraComponent);
+
+
+	CPollingStation::GetInstance()->AddPlayer(playerObject);
 }
 
 void CPlayState::InitiateRace()
@@ -565,6 +578,23 @@ void CPlayState::InitiateRace()
 
 	work.SetFinishedCallback(callback);
 	CU::ThreadPool::GetInstance()->AddWork(work);
+}
+
+void CPlayState::RenderCountdown()
+{
+	SCreateOrClearGuiElement* createOrClear = new SCreateOrClearGuiElement(L"countdown", *myCountdownElement, CU::Vector2ui(WINDOW_SIZE.x, WINDOW_SIZE.y));
+	RENDERER.AddRenderMessage(createOrClear);
+
+	SChangeStatesMessage* const changeStatesMessage = new SChangeStatesMessage();
+	changeStatesMessage->myBlendState = eBlendState::eAddBlend;
+	changeStatesMessage->myDepthStencilState = eDepthStencilState::eDisableDepth;
+	changeStatesMessage->myRasterizerState = eRasterizerState::eNoCulling;
+	changeStatesMessage->mySamplerState = eSamplerState::eClamp;
+
+	SRenderToGUI* const guiChangeState = new SRenderToGUI(L"countdown", changeStatesMessage);
+	RENDERER.AddRenderMessage(guiChangeState);
+
+	myCountdownSprite->RenderToGUI(L"countdown");
 }
 
 void CPlayState::SetCameraComponent(CCameraComponent* aCameraComponent)
