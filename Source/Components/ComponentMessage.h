@@ -82,6 +82,7 @@ enum class eComponentMessageType
 	eRespawn,
 	eDoDriftBobbing,
 	eCancelDriftBobbing,
+	eEnteredGoal,
 	eLength,
 };
 
