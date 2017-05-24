@@ -10,8 +10,11 @@ namespace Component
 		bool Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData) override;
 		void Destroy() override;
 	protected:
-		void DoUpdate(const float aFloat);
+		void DoUpdate(const float aDeltaTime);
 		CU::Matrix33f myTargetTurn;
+	private:
+		bool myHasBeenHit;
+		float myHasBeenHitTotalTime;
 	};
 }
 
