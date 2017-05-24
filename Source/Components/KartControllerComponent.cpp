@@ -96,6 +96,7 @@ void CKartControllerComponent::Turn(float aDirectionX)
 
 void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 {
+	DL_PRINT("turning right: %f", aNormalizedModifier);
 	if (myHasGottenHit == true)
 	{
 		return;
@@ -105,7 +106,7 @@ void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 
 	if (myDrifter->IsDrifting() == false)
 	{
-		mySteering = myTurnRate;
+		mySteering = myTurnRate * aNormalizedModifier;
 	}
 	else
 	{
@@ -115,6 +116,7 @@ void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 
 void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 {
+	DL_PRINT("turning left: %f", aNormalizedModifier);
 	if (myHasGottenHit == true)
 	{
 		return;
@@ -122,7 +124,7 @@ void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 	myCurrentAction = eCurrentAction::eTurningLeft;
 	if (myDrifter->IsDrifting() == false)
 	{
-		mySteering = -myTurnRate * aNormalizedModifier;
+		mySteering = myTurnRate * aNormalizedModifier;
 	}
 	else
 	{
