@@ -12,6 +12,7 @@ namespace Physics
 		eBoostpad = 1 << 10,
 		eGround = 1 << 11,
 		eHazzard = 1 << 12,
+		eWall = 1 << 13,
 
 		eEverything = CollideEverything,
 	};
@@ -19,7 +20,7 @@ namespace Physics
 
 	inline ECollisionLayer GetLayerFromUnity(const unsigned int aLayer)
 	{
-		assert(aLayer >= 0 && aLayer <= eGround);
+		assert(aLayer >= 0 && 1 << aLayer <= eWall && "Collider layer out of range.");
 		return static_cast<ECollisionLayer>(1 << aLayer);
 	}
 
@@ -30,7 +31,7 @@ namespace Physics
 		case Physics::eDefault:
 			return CollideEverything;
 		case Physics::eKart:
-			return eDefault | eItemBox | eBoostpad | eKart | eHazzard;
+			return eDefault | eItemBox | eBoostpad | eKart | eHazzard | eWall;
 		case Physics::eItemBox:
 			return eKart;
 		case Physics::eBoostpad:
@@ -39,6 +40,8 @@ namespace Physics
 			return 0;
 		case Physics::eHazzard:
 			return eKart | eHazzard;
+		case Physics::eWall:
+			return eKart;
 		default:
 			return CollideEverything;
 		}	

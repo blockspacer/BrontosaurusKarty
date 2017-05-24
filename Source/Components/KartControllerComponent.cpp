@@ -19,6 +19,7 @@
 
 #include "../CommonUtilities/CommonUtilities.h"
 #include "KartControllerComponentManager.h"
+#include "ColliderComponent.h"
 
 CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager): myPhysicsScene(nullptr), myIsOnGround(true), myCanAccelerate(false), myManager(aManager)
 {
@@ -306,9 +307,16 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 {
 	switch (aMessageType)
 	{
-	case eComponentMessageType::eOnCollisionEnter:
+	case eComponentMessageType::eOnTriggerEnter:
 		{
-		int i = 0;
+		CColliderComponent& collider = *reinterpret_cast<CColliderComponent*>(aMessageData.myComponent);
+		const SColliderData& data = *collider.GetData();
+		const Physics::ECollisionLayer layer = data.myLayer;
+			if(layer == Physics::eWall)
+			{
+				DoWallCollision(collider);
+			}
+			//Do collision stuff
 		}
 		break;
 	case eComponentMessageType::eAddComponent:
@@ -338,6 +346,18 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 void CKartControllerComponent::Init(Physics::CPhysicsScene* aPhysicsScene)
 {
 	myPhysicsScene = aPhysicsScene;
+}
+
+void CKartControllerComponent::DoWallCollision(CColliderComponent& aCollider)
+{
+	//aCollider.
+	myVelocity = -5.f * myVelocity;
+
+	SComponentQuestionData questionData;
+	if(aCollider.GetParent()->AskComponents(eComponentQuestionType::eLastHitNormal, questionData) == true)
+	{
+		int i = 0;
+	}
 }
 
 void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
@@ -442,7 +462,6 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 	Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(examineVector + upMove, down, testLength, Physics::eGround);
 
 	CU::Vector3f downAccl = down;
-	float slopeModifier = 1.f;
 	float friction = 1.f;
 	if (raycastHitData.hit == true)
 	{

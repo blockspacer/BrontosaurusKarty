@@ -30,7 +30,7 @@ public:
 
 	void CheckZKill();
 	void Update(const float aDeltaTime);
-	
+
 	void Receive(const eComponentMessageType, const SComponentMessageData&) override;
 	bool Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData) override;
 	void Init(Physics::CPhysicsScene* aPhysicsScene);
@@ -43,6 +43,7 @@ public:
 	};
 
 private:
+	void DoWallCollision(CColliderComponent& aCollider);
 	void UpdateMovement(const float aDeltaTime);
 	void DoDriftingParticles();
 

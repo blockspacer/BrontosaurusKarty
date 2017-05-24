@@ -15,7 +15,9 @@ public:
 	~CBoxColliderComponent();
 
 
-	const SBoxColliderData* GetData() override { return &myData; };
+	const SBoxColliderData* GetData() override { 
+		const int i = 0;
+		return &myData; };
 	inline SColliderData::eColliderType GetType() { return SColliderData::eColliderType::eBox; }
 	void Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData) override;;
 

@@ -486,15 +486,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	box.myHalfExtent = CU::Vector3f(1.0f, 1.0f, 1.0f);
 	box.center.y = 1.05f;
 	box.myLayer = Physics::eKart;
-	SConcaveMeshColliderData crystalMeshColliderData;
-	crystalMeshColliderData.IsTrigger = false;
-	crystalMeshColliderData.myLayer = Physics::eKart;
-	crystalMeshColliderData.myCollideAgainst = Physics::GetCollideAgainst(crystalMeshColliderData.myLayer);
-	crystalMeshColliderData.myPath = "Models/Meshes/M_Kart_01.fbx";
-	crystalMeshColliderData.material.aDynamicFriction = 0.5f;
-	crystalMeshColliderData.material.aRestitution = 0.5f;
-	crystalMeshColliderData.material.aStaticFriction = 0.5f;
-	crystalMeshColliderData.myLayer;
+
 	CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&box, playerObject->GetId());
 	CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
 	CU::Vector3f offset = playerObject->GetWorldPosition();

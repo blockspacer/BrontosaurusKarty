@@ -60,6 +60,13 @@ namespace Physics
 					otherActorCallback->OnCollisionExit(actor);
 				}
 			}
+
+			//Check contact normals etc.
+			const physx::PxU8* stream = cp.contactPoints;
+
+			physx::PxContactStreamIterator iter(cp.contactPatches,cp.contactPoints,cp.getInternalFaceIndices(),cp.patchCount,cp.contactCount);
+
+
 		}
 		//Edvin är smet, Kevin är en best!
 		//Edvin är semst, Kevin är best!
@@ -69,6 +76,7 @@ namespace Physics
 	{
 		for (physx::PxU32 i = 0; i < count; i++)// change back to count if needed
 		{
+			
 			// ignore pairs when shapes have been deleted
 			if (pairs[i].flags & (physx::PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER |
 				physx::PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
