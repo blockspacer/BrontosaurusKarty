@@ -29,7 +29,11 @@
 //	return result;
 //}
 
-CCameraComponent::CCameraComponent()
+CCameraComponent::CCameraComponent() : CCameraComponent(0)
+{
+}
+
+CCameraComponent::CCameraComponent(unsigned int aPlayerCount)
 	: myCamera(nullptr)
 	, myInterpolatingSpeed(35.1f)
 	, myAccumulatedRotation(0.f)
@@ -41,15 +45,25 @@ CCameraComponent::CCameraComponent()
 	std::string errorString = levelsFile.Parse("Json/Camera.json");
 	if (!errorString.empty()) DL_MESSAGE_BOX(errorString.c_str());
 
-	CU::CJsonValue levelsArray = levelsFile.at("Camera");
+	CU::CJsonValue cameraSettings = levelsFile.at("Camera");
+	CU::CJsonValue setting;
+	const std::string countKey = std::to_string(aPlayerCount);
+	if(cameraSettings.HasKey(countKey) == true)
+	{
+		setting = cameraSettings.at(countKey);
+	}
+	else
+	{
+		setting = cameraSettings.at("Default");
+	}
 
-	float radians = levelsArray.at("CameraRotationX").GetFloat() * PI/180;
+	float radians = setting.at("CameraRotationX").GetFloat() * PI/180;
 
 
 	float rotationAngle = radians;
 	myKartOffset.RotateAroundAxis(rotationAngle, CU::Axees::X);
-	myKartOffset.Move(CU::Vector3f(0.0f, 0.0f, levelsArray.at("CameraOffsetZ").GetFloat()));
-	myKartOffset.GetPosition() += CU::Vector3f(0.0f, levelsArray.at("CameraOffsetY").GetFloat(), .0f);
+	myKartOffset.Move(CU::Vector3f(0.0f, 0.0f, setting.at("CameraOffsetZ").GetFloat()));
+	myKartOffset.GetPosition() += CU::Vector3f(0.0f, setting.at("CameraOffsetY").GetFloat(), .0f);
 }
 
 CCameraComponent::~CCameraComponent()

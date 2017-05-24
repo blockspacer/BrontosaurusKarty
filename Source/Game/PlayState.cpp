@@ -264,7 +264,7 @@ void CPlayState::Load()
 	myScene->InitPlayerCameras(myPlayerCount);
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
-		CreatePlayer(myScene->GetPlayerCamera(i).GetCamera(),myPlayers[i].myInputDevice);
+		CreatePlayer(myScene->GetPlayerCamera(i).GetCamera(),myPlayers[i].myInputDevice, myPlayerCount);
 	}
 
 	myScene->SetSkybox("default_cubemap.dds");
@@ -428,7 +428,7 @@ void CPlayState::LoadNavigationSpline(const CU::CJsonValue& splineData)
 	myKartControllerComponentManager->LoadNavigationSpline(splineData);
 }
 
-void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDevice aIntputDevice)
+void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDevice aIntputDevice, unsigned int aPlayerCount)
 {
 	//Create sub sub player object
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
@@ -447,7 +447,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	CU::Matrix44f kartTransformation = CKartSpawnPointManager::GetInstance()->PopSpawnPoint().mySpawnTransformaion;
 	playerObject->SetWorldTransformation(kartTransformation);
 	playerObject->Move(CU::Vector3f::UnitY);
-	CCameraComponent* cameraComponent = new CCameraComponent();
+	CCameraComponent* cameraComponent = new CCameraComponent(aPlayerCount);
 	CComponentManager::GetInstance().RegisterComponent(cameraComponent);
 	cameraComponent->SetCamera(aCamera);
 
