@@ -105,7 +105,7 @@ void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 
 	if (myDrifter->IsDrifting() == false)
 	{
-		mySteering = myTurnRate;
+		mySteering = myTurnRate * aNormalizedModifier;
 	}
 	else
 	{
@@ -122,7 +122,7 @@ void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 	myCurrentAction = eCurrentAction::eTurningLeft;
 	if (myDrifter->IsDrifting() == false)
 	{
-		mySteering = -myTurnRate * aNormalizedModifier;
+		mySteering = myTurnRate * aNormalizedModifier;
 	}
 	else
 	{
@@ -453,7 +453,7 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 		}
 		if (raycastHitData.distance < onGroundDist)
 		{
-			friction = norm.Dot(-down);
+			//friction = norm.Dot(-down);
 			myCanAccelerate = true;
 			
 		}
