@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ItemWeaponBehaviourComponent.h"
 #include "../Physics/PhysicsScene.h"
+#include "../CommonUtilities/JsonValue.h"
 
 
 CItemWeaponBehaviourComponent::CItemWeaponBehaviourComponent()
@@ -9,7 +10,16 @@ CItemWeaponBehaviourComponent::CItemWeaponBehaviourComponent()
 	myIsOnGround = false;
 	myGrip = 16;
 	myPhysicsScene = nullptr;
-	myVelocity = CU::Vector3f::UnitZ*45.0f;
+
+	CU::CJsonValue boostList;
+	std::string filePath = "Json/Items.json";
+	const std::string& errorString = boostList.Parse(filePath);
+	CU::CJsonValue levelsArray = boostList.at("Items");
+	CU::CJsonValue Item = levelsArray.at("GreenShell");
+
+	Speed = Item.at("MaxSpeed").GetFloat();
+
+	myVelocity = CU::Vector3f::UnitZ*	Speed;
 	myWeight = 1.5f;
 	
 }
@@ -101,7 +111,7 @@ void CItemWeaponBehaviourComponent::Receive(const eComponentMessageType aMessage
 	case eComponentMessageType::eActivate:
 	{
 		myIsActive = true;
-		myVelocity = CU::Vector3f::UnitZ*45.0f;
+		myVelocity = CU::Vector3f::UnitZ*Speed;
 		break;
 	}
 

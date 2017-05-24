@@ -53,6 +53,10 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myAccelerationModifier = 1.0f;
 
 	myIsBoosting = false;
+	myIsInvurnable = false;
+	myInvurnableTime = 0;
+	myElapsedInvurnableTime = 0;
+
 	myHasGottenHit = false;
 	myTimeToBeStunned = 1.5f;
 	myElapsedStunTime = 0.f;
@@ -94,7 +98,7 @@ void CKartControllerComponent::Turn(float aDirectionX)
 		TurnRight(aDirectionX * std::fabs(aDirectionX));
 	}
 }
-
+const float rate = 3.2f;
 void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 {
 	if (myHasGottenHit == true)
@@ -106,7 +110,15 @@ void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 
 	if (myDrifter->IsDrifting() == false)
 	{
-		mySteering = myTurnRate * aNormalizedModifier;
+		float maxSteering = myTurnRate * aNormalizedModifier;
+		if (mySteering < maxSteering)
+		{
+			mySteering += myTurnRate * rate * myDeltaTimeCopy;
+			if (mySteering > maxSteering)
+			{
+				mySteering = maxSteering;
+			}
+		}
 	}
 	else
 	{
@@ -123,7 +135,15 @@ void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 	myCurrentAction = eCurrentAction::eTurningLeft;
 	if (myDrifter->IsDrifting() == false)
 	{
-		mySteering = myTurnRate * aNormalizedModifier;
+		float maxSteering = myTurnRate * aNormalizedModifier;
+		if (mySteering > maxSteering)
+		{
+			mySteering -= myTurnRate * rate * myDeltaTimeCopy;
+			if (mySteering < maxSteering)
+			{
+				mySteering = maxSteering;
+			}
+		}
 	}
 	else
 	{
@@ -185,16 +205,12 @@ void CKartControllerComponent::Drift()
 	{
 		CParticleEmitterManager::GetInstance().Activate(myLeftWheelDriftEmmiterHandle);
 		CParticleEmitterManager::GetInstance().Activate(myRightWheelDriftEmmiterHandle);
-		//SetVibrationOnController* vibrationMessage = new SetVibrationOnController(0, 10, 10);
-		//Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 	}
 	else if (mySteering < 0)
 	{
 		messageData.myFloat *= -1.f;
 		CParticleEmitterManager::GetInstance().Activate(myLeftWheelDriftEmmiterHandle);
 		CParticleEmitterManager::GetInstance().Activate(myRightWheelDriftEmmiterHandle);
-		//SetVibrationOnController* vibrationMessage = new SetVibrationOnController(0, 10, 10);
-		//Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 	}
 	else
 	{
@@ -253,8 +269,12 @@ void CKartControllerComponent::StopDrifting()
 
 void CKartControllerComponent::GetHit()
 {
-	myHasGottenHit = true;
-	StopDrifting();
+	if (myIsInvurnable == false)
+	{
+		myHasGottenHit = true;
+		StopDrifting();
+		GetParent()->NotifyComponents(eComponentMessageType::eSpinKart, SComponentMessageData());
+	}
 	//myAcceleration = 0;
 }
 
@@ -278,6 +298,7 @@ void CKartControllerComponent::CheckZKill()
 
 void CKartControllerComponent::Update(const float aDeltaTime)
 {
+	myDeltaTimeCopy = aDeltaTime;
 	DoPhysics(aDeltaTime);
 	CheckZKill();
 	
@@ -304,6 +325,17 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 			myHasGottenHit = false;
 		}
 	}
+
+	if (myIsInvurnable == true)
+	{
+		myElapsedInvurnableTime += aDeltaTime;
+		if (myElapsedInvurnableTime >= myInvurnableTime)
+		{
+			myElapsedInvurnableTime = 0;
+			myIsInvurnable = false;
+		}
+	}
+
 
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
 }
@@ -332,6 +364,12 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 	case eComponentMessageType::eGotHit:
 	{
 		GetHit();
+		break;
+	}
+	case eComponentMessageType::eMakeInvurnable:
+	{
+		myIsInvurnable = true;
+		myInvurnableTime = aMessageData.myBoostData->duration;
 		break;
 	}
 	case eComponentMessageType::eSetBoost:
@@ -409,22 +447,28 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 		myVelocity *= -myMinSpeed;
 
 	}
-
+	float steerAngle = 0.f;
+	GetParent()->Move(CU::Vector3f::UnitZ * speed * aDeltaTime);
+	GetParent()->Move(CU::Vector3f::UnitY * myVelocity.y * aDeltaTime);
 	if (myDrifter->IsDrifting() == true)
 	{
 		DoDriftingParticles();
-
 		myDrifter->ApplySteering(mySteering, aDeltaTime);
-		//GetParent()->SetWorldPosition(GetParent()->GetWorldPosition() + myVelocity * aDeltaTime);
+		if (mySteering > 0.0f)
+		{
+			steerAngle = (myTurnRate + myDrifter->GetSteerModifier()) * myAngularAcceleration * -way * (myIsOnGround == true ? 1.f : myAirControl);
+		}
+		else if (mySteering < 0.0f)
+		{
+			steerAngle = (-myTurnRate + myDrifter->GetSteerModifier()) * myAngularAcceleration * -way * (myIsOnGround == true ? 1.f : myAirControl);
+		}
 	}
-	//else
-	//{
-		GetParent()->Move(CU::Vector3f::UnitZ * speed * aDeltaTime);
-	//}
-	GetParent()->Move(CU::Vector3f::UnitY * myVelocity.y * aDeltaTime);
+	else
+	{
+		steerAngle = (mySteering + myDrifter->GetSteerModifier()) * myAngularAcceleration * -way * (myIsOnGround == true ? 1.f : myAirControl);
+	}
 
 	//Steering
-	float steerAngle = (mySteering + myDrifter->GetSteerModifier()) * myAngularAcceleration * -way * (myIsOnGround == true ? 1.f : myAirControl);
 	CU::Matrix44f& parentTransform = GetParent()->GetLocalTransform();
 	parentTransform.RotateAroundAxis(steerAngle * (abs(speed2) < 0.001f ? 0.f : 1.f) * aDeltaTime, CU::Axees::Y);
 }

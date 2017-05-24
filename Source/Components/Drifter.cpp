@@ -86,7 +86,7 @@ CDrifter::eDriftBoost CDrifter::StopDrifting()
 
 void CDrifter::TurnRight()
 {
-	myDriftSteerModifier = myDriftSteeringModifier;
+	myDriftSteerModifier = std::fabs(myDriftSteeringModifier);
 }
 
 void CDrifter::TurnLeft()

@@ -95,6 +95,8 @@ private:
 
 	float myBoostSpeedDecay;
 
+	float myDeltaTimeCopy;
+
 	eCurrentAction myCurrentAction;
 
 	//struct SDriftEmitter
@@ -112,7 +114,10 @@ private:
 	bool myCanAccelerate;
 	bool myIsBoosting;
 
+	bool myIsInvurnable;
 	bool myHasGottenHit;
+	float myInvurnableTime;
+	float myElapsedInvurnableTime;
 	float myTimeToBeStunned;
 	float myElapsedStunTime;
 	

@@ -32,7 +32,7 @@ void Component::CDriftTurner::Receive(const eComponentMessageType aMessageType, 
 	case eComponentMessageType::eUpdate:
 		DoUpdate(aMessageData.myFloat);
 		break;
-	case eComponentMessageType::eGotHit:
+	case eComponentMessageType::eSpinKart:
 	{
 		myHasBeenHit = true;
 		break;
