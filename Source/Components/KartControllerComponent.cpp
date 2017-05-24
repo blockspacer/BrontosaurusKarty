@@ -359,8 +359,8 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 	}
 
 	const float onGroundModifier = (myCanAccelerate == true ? 1.f : 0.f);
-	myVelocity -= (1.25f - abs(myVelocity.GetNormalized().Dot(forwardVector))) *
-		myVelocity * (myGrip / myWeight)  * aDeltaTime * onGroundModifier;
+	const float gripOverWeight = (myGrip / myWeight);
+	myVelocity -= myVelocity * myGrip * aDeltaTime * onGroundModifier;
 
 	if (myHasGottenHit == false)
 	{
@@ -458,7 +458,7 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 		}
 		if (raycastHitData.distance < onGroundDist)
 		{
-			//friction = norm.Dot(-down);
+			friction = 0.f;
 			myCanAccelerate = true;
 			
 		}
