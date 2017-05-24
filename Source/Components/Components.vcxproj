@@ -377,6 +377,7 @@
     <ClInclude Include="ConcaveMeshCollider.h" />
     <ClInclude Include="Drifter.h" />
     <ClInclude Include="DriftTurner.h" />
+    <ClInclude Include="GoalComponent.h" />
     <ClInclude Include="HazardComponent.h" />
     <ClInclude Include="IPickupComponent.h" />
     <ClInclude Include="ItemHolderComponent.h" />
@@ -445,6 +446,7 @@
     <ClCompile Include="Drifter.cpp" />
     <ClCompile Include="DriftTurner.cpp" />
     <ClCompile Include="FireComponent.cpp" />
+    <ClCompile Include="GoalComponent.cpp" />
     <ClCompile Include="HazardComponent.cpp" />
     <ClCompile Include="IPickupComponent.cpp" />
     <ClCompile Include="ItemHolderComponent.cpp" />

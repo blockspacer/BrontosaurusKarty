@@ -53,6 +53,7 @@
     <ClCompile Include="StateStack.cpp">
       <Filter>States\Statestack</Filter>
     </ClCompile>
+    <ClCompile Include="HUD.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -112,6 +113,7 @@
     <ClInclude Include="StateStack.h">
       <Filter>States\Statestack</Filter>
     </ClInclude>
+    <ClInclude Include="HUD.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="States">
