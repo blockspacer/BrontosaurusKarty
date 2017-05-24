@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "LapTrackerComponent.h"
 #include "NavigationSpline.h"
+#include "../ThreadedPostmaster/Postmaster.h"
+#include "../ThreadedPostmaster/PlayerFinishedMessage.h"
 
 CLapTrackerComponent::CLapTrackerComponent()
 {
@@ -43,6 +45,13 @@ void CLapTrackerComponent::Update()
 		{
 			mySplineIndex = 0;
 			myLapIndex++;
+			if(myLapIndex > 3)
+			{
+				if(GetParent()->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
+				{
+					Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CPlayerFinishedMessage(GetParent()));
+				}
+			}
 		}
 	}
 }

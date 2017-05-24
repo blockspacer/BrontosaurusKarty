@@ -325,11 +325,12 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 {
 	switch (aMessageType)
 	{
+	case eComponentMessageType::eOnCollisionEnter:
 	case eComponentMessageType::eOnTriggerEnter:
 		{
-		CColliderComponent& collider = *reinterpret_cast<CColliderComponent*>(aMessageData.myComponent);
-		const SColliderData& data = *collider.GetData();
-		const Physics::ECollisionLayer layer = data.myLayer;
+			CColliderComponent& collider = *reinterpret_cast<CColliderComponent*>(aMessageData.myComponent);
+			const SColliderData& data = *collider.GetData();
+			const Physics::ECollisionLayer layer = data.myLayer;
 			if(layer == Physics::eWall)
 			{
 				DoWallCollision(collider);
@@ -373,7 +374,6 @@ void CKartControllerComponent::Init(Physics::CPhysicsScene* aPhysicsScene)
 
 void CKartControllerComponent::DoWallCollision(CColliderComponent& aCollider)
 {
-	//aCollider.
 	myVelocity = -5.f * myVelocity;
 
 	SComponentQuestionData questionData;

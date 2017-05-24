@@ -66,7 +66,17 @@ namespace Physics
 
 			physx::PxContactStreamIterator iter(cp.contactPatches,cp.contactPoints,cp.getInternalFaceIndices(),cp.patchCount,cp.contactCount);
 
+			while(iter.hasNextPatch() == true)
+			{
+				iter.nextPatch();
+				while(iter.hasNextContact() == true)
+				{
+					iter.nextContact();
 
+					physx::PxVec3 normal = iter.getContactNormal();
+					physx::PxVec3 position = iter.getContactPoint();
+				}
+			}
 		}
 		//Edvin är smet, Kevin är en best!
 		//Edvin är semst, Kevin är best!

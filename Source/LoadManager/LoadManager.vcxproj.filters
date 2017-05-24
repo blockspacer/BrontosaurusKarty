@@ -55,6 +55,9 @@
     <ClInclude Include="LoadBezierCurve.h">
       <Filter>LoadThings\LoadBezierCurve</Filter>
     </ClInclude>
+    <ClInclude Include="LoadGoal.h">
+      <Filter>LoadThings\LoadGoal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -107,6 +110,9 @@
     </ClCompile>
     <ClCompile Include="LoadBezierCurve.cpp">
       <Filter>LoadThings\LoadBezierCurve</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadGoal.cpp">
+      <Filter>LoadThings\LoadGoal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -163,6 +169,9 @@
     </Filter>
     <Filter Include="LoadThings\LoadKartSpawn\LoadModels">
       <UniqueIdentifier>{acf9c7cc-2225-46d8-8cac-522e2bd15445}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LoadThings\LoadGoal">
+      <UniqueIdentifier>{bdc25b41-0371-471b-aefc-b00727255e3b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
