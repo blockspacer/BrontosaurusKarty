@@ -94,7 +94,6 @@ CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	, myScriptComponentManager(nullptr)
 	, myItemFactory(nullptr)
 	, myRespawnComponentManager(nullptr)
-	, myLapTrackerComponentManager(nullptr)
 	, myCameraComponents(4)
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
@@ -118,7 +117,6 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	, myScriptComponentManager(nullptr)
 	, myItemFactory(nullptr)
 	, myRespawnComponentManager(nullptr)
-	, myLapTrackerComponentManager(nullptr)
 	, myCameraComponents(4)
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
@@ -175,7 +173,7 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myBoostPadComponentManager);
 	SAFE_DELETE(myItemFactory);
 	SAFE_DELETE(myRespawnComponentManager);
-	SAFE_DELETE(myLapTrackerComponentManager);
+	CLapTrackerComponentManager::DestoyInstance();
 }
 
 // Runs on its own thread.
@@ -266,7 +264,7 @@ void CPlayState::Load()
 	myScene->InitPlayerCameras(myPlayerCount);
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
-		CreatePlayer(myScene->GetPlayerCamera(i).GetCamera(),myPlayers[i].myInputDevice);
+		CreatePlayer(myScene->GetPlayerCamera(i).GetCamera(),myPlayers[i].myInputDevice, myPlayerCount);
 	}
 
 	myScene->SetSkybox("default_cubemap.dds");
@@ -329,9 +327,9 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	{
 		myRespawnComponentManager->Update(aDeltaTime.GetSeconds());
 	}
-	if(myLapTrackerComponentManager != nullptr)
+	if(CLapTrackerComponentManager::GetInstance() != nullptr)
 	{
-		myLapTrackerComponentManager->Update();
+		CLapTrackerComponentManager::GetInstance()->Update(aDeltaTime.GetSeconds());
 	}
 
 	if (myItemBehaviourManager != nullptr)
@@ -427,7 +425,7 @@ void CPlayState::CreateManagersAndFactories()
 	myItemFactory = new CItemFactory();
 	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager);
 	myRespawnComponentManager = new CRespawnComponentManager();
-	myLapTrackerComponentManager = new CLapTrackerComponentManager();
+	CLapTrackerComponentManager::CreateInstance();
 	CKartSpawnPointManager::GetInstance()->Create();
 	CPickupComponentManager::Create();
 }
@@ -437,7 +435,7 @@ void CPlayState::LoadNavigationSpline(const CU::CJsonValue& splineData)
 	myKartControllerComponentManager->LoadNavigationSpline(splineData);
 }
 
-void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDevice aIntputDevice)
+void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDevice aIntputDevice, unsigned int aPlayerCount)
 {
 	//Create sub sub player object
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
@@ -456,15 +454,18 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	CU::Matrix44f kartTransformation = CKartSpawnPointManager::GetInstance()->PopSpawnPoint().mySpawnTransformaion;
 	playerObject->SetWorldTransformation(kartTransformation);
 	playerObject->Move(CU::Vector3f::UnitY);
-	CCameraComponent* cameraComponent = new CCameraComponent();
+	CCameraComponent* cameraComponent = new CCameraComponent(aPlayerCount);
 	CComponentManager::GetInstance().RegisterComponent(cameraComponent);
 	cameraComponent->SetCamera(aCamera);
 
 	CRespawnerComponent* respawnComponent = myRespawnComponentManager->CreateAndRegisterComponent();
 	playerObject->AddComponent(respawnComponent);
 
-	CLapTrackerComponent* lapTrackerComponent = myLapTrackerComponentManager->CreateAndRegisterComponent();
-	playerObject->AddComponent(lapTrackerComponent);
+	if(CLapTrackerComponentManager::GetInstance() != nullptr)
+	{
+		CLapTrackerComponent* lapTrackerComponent = CLapTrackerComponentManager::GetInstance()->CreateAndRegisterComponent();
+		playerObject->AddComponent(lapTrackerComponent);
+	}
 
 	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent();
 	if (aIntputDevice == SParticipant::eInputDevice::eKeyboard)
@@ -495,15 +496,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	box.myHalfExtent = CU::Vector3f(1.0f, 1.0f, 1.0f);
 	box.center.y = 1.05f;
 	box.myLayer = Physics::eKart;
-	SConcaveMeshColliderData crystalMeshColliderData;
-	crystalMeshColliderData.IsTrigger = false;
-	crystalMeshColliderData.myLayer = Physics::eKart;
-	crystalMeshColliderData.myCollideAgainst = Physics::GetCollideAgainst(crystalMeshColliderData.myLayer);
-	crystalMeshColliderData.myPath = "Models/Meshes/M_Kart_01.fbx";
-	crystalMeshColliderData.material.aDynamicFriction = 0.5f;
-	crystalMeshColliderData.material.aRestitution = 0.5f;
-	crystalMeshColliderData.material.aStaticFriction = 0.5f;
-	crystalMeshColliderData.myLayer;
+
 	CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&box, playerObject->GetId());
 	CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
 	CU::Vector3f offset = playerObject->GetWorldPosition();
@@ -512,6 +505,8 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	SRigidBodyData rigidbodah;
 	rigidbodah.isKinematic = true;
 	rigidbodah.useGravity = false;
+	rigidbodah.myLayer = Physics::eKart;
+	rigidbodah.myCollideAgainst = Physics::GetCollideAgainst(Physics::eKart);
 	CColliderComponent* rigidComponent = myColliderComponentManager->CreateComponent(&rigidbodah, playerObject->GetId());
 //	colliderObject->SetWorldPosition({ offset.x, offset.y + 0.1f, offset.z });
 	colliderObject->AddComponent(playerColliderComponent);

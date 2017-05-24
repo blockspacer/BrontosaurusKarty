@@ -71,6 +71,25 @@ void CXboxController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 
 	switch (aInputMessage.myGamePad)
 	{
+	case CU::GAMEPAD::DPAD_DOWN:
+	{
+		break;
+	}
+	case CU::GAMEPAD::DPAD_LEFT:
+	{
+		break;
+	}
+	case CU::GAMEPAD::DPAD_RIGHT:
+	{
+		break;
+	}
+	case CU::GAMEPAD::DPAD_UP:
+	{
+		SComponentMessageData data;
+		data.myInt = 0;
+		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveItem, data);
+		break;
+	}
 	case CU::GAMEPAD::A:
 		myControllerComponent.MoveFoward();
 		myIsMovingFoward = true;

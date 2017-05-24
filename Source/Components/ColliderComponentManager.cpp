@@ -65,6 +65,12 @@ CColliderComponent* CColliderComponentManager::CreateComponent(SColliderData* aC
 		break;
 	}
 
+	if (aColliderData->myType != SColliderData::eColliderType::eRigidbody &&
+		aColliderData->myType != SColliderData::eColliderType::eConcaveMesh)
+	{
+		myColliderComponents.GetLast()->GetShape()->SetCollisionLayers(aColliderData->myLayer, aColliderData->myCollideAgainst);
+	}
+
 	CComponentManager::GetInstance().RegisterComponent(myColliderComponents.GetLast());
 	return myColliderComponents.GetLast();
 }

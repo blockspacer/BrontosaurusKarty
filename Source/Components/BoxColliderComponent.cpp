@@ -4,7 +4,7 @@
 
 
 CBoxColliderComponent::CBoxColliderComponent(const SBoxColliderData& aColliderData, Physics::CShape* aShape, Physics::CPhysicsActor* aActor, const bool aIsTrigger)
-	: CColliderComponent(aColliderData, aShape, aActor, aIsTrigger)
+	: CColliderComponent(aColliderData, aShape, aActor, aIsTrigger), myData(aColliderData)
 {
 }
 

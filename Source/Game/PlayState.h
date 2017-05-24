@@ -76,7 +76,7 @@ public:
 
 	void LoadNavigationSpline(const CU::CJsonValue &splineData);
 private:
-	void CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDevice aIntputDevice);
+	void CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDevice aIntputDevice, unsigned int aPlayerCount);
 	void InitiateRace();
 	void RenderCountdown();
 
@@ -98,7 +98,6 @@ private:
 	CItemFactory* myItemFactory;
 	CItemWeaponBehaviourComponentManager* myItemBehaviourManager;
 	CRespawnComponentManager* myRespawnComponentManager;
-	CLapTrackerComponentManager* myLapTrackerComponentManager;
 
 	CU::GrowingArray<CCameraComponent*> myCameraComponents;
 	CU::GrowingArray<SParticipant> myPlayers;

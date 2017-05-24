@@ -38,6 +38,11 @@ void CConcaveMeshColliderComponent::Init(const CU::Vector3f& aScale)
 	Physics::SMaterialData material;
 	Physics::CShape* shape = physics->CreateConcaveMeshShape(myData.myPath, material, aScale);
 
+	if(myData.myLayer == Physics::eWall)
+	{
+		const int i = 0;
+	}
+
 	if (!shape)
 	{
 		DL_ASSERT("Failed to create BoxShape");

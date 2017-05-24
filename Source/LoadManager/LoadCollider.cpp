@@ -162,6 +162,10 @@ int LoadConcaveCollider(KLoader::SLoadedComponentData someData)
 	data.IsTrigger = someData.myData.at("isTrigger").GetBool();
 
 	data.myLayer = Physics::GetLayerFromUnity(someData.myData.at("layer").GetUInt());
+	if(data.myLayer == Physics::ECollisionLayer::eWall)
+	{
+		int i = 0;
+	}
 	data.myCollideAgainst = Physics::GetCollideAgainst(data.myLayer);
 
 	CU::Vector3f material = someData.myData.at("material").GetVector3f("xyz");

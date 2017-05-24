@@ -14,6 +14,7 @@ class CCameraComponent : public CComponent
 {
 public:
 	CCameraComponent();
+	CCameraComponent(unsigned int aPlayerCount);
 	~CCameraComponent();
 
 	void Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData) override;

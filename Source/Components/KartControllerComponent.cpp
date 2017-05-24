@@ -19,6 +19,7 @@
 
 #include "../CommonUtilities/CommonUtilities.h"
 #include "KartControllerComponentManager.h"
+#include "ColliderComponent.h"
 
 CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager): myPhysicsScene(nullptr), myIsOnGround(true), myCanAccelerate(false), myManager(aManager)
 {
@@ -86,11 +87,11 @@ void CKartControllerComponent::Turn(float aDirectionX)
 	}
 	if (aDirectionX < 0.f)
 	{
-		TurnLeft(aDirectionX * aDirectionX);
+		TurnLeft(aDirectionX * std::fabs(aDirectionX));
 	}
 	else if (aDirectionX > 0.f)
 	{
-		TurnRight(aDirectionX * aDirectionX);
+		TurnRight(aDirectionX * std::fabs(aDirectionX));
 	}
 }
 
@@ -105,7 +106,7 @@ void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 
 	if (myDrifter->IsDrifting() == false)
 	{
-		mySteering = myTurnRate;
+		mySteering = myTurnRate * aNormalizedModifier;
 	}
 	else
 	{
@@ -122,7 +123,7 @@ void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 	myCurrentAction = eCurrentAction::eTurningLeft;
 	if (myDrifter->IsDrifting() == false)
 	{
-		mySteering = -myTurnRate * aNormalizedModifier;
+		mySteering = myTurnRate * aNormalizedModifier;
 	}
 	else
 	{
@@ -170,6 +171,10 @@ void CKartControllerComponent::StopTurning()
 void CKartControllerComponent::Drift()
 {
 	if (myHasGottenHit == true)
+	{
+		return;
+	}
+	if (myVelocity.Length2() < (myMaxSpeed * myMaxSpeed) * 0.33f)
 	{
 		return;
 	}
@@ -276,6 +281,10 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	DoPhysics(aDeltaTime);
 	CheckZKill();
 	
+	SComponentMessageData messageData;
+	messageData.myFloat = aDeltaTime;
+	GetParent()->NotifyComponents(eComponentMessageType::eUpdate, messageData);
+
 	UpdateMovement(aDeltaTime);
 	
 	if (myIsBoosting == true)
@@ -296,9 +305,6 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 		}
 	}
 
-	SComponentMessageData messageData;
-	messageData.myFloat = aDeltaTime;
-	GetParent()->NotifyComponents(eComponentMessageType::eUpdate, messageData);
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
 }
 
@@ -307,14 +313,27 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 	switch (aMessageType)
 	{
 	case eComponentMessageType::eOnCollisionEnter:
+	case eComponentMessageType::eOnTriggerEnter:
 		{
-		int i = 0;
+			CColliderComponent& collider = *reinterpret_cast<CColliderComponent*>(aMessageData.myComponent);
+			const SColliderData& data = *collider.GetData();
+			const Physics::ECollisionLayer layer = data.myLayer;
+			if(layer == Physics::eWall)
+			{
+				DoWallCollision(collider);
+			}
+			//Do collision stuff
 		}
 		break;
 	case eComponentMessageType::eAddComponent:
 		break;
 	case eComponentMessageType::eObjectDone:
 		break;
+	case eComponentMessageType::eGotHit:
+	{
+		GetHit();
+		break;
+	}
 	case eComponentMessageType::eSetBoost:
 
 		if (aMessageData.myBoostData->maxSpeedBoost > 0)
@@ -340,6 +359,17 @@ void CKartControllerComponent::Init(Physics::CPhysicsScene* aPhysicsScene)
 	myPhysicsScene = aPhysicsScene;
 }
 
+void CKartControllerComponent::DoWallCollision(CColliderComponent& aCollider)
+{
+	myVelocity = -5.f * myVelocity;
+
+	SComponentQuestionData questionData;
+	if(aCollider.GetParent()->AskComponents(eComponentQuestionType::eLastHitNormal, questionData) == true)
+	{
+		int i = 0;
+	}
+}
+
 void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 {
 	//Position
@@ -354,8 +384,8 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 	}
 
 	const float onGroundModifier = (myCanAccelerate == true ? 1.f : 0.f);
-	myVelocity -= (1.25f - abs(myVelocity.GetNormalized().Dot(forwardVector))) *
-		myVelocity * (myGrip / myWeight)  * aDeltaTime * onGroundModifier;
+	const float gripOverWeight = (myGrip / myWeight);
+	myVelocity -= myVelocity * myGrip * aDeltaTime * onGroundModifier;
 
 	if (myHasGottenHit == false)
 	{
@@ -442,7 +472,6 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 	Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(examineVector + upMove, down, testLength, Physics::eGround);
 
 	CU::Vector3f downAccl = down;
-	float slopeModifier = 1.f;
 	float friction = 1.f;
 	if (raycastHitData.hit == true)
 	{
@@ -453,9 +482,7 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 		}
 		if (raycastHitData.distance < onGroundDist)
 		{
-
-			downAccl = norm.Cross(down.Cross(norm));
-			friction = norm.Dot(-down);
+			friction = 0.f;
 			myCanAccelerate = true;
 			
 		}

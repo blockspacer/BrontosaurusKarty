@@ -51,7 +51,6 @@ void CRespawnerComponent::Receive(const eComponentMessageType aMessageType, cons
 	{
 		GetParent()->SetWorldTransformation(CU::Matrix44f());
 		GetParent()->SetWorldPosition(myGroundData[0].lastGroundPosition);
-		myGroundData[0].lastGroundPosition.Print();
 		SComponentQuestionData spineDirectionQuestionData;
 		if (GetParent()->AskComponents(eComponentQuestionType::eGetSplineDirection, spineDirectionQuestionData) == true)
 		{
