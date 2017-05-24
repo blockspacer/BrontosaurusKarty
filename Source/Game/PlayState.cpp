@@ -80,6 +80,7 @@
 #include "RespawnerComponent.h"
 #include "LapTrackerComponent.h"
 #include "DriftTurner.h"
+#include "HazardComponent.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -478,8 +479,13 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 		playerObject->AddComponent(speedHandlerComponent);
 	}
 
+	CHazardComponent* hazardComponent = new CHazardComponent();
+	hazardComponent->SetToPermanent();
+	CComponentManager::GetInstance().RegisterComponent(hazardComponent);
+	playerObject->AddComponent(hazardComponent);
 
 	CItemHolderComponent* itemHolder = new CItemHolderComponent(*myItemFactory);
+	CComponentManager::GetInstance().RegisterComponent(itemHolder);
 	playerObject->AddComponent(itemHolder);
 
 	playerObject->AddComponent(kartComponent);
@@ -487,6 +493,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	box.myHalfExtent = CU::Vector3f(1.0f, 1.0f, 1.0f);
 	box.center.y = 1.05f;
 	box.myLayer = Physics::eKart;
+	box.myCollideAgainst = Physics::GetCollideAgainst(Physics::eKart);
 
 	CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&box, playerObject->GetId());
 	CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
