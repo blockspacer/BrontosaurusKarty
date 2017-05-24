@@ -112,7 +112,10 @@ private:
 	bool myCanAccelerate;
 	bool myIsBoosting;
 
+	bool myIsInvurnable;
 	bool myHasGottenHit;
+	float myInvurnableTime;
+	float myElapsedInvurnableTime;
 	float myTimeToBeStunned;
 	float myElapsedStunTime;
 	
