@@ -174,6 +174,10 @@ void CKartControllerComponent::Drift()
 	{
 		return;
 	}
+	if (myVelocity.Length2() < (myMaxSpeed * myMaxSpeed) * 0.33f)
+	{
+		return;
+	}
 	myDrifter->StartDrifting(mySteering);
 	SComponentMessageData messageData;
 	messageData.myFloat = myDriftAngle;
@@ -277,6 +281,10 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	DoPhysics(aDeltaTime);
 	CheckZKill();
 	
+	SComponentMessageData messageData;
+	messageData.myFloat = aDeltaTime;
+	GetParent()->NotifyComponents(eComponentMessageType::eUpdate, messageData);
+
 	UpdateMovement(aDeltaTime);
 	
 	if (myIsBoosting == true)
@@ -297,9 +305,6 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 		}
 	}
 
-	SComponentMessageData messageData;
-	messageData.myFloat = aDeltaTime;
-	GetParent()->NotifyComponents(eComponentMessageType::eUpdate, messageData);
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
 }
 
@@ -307,11 +312,12 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 {
 	switch (aMessageType)
 	{
+	case eComponentMessageType::eOnCollisionEnter:
 	case eComponentMessageType::eOnTriggerEnter:
 		{
-		CColliderComponent& collider = *reinterpret_cast<CColliderComponent*>(aMessageData.myComponent);
-		const SColliderData& data = *collider.GetData();
-		const Physics::ECollisionLayer layer = data.myLayer;
+			CColliderComponent& collider = *reinterpret_cast<CColliderComponent*>(aMessageData.myComponent);
+			const SColliderData& data = *collider.GetData();
+			const Physics::ECollisionLayer layer = data.myLayer;
 			if(layer == Physics::eWall)
 			{
 				DoWallCollision(collider);
@@ -323,6 +329,11 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 		break;
 	case eComponentMessageType::eObjectDone:
 		break;
+	case eComponentMessageType::eGotHit:
+	{
+		GetHit();
+		break;
+	}
 	case eComponentMessageType::eSetBoost:
 
 		if (aMessageData.myBoostData->maxSpeedBoost > 0)
@@ -350,7 +361,6 @@ void CKartControllerComponent::Init(Physics::CPhysicsScene* aPhysicsScene)
 
 void CKartControllerComponent::DoWallCollision(CColliderComponent& aCollider)
 {
-	//aCollider.
 	myVelocity = -5.f * myVelocity;
 
 	SComponentQuestionData questionData;

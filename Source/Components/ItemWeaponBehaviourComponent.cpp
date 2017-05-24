@@ -9,8 +9,9 @@ CItemWeaponBehaviourComponent::CItemWeaponBehaviourComponent()
 	myIsOnGround = false;
 	myGrip = 16;
 	myPhysicsScene = nullptr;
-	myVelocity = CU::Vector3f::Zero;
+	myVelocity = CU::Vector3f::UnitZ*45.0f;
 	myWeight = 1.5f;
+	
 }
 
 
@@ -21,6 +22,7 @@ CItemWeaponBehaviourComponent::~CItemWeaponBehaviourComponent()
 void CItemWeaponBehaviourComponent::Init(Physics::CPhysicsScene * aPhysicsScene)
 {
 	myPhysicsScene = aPhysicsScene;
+	myIsActive = false;
 }
 
 void CItemWeaponBehaviourComponent::Update(const float aDeltaTime)
@@ -29,16 +31,18 @@ void CItemWeaponBehaviourComponent::Update(const float aDeltaTime)
 	{
 		DoPhysics(aDeltaTime);
 
+		CU::Matrix44f worldTransform = GetParent()->GetToWorldTransform();
 
-		myVelocity.z += 10.0f;
+		worldTransform.Move(myVelocity*aDeltaTime);
 
-		GetParent()->GetLocalTransform().Move(myVelocity*aDeltaTime);
+		GetParent()->SetWorldTransformation(worldTransform);
 
 
 		SComponentMessageData messageData;
 		messageData.myFloat = aDeltaTime;
 		GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
 
+		
 	}
 }
 
@@ -54,9 +58,9 @@ void CItemWeaponBehaviourComponent::DoPhysics(const float aDeltaTime)
 	const float upMoveLength = upMove.Length();
 	const float upDist = upDistConst + upMoveLength;
 	const float onGroundDist = upDistConst * 2.f + upMoveLength;
+	const float controlDist = upDistConst * 100.f + upMoveLength;
 	const CU::Vector3f pos = transformation.GetPosition();
 
-	myIsOnGround = false;
 
 	//Update fall speed per wheel
 
@@ -65,18 +69,10 @@ void CItemWeaponBehaviourComponent::DoPhysics(const float aDeltaTime)
 	Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(examineVector + upMove, down, testLength, Physics::eGround);
 
 	CU::Vector3f downAccl = down;
-	float slopeModifier = 1.f;
-	float friction = 1.f;
 	if (raycastHitData.hit == true)
 	{
 		const CU::Vector3f& norm = raycastHitData.normal;
-		if (raycastHitData.distance < onGroundDist)
-		{
 
-			downAccl = norm.Cross(down.Cross(norm));
-			friction = norm.Dot(-down);
-			myIsOnGround = true;
-		}
 		if (raycastHitData.distance < upDist)
 		{
 			const float speed = myVelocity.Length();
@@ -89,7 +85,7 @@ void CItemWeaponBehaviourComponent::DoPhysics(const float aDeltaTime)
 	}
 
 
-	myVelocity += downAccl * (friction / (myIsOnGround == true ? myGrip / myWeight : 1.f)) *gravity * aDeltaTime;
+	myVelocity += downAccl  *gravity * aDeltaTime;
 }
 
 void CItemWeaponBehaviourComponent::Receive(const eComponentMessageType aMessageType, const SComponentMessageData & aMessageData)
@@ -100,10 +96,13 @@ void CItemWeaponBehaviourComponent::Receive(const eComponentMessageType aMessage
 	case eComponentMessageType::eDeactivate:
 	{
 		myIsActive = false;
+		break;
 	}
 	case eComponentMessageType::eActivate:
 	{
 		myIsActive = true;
+		myVelocity = CU::Vector3f::UnitZ*45.0f;
+		break;
 	}
 
 	}
