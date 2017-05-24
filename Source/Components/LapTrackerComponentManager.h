@@ -22,7 +22,7 @@ public:
 	CLapTrackerComponent* CreateAndRegisterComponent();
 	void Update(float aDeltaTime);
 	void CalculateRacerPlacement();
-
+	CU::GrowingArray<CGameObject*>& GetRacerPlacements();
 private:
 	CLapTrackerComponentManager();
 	void DoLapPlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList);

@@ -153,3 +153,8 @@ void CLapTrackerComponentManager::AddToRacerPlacements(CU::GrowingArray<SLapCalc
 		myRacerPlacements.Add(aLapCalculateDataList[i].lapTrackerComponent->GetParent());
 	}
 }
+
+CU::GrowingArray<CGameObject*>& CLapTrackerComponentManager::GetRacerPlacements()
+{
+	return myRacerPlacements;
+}
