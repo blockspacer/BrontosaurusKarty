@@ -67,3 +67,19 @@ const float CLapTrackerComponent::GetDistanceToNextSpline()
 	}
 	return 999999;
 }
+
+bool CLapTrackerComponent::Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData)
+{
+	switch (aQuestionType)
+	{
+	case eComponentQuestionType::eGetLapIndex :
+	{
+		aQuestionData.myInt = myLapIndex;
+		return true;
+		break;
+	}
+	default:
+		break;
+	}
+	return false;
+}

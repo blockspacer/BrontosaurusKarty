@@ -42,6 +42,7 @@ enum class eComponentQuestionType
 	eGetIsGrounded,
 	eGetSplineDirection,
 	eGetSplineWithIndex,
+	eGetLapIndex,
 	eLength,
 };
 struct SComponentQuestionData

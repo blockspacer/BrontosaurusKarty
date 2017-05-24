@@ -10,6 +10,8 @@ public:
 	inline const unsigned short GetLapIndex() const;
 	inline const unsigned short GetSplineIndex() const;
 	const float GetDistanceToNextSpline();
+	bool Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData) override;
+
 private:
 	unsigned short myLapIndex;
 	unsigned short mySplineIndex;
