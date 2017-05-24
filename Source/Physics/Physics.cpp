@@ -30,7 +30,7 @@ namespace Physics
 			physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
 			physx::PxPairFlags& pairFlags, const void* /*constantBlock*/, PxU32 /*constantBlockSize*/)
 		{
-			pairFlags = PxPairFlag::eNOTIFY_CONTACT_POINTS;
+			pairFlags = PxPairFlag::eNOTIFY_CONTACT_POINTS | PxPairFlag::eNOTIFY_TOUCH_FOUND;
 			// let triggers through
 			if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1))
 			{
