@@ -174,6 +174,10 @@ void CKartControllerComponent::Drift()
 	{
 		return;
 	}
+	if (myVelocity.Length2() < (myMaxSpeed * myMaxSpeed) * 0.33f)
+	{
+		return;
+	}
 	myDrifter->StartDrifting(mySteering);
 	SComponentMessageData messageData;
 	messageData.myFloat = myDriftAngle;
