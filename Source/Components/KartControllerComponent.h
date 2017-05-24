@@ -95,6 +95,8 @@ private:
 
 	float myBoostSpeedDecay;
 
+	float myDeltaTimeCopy;
+
 	eCurrentAction myCurrentAction;
 
 	//struct SDriftEmitter
