@@ -346,6 +346,7 @@
     <ClInclude Include="LoadCamera.h" />
     <ClInclude Include="LoadCollider.h" />
     <ClInclude Include="LoadFireComponent.h" />
+    <ClInclude Include="LoadGoal.h" />
     <ClInclude Include="LoadHighlightComponent.h" />
     <ClInclude Include="LoadKartSpawnPoint.h" />
     <ClInclude Include="LoadManager.h" />
@@ -366,6 +367,7 @@
     <ClCompile Include="LoadCamera.cpp" />
     <ClCompile Include="LoadCollider.cpp" />
     <ClCompile Include="LoadFireComponent.cpp" />
+    <ClCompile Include="LoadGoal.cpp" />
     <ClCompile Include="LoadHighlightComponent.cpp" />
     <ClCompile Include="LoadKartSpawnPoint.cpp" />
     <ClCompile Include="LoadManager.cpp" />
