@@ -92,7 +92,6 @@ CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	, myScriptComponentManager(nullptr)
 	, myItemFactory(nullptr)
 	, myRespawnComponentManager(nullptr)
-	, myLapTrackerComponentManager(nullptr)
 	, myCameraComponents(4)
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
@@ -116,7 +115,6 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	, myScriptComponentManager(nullptr)
 	, myItemFactory(nullptr)
 	, myRespawnComponentManager(nullptr)
-	, myLapTrackerComponentManager(nullptr)
 	, myCameraComponents(4)
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
@@ -173,7 +171,7 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myBoostPadComponentManager);
 	SAFE_DELETE(myItemFactory);
 	SAFE_DELETE(myRespawnComponentManager);
-	SAFE_DELETE(myLapTrackerComponentManager);
+	CLapTrackerComponentManager::DestoyInstance();
 }
 
 // Runs on its own thread.
@@ -317,9 +315,9 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	{
 		myRespawnComponentManager->Update(aDeltaTime.GetSeconds());
 	}
-	if(myLapTrackerComponentManager != nullptr)
+	if(CLapTrackerComponentManager::GetInstance() != nullptr)
 	{
-		myLapTrackerComponentManager->Update();
+		CLapTrackerComponentManager::GetInstance()->Update(aDeltaTime.GetSeconds());
 	}
 
 	if (myItemBehaviourManager != nullptr)
@@ -418,7 +416,7 @@ void CPlayState::CreateManagersAndFactories()
 	myItemFactory = new CItemFactory();
 	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager);
 	myRespawnComponentManager = new CRespawnComponentManager();
-	myLapTrackerComponentManager = new CLapTrackerComponentManager();
+	CLapTrackerComponentManager::CreateInstance();
 	CKartSpawnPointManager::GetInstance()->Create();
 	CPickupComponentManager::Create();
 }
@@ -454,8 +452,11 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	CRespawnerComponent* respawnComponent = myRespawnComponentManager->CreateAndRegisterComponent();
 	playerObject->AddComponent(respawnComponent);
 
-	CLapTrackerComponent* lapTrackerComponent = myLapTrackerComponentManager->CreateAndRegisterComponent();
-	playerObject->AddComponent(lapTrackerComponent);
+	if(CLapTrackerComponentManager::GetInstance() != nullptr)
+	{
+		CLapTrackerComponent* lapTrackerComponent = CLapTrackerComponentManager::GetInstance()->CreateAndRegisterComponent();
+		playerObject->AddComponent(lapTrackerComponent);
+	}
 
 	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent();
 	if (aIntputDevice == SParticipant::eInputDevice::eKeyboard)

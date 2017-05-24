@@ -17,7 +17,7 @@ void CLapTrackerComponent::Update()
 {
 	SComponentQuestionData splineQuestionData;
 	splineQuestionData.myInt = mySplineIndex;
-	if(GetParent()->AskComponents(eComponentQuestionType::eGetSplineWithIndex, splineQuestionData))
+	if(GetParent()->AskComponents(eComponentQuestionType::eGetSplineWithIndex, splineQuestionData) == true)
 	{
 		if(splineQuestionData.myNavigationPoint != nullptr)
 		{
@@ -45,4 +45,41 @@ void CLapTrackerComponent::Update()
 			myLapIndex++;
 		}
 	}
+}
+
+const float CLapTrackerComponent::GetDistanceToNextSpline()
+{
+	SComponentQuestionData splineQuestionData;
+	splineQuestionData.myInt = mySplineIndex + 1;
+	if (GetParent()->AskComponents(eComponentQuestionType::eGetSplineWithIndex, splineQuestionData) == true)
+	{
+		if (splineQuestionData.myNavigationPoint == nullptr)
+		{
+			splineQuestionData.myInt = 0;
+			GetParent()->AskComponents(eComponentQuestionType::eGetSplineWithIndex, splineQuestionData);
+		}
+		
+		if (splineQuestionData.myNavigationPoint != nullptr)
+		{
+			CU::Vector3f splinePosition(splineQuestionData.myNavigationPoint->myPosition.x, GetParent()->GetWorldPosition().y, splineQuestionData.myNavigationPoint->myPosition.y);
+			return CU::Vector3f(splinePosition - GetParent()->GetWorldPosition()).Length2();
+		}
+	}
+	return 999999;
+}
+
+bool CLapTrackerComponent::Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData)
+{
+	switch (aQuestionType)
+	{
+	case eComponentQuestionType::eGetLapIndex :
+	{
+		aQuestionData.myInt = myLapIndex;
+		return true;
+		break;
+	}
+	default:
+		break;
+	}
+	return false;
 }
