@@ -302,6 +302,11 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
 }
 
+const CNavigationSpline & CKartControllerComponent::GetNavigationSpline()
+{
+	return myManager->GetNavigationSpline();
+}
+
 void CKartControllerComponent::Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData)
 {
 	switch (aMessageType)
