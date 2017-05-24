@@ -86,11 +86,11 @@ void CKartControllerComponent::Turn(float aDirectionX)
 	}
 	if (aDirectionX < 0.f)
 	{
-		TurnLeft(aDirectionX * aDirectionX);
+		TurnLeft(aDirectionX * std::fabs(aDirectionX));
 	}
 	else if (aDirectionX > 0.f)
 	{
-		TurnRight(aDirectionX * aDirectionX);
+		TurnRight(aDirectionX * std::fabs(aDirectionX));
 	}
 }
 
