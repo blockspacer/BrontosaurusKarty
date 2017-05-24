@@ -59,55 +59,76 @@ void CLapTrackerComponentManager::CalculateRacerPlacement()
 		racers.Add(lapCalculateData);
 	}
 
-	for (unsigned int i = 0; i < racers.Size(); i++)
+	DoLapPlacement(racers);
+
+	DoSplinePlacement(racers);
+
+	DoDistanceToNextSplinePlacement(racers);
+
+	SortPlacement(racers);
+
+	AddToRacerPlacements(racers);
+}
+
+void CLapTrackerComponentManager::DoLapPlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList)
+{
+	for (unsigned int i = 0; i < aLapCalculateDataList.Size(); i++)
 	{
-		for (unsigned int j = i; j < racers.Size(); j++)
+		for (unsigned int j = i; j < aLapCalculateDataList.Size(); j++)
 		{
-			if(racers[i].lapIndex > racers[j].lapIndex && racers[i].reversePlacement <  racers[j].reversePlacement)
+			if (aLapCalculateDataList[i].lapIndex > aLapCalculateDataList[j].lapIndex && aLapCalculateDataList[i].reversePlacement < aLapCalculateDataList[j].reversePlacement)
 			{
-				racers[i].reversePlacement = racers[j].reversePlacement + 1;
+				aLapCalculateDataList[i].reversePlacement = aLapCalculateDataList[j].reversePlacement + 1;
 			}
 		}
 	}
-
-	for (unsigned int i = 0; i < racers.Size(); i++)
+}
+void CLapTrackerComponentManager::DoSplinePlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList)
+{
+	for (unsigned int i = 0; i < aLapCalculateDataList.Size(); i++)
 	{
-		for (unsigned int j = i; j < racers.Size(); j++)
+		for (unsigned int j = i; j < aLapCalculateDataList.Size(); j++)
 		{
-			if (racers[i].splineIndex > racers[j].splineIndex && racers[i].lapIndex == racers[j].lapIndex)
+			if (aLapCalculateDataList[i].splineIndex > aLapCalculateDataList[j].splineIndex && aLapCalculateDataList[i].lapIndex == aLapCalculateDataList[j].lapIndex)
 			{
-				racers[i].reversePlacement = racers[j].reversePlacement + 1;
+				aLapCalculateDataList[i].reversePlacement = aLapCalculateDataList[j].reversePlacement + 1;
 			}
 		}
 	}
-
-	for (unsigned int i = 0; i < racers.Size(); i++)
+}
+void CLapTrackerComponentManager::DoDistanceToNextSplinePlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList)
+{
+	for (unsigned int i = 0; i < aLapCalculateDataList.Size(); i++)
 	{
-		for (unsigned int j = i; j < racers.Size(); j++)
+		for (unsigned int j = i; j < aLapCalculateDataList.Size(); j++)
 		{
-			if (racers[i].nextSplineDistance < racers[j].nextSplineDistance && racers[i].lapIndex == racers[j].lapIndex  && racers[i].splineIndex == racers[j].splineIndex)
+			if (aLapCalculateDataList[i].nextSplineDistance < aLapCalculateDataList[j].nextSplineDistance && aLapCalculateDataList[i].lapIndex == aLapCalculateDataList[j].lapIndex  && aLapCalculateDataList[i].splineIndex == aLapCalculateDataList[j].splineIndex)
 			{
-				racers[i].reversePlacement = racers[j].reversePlacement + 1;
+				aLapCalculateDataList[i].reversePlacement = aLapCalculateDataList[j].reversePlacement + 1;
 			}
 		}
 	}
-
-	for (unsigned int i = 0; i < racers.Size(); i++)
+}
+void CLapTrackerComponentManager::SortPlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList)
+{
+	for (unsigned int i = 0; i < aLapCalculateDataList.Size(); i++)
 	{
-		for (unsigned int j = i; j < racers.Size(); j++)
+		for (unsigned int j = i; j < aLapCalculateDataList.Size(); j++)
 		{
-			if(racers[i].reversePlacement < racers[j].reversePlacement)
+			if (aLapCalculateDataList[i].reversePlacement < aLapCalculateDataList[j].reversePlacement)
 			{
 
-				SLapCalculateData tempLapCalculateData = racers[j];
-				racers.RemoveAtIndex(j);
-				racers.Insert(i, tempLapCalculateData);
+				SLapCalculateData tempLapCalculateData = aLapCalculateDataList[j];
+				aLapCalculateDataList.RemoveAtIndex(j);
+				aLapCalculateDataList.Insert(i, tempLapCalculateData);
 			}
 		}
 	}
-
-	for (unsigned int i = 0; i < racers.Size(); i++)
+}
+void CLapTrackerComponentManager::AddToRacerPlacements(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList)
+{
+	for (unsigned int i = 0; i < aLapCalculateDataList.Size(); i++)
 	{
-		myRacerPlacements.Add(racers[i].lapTrackerComponent->GetParent());
+		myRacerPlacements.Add(aLapCalculateDataList[i].lapTrackerComponent->GetParent());
 	}
 }
