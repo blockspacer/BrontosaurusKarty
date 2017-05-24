@@ -453,8 +453,6 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 		}
 		if (raycastHitData.distance < onGroundDist)
 		{
-
-			downAccl = norm.Cross(down.Cross(norm));
 			friction = norm.Dot(-down);
 			myCanAccelerate = true;
 			
