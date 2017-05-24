@@ -39,5 +39,10 @@ void CLapTrackerComponent::Update()
 			}
 
 		}
+		else
+		{
+			mySplineIndex = 0;
+			myLapIndex++;
+		}
 	}
 }
