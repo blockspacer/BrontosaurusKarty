@@ -2,6 +2,7 @@
 #include "LapTrackerComponentManager.h"
 #include "LapTrackerComponent.h"
 
+CLapTrackerComponentManager* CLapTrackerComponentManager::ourInstance = nullptr;
 const float updatePlacementCooldown = 0.1f;
 
 CLapTrackerComponentManager::CLapTrackerComponentManager()
@@ -14,6 +15,26 @@ CLapTrackerComponentManager::CLapTrackerComponentManager()
 
 CLapTrackerComponentManager::~CLapTrackerComponentManager()
 {
+}
+
+void CLapTrackerComponentManager::CreateInstance()
+{
+	if(ourInstance == nullptr)
+	{
+		ourInstance = new CLapTrackerComponentManager();
+	}
+}
+CLapTrackerComponentManager* CLapTrackerComponentManager::GetInstance()
+{
+	return ourInstance;
+}
+
+void CLapTrackerComponentManager::DestoyInstance()
+{
+	if(ourInstance != nullptr)
+	{
+		SAFE_DELETE(ourInstance);
+	}
 }
 
 CLapTrackerComponent* CLapTrackerComponentManager::CreateAndRegisterComponent()
