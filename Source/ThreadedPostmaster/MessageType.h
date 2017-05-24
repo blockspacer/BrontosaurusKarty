@@ -28,6 +28,7 @@ enum class eMessageType
 	eSetVibration,
 	eStopVibration,
 	eGetAvailableController,
+	ePlayerFinished,
 	eLength,
 };
 

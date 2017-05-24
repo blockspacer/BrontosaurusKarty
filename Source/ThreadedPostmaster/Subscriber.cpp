@@ -104,6 +104,11 @@ eMessageReturn Postmaster::ISubscriber::DoEvent(const StopVibrationOnController 
 	return eMessageReturn::eContinue;
 }
 
+eMessageReturn Postmaster::ISubscriber::DoEvent(const CPlayerFinishedMessage& aPlayerFinishedMessage)
+{
+	return eMessageReturn::eContinue;
+}
+
 void Postmaster::ISubscriber::SetSubscribedThread(const std::thread::id & aId)
 {
 	if(mySubscribedId != std::thread::id() && mySubscribedId != aId)

@@ -70,6 +70,9 @@
     <Filter Include="Message\PopCurrentState">
       <UniqueIdentifier>{e77277db-8a9b-43a4-8fcc-0e17ff3e81b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Message\PlayerFinished">
+      <UniqueIdentifier>{bc8ac495-8149-4bd1-8292-e8bfe14a825c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Postmaster.cpp">
@@ -129,6 +132,9 @@
     </ClCompile>
     <ClCompile Include="PopCurrentState.cpp">
       <Filter>Message\PopCurrentState</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerFinishedMessage.cpp">
+      <Filter>Message\PlayerFinished</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -204,6 +210,9 @@
     </ClInclude>
     <ClInclude Include="PopCurrentState.h">
       <Filter>Message\PopCurrentState</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerFinishedMessage.h">
+      <Filter>Message\PlayerFinished</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
