@@ -117,4 +117,6 @@ private:
 	
 
 	CKartControllerComponentManager* myManager;
+	float myDriftAngle;
+	float myAirControl;
 };

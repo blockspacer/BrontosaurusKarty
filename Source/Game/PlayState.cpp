@@ -79,6 +79,7 @@
 #include "KartModelComponent.h"
 #include "RespawnerComponent.h"
 #include "LapTrackerComponent.h"
+#include "DriftTurner.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -429,16 +430,19 @@ void CPlayState::LoadNavigationSpline(const CU::CJsonValue& splineData)
 
 void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDevice aIntputDevice)
 {
-	//Create sub player object
+	//Create sub sub player object
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
 
 	secondPlayerObject->AddComponent(playerModel);
 	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
-
+	//Create sub player object
+	CGameObject* intermediary = myGameObjectManager->CreateGameObject();
+	intermediary->AddComponent(new Component::CDriftTurner);
+	intermediary->AddComponent(secondPlayerObject);
 	//Create top player object
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
-	playerObject->AddComponent(secondPlayerObject);
+	playerObject->AddComponent(intermediary);
 
 	CU::Matrix44f kartTransformation = CKartSpawnPointManager::GetInstance()->PopSpawnPoint().mySpawnTransformaion;
 	playerObject->SetWorldTransformation(kartTransformation);
@@ -481,6 +485,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	SBoxColliderData box;
 	box.myHalfExtent = CU::Vector3f(1.0f, 1.0f, 1.0f);
 	box.center.y = 1.05f;
+	box.myLayer = Physics::eKart;
 	SConcaveMeshColliderData crystalMeshColliderData;
 	crystalMeshColliderData.IsTrigger = false;
 	crystalMeshColliderData.myLayer = Physics::eKart;

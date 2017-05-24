@@ -425,7 +425,8 @@ void CScene::InitPlayerCameras(const int aPlayerCount)
 	for (int player = 0; player < aPlayerCount; ++player)
 	{
 		myPlayerCameras.Add(CRenderCamera());
-		myPlayerCameras.GetLast().InitPerspective(90, frameSize.x, frameSize.y, 0.1f, 500.f);
+		//TODO: Find correcct fov
+		myPlayerCameras.GetLast().InitPerspective(65, frameSize.x, frameSize.y, 0.1f, 500.f);
 		//myPlayerCameras.GetLast().SetViewport(viewp)
 	}
 }

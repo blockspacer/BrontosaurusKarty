@@ -45,6 +45,8 @@ private:
 	CMenuManager myMenuManager;
 	CU::GrowingArray<STextInput> myTextInputs;
 	CU::GrowingArray<SParticipant> myPlayers;
+
+	CU::StaticArray<SParticipant::eInputDevice,4> myPlayerInputDevices;
 	//StateStack* myStateStack;
 	bool myHasKeyboardResponded;
 	bool myShowStateBelow;

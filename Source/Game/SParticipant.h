@@ -9,6 +9,7 @@ struct SParticipant
 		eController3 = 2,
 		eController4 = 3,
 		eKeyboard,
+		eNone,
 	};
 	eInputDevice myInputDevice;
 };

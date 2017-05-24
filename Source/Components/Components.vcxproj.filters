@@ -59,6 +59,7 @@
     <ClCompile Include="LapTrackerComponent.cpp" />
     <ClCompile Include="LapTrackerComponentManager.cpp" />
     <ClCompile Include="ItemWeaponBehaviourComponentManager.cpp" />
+    <ClCompile Include="DriftTurner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -125,5 +126,6 @@
     <ClInclude Include="LapTrackerComponent.h" />
     <ClInclude Include="LapTrackerComponentManager.h" />
     <ClInclude Include="ItemWeaponBehaviourComponentManager.h" />
+    <ClInclude Include="DriftTurner.h" />
   </ItemGroup>
 </Project>
