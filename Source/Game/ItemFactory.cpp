@@ -44,42 +44,46 @@ void CItemFactory::CreateShellBuffer()
 	for (int i = 0; i < 25; i++)
 	{
 		CGameObject* shell = myGameObjectManager->CreateGameObject();
+		std::string name = "shell ";
+		name += std::to_string(i);
+		shell->SetName(name.c_str());
 
 		CModelComponent* model = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_shell_green_01.fbx");
 		shell->AddComponent(model);
 
-		/*	CItemWeaponBehaviourComponent* beheviour = myItemBeheviourComponentManager->CreateAndRegisterComponent();
-			shell->AddComponent(beheviour);*/
+			CItemWeaponBehaviourComponent* beheviour = myItemBeheviourComponentManager->CreateAndRegisterComponent();
+			shell->AddComponent(beheviour);
 
 		CHazardComponent* hazardous = new CHazardComponent;
 		CComponentManager::GetInstance().RegisterComponent(hazardous);
 		shell->AddComponent(hazardous);
 
 		//adds collider
-		SSphereColliderData crystalMeshColliderData;
+		SBoxColliderData crystalMeshColliderData;
 		crystalMeshColliderData.IsTrigger = true;
 		crystalMeshColliderData.myLayer = Physics::eHazzard;
 		crystalMeshColliderData.myCollideAgainst = Physics::GetCollideAgainst(crystalMeshColliderData.myLayer);
 		crystalMeshColliderData.material.aDynamicFriction = 0.5f;
 		crystalMeshColliderData.material.aRestitution = 0.5f;
 		crystalMeshColliderData.material.aStaticFriction = 0.5f;
-		crystalMeshColliderData.myLayer;
+		crystalMeshColliderData.center.y = 0.5f;
+		crystalMeshColliderData.myHalfExtent = CU::Vector3f(0.5f, 0.5f, 0.5f);
 		CColliderComponent* shellColliderComponent = myColliderManager->CreateComponent(&crystalMeshColliderData, shell->GetId());
-		CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
+		//CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
 		CU::Vector3f offset = shell->GetWorldPosition();
 
 		SRigidBodyData rigidbodah;
 		rigidbodah.isKinematic = true;
 		rigidbodah.useGravity = false;
 		rigidbodah.myLayer = Physics::eHazzard;
-		rigidbodah.myCollideAgainst = Physics::GetCollideAgainst(crystalMeshColliderData.myLayer);
+		rigidbodah.myCollideAgainst = Physics::GetCollideAgainst(rigidbodah.myLayer);
 
 		CColliderComponent* rigidComponent = myColliderManager->CreateComponent(&rigidbodah, shell->GetId());
 		//	colliderObject->SetWorldPosition({ offset.x, offset.y + 0.1f, offset.z });
-		colliderObject->AddComponent(shellColliderComponent);
-		colliderObject->AddComponent(rigidComponent);
+		shell->AddComponent(shellColliderComponent);
+		shell->AddComponent(rigidComponent);
 
-		shell->AddComponent(colliderObject);
+		//shell->AddComponent(colliderObject);
 		//collider added
 
 		myShells.Add(shell);
@@ -88,7 +92,7 @@ void CItemFactory::CreateShellBuffer()
 
 eItemTypes CItemFactory::RandomizeItem()
 {
-	return eItemTypes::eMushroom;
+	return eItemTypes::eGreenShell;
 }
 
 int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userComponent)
@@ -97,13 +101,23 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 	{
 	case eItemTypes::eGreenShell:
 	{
+		if (myShells.Size() <= 0)
+		{
+			myShells.Add(myActiveShells.GetFirst());
+			myActiveShells.Remove(myActiveShells.GetFirst());
+		}
+
 		CGameObject* shell = myShells.GetLast();
 		myShells.Remove(shell);
 		shell->NotifyComponents(eComponentMessageType::eActivate, SComponentMessageData());
 		myActiveShells.Add(shell);
+		CU::Matrix44f transform = userComponent->GetParent()->GetToWorldTransform();
 		CU::Vector3f position = userComponent->GetParent()->GetWorldPosition();
+		shell->GetLocalTransform() = transform;
 		shell->SetWorldPosition(position);
-		shell->Move(CU::Vector3f(0,0,1));
+		//CU::Vector3f forward = userComponent->GetParent()->GetToWorldTransform().myForwardVector;
+		//forward  *=3;
+		shell->Move(CU::Vector3f(0,-0.5f,3));
 		break;
 	}
 	case eItemTypes::eRedShell:

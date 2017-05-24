@@ -281,6 +281,10 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	DoPhysics(aDeltaTime);
 	CheckZKill();
 	
+	SComponentMessageData messageData;
+	messageData.myFloat = aDeltaTime;
+	GetParent()->NotifyComponents(eComponentMessageType::eUpdate, messageData);
+
 	UpdateMovement(aDeltaTime);
 	
 	if (myIsBoosting == true)
@@ -301,9 +305,6 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 		}
 	}
 
-	SComponentMessageData messageData;
-	messageData.myFloat = aDeltaTime;
-	GetParent()->NotifyComponents(eComponentMessageType::eUpdate, messageData);
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
 }
 
@@ -327,6 +328,11 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 		break;
 	case eComponentMessageType::eObjectDone:
 		break;
+	case eComponentMessageType::eGotHit:
+	{
+		GetHit();
+		break;
+	}
 	case eComponentMessageType::eSetBoost:
 
 		if (aMessageData.myBoostData->maxSpeedBoost > 0)

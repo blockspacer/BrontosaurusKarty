@@ -495,6 +495,8 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	SRigidBodyData rigidbodah;
 	rigidbodah.isKinematic = true;
 	rigidbodah.useGravity = false;
+	rigidbodah.myLayer = Physics::eKart;
+	rigidbodah.myCollideAgainst = Physics::GetCollideAgainst(Physics::eKart);
 	CColliderComponent* rigidComponent = myColliderComponentManager->CreateComponent(&rigidbodah, playerObject->GetId());
 //	colliderObject->SetWorldPosition({ offset.x, offset.y + 0.1f, offset.z });
 	colliderObject->AddComponent(playerColliderComponent);
