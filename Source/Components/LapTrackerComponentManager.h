@@ -34,10 +34,13 @@ private:
 	void SortPlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList);
 	void AddToRacerPlacements(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList);
 	bool HaveAllPlayersFinished();
+	void SendRaceOverMessage();
 private:
 	CU::GrowingArray<CLapTrackerComponent*> myComponents;
 	CU::GrowingArray<CGameObject*> myRacerPlacements;
 	static CLapTrackerComponentManager* ourInstance;
 	float myUpdatePlacementCountdown;
+
+	bool myStartedWithOnlyOnePlayer;
 };
 

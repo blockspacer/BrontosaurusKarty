@@ -13,6 +13,7 @@ CLapTrackerComponentManager::CLapTrackerComponentManager()
 	myComponents.Init(16);
 	myRacerPlacements.Init(16);
 	myUpdatePlacementCountdown = 0.0f;
+	myStartedWithOnlyOnePlayer = false;
 }
 
 
@@ -175,8 +176,11 @@ eMessageReturn CLapTrackerComponentManager::DoEvent(const CPlayerFinishedMessage
 
 	if(HaveAllPlayersFinished() == true)
 	{
-		int br = 1;
-		br = 0;
+		SendRaceOverMessage();
+	}
+	else if(myComponents.Size() <= 1 && myStartedWithOnlyOnePlayer == false)
+	{
+		SendRaceOverMessage();
 	}
 
 	return eMessageReturn::eContinue;
@@ -200,4 +204,14 @@ bool CLapTrackerComponentManager::HaveAllPlayersFinished()
 void CLapTrackerComponentManager::Init()
 {
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::ePlayerFinished);
+
+	if(myComponents.Size() == 1)
+	{
+		myStartedWithOnlyOnePlayer = true;
+	}
+}
+
+void CLapTrackerComponentManager::SendRaceOverMessage()
+{
+
 }
