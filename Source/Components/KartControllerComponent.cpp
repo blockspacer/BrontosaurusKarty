@@ -106,19 +106,22 @@ void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 		return;
 	}
 	assert(aNormalizedModifier <= 1.f && aNormalizedModifier >= -1.f && "normalized modifier not normalized mvh carl");
+	DL_PRINT("curreent action %u", myCurrentAction);
 	myCurrentAction = eCurrentAction::eTurningRight;
-
 	if (myDrifter->IsDrifting() == false)
 	{
-		float maxSteering = myTurnRate * aNormalizedModifier;
+		mySteering = myTurnRate * aNormalizedModifier;
+
+		/*float maxSteering = myTurnRate * aNormalizedModifier;
 		if (mySteering < maxSteering)
 		{
 			mySteering += myTurnRate * rate * myDeltaTimeCopy;
 			if (mySteering > maxSteering)
 			{
 				mySteering = maxSteering;
+
 			}
-		}
+		}*/
 	}
 	else
 	{
@@ -135,7 +138,9 @@ void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 	myCurrentAction = eCurrentAction::eTurningLeft;
 	if (myDrifter->IsDrifting() == false)
 	{
-		float maxSteering = myTurnRate * aNormalizedModifier;
+		mySteering = myTurnRate * aNormalizedModifier;
+
+		/*float maxSteering = myTurnRate * aNormalizedModifier;
 		if (mySteering > maxSteering)
 		{
 			mySteering -= myTurnRate * rate * myDeltaTimeCopy;
@@ -143,7 +148,7 @@ void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 			{
 				mySteering = maxSteering;
 			}
-		}
+		}*/
 	}
 	else
 	{
