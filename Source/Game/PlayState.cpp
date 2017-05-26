@@ -505,7 +505,15 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	box.myLayer = Physics::eKart;
 	box.myCollideAgainst = Physics::GetCollideAgainst(Physics::eKart);
 
+	SBoxColliderData triggerbox;
+	triggerbox.myHalfExtent = CU::Vector3f(1.0f, 1.0f, 1.0f);
+	triggerbox.center.y = 1.05f;
+	triggerbox.myLayer = Physics::eKart;
+	triggerbox.myCollideAgainst = Physics::GetCollideAgainst(Physics::eKart);
+	triggerbox.IsTrigger = true;
+
 	CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&box, playerObject->GetId());
+	CColliderComponent* playerTriggerColliderComponent = myColliderComponentManager->CreateComponent(&triggerbox, playerObject->GetId());
 	CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
 	CU::Vector3f offset = playerObject->GetWorldPosition();
 
@@ -518,6 +526,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	CColliderComponent* rigidComponent = myColliderComponentManager->CreateComponent(&rigidbodah, playerObject->GetId());
 //	colliderObject->SetWorldPosition({ offset.x, offset.y + 0.1f, offset.z });
 	colliderObject->AddComponent(playerColliderComponent);
+	colliderObject->AddComponent(playerTriggerColliderComponent);
 
 	colliderObject->AddComponent(rigidComponent);
 	playerObject->AddComponent(colliderObject);
