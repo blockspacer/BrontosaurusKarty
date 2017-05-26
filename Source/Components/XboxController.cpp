@@ -73,23 +73,29 @@ void CXboxController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 	{
 	case CU::GAMEPAD::DPAD_DOWN:
 	{
+		SComponentMessageData data;
+		data.myInt = 0; //GreenShell
+		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveItem, data);
 		break;
 	}
 	case CU::GAMEPAD::DPAD_LEFT:
 	{
+		SComponentMessageData data;
+		data.myInt = 2; //mushroom
+		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveItem, data);
 		break;
 	}
 	case CU::GAMEPAD::DPAD_RIGHT:
 	{
 		SComponentMessageData data;
-		data.myInt = 1;
+		data.myInt = 1;//Banana
 		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveItem, data);
 		break;
 	}
 	case CU::GAMEPAD::DPAD_UP:
 	{
 		SComponentMessageData data;
-		data.myInt = 3;
+		data.myInt = 3; //Star
 		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveItem, data);
 		break;
 	}
@@ -106,9 +112,9 @@ void CXboxController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 		break;
 	case CU::GAMEPAD::LEFT_THUMB:
 	{
-		SComponentMessageData boostMessageData;
+		/*SComponentMessageData boostMessageData;
 		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("BoostPowerUp"));
-		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);*/
 	}
 	case CU::GAMEPAD::LEFT_SHOULDER:
 		/*SComponentMessageData boostMessageData;

@@ -24,6 +24,11 @@ void CHazardComponent::Receive(const eComponentMessageType aMessageType, const S
 {
 	switch (aMessageType)
 	{
+	case eComponentMessageType::eTurnOffHazard:
+	{
+		myIsActive = false;
+		break;
+	}
 	case eComponentMessageType::eActivate:
 	{
 		myIsActive = true;

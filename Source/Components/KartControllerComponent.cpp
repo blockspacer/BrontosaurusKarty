@@ -333,6 +333,7 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 		{
 			myElapsedInvurnableTime = 0;
 			myIsInvurnable = false;
+			GetParent()->NotifyOnlyComponents(eComponentMessageType::eTurnOffHazard, SComponentMessageData());
 		}
 	}
 

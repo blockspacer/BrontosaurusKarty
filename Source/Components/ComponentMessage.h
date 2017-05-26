@@ -85,6 +85,7 @@ enum class eComponentMessageType
 	eMakeInvurnable,
 	eSpinKart,
 	eEnteredGoal,
+	eTurnOffHazard,
 	eLength,
 };
 
