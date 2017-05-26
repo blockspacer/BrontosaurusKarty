@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include "CurrentAction.h"
 
 namespace Physics
 {
@@ -34,13 +35,6 @@ public:
 	void Receive(const eComponentMessageType, const SComponentMessageData&) override;
 	bool Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData) override;
 	void Init(Physics::CPhysicsScene* aPhysicsScene);
-
-	enum class eCurrentAction
-	{
-		eTurningRight,
-		eTurningLeft,
-		eDefault,
-	};
 
 private:
 	void DoWallCollision(CColliderComponent& aCollider);
@@ -92,10 +86,10 @@ private:
 
 	float myMaxSpeedModifier;
 	float myAccelerationModifier;
+	float myModifierCopy;
+	float myTargetSteering;
 
 	float myBoostSpeedDecay;
-
-	float myDeltaTimeCopy;
 
 	eCurrentAction myCurrentAction;
 

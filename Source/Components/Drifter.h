@@ -1,5 +1,8 @@
 #pragma once
 
+
+enum class eCurrentAction;
+
 namespace CU
 {
 	class CJsonValue;
@@ -20,9 +23,9 @@ public:
 	~CDrifter();
 
 	bool Init(const CU::CJsonValue& aJsonValue);
-	void ApplySteering(float& aSteering, const float aDeltaTime);
+	void Update(const float aDeltaTime);
 
-	void StartDrifting(const float aSteering);
+	void StartDrifting(const eCurrentAction& aCurrentAction);
 	eDriftBoost StopDrifting();
 
 	void TurnRight();

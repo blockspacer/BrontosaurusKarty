@@ -6,7 +6,6 @@
 #include "ParticleEmitterManager.h"
 #include "Drifter.h"
 #include "SmoothRotater.h"
-
 #include "../CommonUtilities/JsonValue.h"
 
 #include "../ThreadedPostmaster/SetVibrationOnController.h"
@@ -46,6 +45,7 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myWeight = Karts.at("Weight").GetFloat();
 
 	mySteering = 0.f;
+	myTargetSteering = 0.f;
 	myAngularAcceleration = Karts.at("AngulareAcceleration").GetFloat();
 	myDriftAngle = Karts.at("DriftAngle").GetFloat();
 
@@ -60,6 +60,7 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myHasGottenHit = false;
 	myTimeToBeStunned = 1.5f;
 	myElapsedStunTime = 0.f;
+	myModifierCopy = 0.0f;
 
 
 	myBoostSpeedDecay = myMaxAcceleration * myAccelerationModifier * 1.25f;
@@ -101,6 +102,7 @@ void CKartControllerComponent::Turn(float aDirectionX)
 const float rate = 3.2f;
 void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 {
+	myModifierCopy = aNormalizedModifier;
 	if (myHasGottenHit == true)
 	{
 		return;
@@ -109,18 +111,8 @@ void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 	myCurrentAction = eCurrentAction::eTurningRight;
 	if (myDrifter->IsDrifting() == false)
 	{
-		mySteering = myTurnRate * aNormalizedModifier;
-
-		/*float maxSteering = myTurnRate * aNormalizedModifier;
-		if (mySteering < maxSteering)
-		{
-			mySteering += myTurnRate * rate * myDeltaTimeCopy;
-			if (mySteering > maxSteering)
-			{
-				mySteering = maxSteering;
-
-			}
-		}*/
+		float maxSteering = myTurnRate * aNormalizedModifier;
+		myTargetSteering = maxSteering;
 	}
 	else
 	{
@@ -137,17 +129,8 @@ void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 	myCurrentAction = eCurrentAction::eTurningLeft;
 	if (myDrifter->IsDrifting() == false)
 	{
-		mySteering = myTurnRate * aNormalizedModifier;
-
-		/*float maxSteering = myTurnRate * aNormalizedModifier;
-		if (mySteering > maxSteering)
-		{
-			mySteering -= myTurnRate * rate * myDeltaTimeCopy;
-			if (mySteering < maxSteering)
-			{
-				mySteering = maxSteering;
-			}
-		}*/
+		float maxSteering = myTurnRate * aNormalizedModifier;
+		myTargetSteering = maxSteering;
 	}
 	else
 	{
@@ -202,15 +185,15 @@ void CKartControllerComponent::Drift()
 	{
 		return;
 	}
-	myDrifter->StartDrifting(mySteering);
+	myDrifter->StartDrifting(myCurrentAction);
 	SComponentMessageData messageData;
 	messageData.myFloat = myDriftAngle;
-	if (mySteering > 0)
+	if (myCurrentAction == eCurrentAction::eTurningRight)
 	{
 		CParticleEmitterManager::GetInstance().Activate(myLeftWheelDriftEmmiterHandle);
 		CParticleEmitterManager::GetInstance().Activate(myRightWheelDriftEmmiterHandle);
 	}
-	else if (mySteering < 0)
+	else if (myCurrentAction == eCurrentAction::eTurningLeft)
 	{
 		messageData.myFloat *= -1.f;
 		CParticleEmitterManager::GetInstance().Activate(myLeftWheelDriftEmmiterHandle);
@@ -257,13 +240,13 @@ void CKartControllerComponent::StopDrifting()
 
 	switch (myCurrentAction)
 	{
-	case CKartControllerComponent::eCurrentAction::eTurningRight:
+	case eCurrentAction::eTurningRight:
 		TurnRight();
 		break;
-	case CKartControllerComponent::eCurrentAction::eTurningLeft:
+	case eCurrentAction::eTurningLeft:
 		TurnLeft();
 		break;
-	case CKartControllerComponent::eCurrentAction::eDefault:
+	case eCurrentAction::eDefault:
 		StopTurning();
 		break;
 	default:
@@ -302,7 +285,6 @@ void CKartControllerComponent::CheckZKill()
 
 void CKartControllerComponent::Update(const float aDeltaTime)
 {
-	myDeltaTimeCopy = aDeltaTime;
 	DoPhysics(aDeltaTime);
 	CheckZKill();
 	
@@ -458,18 +440,45 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 	if (myDrifter->IsDrifting() == true)
 	{
 		DoDriftingParticles();
-		myDrifter->ApplySteering(mySteering, aDeltaTime);
-		if (mySteering > 0.0f)
+		myDrifter->Update(aDeltaTime);
+		if (myCurrentAction == eCurrentAction::eTurningRight)
 		{
 			steerAngle = (myTurnRate + myDrifter->GetSteerModifier()) * myAngularAcceleration * -way * (myIsOnGround == true ? 1.f : myAirControl);
 		}
-		else if (mySteering < 0.0f)
+		else if (myCurrentAction == eCurrentAction::eTurningLeft)
 		{
 			steerAngle = (-myTurnRate + myDrifter->GetSteerModifier()) * myAngularAcceleration * -way * (myIsOnGround == true ? 1.f : myAirControl);
 		}
 	}
 	else
 	{
+		switch (myCurrentAction)
+		{
+		case eCurrentAction::eTurningRight:
+			if (mySteering < myTargetSteering)
+			{
+				mySteering += myTurnRate * rate * aDeltaTime;
+				if (mySteering > myTargetSteering)
+				{
+					mySteering = myTargetSteering;
+				}
+			}
+			break;
+		case eCurrentAction::eTurningLeft:
+			if (mySteering > myTargetSteering)
+			{
+				mySteering -= myTurnRate * rate * aDeltaTime;
+				if (mySteering < myTargetSteering)
+				{
+					mySteering = myTargetSteering;
+				}
+			}
+			break;
+		case eCurrentAction::eDefault:
+			break;
+		default:
+			break;
+		}
 		steerAngle = (mySteering + myDrifter->GetSteerModifier()) * myAngularAcceleration * -way * (myIsOnGround == true ? 1.f : myAirControl);
 	}
 
