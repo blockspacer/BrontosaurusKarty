@@ -1,5 +1,6 @@
 #pragma once
 #include "ItemTypes.h"
+#include "BoostData.h"
 
 namespace Physics
 {
@@ -38,6 +39,8 @@ private:
 
 	CU::GrowingArray<CGameObject*> myBananas;
 	CU::GrowingArray<CGameObject*> myActiveBananas;
+
+	SBoostData myStartBoostData;
 
 };
 

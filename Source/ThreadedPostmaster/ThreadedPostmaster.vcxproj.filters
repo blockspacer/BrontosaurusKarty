@@ -73,6 +73,12 @@
     <Filter Include="Message\PlayerFinished">
       <UniqueIdentifier>{bc8ac495-8149-4bd1-8292-e8bfe14a825c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Message\RaceOver">
+      <UniqueIdentifier>{3de636cf-b5aa-4d97-938f-c8c1770e0d5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIFinished">
+      <UniqueIdentifier>{b6f3c342-a101-44d1-bfaf-229dbbe0800e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Postmaster.cpp">
@@ -135,6 +141,12 @@
     </ClCompile>
     <ClCompile Include="PlayerFinishedMessage.cpp">
       <Filter>Message\PlayerFinished</Filter>
+    </ClCompile>
+    <ClCompile Include="RaceOverMessage.cpp">
+      <Filter>Message\RaceOver</Filter>
+    </ClCompile>
+    <ClCompile Include="AIFinishedMessage.cpp">
+      <Filter>AIFinished</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -213,6 +225,12 @@
     </ClInclude>
     <ClInclude Include="PlayerFinishedMessage.h">
       <Filter>Message\PlayerFinished</Filter>
+    </ClInclude>
+    <ClInclude Include="RaceOverMessage.h">
+      <Filter>Message\RaceOver</Filter>
+    </ClInclude>
+    <ClInclude Include="AIFinishedMessage.h">
+      <Filter>AIFinished</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

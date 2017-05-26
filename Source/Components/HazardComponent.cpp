@@ -6,6 +6,8 @@
 
 CHazardComponent::CHazardComponent()
 {
+	myIsActive = false;
+	myIsPermanent = false;
 }
 
 
@@ -13,19 +15,45 @@ CHazardComponent::~CHazardComponent()
 {
 }
 
+void CHazardComponent::SetToPermanent()
+{
+	myIsPermanent = true;
+}
+
 void CHazardComponent::Receive(const eComponentMessageType aMessageType, const SComponentMessageData & aMessageData)
 {
 	switch (aMessageType)
 	{
+	case eComponentMessageType::eTurnOffHazard:
+	{
+		myIsActive = false;
+		break;
+	}
+	case eComponentMessageType::eActivate:
+	{
+		myIsActive = true;
+		break;
+	}
+	case eComponentMessageType::eMakeInvurnable:
+	{
+		myIsActive = true;
+		break;
+	}
 	case eComponentMessageType::eOnTriggerEnter:
 	{
-		CColliderComponent* collider = reinterpret_cast<CColliderComponent*>(aMessageData.myComponent);
-		const SColliderData* data = collider->GetData();
-
-		if (data->myLayer == Physics::eKart)
+		if(myIsActive == true)
 		{
-			aMessageData.myComponent->GetParent()->NotifyComponents(eComponentMessageType::eGotHit, SComponentMessageData());
-			GetParent()->NotifyComponents(eComponentMessageType::eDeactivate, SComponentMessageData());
+			CColliderComponent* collider = reinterpret_cast<CColliderComponent*>(aMessageData.myComponent);
+			const SColliderData* data = collider->GetData();
+
+			if (data->myLayer == Physics::eKart)
+			{
+				aMessageData.myComponent->GetParent()->NotifyComponents(eComponentMessageType::eGotHit, SComponentMessageData());
+				if (myIsPermanent == false)
+				{
+					GetParent()->NotifyComponents(eComponentMessageType::eDeactivate, SComponentMessageData());
+				}
+			}
 		}
 	}
 	break;

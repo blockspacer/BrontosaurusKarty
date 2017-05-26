@@ -27,6 +27,9 @@ private:
 	Physics::CPhysicsScene* myPhysicsScene;
 
 	CU::Vector3f myVelocity;
+
+	float Speed;
+
 	float myGrip;
 	float myWeight;
 	bool myIsOnGround;

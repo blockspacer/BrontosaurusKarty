@@ -3,11 +3,13 @@
 #include "NavigationSpline.h"
 #include "../ThreadedPostmaster/Postmaster.h"
 #include "../ThreadedPostmaster/PlayerFinishedMessage.h"
+#include "../ThreadedPostmaster/AIFinishedMessage.h"
 
 CLapTrackerComponent::CLapTrackerComponent()
 {
 	mySplineIndex = 0;
 	myLapIndex = 1;
+	myIsReadyToEnterGoal = false;
 }
 
 
@@ -43,15 +45,7 @@ void CLapTrackerComponent::Update()
 		}
 		else
 		{
-			mySplineIndex = 0;
-			myLapIndex++;
-			if(myLapIndex > 3)
-			{
-				if(GetParent()->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
-				{
-					Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CPlayerFinishedMessage(GetParent()));
-				}
-			}
+			myIsReadyToEnterGoal = true;
 		}
 	}
 }
@@ -91,4 +85,33 @@ bool CLapTrackerComponent::Answer(const eComponentQuestionType aQuestionType, SC
 		break;
 	}
 	return false;
+}
+
+void CLapTrackerComponent::Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData)
+{
+	switch (aMessageType)
+	{
+	case eComponentMessageType::eEnteredGoal:
+	{
+		if(myIsReadyToEnterGoal == true)
+		{		
+			mySplineIndex = 0;
+			myLapIndex++;
+			if (myLapIndex > 3)
+			{
+				if (GetParent()->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
+				{
+					Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CPlayerFinishedMessage(GetParent()));
+				}
+				else
+				{
+					Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CAIFinishedMessage(GetParent()));
+				}
+			}
+		}
+		break;
+	}
+	default:
+		break;
+	}
 }

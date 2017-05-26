@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "AIFinishedMessage.h"
 
 Postmaster::ISubscriber::ISubscriber()
 {
@@ -105,6 +106,16 @@ eMessageReturn Postmaster::ISubscriber::DoEvent(const StopVibrationOnController 
 }
 
 eMessageReturn Postmaster::ISubscriber::DoEvent(const CPlayerFinishedMessage& aPlayerFinishedMessage)
+{
+	return eMessageReturn::eContinue;
+}
+
+eMessageReturn Postmaster::ISubscriber::DoEvent(const CAIFinishedMessage& aAIFinishedMessage)
+{
+	return eMessageReturn::eContinue;
+}
+
+eMessageReturn Postmaster::ISubscriber::DoEvent(const CRaceOverMessage& aRaceOverMessage)
 {
 	return eMessageReturn::eContinue;
 }

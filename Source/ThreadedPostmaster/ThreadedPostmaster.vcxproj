@@ -185,6 +185,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AIFinishedMessage.h" />
     <ClInclude Include="ConectedMessage.h" />
     <ClInclude Include="ConetctMessage.h" />
     <ClInclude Include="ConsoleCalledUpon.h" />
@@ -206,6 +207,7 @@
     <ClInclude Include="PostOffice.h" />
     <ClInclude Include="PushState.h" />
     <ClInclude Include="QuitGame.h" />
+    <ClInclude Include="RaceOverMessage.h" />
     <ClInclude Include="SetClientIDMessage.h" />
     <ClInclude Include="SetVibrationOnController.h" />
     <ClInclude Include="stdafx.h" />
@@ -213,6 +215,7 @@
     <ClInclude Include="Subscriber.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AIFinishedMessage.cpp" />
     <ClCompile Include="ConectedMessage.cpp" />
     <ClCompile Include="ConetctMessage.cpp" />
     <ClCompile Include="ConsoleCalledUpon.cpp" />
@@ -229,6 +232,7 @@
     <ClCompile Include="PostOffice.cpp" />
     <ClCompile Include="PushState.cpp" />
     <ClCompile Include="QuitGame.cpp" />
+    <ClCompile Include="RaceOverMessage.cpp" />
     <ClCompile Include="SetClientIDMessage.cpp" />
     <ClCompile Include="SetVibrationOnController.cpp" />
     <ClCompile Include="stdafx.cpp">

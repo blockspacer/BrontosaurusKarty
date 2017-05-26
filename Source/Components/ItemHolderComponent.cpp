@@ -20,7 +20,10 @@ void CItemHolderComponent::Receive(const eComponentMessageType aMessageType, con
 	case eComponentMessageType::eAddComponent:
 		break;
 	case eComponentMessageType::eGiveItem:
-		myItem = static_cast<eItemTypes>(aMessageData.myInt);
+		if (myItem == eItemTypes::eNone)
+		{
+			myItem = static_cast<eItemTypes>(aMessageData.myInt);
+		}
 		break;
 	case eComponentMessageType::eUseItem:
  		myItemFactory.CreateItem(myItem,this);

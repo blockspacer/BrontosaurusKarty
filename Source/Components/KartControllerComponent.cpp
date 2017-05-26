@@ -53,6 +53,10 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myAccelerationModifier = 1.0f;
 
 	myIsBoosting = false;
+	myIsInvurnable = false;
+	myInvurnableTime = 0;
+	myElapsedInvurnableTime = 0;
+
 	myHasGottenHit = false;
 	myTimeToBeStunned = 1.5f;
 	myElapsedStunTime = 0.f;
@@ -105,7 +109,6 @@ void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 	}
 	assert(aNormalizedModifier <= 1.f && aNormalizedModifier >= -1.f && "normalized modifier not normalized mvh carl");
 	myCurrentAction = eCurrentAction::eTurningRight;
-
 	if (myDrifter->IsDrifting() == false)
 	{
 		float maxSteering = myTurnRate * aNormalizedModifier;
@@ -253,8 +256,12 @@ void CKartControllerComponent::StopDrifting()
 
 void CKartControllerComponent::GetHit()
 {
-	myHasGottenHit = true;
-	StopDrifting();
+	if (myIsInvurnable == false)
+	{
+		myHasGottenHit = true;
+		StopDrifting();
+		GetParent()->NotifyComponents(eComponentMessageType::eSpinKart, SComponentMessageData());
+	}
 	//myAcceleration = 0;
 }
 
@@ -305,6 +312,18 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 		}
 	}
 
+	if (myIsInvurnable == true)
+	{
+		myElapsedInvurnableTime += aDeltaTime;
+		if (myElapsedInvurnableTime >= myInvurnableTime)
+		{
+			myElapsedInvurnableTime = 0;
+			myIsInvurnable = false;
+			GetParent()->NotifyOnlyComponents(eComponentMessageType::eTurnOffHazard, SComponentMessageData());
+		}
+	}
+
+
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
 }
 
@@ -332,6 +351,12 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 	case eComponentMessageType::eGotHit:
 	{
 		GetHit();
+		break;
+	}
+	case eComponentMessageType::eMakeInvurnable:
+	{
+		myIsInvurnable = true;
+		myInvurnableTime = aMessageData.myBoostData->duration;
 		break;
 	}
 	case eComponentMessageType::eSetBoost:
