@@ -265,6 +265,14 @@ void CKartControllerComponent::GetHit()
 	//myAcceleration = 0;
 }
 
+void CKartControllerComponent::Jump()
+{
+	if (myIsOnGround == true)
+	{
+		GetParent()->GetLocalTransform().Move(CU::Vector3f(0, 1.0f, 0));
+	}
+}
+
 //TODO: Hard coded, not good, change soon
 const float killHeight = -50;
 
@@ -440,15 +448,7 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 	if (myDrifter->IsDrifting() == true)
 	{
 		DoDriftingParticles();
-		myDrifter->Update(aDeltaTime);
-		if (myCurrentAction == eCurrentAction::eTurningRight)
-		{
-			steerAngle = (myTurnRate + myDrifter->GetSteerModifier()) * myAngularAcceleration * -way * (myIsOnGround == true ? 1.f : myAirControl);
-		}
-		else if (myCurrentAction == eCurrentAction::eTurningLeft)
-		{
-			steerAngle = (-myTurnRate + myDrifter->GetSteerModifier()) * myAngularAcceleration * -way * (myIsOnGround == true ? 1.f : myAirControl);
-		}
+		myDrifter->GetSteering(steerAngle,myTurnRate,myAngularAcceleration,way,myAirControl,myIsOnGround,myCurrentAction,aDeltaTime);
 	}
 	else
 	{

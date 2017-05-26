@@ -26,12 +26,25 @@ bool CDrifter::Init(const CU::CJsonValue& aJsonValue)
 	myLongDriftTime = aJsonValue.at("LargeBoostAt").GetFloat();
 	myShortDriftTime = aJsonValue.at("SmallBoostAt").GetFloat();
 
+	myDriftState = eDriftState::eNotDrifting;
+
 	return true;
 }
 
-void CDrifter::Update(const float aDeltaTime)
+void CDrifter::GetSteering(float& aSteeringAngle, const float aTurnRate, const float aAngularAcceleration, const float aWay,const float aAirControl, const bool aIsOnGround, const eCurrentAction& aAction ,const float aDeltaTime)
 {
 	myDriftTimer += aDeltaTime;
+	switch (myDriftState)
+	{
+	case eDriftState::eDriftingLeft:
+			aSteeringAngle = (-aTurnRate + GetSteerModifier()) * aAngularAcceleration * -aWay * (aIsOnGround == true ? 1.f : aAirControl);
+		break;
+	case eDriftState::eDriftingRight:
+			aSteeringAngle = (aTurnRate + GetSteerModifier()) * aAngularAcceleration * -aWay * (aIsOnGround == true ? 1.f : aAirControl);
+		break;
+	default:
+		break;
+	}
 }
 
 void CDrifter::StartDrifting(const eCurrentAction& aCurrentAction)
@@ -42,11 +55,13 @@ void CDrifter::StartDrifting(const eCurrentAction& aCurrentAction)
 		myIsDrifting = true;
 		myDriftRate = myMaxDriftRate;
 		myDriftTimer = 0.0f;
+		myDriftState = eDriftState::eDriftingLeft;
 		break;
 	case eCurrentAction::eTurningRight:
 		myIsDrifting = true;
 		myDriftRate = -myMaxDriftRate;
 		myDriftTimer = 0.0f;
+		myDriftState = eDriftState::eDriftingRight;
 		break;
 	default:
 		break;
@@ -70,6 +85,7 @@ CDrifter::eDriftBoost CDrifter::StopDrifting()
 	myDriftRate = 0;
 	myDriftTimer = 0;
 	myDriftSteerModifier = 0;
+	myDriftState = eDriftState::eNotDrifting;
 
 	return boost;
 }

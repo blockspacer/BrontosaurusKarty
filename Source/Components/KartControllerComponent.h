@@ -28,6 +28,7 @@ public:
 	void Drift();
 	void StopDrifting();
 	void GetHit();
+	void Jump();
 
 	void CheckZKill();
 	void Update(const float aDeltaTime);
