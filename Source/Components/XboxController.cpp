@@ -146,8 +146,9 @@ void CXboxController::GamePadReleasedKey(const CU::SInputMessage& aInputMessage)
 			myControllerComponent.MoveFoward();
 		}
 		break;
-	case CU::GAMEPAD::LEFT_SHOULDER:
+	case CU::GAMEPAD::RIGHT_SHOULDER:
 		myControllerComponent.StopDrifting();
+		break;
 		break;
 	}
 }

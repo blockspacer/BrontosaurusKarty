@@ -28,7 +28,6 @@ public:
 	void Drift();
 	void StopDrifting();
 	void GetHit();
-	void Jump();
 
 	void CheckZKill();
 	void Update(const float aDeltaTime);
@@ -61,7 +60,6 @@ private:
 	
 
 	std::unique_ptr<CDrifter> myDrifter;
-
 	struct
 	{
 		float width = 1.f;
@@ -108,6 +106,7 @@ private:
 	bool myIsOnGround;
 	bool myCanAccelerate;
 	bool myIsBoosting;
+	bool myHasJumped;
 
 	bool myIsInvurnable;
 	bool myHasGottenHit;
