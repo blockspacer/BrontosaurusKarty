@@ -3,6 +3,7 @@
 #include "NavigationSpline.h"
 #include "../ThreadedPostmaster/Postmaster.h"
 #include "../ThreadedPostmaster/PlayerFinishedMessage.h"
+#include "../ThreadedPostmaster/AIFinishedMessage.h"
 
 CLapTrackerComponent::CLapTrackerComponent()
 {
@@ -101,6 +102,10 @@ void CLapTrackerComponent::Receive(const eComponentMessageType aMessageType, con
 				if (GetParent()->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
 				{
 					Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CPlayerFinishedMessage(GetParent()));
+				}
+				else
+				{
+					Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CAIFinishedMessage(GetParent()));
 				}
 			}
 		}

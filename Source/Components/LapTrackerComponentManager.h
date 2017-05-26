@@ -26,6 +26,7 @@ public:
 	void Init();
 	CU::GrowingArray<CGameObject*>& GetRacerPlacements();
 	eMessageReturn DoEvent(const CPlayerFinishedMessage& aPlayerFinishedMessage) override;
+	eMessageReturn DoEvent(const CAIFinishedMessage& aAIFinishedMessage) override;
 private:
 	CLapTrackerComponentManager();
 	void DoLapPlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList);

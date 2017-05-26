@@ -185,6 +185,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AIFinishedMessage.h" />
     <ClInclude Include="ConectedMessage.h" />
     <ClInclude Include="ConetctMessage.h" />
     <ClInclude Include="ConsoleCalledUpon.h" />
@@ -214,6 +215,7 @@
     <ClInclude Include="Subscriber.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AIFinishedMessage.cpp" />
     <ClCompile Include="ConectedMessage.cpp" />
     <ClCompile Include="ConetctMessage.cpp" />
     <ClCompile Include="ConsoleCalledUpon.cpp" />

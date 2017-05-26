@@ -2,6 +2,7 @@
 #include "LapTrackerComponentManager.h"
 #include "LapTrackerComponent.h"
 #include "../ThreadedPostmaster/PlayerFinishedMessage.h"
+#include "../ThreadedPostmaster/AIFinishedMessage.h"
 #include "../ThreadedPostmaster/MessageType.h"
 #include "../ThreadedPostmaster/Postmaster.h"
 #include "../ThreadedPostmaster/RaceOverMessage.h"
@@ -189,6 +190,25 @@ eMessageReturn CLapTrackerComponentManager::DoEvent(const CPlayerFinishedMessage
 	return eMessageReturn::eContinue;
 }
 
+eMessageReturn CLapTrackerComponentManager::DoEvent(const CAIFinishedMessage& aAIFinishedMessage)
+{
+	for (unsigned int i = 0; i < myComponents.Size(); i++)
+	{
+		if (myComponents[i]->GetParent() == aAIFinishedMessage.GetGameObject())
+		{
+			myWinnerPlacements.Add((myComponents[i]->GetParent()));
+			myComponents.RemoveCyclicAtIndex(i);
+		}
+	}
+
+	if (myComponents.Size() <= 1 && myStartedWithOnlyOnePlayer == false)
+	{
+		SendRaceOverMessage();
+	}
+
+	return eMessageReturn::eContinue;
+}
+
 bool CLapTrackerComponentManager::HaveAllPlayersFinished()
 {
 	bool havePlayersFinished = true;
@@ -207,6 +227,7 @@ bool CLapTrackerComponentManager::HaveAllPlayersFinished()
 void CLapTrackerComponentManager::Init()
 {
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::ePlayerFinished);
+	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eAIFInished);
 
 	if(myComponents.Size() == 1)
 	{

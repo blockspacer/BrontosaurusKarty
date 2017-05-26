@@ -21,6 +21,7 @@ class SetVibrationOnController;
 class StopVibrationOnController;
 class GetAvailableController;
 class CPlayerFinishedMessage;
+class CAIFinishedMessage;
 class CRaceOverMessage;
 
 namespace Postmaster
@@ -55,6 +56,7 @@ namespace Postmaster
 		virtual eMessageReturn DoEvent(const SetVibrationOnController& asetVibrationMessage);
 		virtual eMessageReturn DoEvent(const StopVibrationOnController& aStopVibrationMessage);
 		virtual eMessageReturn DoEvent(const CPlayerFinishedMessage& aPlayerFinishedMessage);
+		virtual eMessageReturn DoEvent(const CAIFinishedMessage& aAIFinishedMessage);
 		virtual eMessageReturn DoEvent(const CRaceOverMessage& aRaceOverMessage);
 
 		void SetSubscribedThread(const std::thread::id& aId);
