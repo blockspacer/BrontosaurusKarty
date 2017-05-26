@@ -38,6 +38,7 @@ private:
 private:
 	CU::GrowingArray<CLapTrackerComponent*> myComponents;
 	CU::GrowingArray<CGameObject*> myRacerPlacements;
+	CU::GrowingArray<CGameObject*> myWinnerPlacements;
 	static CLapTrackerComponentManager* ourInstance;
 	float myUpdatePlacementCountdown;
 

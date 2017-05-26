@@ -12,6 +12,7 @@ CLapTrackerComponentManager::CLapTrackerComponentManager()
 {
 	myComponents.Init(16);
 	myRacerPlacements.Init(16);
+	myWinnerPlacements.Init(16);
 	myUpdatePlacementCountdown = 0.0f;
 	myStartedWithOnlyOnePlayer = false;
 }
@@ -170,6 +171,7 @@ eMessageReturn CLapTrackerComponentManager::DoEvent(const CPlayerFinishedMessage
 	{
 		if(myComponents[i]->GetParent() == aPlayerFinishedMessage.GetGameObject())
 		{
+			myWinnerPlacements.Add((myComponents[i]->GetParent()));
 			myComponents.RemoveCyclicAtIndex(i);
 		}
 	}
