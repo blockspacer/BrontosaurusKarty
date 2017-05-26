@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "LapTrackerComponentManager.h"
 #include "LapTrackerComponent.h"
+#include "../ThreadedPostmaster/PlayerFinishedMessage.h"
+#include "../ThreadedPostmaster/MessageType.h"
+#include "../ThreadedPostmaster/Postmaster.h"
 
 CLapTrackerComponentManager* CLapTrackerComponentManager::ourInstance = nullptr;
 const float updatePlacementCooldown = 0.1f;
@@ -15,6 +18,7 @@ CLapTrackerComponentManager::CLapTrackerComponentManager()
 
 CLapTrackerComponentManager::~CLapTrackerComponentManager()
 {
+	Postmaster::Threaded::CPostmaster::GetInstance().Unsubscribe(this);
 }
 
 void CLapTrackerComponentManager::CreateInstance()
@@ -157,4 +161,43 @@ void CLapTrackerComponentManager::AddToRacerPlacements(CU::GrowingArray<SLapCalc
 CU::GrowingArray<CGameObject*>& CLapTrackerComponentManager::GetRacerPlacements()
 {
 	return myRacerPlacements;
+}
+
+eMessageReturn CLapTrackerComponentManager::DoEvent(const CPlayerFinishedMessage& aPlayerFinishedMessage)
+{
+	for (unsigned int i = 0; i < myComponents.Size(); i++)
+	{
+		if(myComponents[i]->GetParent() == aPlayerFinishedMessage.GetGameObject())
+		{
+			myComponents.RemoveCyclicAtIndex(i);
+		}
+	}
+
+	if(HaveAllPlayersFinished() == true)
+	{
+		int br = 1;
+		br = 0;
+	}
+
+	return eMessageReturn::eContinue;
+}
+
+bool CLapTrackerComponentManager::HaveAllPlayersFinished()
+{
+	bool havePlayersFinished = true;
+	
+	for (unsigned int i = 0; i < myComponents.Size(); i++)
+	{
+		if(myComponents[i]->GetParent()->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
+		{
+			havePlayersFinished = false;
+		}
+	}
+
+	return havePlayersFinished;
+}
+
+void CLapTrackerComponentManager::Init()
+{
+	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::ePlayerFinished);
 }

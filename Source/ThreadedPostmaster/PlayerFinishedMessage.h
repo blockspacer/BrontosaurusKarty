@@ -10,12 +10,12 @@ public:
 
 	IMessage *Copy() override;
 	eMessageReturn DoEvent(Postmaster::ISubscriber & aSubscriber) const override;
-	inline CGameObject* GetGameObject();
+	inline const CGameObject* GetGameObject() const ;
 private:
 	CGameObject* myKartObject;
 };
 
-inline CGameObject* CPlayerFinishedMessage::GetGameObject()
+inline const CGameObject* CPlayerFinishedMessage::GetGameObject() const 
 {
 	return myKartObject;
 }

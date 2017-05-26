@@ -296,6 +296,7 @@ void CPlayState::Load()
 void CPlayState::Init()
 {
 	myGameObjectManager->SendObjectsDoneMessage();
+	CLapTrackerComponentManager::GetInstance()->Init();
 }
 
 eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)

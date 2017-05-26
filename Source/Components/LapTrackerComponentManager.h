@@ -1,4 +1,5 @@
 #pragma once
+#include "../ThreadedPostmaster/Subscriber.h"
 class CLapTrackerComponent;
 
 struct SLapCalculateData
@@ -10,7 +11,7 @@ struct SLapCalculateData
 	float nextSplineDistance;
 };
 
-class CLapTrackerComponentManager
+class CLapTrackerComponentManager : public Postmaster::ISubscriber
 {
 public:
 	~CLapTrackerComponentManager();
@@ -22,7 +23,9 @@ public:
 	CLapTrackerComponent* CreateAndRegisterComponent();
 	void Update(float aDeltaTime);
 	void CalculateRacerPlacement();
+	void Init();
 	CU::GrowingArray<CGameObject*>& GetRacerPlacements();
+	eMessageReturn DoEvent(const CPlayerFinishedMessage& aPlayerFinishedMessage) override;
 private:
 	CLapTrackerComponentManager();
 	void DoLapPlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList);
@@ -30,6 +33,7 @@ private:
 	void DoDistanceToNextSplinePlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList);
 	void SortPlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList);
 	void AddToRacerPlacements(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList);
+	bool HaveAllPlayersFinished();
 private:
 	CU::GrowingArray<CLapTrackerComponent*> myComponents;
 	CU::GrowingArray<CGameObject*> myRacerPlacements;
