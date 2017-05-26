@@ -51,7 +51,7 @@ void CHazardComponent::Receive(const eComponentMessageType aMessageType, const S
 				aMessageData.myComponent->GetParent()->NotifyComponents(eComponentMessageType::eGotHit, SComponentMessageData());
 				if (myIsPermanent == false)
 				{
-					GetParent()->NotifyComponents(eComponentMessageType::eDeactivate, SComponentMessageData());
+					GetParent()->NotifyComponents(eComponentMessageType::eDeactivate, SComponentMessageData()); //can be a problem with unity parenting...
 				}
 			}
 		}
