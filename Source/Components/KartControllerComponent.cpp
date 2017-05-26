@@ -179,6 +179,10 @@ void CKartControllerComponent::StopTurning()
 //Checks if the player is turning left or right and then sets the drift values accordingly
 void CKartControllerComponent::Drift()
 {
+	if (myIsOnGround == false)
+	{
+		return;
+	}
 	if (myHasGottenHit == true)
 	{
 		return;
