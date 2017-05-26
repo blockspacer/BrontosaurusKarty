@@ -375,6 +375,7 @@
     <ClInclude Include="ComponentMessageCallback.h" />
     <ClInclude Include="ComponentMessageTypeToLua.h" />
     <ClInclude Include="ConcaveMeshCollider.h" />
+    <ClInclude Include="CurrentAction.h" />
     <ClInclude Include="Drifter.h" />
     <ClInclude Include="DriftTurner.h" />
     <ClInclude Include="GoalComponent.h" />

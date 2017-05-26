@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Drifter.h"
 #include "..\CommonUtilities\JsonValue.h"
+#include "CurrentAction.h"
 
 
 CDrifter::CDrifter()
@@ -47,19 +48,22 @@ void CDrifter::ApplySteering(float& aSteering, const float aDeltaTime)
 	}*/
 }
 
-void CDrifter::StartDrifting(const float aSteering)
+void CDrifter::StartDrifting(const eCurrentAction& aCurrentAction)
 {
-	if (aSteering > 0.f)
+	switch (aCurrentAction)
 	{
-		myIsDrifting = true;
-		myDriftRate = -myMaxDriftRate;
-		myDriftTimer = 0.0f;
-	}
-	else if (aSteering < 0.f)
-	{
+	case eCurrentAction::eTurningLeft:
 		myIsDrifting = true;
 		myDriftRate = myMaxDriftRate;
 		myDriftTimer = 0.0f;
+		break;
+	case eCurrentAction::eTurningRight:
+		myIsDrifting = true;
+		myDriftRate = -myMaxDriftRate;
+		myDriftTimer = 0.0f;
+		break;
+	default:
+		break;
 	}
 }
 
