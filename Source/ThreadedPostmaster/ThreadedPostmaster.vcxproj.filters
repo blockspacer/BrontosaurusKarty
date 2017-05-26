@@ -73,6 +73,9 @@
     <Filter Include="Message\PlayerFinished">
       <UniqueIdentifier>{bc8ac495-8149-4bd1-8292-e8bfe14a825c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Message\RaceOver">
+      <UniqueIdentifier>{3de636cf-b5aa-4d97-938f-c8c1770e0d5a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Postmaster.cpp">
@@ -136,6 +139,7 @@
     <ClCompile Include="PlayerFinishedMessage.cpp">
       <Filter>Message\PlayerFinished</Filter>
     </ClCompile>
+    <ClCompile Include="RaceOverMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Postmaster.h">
@@ -214,5 +218,6 @@
     <ClInclude Include="PlayerFinishedMessage.h">
       <Filter>Message\PlayerFinished</Filter>
     </ClInclude>
+    <ClInclude Include="RaceOverMessage.h" />
   </ItemGroup>
 </Project>

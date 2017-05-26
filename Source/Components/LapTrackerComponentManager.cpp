@@ -4,6 +4,7 @@
 #include "../ThreadedPostmaster/PlayerFinishedMessage.h"
 #include "../ThreadedPostmaster/MessageType.h"
 #include "../ThreadedPostmaster/Postmaster.h"
+#include "../ThreadedPostmaster/RaceOverMessage.h"
 
 CLapTrackerComponentManager* CLapTrackerComponentManager::ourInstance = nullptr;
 const float updatePlacementCooldown = 0.1f;
@@ -215,5 +216,5 @@ void CLapTrackerComponentManager::Init()
 
 void CLapTrackerComponentManager::SendRaceOverMessage()
 {
-
+	Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CRaceOverMessage(myWinnerPlacements));
 }
