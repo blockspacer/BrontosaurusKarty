@@ -29,23 +29,9 @@ bool CDrifter::Init(const CU::CJsonValue& aJsonValue)
 	return true;
 }
 
-void CDrifter::ApplySteering(float& aSteering, const float aDeltaTime)
+void CDrifter::Update(const float aDeltaTime)
 {
 	myDriftTimer += aDeltaTime;
-	/*if (aSteering > 0)
-	{
-		if (aSteering <= myMaxDriftSteerAffection)
-		{
-			aSteering += (aDeltaTime / myTimeMultiplier);
-		}
-	}
-	else if (aSteering < 0)
-	{
-		if (aSteering >= -myMaxDriftSteerAffection)
-		{
-			aSteering -= (aDeltaTime / myTimeMultiplier);
-		}
-	}*/
 }
 
 void CDrifter::StartDrifting(const eCurrentAction& aCurrentAction)

@@ -23,7 +23,7 @@ public:
 	~CDrifter();
 
 	bool Init(const CU::CJsonValue& aJsonValue);
-	void ApplySteering(float& aSteering, const float aDeltaTime);
+	void Update(const float aDeltaTime);
 
 	void StartDrifting(const eCurrentAction& aCurrentAction);
 	eDriftBoost StopDrifting();

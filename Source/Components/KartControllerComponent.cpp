@@ -188,12 +188,12 @@ void CKartControllerComponent::Drift()
 	myDrifter->StartDrifting(myCurrentAction);
 	SComponentMessageData messageData;
 	messageData.myFloat = myDriftAngle;
-	if (mySteering > 0)
+	if (myCurrentAction == eCurrentAction::eTurningRight)
 	{
 		CParticleEmitterManager::GetInstance().Activate(myLeftWheelDriftEmmiterHandle);
 		CParticleEmitterManager::GetInstance().Activate(myRightWheelDriftEmmiterHandle);
 	}
-	else if (mySteering < 0)
+	else if (myCurrentAction == eCurrentAction::eTurningLeft)
 	{
 		messageData.myFloat *= -1.f;
 		CParticleEmitterManager::GetInstance().Activate(myLeftWheelDriftEmmiterHandle);
@@ -440,12 +440,12 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 	if (myDrifter->IsDrifting() == true)
 	{
 		DoDriftingParticles();
-		myDrifter->ApplySteering(mySteering, aDeltaTime);
-		if (mySteering > 0.0f)
+		myDrifter->Update(aDeltaTime);
+		if (myCurrentAction == eCurrentAction::eTurningRight)
 		{
 			steerAngle = (myTurnRate + myDrifter->GetSteerModifier()) * myAngularAcceleration * -way * (myIsOnGround == true ? 1.f : myAirControl);
 		}
-		else if (mySteering < 0.0f)
+		else if (myCurrentAction == eCurrentAction::eTurningLeft)
 		{
 			steerAngle = (-myTurnRate + myDrifter->GetSteerModifier()) * myAngularAcceleration * -way * (myIsOnGround == true ? 1.f : myAirControl);
 		}
