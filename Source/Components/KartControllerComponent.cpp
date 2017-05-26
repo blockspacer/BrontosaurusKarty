@@ -106,7 +106,6 @@ void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 		return;
 	}
 	assert(aNormalizedModifier <= 1.f && aNormalizedModifier >= -1.f && "normalized modifier not normalized mvh carl");
-	DL_PRINT("curreent action %u", myCurrentAction);
 	myCurrentAction = eCurrentAction::eTurningRight;
 	if (myDrifter->IsDrifting() == false)
 	{
