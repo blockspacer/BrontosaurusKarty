@@ -276,11 +276,18 @@ void CPlayState::Load()
 
 	myHUDs.Init(myPlayerCount);
 
+	bool myIsOneSplit = false;
+	if (myPlayerCount == 2)
+	{
+		myIsOneSplit = true;
+	}
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
-		myHUDs.Add(new CHUD(i));
+		myHUDs.Add(new CHUD(i, myIsOneSplit));
 		myHUDs[i]->LoadHUD();
 	}
+
+	myCountdownSprite->Render();
 
 	///////////
 	myIsLoaded = true;
@@ -359,7 +366,6 @@ void CPlayState::Render()
 	{
 		myHUDs[i]->Render();
 	}
-
 }
 
 void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
@@ -607,9 +613,4 @@ void CPlayState::RenderCountdown()
 	RENDERER.AddRenderMessage(guiChangeState);
 
 	myCountdownSprite->RenderToGUI(L"countdown");
-}
-
-void CPlayState::SetCameraComponent(CCameraComponent* aCameraComponent)
-{
-	DL_ASSERT("cant add camera component like this right now,,,,,,");
 }
