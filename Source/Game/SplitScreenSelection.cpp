@@ -79,8 +79,14 @@ void CSplitScreenSelection::LoadElement(const CU::CJsonValue & aJsonValue, const
 	const std::string &name = aJsonValue.at("name").GetString();
 	const CU::Vector2f position = aJsonValue.at("position").GetVector2f("xy");
 	const CU::Vector2f origin = aJsonValue.at("origin").GetVector2f("xy");
+	int playerIndexThatiListenTo = -1;
+	if (name[0] == '#')
+	{
+		//make controller controlled gui
+		playerIndexThatiListenTo = aJsonValue.at("listeningToPlayer").GetInt();
+	}
 
-	const int spriteID = myMenuManager.CreateSprite(aFolderpath + "/" + name, position, origin, 1);
+	const int spriteID = myMenuManager.CreateSprite(aFolderpath + "/" + name, position, origin, 1, playerIndexThatiListenTo);
 
 	if (aJsonValue.at("isButton").GetBool())
 	{
@@ -183,30 +189,29 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 		switch (aInputMessage.myGamePad)
 		{
 		case CU::GAMEPAD::A:
+		{
+			bool found = false;
 			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
 			{
 				if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
 				{
-					return CU::eInputReturn::eKeepSecret;
+					found = true;
 				}
 			}
-			if (myPlayers.Size() < 4)
+			if (found == false)
 			{
-				SParticipant participant;
-				participant.myInputDevice = static_cast<SParticipant::eInputDevice>(aInputMessage.myGamepadIndex);
-				myPlayers.Add(participant);
-				myPlayerInputDevices[myPlayers.Size() - 1] = static_cast<SParticipant::eInputDevice>(aInputMessage.myGamepadIndex);
+				if (myPlayers.Size() < 4)
+				{
+					SParticipant participant;
+					participant.myInputDevice = static_cast<SParticipant::eInputDevice>(aInputMessage.myGamepadIndex);
+					myPlayers.Add(participant);
+					myPlayerInputDevices[myPlayers.Size() - 1] = static_cast<SParticipant::eInputDevice>(aInputMessage.myGamepadIndex);
+				}
 			}
+		}
 			break;
 		case CU::GAMEPAD::B:
-			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
-			{
-				if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
-				{
-					myPlayerInputDevices[i] = SParticipant::eInputDevice::eNone;
-					myPlayers.RemoveAtIndex(i);
-				}
-			}
+			myStateStack.Pop();
 			break;
 		case CU::GAMEPAD::START:
 			if (myPlayers.Size() >= 2)
@@ -276,20 +281,20 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 
 	for (unsigned int i = 0; i < myPlayerInputDevices.Size(); ++i)
 	{
-		if (myPlayerInputDevices[i] == static_cast<SParticipant::eInputDevice>(aInputMessage.myGamePad))
+		if (myPlayerInputDevices[i] == static_cast<SParticipant::eInputDevice>(aInputMessage.myGamepadIndex))
 		{
 			if (aInputMessage.myType == CU::eInputType::eGamePadButtonPressed)
 			{
 				switch (aInputMessage.myGamePad)
 				{
 				case CU::GAMEPAD::A:
-					myMenuManager.ActionPressed(static_cast<short>(myPlayerInputDevices[i]));
+					myMenuManager.ActionPressed(static_cast<short>(i));
 					break;
 				case CU::GAMEPAD::DPAD_LEFT:
-					myMenuManager.LeftPressed(static_cast<short>(myPlayerInputDevices[i]));
+					myMenuManager.LeftPressed(static_cast<short>(i));
 					break;
 				case CU::GAMEPAD::DPAD_RIGHT:
-					myMenuManager.RightPressed(static_cast<short>(myPlayerInputDevices[i]));
+					myMenuManager.RightPressed(static_cast<short>(i));
 					break;
 				default:
 					break;
@@ -312,11 +317,14 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 				{
 				case CU::eKeys::A:
 				case CU::eKeys::LEFT:
-					myMenuManager.LeftPressed(static_cast<short>(myPlayerInputDevices[i]));
+					myMenuManager.LeftPressed(static_cast<short>(i));
 					break;
 				case CU::eKeys::D:
 				case CU::eKeys::RIGHT:
-					myMenuManager.RightPressed(static_cast<short>(myPlayerInputDevices[i]));
+					myMenuManager.RightPressed(static_cast<short>(i));
+					break;
+				case CU::eKeys::SPACE:
+					myMenuManager.ActionPressed(static_cast<short>(i));
 					break;
 				}
 			}

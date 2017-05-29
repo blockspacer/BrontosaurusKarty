@@ -53,7 +53,7 @@ void CMenuManager::CreateClickArea(CU::GrowingArray<std::string> someActions, CU
 	myLayers.Add({ aLayer, myClickAreas.Size() - 1, eMenuThingType::eClickArea });
 }
 
-int CMenuManager::CreateSprite(const std::string& aFolder, const CU::Vector2f aPosition, const CU::Vector2f anOrigin, const unsigned char aLayer)
+int CMenuManager::CreateSprite(const std::string& aFolder, const CU::Vector2f aPosition, const CU::Vector2f anOrigin, const unsigned char aLayer, const short aListeningToPlayer)
 {
 	SMenuSprite menuSprite;
 
@@ -105,6 +105,11 @@ int CMenuManager::CreateSprite(const std::string& aFolder, const CU::Vector2f aP
 		DL_PRINT("inactive sprite missing using default instead");
 	}
 
+	if (aListeningToPlayer != -1)
+	{
+		DL_PRINT("Creating gui element controlled by a player");
+	}
+	menuSprite.myPlayerIndex = aListeningToPlayer;
 	mySpriteInstances.Add(menuSprite);
 
 	myLayers.Add({ aLayer, mySpriteInstances.Size() - 1, eMenuThingType::eSprite });
@@ -183,28 +188,6 @@ void CMenuManager::Update(const CU::Time& aDeltaTime)
 			else if (myClickAreas[i].mySpriteID >= 0)
 			{
 				mySpriteInstances[myClickAreas[i].mySpriteID].myState = eMenuButtonState::eOnHover;
-			}
-			switch (myInput)
-			{
-			case eActionPressed:
-			{
-				int br = 0;
-			}
-				break;
-			case eBackPressed:
-				break;
-			case eLeftPressed:
-				break;
-			case eRightPressed:
-				break;
-			case eStartPressed:
-				break;
-			case eSelectPressed:
-				break;
-			case eNone:
-				break;
-			default:
-				break;
 			}
 			hasCollided = true;
 			break;
@@ -305,7 +288,7 @@ void CMenuManager::MouseReleased()
 
 void CMenuManager::LeftPressed(const short aPlayerIndex)
 {
-	myInput = eInputAction::eRightPressed;
+	myInput = eInputAction::eLeftPressed;
 	myPlayerThatpressed = aPlayerIndex;
 }
 
@@ -327,6 +310,13 @@ void CMenuManager::ActionPressed(const short aPlayerIndex)
 {
 	myInput = eInputAction::eActionPressed;
 	myPlayerThatpressed = aPlayerIndex;
+	for (unsigned int i  = 0; i < mySpriteInstances.Size(); ++i)
+	{
+		if (mySpriteInstances[i].myPlayerIndex == aPlayerIndex)
+		{
+			mySpriteInstances[i].myState = eMenuButtonState::eOnHover;
+		}
+	}
 }
 
 void CMenuManager::BackButtonPressed(const short aPlayerIndex)
