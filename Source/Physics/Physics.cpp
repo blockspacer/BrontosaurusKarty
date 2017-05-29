@@ -30,31 +30,52 @@ namespace Physics
 			physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
 			physx::PxPairFlags& pairFlags, const void* /*constantBlock*/, PxU32 /*constantBlockSize*/)
 		{
-			pairFlags = PxPairFlag::eNOTIFY_CONTACT_POINTS | PxPairFlag::eNOTIFY_TOUCH_FOUND;
-			// let triggers through
-			if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1))
+			const bool firstCheck = (filterData0.word0 & filterData1.word1) != 0;
+			const bool secondCheck = (filterData1.word0 & filterData0.word1) != 0;
+			if (firstCheck || secondCheck)
 			{
-				pairFlags |= physx::PxPairFlag::eTRIGGER_DEFAULT | PxPairFlag::eDETECT_CCD_CONTACT;
-				return physx::PxFilterFlag::eDEFAULT;
-			}
-			// generate contacts for all that were not filtered above
-			pairFlags |= physx::PxPairFlag::eCONTACT_DEFAULT;
+				if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1))
+				{
+					pairFlags |= physx::PxPairFlag::eTRIGGER_DEFAULT;
+					pairFlags |= PxPairFlag::eDETECT_CCD_CONTACT;
+					return PxFilterFlag::eDEFAULT;
+				}
+			
+					
+				pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
+				pairFlags |= PxPairFlag::eNOTIFY_CONTACT_POINTS;
+				pairFlags |= PxPairFlag::eDETECT_DISCRETE_CONTACT;
 
-			if (filterData0.word2 == filterData1.word2)
-			{
-				int i = 0;
-			}
-			// trigger the contact callback for pairs (A,B) where 
-			// the filtermask of A contains the ID of B and vice versa.
-			if ((filterData0.word0 & filterData1.word1) != 0 && (filterData1.word0 & filterData0.word1) != 0/*&& filterData0.word2 != filterData1.word2*/)
-			{
-				//std::cout << "First object: " << filterData0.word2 << "\t\tSecond object: " << filterData1.word2 << std::endl;
-				pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND | physx::PxPairFlag::eNOTIFY_TOUCH_LOST | physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS;
-				return physx::PxFilterFlag::eDEFAULT;//Remove this if collision filter is messing up
+				//pairFlags |= PxPairFlag::eNOTIFY_CONTACT_POINTS;
+				
+
+				pairFlags |= physx::PxPairFlag::eCONTACT_DEFAULT;
+
+				return PxFilterFlag::eDEFAULT;
 			}
 
+			return PxFilterFlag::eSUPPRESS;
+			//// let triggers through
+			//if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1))
+			//{
+			//	pairFlags |= physx::PxPairFlag::eTRIGGER_DEFAULT | PxPairFlag::eDETECT_CCD_CONTACT;
+			//	return physx::PxFilterFlag::eDEFAULT;
+			//}
 
-			return physx::PxFilterFlag::eSUPPRESS;//Change back to Default if collision filter is messing up
+			//// generate contacts for all that were not filtered above
+			//pairFlags |= physx::PxPairFlag::eCONTACT_DEFAULT;
+
+			//// trigger the contact callback for pairs (A,B) where 
+			//// the filtermask of A contains the ID of B and vice versa.
+			//if ((filterData0.word0 & filterData1.word1) != 0 && (filterData1.word0 & filterData0.word1) != 0/*&& filterData0.word2 != filterData1.word2*/)
+			//{
+			//	//std::cout << "First object: " << filterData0.word2 << "\t\tSecond object: " << filterData1.word2 << std::endl;
+			//	pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_LOST | PxPairFlag::eNOTIFY_CONTACT_POINTS;
+			//	return physx::PxFilterFlag::eDEFAULT;//Remove this if collision filter is messing up
+			//}
+
+
+			//return physx::PxFilterFlag::eSUPPRESS;//Change back to Default if collision filter is messing up
 		}
 	}
 
