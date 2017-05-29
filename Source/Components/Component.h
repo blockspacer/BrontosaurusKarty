@@ -14,6 +14,8 @@ enum class eComponentQuestionType;
 enum class eComponentType : unsigned char
 {
 	eGameObject,
+	eSpotLight,
+	ePointLight,
 	eDoor,
 	eModel,
 	eModelDebug,
@@ -50,7 +52,6 @@ enum class eComponentType : unsigned char
 	eCollision,
 	eAudioSource,
 	eActivationComponent,
-	ePointLight,
 	eNetwork,
 	eCharacterController,
 	eAnimationComponent,
