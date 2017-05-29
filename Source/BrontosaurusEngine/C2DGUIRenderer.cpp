@@ -176,6 +176,10 @@ void C2DGUIRenderer::RenderWholeGuiToPackage(CRenderPackage& aTargetPackage, CFu
 		const float elementHeight = currentGuiElement.myScreenRect.w - currentGuiElement.myScreenRect.y;
 		const float elementWidth = currentGuiElement.myScreenRect.z - currentGuiElement.myScreenRect.x;
 
+
+		if(elementHeight == 0.0f|| elementWidth == 0.0f)
+			continue;
+
 		const float newPixelWidth = elementHeight * targetSize.y / (elementHeight * 9 / (elementWidth * 16));
 		const float fullScreenWidth = newPixelWidth / targetSize.x;
 

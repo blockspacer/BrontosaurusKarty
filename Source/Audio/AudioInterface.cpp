@@ -2,6 +2,7 @@
 #include "WwiseManager.h"
 
 #include <assert.h>
+#include "../CommonUtilities/StaticArray.h"
 #include "../CommonUtilities/CUvector.h"
 #include "../CommonUtilities/matrix.h"
 

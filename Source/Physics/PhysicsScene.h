@@ -20,7 +20,7 @@ namespace Physics
 		CU::Vector3f normal;
 		unsigned int faceIndex;
 		CPhysicsCallbackActor* actor;
-
+		ECollisionLayer collisionLayer = ECollisionLayer::eNone;
 
 
 	};

@@ -58,7 +58,7 @@
 #include "ConcaveMeshCollider.h"
 
 //Other stuff I dunno
-#include "PointLightComponentManager.h"
+#include "LightComponentManager.h"
 #include "BrontosaurusEngine/SpriteInstance.h"
 #include "ThreadedPostmaster/GameEventMessage.h"
 #include <LuaWrapper/SSlua/SSlua.h>
@@ -149,6 +149,7 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 		myPlayers.Add(SParticipant());
 		myPlayers[0].myInputDevice = SParticipant::eInputDevice::eKeyboard;
 	}
+
 	DL_PRINT("started with %d players", myPlayerCount);
 }
 
@@ -162,7 +163,7 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myModelComponentManager);
 	SAFE_DELETE(myScriptComponentManager);
 
-	CPointLightComponentManager::Destroy();
+	CLightComponentManager::Destroy();
 	CComponentManager::DestroyInstance();
 	SAFE_DELETE(myColliderComponentManager);
 	SAFE_DELETE(myPhysicsScene);
@@ -266,7 +267,12 @@ void CPlayState::Load()
 	myScene->InitPlayerCameras(myPlayerCount);
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
-		CreatePlayer(myScene->GetPlayerCamera(i).GetCamera(),myPlayers[i].myInputDevice, myPlayerCount);
+		CreatePlayer(myScene->GetPlayerCamera(i).GetCamera(), myPlayers[i].myInputDevice, myPlayerCount);
+	}
+
+	for (int i = myPlayerCount; i < 8; ++i)
+	{
+		CreateAI();
 	}
 
 	myScene->SetSkybox("default_cubemap.dds");
@@ -319,7 +325,8 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 
 	myKartComponentManager->Update(aDeltaTime.GetSeconds());
 	myKartControllerComponentManager->Update(aDeltaTime.GetSeconds());
-	
+	myPlayerControllerManager->Update(aDeltaTime.GetSeconds());
+
 	for (CCameraComponent* camera : myCameraComponents)
 	{
 		camera->Update(aDeltaTime.GetSeconds());
@@ -423,7 +430,7 @@ void CPlayState::CreateManagersAndFactories()
 
 	myScene = new CScene();
 
-	CPointLightComponentManager::Create(*myScene);
+	CLightComponentManager::Create(*myScene);
 	myGameObjectManager = new CGameObjectManager();
 	myModelComponentManager = new CModelComponentManager(*myScene);
 
@@ -551,6 +558,88 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 
 
 	CPollingStation::GetInstance()->AddPlayer(playerObject);
+}
+
+void CPlayState::CreateAI()
+{
+	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
+	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
+
+	secondPlayerObject->AddComponent(playerModel);
+	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
+
+	CGameObject* intermediary = myGameObjectManager->CreateGameObject();
+	intermediary->AddComponent(new Component::CDriftTurner);
+	intermediary->AddComponent(secondPlayerObject);
+
+	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
+	playerObject->AddComponent(intermediary);
+
+	CU::Matrix44f kartTransformation = CKartSpawnPointManager::GetInstance()->PopSpawnPoint().mySpawnTransformaion;
+	playerObject->SetWorldTransformation(kartTransformation);
+	playerObject->Move(CU::Vector3f::UnitY);
+
+	CRespawnerComponent* respawnComponent = myRespawnComponentManager->CreateAndRegisterComponent();
+	playerObject->AddComponent(respawnComponent);
+
+	if (CLapTrackerComponentManager::GetInstance() != nullptr)
+	{
+		CLapTrackerComponent* lapTrackerComponent = CLapTrackerComponentManager::GetInstance()->CreateAndRegisterComponent();
+		playerObject->AddComponent(lapTrackerComponent);
+	}
+
+	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent();
+
+	myPlayerControllerManager->CreateAIController(*kartComponent);
+
+	if (CSpeedHandlerManager::GetInstance() != nullptr)
+	{
+		CSpeedHandlerComponent* speedHandlerComponent = CSpeedHandlerManager::GetInstance()->CreateAndRegisterComponent();
+		playerObject->AddComponent(speedHandlerComponent);
+	}
+
+	CHazardComponent* hazardComponent = new CHazardComponent();
+	hazardComponent->SetToPermanent();
+	CComponentManager::GetInstance().RegisterComponent(hazardComponent);
+	playerObject->AddComponent(hazardComponent);
+
+	CItemHolderComponent* itemHolder = new CItemHolderComponent(*myItemFactory);
+	CComponentManager::GetInstance().RegisterComponent(itemHolder);
+	playerObject->AddComponent(itemHolder);
+
+	playerObject->AddComponent(kartComponent);
+	SBoxColliderData box;
+	box.myHalfExtent = CU::Vector3f(1.0f, 1.0f, 1.0f);
+	box.center.y = 1.05f;
+	box.myLayer = Physics::eKart;
+	box.myCollideAgainst = Physics::GetCollideAgainst(Physics::eKart);
+
+	SBoxColliderData triggerbox;
+	triggerbox.myHalfExtent = CU::Vector3f(1.0f, 1.0f, 1.0f);
+	triggerbox.center.y = 1.05f;
+	triggerbox.myLayer = Physics::eKart;
+	triggerbox.myCollideAgainst = Physics::GetCollideAgainst(Physics::eKart);
+	triggerbox.IsTrigger = true;
+
+	CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&box, playerObject->GetId());
+	CColliderComponent* playerTriggerColliderComponent = myColliderComponentManager->CreateComponent(&triggerbox, playerObject->GetId());
+
+
+	SRigidBodyData rigidbodah;
+	rigidbodah.isKinematic = true;
+	rigidbodah.useGravity = false;
+	rigidbodah.myLayer = Physics::eKart;
+	rigidbodah.myCollideAgainst = Physics::GetCollideAgainst(Physics::eKart);
+	CColliderComponent* rigidComponent = myColliderComponentManager->CreateComponent(&rigidbodah, playerObject->GetId());
+	//	colliderObject->SetWorldPosition({ offset.x, offset.y + 0.1f, offset.z });
+	playerObject->AddComponent(playerColliderComponent);
+	playerObject->AddComponent(playerTriggerColliderComponent);
+	playerObject->AddComponent(rigidComponent);
+}
+
+void CPlayState::CreateKart()
+{
+
 }
 
 void CPlayState::InitiateRace()
