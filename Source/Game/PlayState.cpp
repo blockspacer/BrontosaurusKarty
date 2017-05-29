@@ -58,7 +58,7 @@
 #include "ConcaveMeshCollider.h"
 
 //Other stuff I dunno
-#include "PointLightComponentManager.h"
+#include "LightComponentManager.h"
 #include "BrontosaurusEngine/SpriteInstance.h"
 #include "ThreadedPostmaster/GameEventMessage.h"
 #include <LuaWrapper/SSlua/SSlua.h>
@@ -162,7 +162,7 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myModelComponentManager);
 	SAFE_DELETE(myScriptComponentManager);
 
-	CPointLightComponentManager::Destroy();
+	CLightComponentManager::Destroy();
 	CComponentManager::DestroyInstance();
 	SAFE_DELETE(myColliderComponentManager);
 	SAFE_DELETE(myPhysicsScene);
@@ -312,7 +312,8 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 
 	myKartComponentManager->Update(aDeltaTime.GetSeconds());
 	myKartControllerComponentManager->Update(aDeltaTime.GetSeconds());
-	
+	myPlayerControllerManager->Update(aDeltaTime.GetSeconds());
+
 	for (CCameraComponent* camera : myCameraComponents)
 	{
 		camera->Update(aDeltaTime.GetSeconds());
@@ -406,7 +407,7 @@ void CPlayState::CreateManagersAndFactories()
 
 	myScene = new CScene();
 
-	CPointLightComponentManager::Create(*myScene);
+	CLightComponentManager::Create(*myScene);
 	myGameObjectManager = new CGameObjectManager();
 	myModelComponentManager = new CModelComponentManager(*myScene);
 
@@ -471,7 +472,10 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	}
 
 	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent();
-	if (aIntputDevice == SParticipant::eInputDevice::eKeyboard)
+
+	myPlayerControllerManager->CreateAIController(*kartComponent);
+
+	/*if (aIntputDevice == SParticipant::eInputDevice::eKeyboard)
 	{
 		CKeyboardController* controls = myPlayerControllerManager->CreateKeyboardController(*kartComponent);
 		if (myPlayerCount < 2)
@@ -483,7 +487,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	else
 	{
 		CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent, static_cast<short>(aIntputDevice));
-	}
+	}*/
 	if(CSpeedHandlerManager::GetInstance() != nullptr)
 	{
 		CSpeedHandlerComponent* speedHandlerComponent = CSpeedHandlerManager::GetInstance()->CreateAndRegisterComponent();
