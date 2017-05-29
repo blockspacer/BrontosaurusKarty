@@ -199,7 +199,7 @@ CTextBitmap CFT_Font::RenderChar(FT_UInt aGlyphIndex)
 	if (glyphSlot->bitmap.width * glyphSlot->bitmap.rows > 0)
 	{
 		charBitmap.Init(glyphSlot->bitmap.width, glyphSlot->bitmap.rows);
-		charBitmap.DrawMono(CU::Vector2i(0, 0), { static_cast<int>(glyphSlot->bitmap.width), static_cast<int>(glyphSlot->bitmap.rows) }, glyphSlot->bitmap.buffer, CU::Vector3uc(0xff, 0xff, 0xff));
+		charBitmap.DrawMono(CU::Vector2i(0, 0), { static_cast<int>(glyphSlot->bitmap.width), static_cast<int>(glyphSlot->bitmap.rows) }, glyphSlot->bitmap.buffer, CU::Vector3<unsigned char>(0xff, 0xff, 0xff));
 	}
 	else
 	{

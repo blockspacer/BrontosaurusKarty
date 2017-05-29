@@ -42,13 +42,13 @@ void CLoadState::Init()
 {
 	CBackgroundLoadingManager &bLM = CBackgroundLoadingManager::GetInstance();
 
-	myControlSchemeSprite = new CSpriteInstance("Sprites/Menu/Main/Loading/default.dds");
+	myControlSchemeSprite = new CSpriteInstance("Sprites/Loading/background.dds");
 	myControlSchemeSprite->SetPivot({ 0.5f, 0.5f });
 	myControlSchemeSprite->SetPosition({ 0.5f, 0.5f });
 
-	myTDLogoSprite = new CSpriteInstance("Sprites/LoadingScreen/Rotating.dds");
+	myTDLogoSprite = new CSpriteInstance("Sprites/Loading/birdy.dds");
 	myTDLogoSprite->SetPivot({ 0.5f, -0.5f });
-	myTDLogoSprite->SetPosition({ 0.96f, 0.88f });
+	myTDLogoSprite->SetPosition({ 0.76f, 0.68f });
 
 	if (bLM.GetIfActive() == true)
 	{

@@ -36,6 +36,7 @@ class CPlayerControllerManager;
 class CBoostPadComponentManager;
 class CItemFactory;
 class CItemWeaponBehaviourComponentManager;
+class CRedShellManager;
 class CRespawnComponentManager;
 class CLapTrackerComponentManager;
 class CHUD;
@@ -76,6 +77,9 @@ public:
 	void LoadNavigationSpline(const CU::CJsonValue &splineData);
 private:
 	void CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDevice aIntputDevice, unsigned int aPlayerCount);
+	void CreateAI();
+	void CreateKart();
+
 	void InitiateRace();
 	void RenderCountdown();
 
@@ -96,6 +100,7 @@ private:
 	CPlayerControllerManager* myPlayerControllerManager;
 	CItemFactory* myItemFactory;
 	CItemWeaponBehaviourComponentManager* myItemBehaviourManager;
+	CRedShellManager* myRedShellManager;
 	CRespawnComponentManager* myRespawnComponentManager;
 
 	CU::GrowingArray<CCameraComponent*> myCameraComponents;

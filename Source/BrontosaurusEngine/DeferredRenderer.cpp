@@ -50,7 +50,7 @@ CDeferredRenderer::CDeferredRenderer()
 	Lights::SSpotLight spotLight;
 	mySpotLightBuffer = BSR::CreateCBuffer<Lights::SSpotLight>(&spotLight);
 
-	InitPointLightModel();
+	InitLightModels();
 	
 	
 #ifdef _ENABLE_RENDERMODES
@@ -66,25 +66,41 @@ CDeferredRenderer::~CDeferredRenderer()
 	SAFE_RELEASE(myDirectionalLightBuffer);
 	SAFE_RELEASE(myPointLightBuffer);
 	SAFE_RELEASE(mySpotLightBuffer);
-	SAFE_DELETE(myLightModel);
+	SAFE_DELETE(myPointLightModel);
+	SAFE_DELETE(mySpotLightModel);
+
 }
 
-void CDeferredRenderer::InitPointLightModel()
+void CDeferredRenderer::InitLightModels()
 {
-	myLightModel = new CLightModel();
+	myPointLightModel = new CLightModel();
+	mySpotLightModel = new CLightModel();
 
 	CFBXLoader modelLoader;
-	CLoaderModel* model = modelLoader.LoadModel("Models/lightmeshes/sphere.fbx");
-	CLoaderMesh* mesh = model->myMeshes[0];
+	CLoaderModel* pointModel = modelLoader.LoadModel("Models/lightmeshes/sphere.fbx");
+	CLoaderMesh* pointMesh = pointModel->myMeshes[0];
 
-	unsigned int shaderBlueprint = mesh->myShaderType;
+	CLoaderModel* spotModel = modelLoader.LoadModel("Models/lightmeshes/cone.fbx");
+	CLoaderMesh* spotMesh = spotModel->myMeshes[0];
+
+	unsigned int shaderBlueprint = pointMesh->myShaderType;
 	ID3D11VertexShader* vertexShader = SHADERMGR->LoadVertexShader(L"Shaders/Deferred/deferred_vertex.fx", shaderBlueprint);
-	ID3D11PixelShader* pixelShader = SHADERMGR->LoadPixelShader(L"Shaders/Deferred/deferred_pointlight.fx", shaderBlueprint);
+	ID3D11PixelShader* pixelShaderPoint = SHADERMGR->LoadPixelShader(L"Shaders/Deferred/deferred_pointlight.fx", shaderBlueprint);
+	ID3D11PixelShader* pixelShaderSpot = SHADERMGR->LoadPixelShader(L"Shaders/Deferred/deferred_spotlight.fx", shaderBlueprint);
 	ID3D11InputLayout* inputLayout = SHADERMGR->LoadInputLayout(L"Shaders/Deferred/deferred_vertex.fx", shaderBlueprint);
 
 
-	CEffect* effect = new CEffect(vertexShader, pixelShader, nullptr, inputLayout, D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	myLightModel->Init(effect, mesh);
+	CEffect* pointEffect = new CEffect(vertexShader, pixelShaderPoint, nullptr, inputLayout, D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	CEffect* spotEffect = new CEffect(vertexShader, pixelShaderSpot, nullptr, inputLayout, D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	myPointLightModel->Init(pointEffect, pointMesh);
+	mySpotLightModel->Init(spotEffect, spotMesh);
+
+	delete pointMesh;
+	delete pointModel;
+
+	delete spotMesh;
+	delete spotModel;
 }
 
 void CDeferredRenderer::DoRenderQueue(CRenderer& aRenderer)
@@ -369,9 +385,10 @@ void CDeferredRenderer::RenderPointLight(SRenderMessage* aRenderMessage, CFullSc
 	myFramework->GetDeviceContext()->PSSetConstantBuffers(2, 1, &myPointLightBuffer);
 	CU::Matrix44f pointLightTransformation;
 	pointLightTransformation.myPosition = msg->pointLight.position;
+
 	float scale = msg->pointLight.range;
 	pointLightTransformation.Scale({ scale, scale, scale });
-	myLightModel->Render(pointLightTransformation);
+	myPointLightModel->Render(pointLightTransformation);
 }
 
 void CDeferredRenderer::RenderSpotLight(SRenderMessage* aRenderMessage, CFullScreenHelper& aFullscreenHelper)
@@ -379,7 +396,16 @@ void CDeferredRenderer::RenderSpotLight(SRenderMessage* aRenderMessage, CFullScr
 	SRenderSpotLight* msg = static_cast<SRenderSpotLight*>(aRenderMessage);
 	BSR::UpdateCBuffer<Lights::SSpotLight>(mySpotLightBuffer, &msg->spotLight);
 	myFramework->GetDeviceContext()->PSSetConstantBuffers(2, 1, &mySpotLightBuffer);
-	aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eDeferredSpotLight);
+	
+	CU::Matrix44f spotLightTransformation = msg->rotation;
+	spotLightTransformation.myPosition = msg->spotLight.position;
+
+	float scaleXY = msg->spotLight.spotAngle / (3.141592f * 0.5f);
+	float scaleZ = msg->spotLight.range;
+	scaleXY *= scaleZ;
+
+	spotLightTransformation.SetScale({ scaleXY, scaleXY, scaleZ });
+	mySpotLightModel->Render(spotLightTransformation);
 }
 
 void CDeferredRenderer::DoHighlight(CFullScreenHelper& aFullscreenHelper, CRenderer& aRenderer)

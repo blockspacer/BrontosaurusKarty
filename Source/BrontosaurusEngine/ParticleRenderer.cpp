@@ -273,10 +273,10 @@ void CParticleRenderer::RenderPointLight(SRenderMessage* aRenderMessage)
 
 void CParticleRenderer::RenderSpotLight(SRenderMessage* aRenderMessage)
 {
-	SRenderSpotLight* msg = static_cast<SRenderSpotLight*>(aRenderMessage);
-	BSR::UpdateCBuffer<Lights::SSpotLight>(mySpotLightBuffer, &msg->spotLight);
-	DEVICE_CONTEXT->PSSetConstantBuffers(2, 1, &mySpotLightBuffer);
-	mySharedHelper.DoEffect(CFullScreenHelper::eEffectType::eDeferredSpotLight);
+	//SRenderSpotLight* msg = static_cast<SRenderSpotLight*>(aRenderMessage);
+	//BSR::UpdateCBuffer<Lights::SSpotLight>(mySpotLightBuffer, &msg->spotLight);
+	//DEVICE_CONTEXT->PSSetConstantBuffers(2, 1, &mySpotLightBuffer);
+	//mySharedHelper.DoEffect(CFullScreenHelper::eEffectType::eDeferredSpotLight);
 }
 
 void CParticleRenderer::DoDirectLighting()

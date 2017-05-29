@@ -4,11 +4,15 @@
 #include "../Physics/PhysicsScene.h"
 #include "GameObjectManager.h"
 #include "ItemWeaponBehaviourComponentManager.h"
+#include "RedShellManager.h"
 #include "ColliderComponentManager.h"
 
 #include "ItemWeaponBehaviourComponent.h"
+#include "RedShellBehaviourComponent.h"
 #include "HazardComponent.h"
 #include "ModelComponent.h"
+#include "ParticleEmitterComponent.h"
+#include "ParticleEmitterComponentManager.h"
 
 #include "ModelComponentManager.h"
 #include "ConcaveMeshCollider.h"
@@ -23,6 +27,9 @@ CItemFactory::CItemFactory()
 
 	myBananas.Init(50);
 	myActiveBananas.Init(50);
+
+	myRedShells.Init(26);
+	myActiveRedShells.Init(26);
 
 	CU::CJsonValue boostList;
 	std::string filePath = "Json/Items.json";
@@ -40,15 +47,17 @@ CItemFactory::~CItemFactory()
 {
 }
 
-void CItemFactory::Init(CGameObjectManager& aGameObjectManager, CItemWeaponBehaviourComponentManager & aManager, Physics::CPhysicsScene* aPhysicsScene, CColliderComponentManager& aColliderManager)
+void CItemFactory::Init(CGameObjectManager& aGameObjectManager, CItemWeaponBehaviourComponentManager & aManager, Physics::CPhysicsScene* aPhysicsScene, CColliderComponentManager& aColliderManager, CRedShellManager& aRedShellManager)
 {
 	myItemBeheviourComponentManager = &aManager;
 	myPhysicsScene = aPhysicsScene;
 	myGameObjectManager = &aGameObjectManager;
 	myColliderManager = &aColliderManager;
+	myRedShellManager = &aRedShellManager;
 
 	CreateShellBuffer();
 	CreateBananaBuffer();
+	CreateRedShellBuffer();
 }
 
 void CItemFactory::CreateBananaBuffer()
@@ -63,6 +72,10 @@ void CItemFactory::CreateBananaBuffer()
 		CModelComponent* model = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_Banana_01.fbx");
 		model->FlipVisibility();
 		banana->AddComponent(model);
+
+		CItemWeaponBehaviourComponent* physics = myItemBeheviourComponentManager->CreateAndRegisterComponent();
+		physics->SetToNoSpeed();
+		banana->AddComponent(physics);
 
 		CHazardComponent* hazardous = new CHazardComponent;
 		CComponentManager::GetInstance().RegisterComponent(hazardous);
@@ -113,8 +126,12 @@ void CItemFactory::CreateShellBuffer()
 		model->FlipVisibility();
 		shell->AddComponent(model);
 
-			CItemWeaponBehaviourComponent* beheviour = myItemBeheviourComponentManager->CreateAndRegisterComponent();
-			shell->AddComponent(beheviour);
+		CParticleEmitterComponent* particle = CParticleEmitterComponentManager::GetInstance().CreateComponent("DriftDebris");
+		particle->Deactivate();
+		shell->AddComponent(particle);
+
+		CItemWeaponBehaviourComponent* beheviour = myItemBeheviourComponentManager->CreateAndRegisterComponent();
+		shell->AddComponent(beheviour);
 
 		CHazardComponent* hazardous = new CHazardComponent;
 		CComponentManager::GetInstance().RegisterComponent(hazardous);
@@ -152,9 +169,66 @@ void CItemFactory::CreateShellBuffer()
 	}
 }
 
+void CItemFactory::CreateRedShellBuffer()
+{
+	for (int i = 0; i < 25; i++)
+	{
+		CGameObject* shell = myGameObjectManager->CreateGameObject();
+		std::string name = "red shell ";
+		name += std::to_string(i);
+		shell->SetName(name.c_str());
+
+		CModelComponent* model = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_Shell_Red_01.fbx");
+		model->FlipVisibility();
+		shell->AddComponent(model);
+
+		CParticleEmitterComponent* particle = CParticleEmitterComponentManager::GetInstance().CreateComponent("DriftDebris");
+		particle->Deactivate();
+		shell->AddComponent(particle);
+
+		CRedShellBehaviourComponent* behaviour = myRedShellManager->CreateAndRegisterComponent();
+		shell->AddComponent(behaviour);
+
+
+		CHazardComponent* hazardous = new CHazardComponent;
+		CComponentManager::GetInstance().RegisterComponent(hazardous);
+		shell->AddComponent(hazardous);
+
+		//adds collider
+		SBoxColliderData crystalMeshColliderData;
+		crystalMeshColliderData.IsTrigger = true;
+		crystalMeshColliderData.myLayer = Physics::eHazzard;
+		crystalMeshColliderData.myCollideAgainst = Physics::GetCollideAgainst(crystalMeshColliderData.myLayer);
+		crystalMeshColliderData.material.aDynamicFriction = 0.5f;
+		crystalMeshColliderData.material.aRestitution = 0.5f;
+		crystalMeshColliderData.material.aStaticFriction = 0.5f;
+		crystalMeshColliderData.center.y = 0.5f;
+		crystalMeshColliderData.myHalfExtent = CU::Vector3f(0.5f, 0.5f, 0.5f);
+		CColliderComponent* shellColliderComponent = myColliderManager->CreateComponent(&crystalMeshColliderData, shell->GetId());
+		//CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
+		CU::Vector3f offset = shell->GetWorldPosition();
+
+		SRigidBodyData rigidbodah;
+		rigidbodah.isKinematic = true;
+		rigidbodah.useGravity = false;
+		rigidbodah.myLayer = Physics::eHazzard;
+		rigidbodah.myCollideAgainst = Physics::GetCollideAgainst(rigidbodah.myLayer);
+
+		CColliderComponent* rigidComponent = myColliderManager->CreateComponent(&rigidbodah, shell->GetId());
+		//	colliderObject->SetWorldPosition({ offset.x, offset.y + 0.1f, offset.z });
+		shell->AddComponent(shellColliderComponent);
+		shell->AddComponent(rigidComponent);
+
+		//shell->AddComponent(colliderObject);
+		//collider added
+
+		myRedShells.Add(shell);
+	}
+}
+
 eItemTypes CItemFactory::RandomizeItem()
 {
-	return static_cast<eItemTypes>(rand() % 4);
+	return static_cast<eItemTypes>(rand() % 5);
 }
 
 int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userComponent)
@@ -171,7 +245,8 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 
 		CGameObject* shell = myShells.GetLast();
 		myShells.Remove(shell);
-		shell->NotifyComponents(eComponentMessageType::eActivate, SComponentMessageData());
+		shell->NotifyOnlyComponents(eComponentMessageType::eActivate, SComponentMessageData());
+		shell->NotifyOnlyComponents(eComponentMessageType::eActivateEmitter, SComponentMessageData());
 		myActiveShells.Add(shell);
 		CU::Matrix44f transform = userComponent->GetParent()->GetToWorldTransform();
 		CU::Vector3f position = userComponent->GetParent()->GetWorldPosition();
@@ -183,8 +258,27 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 		break;
 	}
 	case eItemTypes::eRedShell:
-		//Create shell that homes in on the player in front of the user
+	{
+		if (myRedShells.Size() <= 0)
+		{
+			myRedShells.Add(myActiveRedShells.GetFirst());
+			myActiveRedShells.Remove(myActiveRedShells.GetFirst());
+		}
+
+		CGameObject* shell = myRedShells.GetLast();
+		myRedShells.Remove(shell);
+		shell->NotifyOnlyComponents(eComponentMessageType::eActivate, SComponentMessageData());
+		shell->NotifyOnlyComponents(eComponentMessageType::eActivateEmitter, SComponentMessageData());
+		myActiveRedShells.Add(shell);
+		CU::Matrix44f transform = userComponent->GetParent()->GetToWorldTransform();
+		CU::Vector3f position = userComponent->GetParent()->GetWorldPosition();
+		shell->GetLocalTransform() = transform;
+		shell->SetWorldPosition(position);
+		//CU::Vector3f forward = userComponent->GetParent()->GetToWorldTransform().myForwardVector;
+		//forward  *=3;
+		shell->Move(CU::Vector3f(0, -0.5f, 3));
 		break;
+	}
 	case eItemTypes::eBlueShell:
 		//Create shell that homes in on the leader
 		break;

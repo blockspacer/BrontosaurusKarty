@@ -1,21 +1,21 @@
 #pragma once
-#include "RenderCamera.h"
-struct ID3D11ShaderResourceView;
+//#include "RenderCamera.h"
+//struct ID3D11ShaderResourceView;
 
 class CPointLight
 {
 public:
 
-	enum ePointLightFace : char
-	{
-		eUP,
-		eDown, 
-		eLeft,
-		eRight,
-		eFront,
-		eBack,
-		eLength
-	};
+	//enum ePointLightFace : char
+	//{
+	//	eUP,
+	//	eDown, 
+	//	eLeft,
+	//	eRight,
+	//	eFront,
+	//	eBack,
+	//	eLength
+	//};
 
 
 
@@ -31,13 +31,13 @@ public:
 	inline void SetIntensity(const float aIntensity);
 	inline void SetRange(const float aRange);
 	
-	void RenderShadowMap(const CU::Vector4f& aPosition);
+	//void RenderShadowMap(const CU::Vector4f& aPosition);
 
 private:
-	CU::StaticArray<CRenderCamera, ePointLightFace::eLength> myRenderCameras;
+	//CU::StaticArray<CRenderCamera, ePointLightFace::eLength> myRenderCameras;
 
-	ID3D11Texture2D* myTexture;
-	ID3D11ShaderResourceView* myShadowCubeMap;
+	//ID3D11Texture2D* myTexture;
+	//ID3D11ShaderResourceView* myShadowCubeMap;
 
 	CU::Vector4f myColor;
 

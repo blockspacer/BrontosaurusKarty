@@ -16,6 +16,8 @@ public:
 
 	void Init(Physics::CPhysicsScene* aPhysicsScene);
 
+	void SetToNoSpeed();
+
 	void Update(const float aDeltaTime);
 
 	void DoPhysics(const float aDeltaTime);

@@ -179,19 +179,19 @@ void CKartControllerComponent::StopTurning()
 }
 
 //Checks if the player is turning left or right and then sets the drift values accordingly
-void CKartControllerComponent::Drift()
+bool CKartControllerComponent::Drift()
 {
 	if (myIsOnGround == false)
 	{
-		return;
+		return false;
 	}
 	if (myHasGottenHit == true)
 	{
-		return;
+		return false;
 	}
 	if (myVelocity.Length2() < (myMaxSpeed * myMaxSpeed) * 0.33f)
 	{
-		return;
+		return false;
 	}
 	myDrifter->StartDrifting(myCurrentAction);
 	SComponentMessageData messageData;
@@ -215,6 +215,7 @@ void CKartControllerComponent::Drift()
 	//myVelocity += CU::Vector3f::UnitY * 5;
 	
 	GetParent()->NotifyComponents(eComponentMessageType::eDoDriftBobbing, messageData);
+	return true;
 }
 
 void CKartControllerComponent::StopDrifting()
@@ -338,6 +339,11 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
 }
 
+const CNavigationSpline & CKartControllerComponent::GetNavigationSpline()
+{
+	return myManager->GetNavigationSpline();
+}
+
 void CKartControllerComponent::Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData)
 {
 	switch (aMessageType)
@@ -404,6 +410,23 @@ void CKartControllerComponent::DoWallCollision(CColliderComponent& aCollider)
 	{
 		int i = 0;
 	}
+}
+
+
+bool CKartControllerComponent::IsFutureGrounded(const float aDistance)
+{
+	CU::Vector3f orig = GetParent()->GetWorldPosition();
+	orig.y += 50.f;
+	CU::Vector3f down(0.0f, -1.0f, 0.0f);
+	orig += GetParent()->GetToWorldTransform().myForwardVector * aDistance;
+
+	Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(orig, down, 100.0f, Physics::eGround);
+	return raycastHitData.hit;
+}
+
+const CU::Vector3f& CKartControllerComponent::GetVelocity() const
+{
+	return myVelocity;
 }
 
 void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
@@ -509,7 +532,7 @@ void CKartControllerComponent::DoDriftingParticles()
 	}
 }
 
-const float gravity = 9.82f;
+const float gravity = 9.82f * 2.f;
 const float upDistConst = 0.01f;
 const float testLength = 2.f;
 void CKartControllerComponent::DoPhysics(const float aDeltaTime)

@@ -113,6 +113,7 @@ struct SRenderSpotLight : SRenderMessage
 {
 	SRenderSpotLight();
 	Lights::SSpotLight spotLight;
+	CU::Matrix33f rotation;
 };
 
 struct SSetCubemapResource : SRenderMessage

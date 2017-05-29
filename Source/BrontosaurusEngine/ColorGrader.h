@@ -22,7 +22,7 @@ private:
 
 private:
 	CRenderPackage myRenderPackage;
-	CU::StaticArray<CTexture*, 4> myLuts;
+	CU::StaticArray<CTexture*, 1> myLuts;
 	ID3D11Buffer* myLerpTimeBuffer;
 	SColorFade myFadeData;
 };
