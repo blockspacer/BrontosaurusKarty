@@ -17,10 +17,8 @@ struct SHUDElement
 	CU::Vector2ui myPixelSize;
 	bool myHasChanged;
 
-	const CU::Vector2f& GetPos() { return *myPosition; }
 
-private:
-	const CU::Vector2f* myPosition = &myGUIElement.myScreenRect.xy;
+
 };
 
 
@@ -38,11 +36,17 @@ private:
 	SHUDElement LoadHUDElement(const CU::CJsonValue& aJsonValue);
 	void LoadLapCounter(const CU::CJsonValue& aJsonValue);
 	void LoadPlacement(const CU::CJsonValue& aJsonValue);
+	void LoadFinishText(const CU::CJsonValue& aJsonValue);
+
 	void SetGUIToEmilBlend(std::wstring aStr);
 	void SetGUIToEndBlend(std::wstring aStr);
+
+	void AdjustPosBasedOnNrOfPlayers(CU::Vector2f aTopLeft, CU::Vector2f aBotRight);
+
 private:
 	SHUDElement myLapCounterElement;
 	SHUDElement myPlacementElement;
+	SHUDElement myFinishTextElement;
 
 	CU::Vector2f myCameraOffset; //best solution 10/10
 	CU::Vector2f mySpriteOffset;

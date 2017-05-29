@@ -33,6 +33,7 @@
 #include "ItemFactory.h"
 #include "../Components/PickupComponentManager.h"
 #include "ItemWeaponBehaviourComponentManager.h"
+#include "RedShellManager.h"
 #include "RespawnComponentManager.h"
 #include "LapTrackerComponentManager.h"
 
@@ -351,6 +352,8 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 		myItemBehaviourManager->Update(aDeltaTime.GetSeconds());
 	}
 
+	myRedShellManager->Update(aDeltaTime.GetSeconds());
+
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
 		myHUDs[i]->Update();
@@ -446,8 +449,10 @@ void CPlayState::CreateManagersAndFactories()
 	myBoostPadComponentManager = new CBoostPadComponentManager();
 	myItemBehaviourManager = new CItemWeaponBehaviourComponentManager();
 	myItemBehaviourManager->Init(myPhysicsScene);
+	myRedShellManager = new CRedShellManager();
+	myRedShellManager->Init(myPhysicsScene, myKartControllerComponentManager);
 	myItemFactory = new CItemFactory();
-	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager);
+	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager,*myRedShellManager);
 	myRespawnComponentManager = new CRespawnComponentManager();
 	CLapTrackerComponentManager::CreateInstance();
 	CKartSpawnPointManager::GetInstance()->Create();
@@ -555,6 +560,8 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 
 
 	CPollingStation::GetInstance()->AddPlayer(playerObject);
+
+	//playerObject->Move(CU::Vector3f(0, 10, 0));
 }
 
 void CPlayState::CreateAI()

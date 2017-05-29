@@ -399,6 +399,8 @@
     <ClInclude Include="PickupComponentManager.h" />
     <ClInclude Include="KeyboardController.h" />
     <ClInclude Include="PlayerControllerManager.h" />
+    <ClInclude Include="RedShellBehaviourComponent.h" />
+    <ClInclude Include="RedShellManager.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RespawnComponentManager.h" />
     <ClInclude Include="RespawnerComponent.h" />
@@ -469,6 +471,8 @@
     <ClCompile Include="PlayerControllerManager.cpp" />
     <ClCompile Include="PointLightComponent.cpp" />
     <ClCompile Include="LightComponentManager.cpp" />
+    <ClCompile Include="RedShellBehaviourComponent.cpp" />
+    <ClCompile Include="RedShellManager.cpp" />
     <ClCompile Include="RespawnComponentManager.cpp" />
     <ClCompile Include="RespawnerComponent.cpp" />
     <ClCompile Include="RigidBodyComponent.cpp" />

@@ -12,6 +12,17 @@ enum class eMenuThingType
 	eSprite
 };
 
+enum eInputAction
+{
+	eActionPressed,
+	eBackPressed,
+	eLeftPressed,
+	eRightPressed,
+	eStartPressed,
+	eSelectPressed,
+	eNone,
+};
+
 
 enum class eMenuButtonState
 {
@@ -46,6 +57,8 @@ struct SMenuSprite
 	CSpriteInstance* myOnHoverSprite;
 	CSpriteInstance* myOnClickSprite;
 	CSpriteInstance* myInactiveSprite;
+
+	short myPlayerIndex;
 };
 
 class CMenuManager
@@ -56,7 +69,7 @@ public:
 
 	void CreateClickArea(CU::GrowingArray<std::string> someActions, CU::GrowingArray<std::string> someArguments, const int aSpriteID, CU::Vector4f aRect, const unsigned char aLayer);
 
-	int CreateSprite(const std::string& aFolder, const CU::Vector2f aPosition, const CU::Vector2f anOrigin, const unsigned char aLayer);
+	int CreateSprite(const std::string& aFolder, const CU::Vector2f aPosition, const CU::Vector2f anOrigin, const unsigned char aLayer, const short aListeningToPlayer = -1);
 	unsigned CreateText(const std::string& aFontName, const CU::Vector2f& aPosition, const std::wstring someText, const unsigned char aLayer, const eAlignment anAlignment = eAlignment::eLeft);
 
 	void SetMousePointer(CSpriteInstance* aMousePointer);
@@ -73,6 +86,9 @@ public:
 	void RightPressed(const short aPlayerIndex = 0);
 	void LeftReleased(const short aPlayerIndex = 0);
 	void RightReleased(const short aPlayerIndex = 0);
+
+	void ActionPressed(const short aPlayerIndex = 0);
+	void BackButtonPressed(const short aPlayerIndex = 0);
 
 	const SMenuSprite& GetSprite(unsigned aSpriteId);
 
@@ -98,6 +114,8 @@ private:
 	int myCurentlyHoveredClickarea;
 
 	short myPlayerThatpressed;
+
+	eInputAction myInput;
 
 	bool myMouseIsPressed;
 	bool myIsLeftPressed;

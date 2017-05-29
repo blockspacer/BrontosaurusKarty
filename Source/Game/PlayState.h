@@ -36,6 +36,7 @@ class CPlayerControllerManager;
 class CBoostPadComponentManager;
 class CItemFactory;
 class CItemWeaponBehaviourComponentManager;
+class CRedShellManager;
 class CRespawnComponentManager;
 class CLapTrackerComponentManager;
 class CHUD;
@@ -99,6 +100,7 @@ private:
 	CPlayerControllerManager* myPlayerControllerManager;
 	CItemFactory* myItemFactory;
 	CItemWeaponBehaviourComponentManager* myItemBehaviourManager;
+	CRedShellManager* myRedShellManager;
 	CRespawnComponentManager* myRespawnComponentManager;
 
 	CU::GrowingArray<CCameraComponent*> myCameraComponents;
