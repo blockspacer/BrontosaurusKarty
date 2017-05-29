@@ -85,6 +85,7 @@ namespace Physics
 		sceneDesc.cpuDispatcher = myDispatcher;
 		//sceneDesc.filterShader = PxDefaultSimulationFilterShader;
 		sceneDesc.filterShader = CollisionFilterShader;
+		sceneDesc.flags = PxSceneFlag::eENABLE_KINEMATIC_STATIC_PAIRS | PxSceneFlag::eENABLE_KINEMATIC_PAIRS;
 		pxScene = myPxPhysics->createScene(sceneDesc);
 
 #ifndef _RETAIL_BUILD

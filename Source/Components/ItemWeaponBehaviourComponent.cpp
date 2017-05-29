@@ -85,8 +85,7 @@ void CItemWeaponBehaviourComponent::DoPhysics(const float aDeltaTime)
 
 		if (raycastHitData.distance < upDist)
 		{
-			const float speed = myVelocity.Length();
-			//myVelocity.y = 0.f; downAccl * speed;
+
 
 			const float disp = upDist - raycastHitData.distance;
 

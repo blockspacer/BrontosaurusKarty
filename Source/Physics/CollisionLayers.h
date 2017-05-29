@@ -32,7 +32,7 @@ namespace Physics
 		case Physics::eDefault:
 			return eEverything;
 		case Physics::eKart:
-			return static_cast<ECollisionLayer>(eDefault | eItemBox | eBoostpad | eKart | eHazzard);
+			return static_cast<ECollisionLayer>(eDefault | eItemBox | eBoostpad | eKart | eHazzard | eWall);
 		case Physics::eItemBox:
 			return eKart;
 		case Physics::eBoostpad:
