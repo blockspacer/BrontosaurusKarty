@@ -35,6 +35,12 @@ void CItemWeaponBehaviourComponent::Init(Physics::CPhysicsScene * aPhysicsScene)
 	myIsActive = false;
 }
 
+void CItemWeaponBehaviourComponent::SetToNoSpeed()
+{
+	Speed = 0;
+	myVelocity = CU::Vector3f::Zero;
+}
+
 void CItemWeaponBehaviourComponent::Update(const float aDeltaTime)
 {
 	if (myIsActive == true)
@@ -56,7 +62,7 @@ void CItemWeaponBehaviourComponent::Update(const float aDeltaTime)
 	}
 }
 
-const float gravity = 9.82f;
+const float gravity = 9.82f*10;
 const float upDistConst = 0.01f;
 const float testLength = 2.f;
 
@@ -83,14 +89,23 @@ void CItemWeaponBehaviourComponent::DoPhysics(const float aDeltaTime)
 	{
 		const CU::Vector3f& norm = raycastHitData.normal;
 
-		if (raycastHitData.distance < upDist)
+		if (raycastHitData.distance > onGroundDist)
 		{
-			const float speed = myVelocity.Length();
-			//myVelocity.y = 0.f; downAccl * speed;
-
 			const float disp = upDist - raycastHitData.distance;
+			downAccl = CU::Vector3f::Zero;
+			myVelocity.y = 0;
 
-			GetParent()->GetLocalTransform().Move(norm * (disp < 0.f ? 0.f : disp));
+			GetParent()->GetLocalTransform().Move(-down * (disp > 0.f ? 0.f : disp));
+		}
+		else if (raycastHitData.distance < upDist)
+		{
+			//const float speed = myVelocity.Length();
+			//myVelocity.y = 0.f; downAccl * speed;
+			downAccl = CU::Vector3f::Zero;
+			const float disp = upDist - raycastHitData.distance;
+			myVelocity.y = 0;
+
+			GetParent()->GetLocalTransform().Move(-down * (disp < 0.f ? 0.f : disp));
 		}
 	}
 

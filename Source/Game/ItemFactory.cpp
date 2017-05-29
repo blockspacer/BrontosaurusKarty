@@ -9,6 +9,8 @@
 #include "ItemWeaponBehaviourComponent.h"
 #include "HazardComponent.h"
 #include "ModelComponent.h"
+#include "ParticleEmitterComponent.h"
+#include "ParticleEmitterComponentManager.h"
 
 #include "ModelComponentManager.h"
 #include "ConcaveMeshCollider.h"
@@ -64,6 +66,10 @@ void CItemFactory::CreateBananaBuffer()
 		model->FlipVisibility();
 		banana->AddComponent(model);
 
+		CItemWeaponBehaviourComponent* physics = myItemBeheviourComponentManager->CreateAndRegisterComponent();
+		physics->SetToNoSpeed();
+		banana->AddComponent(physics);
+
 		CHazardComponent* hazardous = new CHazardComponent;
 		CComponentManager::GetInstance().RegisterComponent(hazardous);
 		banana->AddComponent(hazardous);
@@ -113,8 +119,12 @@ void CItemFactory::CreateShellBuffer()
 		model->FlipVisibility();
 		shell->AddComponent(model);
 
-			CItemWeaponBehaviourComponent* beheviour = myItemBeheviourComponentManager->CreateAndRegisterComponent();
-			shell->AddComponent(beheviour);
+		CParticleEmitterComponent* particle = CParticleEmitterComponentManager::GetInstance().CreateComponent("DriftDebris");
+		particle->Deactivate();
+		shell->AddComponent(particle);
+
+		CItemWeaponBehaviourComponent* beheviour = myItemBeheviourComponentManager->CreateAndRegisterComponent();
+		shell->AddComponent(beheviour);
 
 		CHazardComponent* hazardous = new CHazardComponent;
 		CComponentManager::GetInstance().RegisterComponent(hazardous);
@@ -171,7 +181,8 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 
 		CGameObject* shell = myShells.GetLast();
 		myShells.Remove(shell);
-		shell->NotifyComponents(eComponentMessageType::eActivate, SComponentMessageData());
+		shell->NotifyOnlyComponents(eComponentMessageType::eActivate, SComponentMessageData());
+		shell->NotifyOnlyComponents(eComponentMessageType::eActivateEmitter, SComponentMessageData());
 		myActiveShells.Add(shell);
 		CU::Matrix44f transform = userComponent->GetParent()->GetToWorldTransform();
 		CU::Vector3f position = userComponent->GetParent()->GetWorldPosition();
