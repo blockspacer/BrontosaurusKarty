@@ -292,6 +292,12 @@
     <ClInclude Include="AnimationState.h">
       <Filter>Model</Filter>
     </ClInclude>
+    <ClInclude Include="SpotLight.h">
+      <Filter>Light</Filter>
+    </ClInclude>
+    <ClInclude Include="SpotLightInstance.h">
+      <Filter>Light</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -449,6 +455,12 @@
     </ClCompile>
     <ClCompile Include="EffectsFactory.cpp">
       <Filter>Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="SpotLight.cpp">
+      <Filter>Light</Filter>
+    </ClCompile>
+    <ClCompile Include="SpotLightInstance.cpp">
+      <Filter>Light</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

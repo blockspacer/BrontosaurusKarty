@@ -49,6 +49,7 @@ void CHUD::LoadHUD()
 	jsonDoc.Parse("Json/HUD.json");
 	LoadLapCounter(jsonDoc.at("lapCounter"));
 	LoadPlacement(jsonDoc.at("placement"));
+	LoadFinishText(jsonDoc.at("finishText"));
 }
 
 void CHUD::Update()
@@ -58,10 +59,17 @@ void CHUD::Update()
 
 void CHUD::Render()
 {
+	unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer);
 
-	if (myLapCounterElement.myHasChanged == true)
+	if (myLapCounterElement.myHasChanged == true) // används inte atm. om det behövs, fixa någon timer lösnings shizz.
 	{
-		//float rektYTop = 
+
+		if(currentLap == 1)
+			myLapCounterElement.mySprite->SetRect({ 0.f, 0.5f, 1.f, 0.75f });
+		else if (currentLap == 2)
+			myLapCounterElement.mySprite->SetRect({ 0.f, 0.25f, 1.f, 0.5f });
+		else if(currentLap == 3)
+			myLapCounterElement.mySprite->SetRect({ 0.f, 0.f, 1.f, 0.25f });
 
 
 		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"lapCounter", myLapCounterElement.myGUIElement, myLapCounterElement.myPixelSize);
@@ -86,6 +94,19 @@ void CHUD::Render()
 		SetGUIToEmilBlend(L"placement");
 		myPlacementElement.mySprite->RenderToGUI(L"placement");
 		SetGUIToEndBlend(L"placement");
+	}
+
+	if (myFinishTextElement.myHasChanged == true)
+	{
+		if (currentLap > 3)
+		{
+			SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"finishText", myFinishTextElement.myGUIElement, myFinishTextElement.myPixelSize);
+
+			RENDERER.AddRenderMessage(guiElement);
+			SetGUIToEmilBlend(L"finishText");
+			myFinishTextElement.mySprite->RenderToGUI(L"finishText");
+			SetGUIToEndBlend(L"finishText");
+		}
 	}
 }
 
@@ -115,7 +136,9 @@ SHUDElement CHUD::LoadHUDElement(const CU::CJsonValue& aJsonValue)
 	return hudElement;
 }
 
-void CHUD::LoadLapCounter(const CU::CJsonValue & aJsonValue)
+// Remember - Sprites are bot-left based.
+
+void CHUD::LoadLapCounter(const CU::CJsonValue& aJsonValue)
 {
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
@@ -125,7 +148,7 @@ void CHUD::LoadLapCounter(const CU::CJsonValue & aJsonValue)
 	myLapCounterElement.mySprite->SetRect({ 0.f, 0.5f, 1.f, 0.75f });
 }
 
-void CHUD::LoadPlacement(const CU::CJsonValue & aJsonValue)
+void CHUD::LoadPlacement(const CU::CJsonValue& aJsonValue)
 {
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
@@ -134,6 +157,16 @@ void CHUD::LoadPlacement(const CU::CJsonValue & aJsonValue)
 	myPlacementElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 1.f,0.125f });
 	myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.875f, 1.0f, 1.0f));
 	mySpriteOffset = myPlacementElement.mySprite->GetPosition();
+}
+
+void CHUD::LoadFinishText(const CU::CJsonValue& aJsonValue)
+{
+	const std::string spritePath = aJsonValue.at("spritePath").GetString();
+
+	myFinishTextElement = LoadHUDElement(aJsonValue);
+
+	myFinishTextElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 1.f,1.f });
+	myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));
 }
 
 void CHUD::SetGUIToEmilBlend(std::wstring aStr)
@@ -159,4 +192,9 @@ void CHUD::SetGUIToEndBlend(std::wstring aStr)
 
 	SRenderToGUI* guiChangeState = new SRenderToGUI(aStr, changeStatesMessage);
 	RENDERER.AddRenderMessage(guiChangeState);
+}
+
+void CHUD::AdjustPosBasedOnNrOfPlayers(CU::Vector2f aTopLeft, CU::Vector2f aBotRight)
+{
+	//Detta låter som en bra ide! -mig själv.
 }

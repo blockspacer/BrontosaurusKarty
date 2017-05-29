@@ -3,6 +3,7 @@
 class CController;
 class CKeyboardController;
 class CXboxController;
+class CAIController;
 class CKartControllerComponent;
 
 class CPlayerControllerManager
@@ -13,8 +14,9 @@ public:
 
 	CKeyboardController* CreateKeyboardController(CKartControllerComponent& aKartComponent);
 	CXboxController* CreateXboxController(CKartControllerComponent& aKartComponent, short aControllerIndex);
+	CAIController* CreateAIController(CKartControllerComponent& aKartComponent);
 
-	void Update();
+	void Update(const float aDeltaTime);
 
 
 private:

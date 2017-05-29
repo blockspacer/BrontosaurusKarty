@@ -4,6 +4,7 @@
 #include "Engine.h"
 #include "ModelManager.h"
 #include "PointLightInstance.h"
+#include "SpotLightInstance.h"
 #include "Camera.h"
 #include "Renderer.h"
 #include "Skybox.h"
@@ -23,6 +24,7 @@ CScene::CScene()
 {
 	myModels.Init(4096);
 	myPointLights.Init(32);
+	mySpotLights.Init(16);
 	//myParticleEmitters.Init(8);
 	myFireEmitters.Init(8);
 	mySkybox = nullptr;
@@ -107,6 +109,26 @@ void CScene::Render()
 		pointlightMessage.pointLight = myPointLights[i].GetData();
 		PlayerOneCamera.AddRenderMessage(new SRenderPointLight(pointlightMessage));
 	}
+
+	for (unsigned int i = 0; i < mySpotLights.Size(); ++i)
+	{
+		if (mySpotLights[i].GetIsActive() == false)
+		{
+			continue;
+		}
+		SRenderSpotLight spotlightMessage;
+		spotlightMessage.spotLight = mySpotLights[i].GetData();
+
+		CU::Sphere lightSphere;
+		lightSphere.myCenterPos = spotlightMessage.spotLight.position;
+		lightSphere.myRadius = spotlightMessage.spotLight.range;
+
+		if (PlayerOneCamera.GetCamera().IsInside(lightSphere) == false)
+			continue;
+
+		PlayerOneCamera.AddRenderMessage(new SRenderSpotLight(spotlightMessage));
+	}
+
 
 	CParticleEmitterManager::GetInstance().Render(PlayerOneCamera);
 
@@ -265,6 +287,26 @@ void CScene::RenderToRect(const CU::Vector4f& aRect, CRenderCamera& aCamera)
 		aCamera.AddRenderMessage(pointlightMessage);
 	}
 
+	for (CSpotLightInstance & spotLight : mySpotLights)
+	{
+		if (spotLight.GetIsActive() == false)
+		{
+			continue;
+		}
+		SRenderSpotLight spotlightMessage;
+		spotlightMessage.spotLight = spotLight.GetData();
+		spotlightMessage.rotation = spotLight.GetRotation();
+
+		CU::Sphere lightSphere;
+		lightSphere.myCenterPos = spotlightMessage.spotLight.position;
+		lightSphere.myRadius = spotlightMessage.spotLight.range;
+
+		if (aCamera.GetCamera().IsInside(lightSphere) == false)
+			continue;
+
+		aCamera.AddRenderMessage(new SRenderSpotLight(spotlightMessage));
+	}
+
 	CParticleEmitterManager::GetInstance().Render(aCamera);
 
 	for (CModelInstance* model : myModels)
@@ -372,6 +414,22 @@ InstanceID CScene::AddPointLightInstance(const CPointLightInstance& aPointLight)
 	id = myFreePointlights.Pop();
 	myPointLights[id] = aPointLight;
 	myPointLights[id].SetActive(true);
+	return id;
+}
+
+InstanceID CScene::AddSpotLightInstance(const CSpotLightInstance & aSpotLight)
+{
+	InstanceID id = 0;
+
+	if (myFreeSpotlights.Size() < 1)
+	{
+		id = mySpotLights.Size();
+		mySpotLights.Add(aSpotLight);
+		return id;
+	}
+
+	id = myFreeSpotlights.Pop();
+	mySpotLights[id] = aSpotLight;
 	return id;
 }
 
@@ -624,4 +682,9 @@ void CScene::GenerateCubemap()
 CRenderCamera& CScene::GetPlayerCamera(const int aPlayerIndex)
 {
 	return myPlayerCameras[aPlayerIndex];
+}
+
+CSpotLightInstance* CScene::GetSpotLightInstance(const InstanceID aID)
+{
+	return (mySpotLights.HasIndex(aID)) ? &mySpotLights[aID] : nullptr;
 }

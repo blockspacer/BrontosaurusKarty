@@ -403,6 +403,8 @@
     <ClInclude Include="RenderCamera.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="ConstBufferTemplate.h" />
+    <ClInclude Include="SpotLight.h" />
+    <ClInclude Include="SpotLightInstance.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="dds.h" />
     <ClInclude Include="DDSTextureLoader.h" />
@@ -484,6 +486,8 @@
     <ClCompile Include="ObjLoader.cpp" />
     <ClCompile Include="RenderCamera.cpp" />
     <ClCompile Include="Console.cpp" />
+    <ClCompile Include="SpotLight.cpp" />
+    <ClCompile Include="SpotLightInstance.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="DebugInfoDrawer.cpp" />

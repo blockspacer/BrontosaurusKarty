@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "../CommonUtilities/JsonValue.h"
 #include "NavigationSpline.h"
 #include "CommonUtilities.h"
 

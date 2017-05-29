@@ -17,7 +17,7 @@ namespace Lights
 {
 	struct SDirectionalLight
 	{
-		CU::Vector3f color;
+		CU::Vector3f color = CU::Vector3f::One;
 		float intensity = 1.0f;
 		CU::Vector3f direction;
 		int shadowIndex;
@@ -25,7 +25,7 @@ namespace Lights
 
 	struct SPointLight
 	{
-		CU::Vector3f color;
+		CU::Vector3f color = CU::Vector3f::One;
 		float intensity;
 		CU::Vector3f position;
 		float range;
@@ -33,17 +33,12 @@ namespace Lights
 
 	struct SSpotLight
 	{
-		CU::Vector3f color;
-		float intensity;
+		CU::Vector3f color = CU::Vector3f::One;
+		float intensity = 1.0f;;
 		CU::Vector3f position;
-		float range;
+		float range = 100.f;
 		CU::Vector3f direction;
-		float shadowCasting;
-
-		float theta; // inner cone
-		float phi;	//outer cone
-
-		float garbage[2];
+		float spotAngle = 3.141592f * 0.25f;
 	};
 
 	struct SLightsBuffer
@@ -57,10 +52,4 @@ namespace Lights
 		
 		float trash[2];
 	};
-
-	//struct SSpotLight
-	//{
-	//	CU::Vector4f Direction;
-	//	CU::Vector4f colour;
-	//};
 }

@@ -19,7 +19,6 @@ public:
 	void ChangeColorOverTime(const CU::Vector3f& aColor, const float aSeconds = 0.5f);
 	void Update(const CU::Time aDeltaTime);
 
-	void Destroy() override;
 	void Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData) override;
 
 private:

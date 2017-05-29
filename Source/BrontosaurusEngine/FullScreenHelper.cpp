@@ -40,8 +40,6 @@ CFullScreenHelper::CFullScreenHelper()
 
 	ID3D11PixelShader* deferredAmbient = SHADERMGR->LoadPixelShader(L"Shaders/Deferred/deferred_ambient.fx", ShaderType);
 	ID3D11PixelShader* deferredDirectional = SHADERMGR->LoadPixelShader(L"Shaders/Deferred/deferred_directional.fx", ShaderType);
-	//ID3D11PixelShader* deferredPointLight = SHADERMGR->LoadPixelShader(L"Shaders/Deferred/deferred_pointlight.fx", ShaderType);
-	ID3D11PixelShader* deferredSpotLight = SHADERMGR->LoadPixelShader(L"Shaders/Deferred/deferred_spotlight.fx", ShaderType);
 	ID3D11PixelShader* SSAO = SHADERMGR->LoadPixelShader(L"Shaders/FullScreen/SSAO.fx", ShaderType);
 
 	ID3D11PixelShader* mergeDepth = SHADERMGR->LoadPixelShader(L"Shaders/FullScreen/mergeDepth.fx", ShaderType);
@@ -79,8 +77,6 @@ CFullScreenHelper::CFullScreenHelper()
 	//deferred,
 	myEffects[static_cast<int>(eEffectType::eDeferredAmbient)]			= new CEffect(vertexShader, deferredAmbient, nullptr, inputLayout, D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	myEffects[static_cast<int>(eEffectType::eDeferredDirectional)]		= new CEffect(vertexShader, deferredDirectional, nullptr, inputLayout, D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	//myEffects[static_cast<int>(eEffectType::eDeferredPointLight)]		= new CEffect(vertexShader, deferredPointLight, nullptr, inputLayout, D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	myEffects[static_cast<int>(eEffectType::eDeferredSpotLight)]		= new CEffect(vertexShader, deferredSpotLight, nullptr, inputLayout, D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	myEffects[static_cast<int>(eEffectType::eSSAO)]						= new CEffect(vertexShader, SSAO, nullptr, inputLayout, D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	myEffects[static_cast<int>(eEffectType::eAA)]						= new CEffect(vertexShader, aaShader, nullptr, inputLayout, D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	myEffects[static_cast<int>(eEffectType::eMergeDepth)]				= new CEffect(vertexShader, mergeDepth, nullptr, inputLayout, D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);

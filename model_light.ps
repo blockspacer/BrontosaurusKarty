@@ -1,0 +1,148 @@
+
+struct DirectionalLight
+{
+	float4 myDirection;
+	float4 myColor;
+	float4x4 myInversedLightSpace;
+};
+struct SpotLight
+{
+	float4x4 myInversedLightSpace;
+	float3 myPosition;
+	float myRange;
+	float3 myColor;
+	float myIntensity;
+	float3 myDirection;
+	float mySpotAngle;
+};
+struct PointLight
+{
+	float3 myPosition;
+	float myRange;
+	float3 myColor;
+	float myIntensity;
+};
+
+#define SPOTLIGHT_COUNT 3
+#define POINTLIGHT_COUNT 8
+
+cbuffer LightBuffer : register(b2)
+{
+    DirectionalLight myDirectionalLight;
+	SpotLight mySpotLights[SPOTLIGHT_COUNT];
+    PointLight myPointLights[POINTLIGHT_COUNT];
+};
+cbuffer DirectionalLightBuffer : register(b2)
+{
+    DirectionalLight myDLB_Light;
+};
+cbuffer SpotLightBuffer : register(b2)
+{
+    SpotLight mySLB_Light;
+};
+cbuffer PointLightBuffer : register(b2)
+{
+    PointLight myPLB_Light;
+};
+
+Texture2D LightDepthTexture : register(t0);
+
+#define LIGHT_DEPTH_TEXTURE_DIRECTIONAL 0
+#define LIGHT_DEPTH_TEXTURE_SPOT 1
+
+struct LightOutput
+{
+	float3 myDirectDiffuse;
+	float3 myDirectSpecularity;
+};
+
+LightOutput PixelShader_Light(PixelInputType input, float3 aToLight, float3 aLightColor, float anExposure)
+{
+	LightOutput output;
+	output.myDirectDiffuse = PixelShader_DirectDiffuse(input, aToLight, aLightColor).myColor.xyz * anExposure;
+	output.myDirectSpecularity = PixelShader_DirectSpecularity(input, aToLight, aLightColor).myColor.xyz * anExposure;
+	return output;
+}
+float PixelShader_Exposure(PixelInputType input, float4x4 anInversedLightSpace)
+{
+	
+	float4 lightPosition = PixelShader_WorldPosition(input).myColor;
+	lightPosition = mul(anInversedLightSpace, lightPosition);
+	lightPosition /= lightPosition.w;
+	
+	float2 textureCoord;
+	textureCoord.x = lightPosition.x * 0.5f + 0.5f;
+	textureCoord.y = lightPosition.y * -0.5f + 0.5f;
+	
+	float exposure = 0.0f;
+	for(int y = -1; y < 2; ++y)
+	{
+		for(int x = -1; x < 2; ++x)
+		{
+			
+			float2 offset;
+			offset.x = x * 0.001f;
+			offset.y = y * 0.001f;
+			float depth = LightDepthTexture.Sample(SampleType, textureCoord + offset).x + 0.0001f;
+			
+			if(lightPosition.z < depth)
+			{
+				exposure += (1.0f / 9.0f);
+			}
+			
+		}
+	}
+	
+	return exposure;
+	
+}
+
+LightOutput LightPointLight(PixelInputType input, PointLight aPointLight)
+{
+	
+	float3 toLight = normalize(aPointLight.myPosition - PixelShader_WorldPosition(input).myColor.xyz);
+	float exposure = 1.f - saturate(length(aPointLight.myPosition - PixelShader_WorldPosition(input).myColor.xyz) / aPointLight.myRange);
+	
+	return PixelShader_Light(input, toLight, aPointLight.myColor, exposure * aPointLight.myIntensity);
+	
+}
+LightOutput LightSpotLight(PixelInputType input, SpotLight aSpotLight)
+{
+	
+
+	float3 pixelToLightVec = aSpotLight.myPosition.xyz - PixelShader_WorldPosition(input).myColor.xyz;
+	float distance = length(pixelToLightVec);
+	
+	//Normalize
+	float3 toLight = pixelToLightVec / distance; 
+	
+	float howMuchLight = dot(toLight, PixelShader_ObjectNormal(input).myColor.xyz);
+	
+	float strength = 0.f;
+	
+	//If light is striking the front side of the pixel
+	if( howMuchLight > 0.0f )
+	{    
+		
+		//Calculate Light's Distance Falloff factor
+		strength = 1.f - saturate(distance / aSpotLight.myRange);
+
+		//Distance falloff
+		strength /= (0.4f + (0.02f * distance)) + (0.0f * (distance*distance));
+
+		float tempDot = 1.f - dot(-toLight, aSpotLight.myDirection);
+		float tempAngleCheck = (tempDot) / aSpotLight.mySpotAngle;
+		float tempLightFalloff = 1.f - tempAngleCheck;
+
+		//Calculate falloff from center to edge of pointlight cone
+		strength *= max(tempLightFalloff, 0.f);
+		
+	}
+	
+	strength = saturate(strength);
+	float exposure = PixelShader_Exposure(input, aSpotLight.myInversedLightSpace);
+
+	return PixelShader_Light(input, toLight, aSpotLight.myColor, exposure * aSpotLight.myIntensity * strength);
+	
+}
+
