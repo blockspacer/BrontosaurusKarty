@@ -71,7 +71,6 @@ public:
 
 	eMessageReturn DoEvent(const CLoadLevelMessage& aLoadLevelMessage) override;
 	CU::eInputReturn RecieveInput(const CU::SInputMessage& aInputMessage) override;
-	void SetCameraComponent(CCameraComponent* aCameraComponent);
 	inline CBoostPadComponentManager* GetBoostPadComponentManager();
 
 	void LoadNavigationSpline(const CU::CJsonValue &splineData);

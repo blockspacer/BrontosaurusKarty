@@ -4,10 +4,31 @@ class CLapTrackerComponent;
 
 struct SLapCalculateData
 {
+	SLapCalculateData()
+	{
+		lapTrackerComponent = nullptr;
+		reversePlacement = 0;
+		placementValue = 0;
+		nextSplineDistance = 0;
+	}
+	SLapCalculateData(const SLapCalculateData& aLapCalcData) 
+	{
+		lapTrackerComponent = aLapCalcData.lapTrackerComponent;
+		reversePlacement = aLapCalcData.reversePlacement;
+		placementValue = aLapCalcData.placementValue;
+		nextSplineDistance = aLapCalcData.nextSplineDistance;
+	}
+	SLapCalculateData & operator=(const SLapCalculateData &aLapCalcData)
+	{
+		lapTrackerComponent = aLapCalcData.lapTrackerComponent;
+		reversePlacement = aLapCalcData.reversePlacement;
+		placementValue = aLapCalcData.placementValue;
+		nextSplineDistance = aLapCalcData.nextSplineDistance;
+		return *this;
+	}
 	CLapTrackerComponent* lapTrackerComponent;
 	unsigned short reversePlacement;
-	unsigned short lapIndex;
-	unsigned short splineIndex;
+	unsigned short placementValue;
 	float nextSplineDistance;
 };
 
@@ -25,13 +46,12 @@ public:
 	void CalculateRacerPlacement();
 	void Init();
 	CU::GrowingArray<CGameObject*>& GetRacerPlacements();
+	unsigned short GetSpecificRacerPlacement(CGameObject* aRacer);
 	eMessageReturn DoEvent(const CPlayerFinishedMessage& aPlayerFinishedMessage) override;
 	eMessageReturn DoEvent(const CAIFinishedMessage& aAIFinishedMessage) override;
 private:
 	CLapTrackerComponentManager();
-	void DoLapPlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList);
-	void DoSplinePlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList);
-	void DoDistanceToNextSplinePlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList);
+	void CalculateReversePlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList);
 	void SortPlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList);
 	void AddToRacerPlacements(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList);
 	bool HaveAllPlayersFinished();

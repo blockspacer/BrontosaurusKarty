@@ -277,11 +277,18 @@ void CPlayState::Load()
 
 	myHUDs.Init(myPlayerCount);
 
+	bool myIsOneSplit = false;
+	if (myPlayerCount == 2)
+	{
+		myIsOneSplit = true;
+	}
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
-		myHUDs.Add(new CHUD(i));
+		myHUDs.Add(new CHUD(i, myIsOneSplit));
 		myHUDs[i]->LoadHUD();
 	}
+
+	myCountdownSprite->Render();
 
 	///////////
 	myIsLoaded = true;
@@ -360,13 +367,23 @@ void CPlayState::Render()
 	{
 		myHUDs[i]->Render();
 	}
-
 }
 
 void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
 {
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eChangeLevel);
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eNetworkMessage);
+
+	CU::CJsonValue levelsFile;
+	std::string errorString = levelsFile.Parse("Json/LevelList.json");
+	if (!errorString.empty()) DL_MESSAGE_BOX(errorString.c_str());
+
+	CU::CJsonValue levelsArray = levelsFile.at("levels");
+
+	const char* song = levelsArray.at(myLevelIndex).GetString().c_str();
+
+	Audio::CAudioInterface::GetInstance()->PostEvent(song);
+
 	InitiateRace();
 }
 
@@ -609,9 +626,4 @@ void CPlayState::RenderCountdown()
 	RENDERER.AddRenderMessage(guiChangeState);
 
 	myCountdownSprite->RenderToGUI(L"countdown");
-}
-
-void CPlayState::SetCameraComponent(CCameraComponent* aCameraComponent)
-{
-	DL_ASSERT("cant add camera component like this right now,,,,,,");
 }

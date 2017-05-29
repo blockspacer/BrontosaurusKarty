@@ -90,9 +90,6 @@ private:
 	CU::GrowingArray<CPointLightInstance, InstanceID> myPointLights;
 	CU::Stack<InstanceID, InstanceID> myFreePointlights;
 
-	//CU::GrowingArray<CParticleEmitterInstance*, InstanceID> myParticleEmitters;
-	//CU::Stack<InstanceID, InstanceID> myFreeParticleEmitters;
-	
 	CU::GrowingArray<CFireEmitterInstance, InstanceID> myFireEmitters;
 
 	CU::StaticArray<CRenderCamera, static_cast<int>(eCameraType::eLength)> myRenderCameras;
