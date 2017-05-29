@@ -61,7 +61,7 @@ void CHUD::Render()
 {
 	unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer);
 
-	if (myLapCounterElement.myHasChanged == true)
+	if (myLapCounterElement.myHasChanged == true) // används inte atm. om det behövs, fixa någon timer lösnings shizz.
 	{
 
 		if(currentLap == 1)
