@@ -38,6 +38,7 @@ class CItemFactory;
 class CItemWeaponBehaviourComponentManager;
 class CRespawnComponentManager;
 class CLapTrackerComponentManager;
+class CHUD;
 
 struct SGUIElement;
 
@@ -77,6 +78,7 @@ public:
 private:
 	void CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDevice aIntputDevice, unsigned int aPlayerCount);
 	void InitiateRace();
+	void RenderCountdown();
 
 private:
 	Physics::CPhysicsScene* myPhysicsScene;
@@ -96,10 +98,11 @@ private:
 	CItemFactory* myItemFactory;
 	CItemWeaponBehaviourComponentManager* myItemBehaviourManager;
 	CRespawnComponentManager* myRespawnComponentManager;
-	CLapTrackerComponentManager* myLapTrackerComponentManager;
 
 	CU::GrowingArray<CCameraComponent*> myCameraComponents;
 	CU::GrowingArray<SParticipant> myPlayers;
+
+	CU::GrowingArray<CHUD*> myHUDs;
 
 	//CU::TimerManager* myTimerManager;
 	TimerHandle myCountdownTimerHandle;

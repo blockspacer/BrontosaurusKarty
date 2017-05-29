@@ -63,6 +63,8 @@
 #include "ThreadedPostmaster/GameEventMessage.h"
 #include <LuaWrapper/SSlua/SSlua.h>
 #include <GUIElement.h>
+#include "HUD.h"
+#include "PollingStation.h"
 
 // player creationSpeciifcIncludes
 #include "KartComponent.h"
@@ -80,6 +82,7 @@
 #include "RespawnerComponent.h"
 #include "LapTrackerComponent.h"
 #include "DriftTurner.h"
+#include "HazardComponent.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -92,7 +95,6 @@ CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	, myScriptComponentManager(nullptr)
 	, myItemFactory(nullptr)
 	, myRespawnComponentManager(nullptr)
-	, myLapTrackerComponentManager(nullptr)
 	, myCameraComponents(4)
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
@@ -116,7 +118,6 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	, myScriptComponentManager(nullptr)
 	, myItemFactory(nullptr)
 	, myRespawnComponentManager(nullptr)
-	, myLapTrackerComponentManager(nullptr)
 	, myCameraComponents(4)
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
@@ -173,7 +174,8 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myBoostPadComponentManager);
 	SAFE_DELETE(myItemFactory);
 	SAFE_DELETE(myRespawnComponentManager);
-	SAFE_DELETE(myLapTrackerComponentManager);
+	SAFE_DELETE(myItemBehaviourManager);
+	CLapTrackerComponentManager::DestoyInstance();
 }
 
 // Runs on its own thread.
@@ -270,8 +272,18 @@ void CPlayState::Load()
 	myScene->SetSkybox("default_cubemap.dds");
 	myScene->SetCubemap("purpleCubemap.dds");
 
+	///////////////////
+	//     HUD 
 
+	myHUDs.Init(myPlayerCount);
 
+	for (int i = 0; i < myPlayerCount; ++i)
+	{
+		myHUDs.Add(new CHUD(i));
+		myHUDs[i]->LoadHUD();
+	}
+
+	///////////
 	myIsLoaded = true;
 
 	// Get time to load the level:
@@ -285,6 +297,7 @@ void CPlayState::Load()
 void CPlayState::Init()
 {
 	myGameObjectManager->SendObjectsDoneMessage();
+	CLapTrackerComponentManager::GetInstance()->Init();
 }
 
 eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
@@ -317,14 +330,19 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	{
 		myRespawnComponentManager->Update(aDeltaTime.GetSeconds());
 	}
-	if(myLapTrackerComponentManager != nullptr)
+	if(CLapTrackerComponentManager::GetInstance() != nullptr)
 	{
-		myLapTrackerComponentManager->Update();
+		CLapTrackerComponentManager::GetInstance()->Update(aDeltaTime.GetSeconds());
 	}
 
 	if (myItemBehaviourManager != nullptr)
 	{
 		myItemBehaviourManager->Update(aDeltaTime.GetSeconds());
+	}
+
+	for (int i = 0; i < myPlayerCount; ++i)
+	{
+		myHUDs[i]->Update();
 	}
 
 	CPickupComponentManager::GetInstance()->Update(aDeltaTime.GetSeconds());
@@ -336,21 +354,13 @@ void CPlayState::Render()
 	myScene->RenderSplitScreen(myPlayerCount);
 
 	if (myCountdownShouldRender)
+		RenderCountdown();
+
+	for (int i = 0; i < myPlayerCount; ++i)
 	{
-		SCreateOrClearGuiElement* createOrClear = new SCreateOrClearGuiElement(L"countdown", *myCountdownElement, CU::Vector2ui(WINDOW_SIZE.x, WINDOW_SIZE.y));
-		RENDERER.AddRenderMessage(createOrClear);
-
-		SChangeStatesMessage* const changeStatesMessage = new SChangeStatesMessage();
-		changeStatesMessage->myBlendState = eBlendState::eAddBlend;
-		changeStatesMessage->myDepthStencilState = eDepthStencilState::eDisableDepth;
-		changeStatesMessage->myRasterizerState = eRasterizerState::eNoCulling;
-		changeStatesMessage->mySamplerState = eSamplerState::eClamp;
-
-		SRenderToGUI* const guiChangeState = new SRenderToGUI(L"countdown", changeStatesMessage);
-		RENDERER.AddRenderMessage(guiChangeState);
-
-		myCountdownSprite->RenderToGUI(L"countdown");
+		myHUDs[i]->Render();
 	}
+
 }
 
 void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
@@ -418,7 +428,7 @@ void CPlayState::CreateManagersAndFactories()
 	myItemFactory = new CItemFactory();
 	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager);
 	myRespawnComponentManager = new CRespawnComponentManager();
-	myLapTrackerComponentManager = new CLapTrackerComponentManager();
+	CLapTrackerComponentManager::CreateInstance();
 	CKartSpawnPointManager::GetInstance()->Create();
 	CPickupComponentManager::Create();
 }
@@ -454,8 +464,11 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	CRespawnerComponent* respawnComponent = myRespawnComponentManager->CreateAndRegisterComponent();
 	playerObject->AddComponent(respawnComponent);
 
-	CLapTrackerComponent* lapTrackerComponent = myLapTrackerComponentManager->CreateAndRegisterComponent();
-	playerObject->AddComponent(lapTrackerComponent);
+	if(CLapTrackerComponentManager::GetInstance() != nullptr)
+	{
+		CLapTrackerComponent* lapTrackerComponent = CLapTrackerComponentManager::GetInstance()->CreateAndRegisterComponent();
+		playerObject->AddComponent(lapTrackerComponent);
+	}
 
 	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent();
 	if (aIntputDevice == SParticipant::eInputDevice::eKeyboard)
@@ -477,8 +490,13 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 		playerObject->AddComponent(speedHandlerComponent);
 	}
 
+	CHazardComponent* hazardComponent = new CHazardComponent();
+	hazardComponent->SetToPermanent();
+	CComponentManager::GetInstance().RegisterComponent(hazardComponent);
+	playerObject->AddComponent(hazardComponent);
 
 	CItemHolderComponent* itemHolder = new CItemHolderComponent(*myItemFactory);
+	CComponentManager::GetInstance().RegisterComponent(itemHolder);
 	playerObject->AddComponent(itemHolder);
 
 	playerObject->AddComponent(kartComponent);
@@ -486,31 +504,36 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	box.myHalfExtent = CU::Vector3f(1.0f, 1.0f, 1.0f);
 	box.center.y = 1.05f;
 	box.myLayer = Physics::eKart;
-	SConcaveMeshColliderData crystalMeshColliderData;
-	crystalMeshColliderData.IsTrigger = false;
-	crystalMeshColliderData.myLayer = Physics::eKart;
-	crystalMeshColliderData.myCollideAgainst = Physics::GetCollideAgainst(crystalMeshColliderData.myLayer);
-	crystalMeshColliderData.myPath = "Models/Meshes/M_Kart_01.fbx";
-	crystalMeshColliderData.material.aDynamicFriction = 0.5f;
-	crystalMeshColliderData.material.aRestitution = 0.5f;
-	crystalMeshColliderData.material.aStaticFriction = 0.5f;
-	crystalMeshColliderData.myLayer;
-	CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&box, playerObject->GetId());
-	CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
-	CU::Vector3f offset = playerObject->GetWorldPosition();
+	box.myCollideAgainst = Physics::GetCollideAgainst(Physics::eKart);
 
+	SBoxColliderData triggerbox;
+	triggerbox.myHalfExtent = CU::Vector3f(1.0f, 1.0f, 1.0f);
+	triggerbox.center.y = 1.05f;
+	triggerbox.myLayer = Physics::eKart;
+	triggerbox.myCollideAgainst = Physics::GetCollideAgainst(Physics::eKart);
+	triggerbox.IsTrigger = true;
+
+	CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&box, playerObject->GetId());
+	CColliderComponent* playerTriggerColliderComponent = myColliderComponentManager->CreateComponent(&triggerbox, playerObject->GetId());
+
+	
 	SRigidBodyData rigidbodah;
 	rigidbodah.isKinematic = true;
 	rigidbodah.useGravity = false;
+	rigidbodah.myLayer = Physics::eKart;
+	rigidbodah.myCollideAgainst = Physics::GetCollideAgainst(Physics::eKart);
 	CColliderComponent* rigidComponent = myColliderComponentManager->CreateComponent(&rigidbodah, playerObject->GetId());
 //	colliderObject->SetWorldPosition({ offset.x, offset.y + 0.1f, offset.z });
-	colliderObject->AddComponent(playerColliderComponent);
+	playerObject->AddComponent(playerColliderComponent);
+	playerObject->AddComponent(playerTriggerColliderComponent);
+	playerObject->AddComponent(rigidComponent);
 
-	colliderObject->AddComponent(rigidComponent);
-	playerObject->AddComponent(colliderObject);
 
 	playerObject->AddComponent(cameraComponent);
 	myCameraComponents.Add(cameraComponent);
+
+
+	CPollingStation::GetInstance()->AddPlayer(playerObject);
 }
 
 void CPlayState::InitiateRace()
@@ -565,6 +588,23 @@ void CPlayState::InitiateRace()
 
 	work.SetFinishedCallback(callback);
 	CU::ThreadPool::GetInstance()->AddWork(work);
+}
+
+void CPlayState::RenderCountdown()
+{
+	SCreateOrClearGuiElement* createOrClear = new SCreateOrClearGuiElement(L"countdown", *myCountdownElement, CU::Vector2ui(WINDOW_SIZE.x, WINDOW_SIZE.y));
+	RENDERER.AddRenderMessage(createOrClear);
+
+	SChangeStatesMessage* const changeStatesMessage = new SChangeStatesMessage();
+	changeStatesMessage->myBlendState = eBlendState::eAddBlend;
+	changeStatesMessage->myDepthStencilState = eDepthStencilState::eDisableDepth;
+	changeStatesMessage->myRasterizerState = eRasterizerState::eNoCulling;
+	changeStatesMessage->mySamplerState = eSamplerState::eClamp;
+
+	SRenderToGUI* const guiChangeState = new SRenderToGUI(L"countdown", changeStatesMessage);
+	RENDERER.AddRenderMessage(guiChangeState);
+
+	myCountdownSprite->RenderToGUI(L"countdown");
 }
 
 void CPlayState::SetCameraComponent(CCameraComponent* aCameraComponent)

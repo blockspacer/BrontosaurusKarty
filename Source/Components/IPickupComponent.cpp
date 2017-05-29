@@ -30,7 +30,7 @@ void IPickupComponent::SetActive(const bool aFlag)
 	{
 		SComponentMessageData data;
 		data.myBool = aFlag;
-		GetParent()->NotifyComponents(eComponentMessageType::eSetVisibility, data);
+		GetParent()->NotifyOnlyComponents(eComponentMessageType::eSetVisibility, data);
 		myRespawnTimer = 0.0f;
 	}
 }

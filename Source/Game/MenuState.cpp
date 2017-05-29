@@ -14,6 +14,7 @@
 #include "LoadState.h"
 #include "ThreadedPostmaster/LoadLevelMessage.h"
 #include "SplitScreenSelection.h"
+#include "../Audio/AudioInterface.h"
 
 char CMenuState::ourMenuesToPop = 0;
 
@@ -101,6 +102,8 @@ void CMenuState::OnEnter(const bool aLetThroughRender)
 {
 
 	myManager.UpdateMousePosition(myManager.GetMopusePosition());
+	Audio::CAudioInterface::GetInstance()->PostEvent("PlayMenu");
+	//Audio::CAudioInterface::GetInstance()->LoadBank("Audio/KartSounds.bnk");
 	//Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eCharPressed);
 	//Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eNetworkMessage);
 	myIsInFocus = true;
@@ -111,6 +114,7 @@ void CMenuState::OnExit(const bool aLetThroughRender)
 	RENDERER.ClearGui();
 	Postmaster::Threaded::CPostmaster::GetInstance().Unsubscribe(this);
 	myIsInFocus = false;
+	Audio::CAudioInterface::GetInstance()->PostEvent("StopMenu");
 }
 
 CU::eInputReturn CMenuState::RecieveInput(const CU::SInputMessage& aInputMessage)

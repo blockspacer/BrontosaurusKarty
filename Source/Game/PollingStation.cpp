@@ -20,9 +20,19 @@ void CPollingStation::Destroy()
 	SAFE_DELETE(ourInstance);
 }
 
+void CPollingStation::AddPlayer(CGameObject* aPlayer)
+{
+	myPlayers.Add(aPlayer);
+}
+
+CGameObject* CPollingStation::GetPlayerAtID(unsigned char aID)
+{
+	return myPlayers[aID];
+}
+
 CPollingStation::CPollingStation()
 {
-
+	myPlayers.Init(4);
 }
 
 CPollingStation::~CPollingStation()

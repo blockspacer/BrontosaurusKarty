@@ -59,7 +59,7 @@ void CColliderComponent::UpdateCallbacks()
 	{
 		SComponentMessageData data;
 		data.myComponent = static_cast<CComponent*>(callbackData.componentPtr);
-		GetParent()->NotifyComponents(callbackData.collisionType, data);
+		GetParent()->NotifyOnlyComponents(callbackData.collisionType, data);
 	}
 	myStoredCallBackDataList.RemoveAll();
 }

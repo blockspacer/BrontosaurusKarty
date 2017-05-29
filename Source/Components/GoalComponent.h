@@ -1,18 +1,12 @@
 #pragma once
 #include "Component.h"
 
-class CHazardComponent : public CComponent
+class CGoalComponent : public CComponent
 {
 public:
-	CHazardComponent();
-	~CHazardComponent();
-
-	void SetToPermanent();
+	CGoalComponent();
+	~CGoalComponent();
 
 	void Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData) override;
-
-private:
-	bool myIsActive;
-	bool myIsPermanent;
 };
 

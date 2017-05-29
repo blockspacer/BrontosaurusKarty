@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include "CurrentAction.h"
 
 namespace Physics
 {
@@ -41,14 +42,9 @@ public:
 
 	bool IsFutureGrounded(const float aDistance);
 
-	enum class eCurrentAction
-	{
-		eTurningRight,
-		eTurningLeft,
-		eDefault,
-	};
 
 private:
+	void DoWallCollision(CColliderComponent& aCollider);
 	void UpdateMovement(const float aDeltaTime);
 	void DoDriftingParticles();
 
@@ -71,7 +67,6 @@ private:
 	
 
 	std::unique_ptr<CDrifter> myDrifter;
-
 	struct
 	{
 		float width = 1.f;
@@ -97,6 +92,8 @@ private:
 
 	float myMaxSpeedModifier;
 	float myAccelerationModifier;
+	float myModifierCopy;
+	float myTargetSteering;
 
 	float myBoostSpeedDecay;
 
@@ -116,8 +113,12 @@ private:
 	bool myIsOnGround;
 	bool myCanAccelerate;
 	bool myIsBoosting;
+	bool myHasJumped;
 
+	bool myIsInvurnable;
 	bool myHasGottenHit;
+	float myInvurnableTime;
+	float myElapsedInvurnableTime;
 	float myTimeToBeStunned;
 	float myElapsedStunTime;
 	

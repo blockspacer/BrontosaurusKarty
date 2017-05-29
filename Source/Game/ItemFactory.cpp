@@ -13,11 +13,26 @@
 #include "ModelComponentManager.h"
 #include "ConcaveMeshCollider.h"
 
+#include "CommonUtilities/JsonValue.h"
+
 
 CItemFactory::CItemFactory()
 {
 	myActiveShells.Init(25);
 	myShells.Init(25);
+
+	myBananas.Init(50);
+	myActiveBananas.Init(50);
+
+	CU::CJsonValue boostList;
+	std::string filePath = "Json/Items.json";
+	const std::string& errorString = boostList.Parse(filePath);
+	CU::CJsonValue levelsArray = boostList.at("Items");
+	CU::CJsonValue Item = levelsArray.at("Star");
+
+	myStartBoostData.duration = Item.at("Duration").GetFloat();
+	myStartBoostData.accerationBoost = Item.at("AccelerationPercentModifier").GetFloat()/100.0f;
+	myStartBoostData.maxSpeedBoost = Item.at("MaxSpeedPercentModifier").GetFloat()/100.0f;
 }
 
 
@@ -33,10 +48,56 @@ void CItemFactory::Init(CGameObjectManager& aGameObjectManager, CItemWeaponBehav
 	myColliderManager = &aColliderManager;
 
 	CreateShellBuffer();
+	CreateBananaBuffer();
 }
 
 void CItemFactory::CreateBananaBuffer()
 {
+	for (int i = 0; i < 25; i++)
+	{
+		CGameObject* banana = myGameObjectManager->CreateGameObject();
+		std::string name = "banana ";
+		name += std::to_string(i);
+		banana->SetName(name.c_str());
+
+		CModelComponent* model = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_Banana_01.fbx");
+		model->FlipVisibility();
+		banana->AddComponent(model);
+
+		CHazardComponent* hazardous = new CHazardComponent;
+		CComponentManager::GetInstance().RegisterComponent(hazardous);
+		banana->AddComponent(hazardous);
+
+		//adds collider
+		SBoxColliderData crystalMeshColliderData;
+		crystalMeshColliderData.IsTrigger = true;
+		crystalMeshColliderData.myLayer = Physics::eHazzard;
+		crystalMeshColliderData.myCollideAgainst = Physics::GetCollideAgainst(crystalMeshColliderData.myLayer);
+		crystalMeshColliderData.material.aDynamicFriction = 0.5f;
+		crystalMeshColliderData.material.aRestitution = 0.5f;
+		crystalMeshColliderData.material.aStaticFriction = 0.5f;
+		crystalMeshColliderData.center.y = 0.5f;
+		crystalMeshColliderData.myHalfExtent = CU::Vector3f(0.25f, 0.25f, 0.25f);
+		CColliderComponent* shellColliderComponent = myColliderManager->CreateComponent(&crystalMeshColliderData, banana->GetId());
+		//CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
+		CU::Vector3f offset = banana->GetWorldPosition();
+
+		SRigidBodyData rigidbodah;
+		rigidbodah.isKinematic = true;
+		rigidbodah.useGravity = false;
+		rigidbodah.myLayer = Physics::eHazzard;
+		rigidbodah.myCollideAgainst = Physics::GetCollideAgainst(rigidbodah.myLayer);
+
+		CColliderComponent* rigidComponent = myColliderManager->CreateComponent(&rigidbodah, banana->GetId());
+		//	colliderObject->SetWorldPosition({ offset.x, offset.y + 0.1f, offset.z });
+		banana->AddComponent(shellColliderComponent);
+		banana->AddComponent(rigidComponent);
+
+		//shell->AddComponent(colliderObject);
+		//collider added
+
+		myBananas.Add(banana);
+	}
 }
 
 void CItemFactory::CreateShellBuffer()
@@ -44,42 +105,47 @@ void CItemFactory::CreateShellBuffer()
 	for (int i = 0; i < 25; i++)
 	{
 		CGameObject* shell = myGameObjectManager->CreateGameObject();
+		std::string name = "shell ";
+		name += std::to_string(i);
+		shell->SetName(name.c_str());
 
 		CModelComponent* model = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_shell_green_01.fbx");
+		model->FlipVisibility();
 		shell->AddComponent(model);
 
-		/*	CItemWeaponBehaviourComponent* beheviour = myItemBeheviourComponentManager->CreateAndRegisterComponent();
-			shell->AddComponent(beheviour);*/
+			CItemWeaponBehaviourComponent* beheviour = myItemBeheviourComponentManager->CreateAndRegisterComponent();
+			shell->AddComponent(beheviour);
 
 		CHazardComponent* hazardous = new CHazardComponent;
 		CComponentManager::GetInstance().RegisterComponent(hazardous);
 		shell->AddComponent(hazardous);
 
 		//adds collider
-		SSphereColliderData crystalMeshColliderData;
+		SBoxColliderData crystalMeshColliderData;
 		crystalMeshColliderData.IsTrigger = true;
 		crystalMeshColliderData.myLayer = Physics::eHazzard;
 		crystalMeshColliderData.myCollideAgainst = Physics::GetCollideAgainst(crystalMeshColliderData.myLayer);
 		crystalMeshColliderData.material.aDynamicFriction = 0.5f;
 		crystalMeshColliderData.material.aRestitution = 0.5f;
 		crystalMeshColliderData.material.aStaticFriction = 0.5f;
-		crystalMeshColliderData.myLayer;
+		crystalMeshColliderData.center.y = 0.5f;
+		crystalMeshColliderData.myHalfExtent = CU::Vector3f(0.5f, 0.5f, 0.5f);
 		CColliderComponent* shellColliderComponent = myColliderManager->CreateComponent(&crystalMeshColliderData, shell->GetId());
-		CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
+		//CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
 		CU::Vector3f offset = shell->GetWorldPosition();
 
 		SRigidBodyData rigidbodah;
 		rigidbodah.isKinematic = true;
 		rigidbodah.useGravity = false;
 		rigidbodah.myLayer = Physics::eHazzard;
-		rigidbodah.myCollideAgainst = Physics::GetCollideAgainst(crystalMeshColliderData.myLayer);
+		rigidbodah.myCollideAgainst = Physics::GetCollideAgainst(rigidbodah.myLayer);
 
 		CColliderComponent* rigidComponent = myColliderManager->CreateComponent(&rigidbodah, shell->GetId());
 		//	colliderObject->SetWorldPosition({ offset.x, offset.y + 0.1f, offset.z });
-		colliderObject->AddComponent(shellColliderComponent);
-		colliderObject->AddComponent(rigidComponent);
+		shell->AddComponent(shellColliderComponent);
+		shell->AddComponent(rigidComponent);
 
-		shell->AddComponent(colliderObject);
+		//shell->AddComponent(colliderObject);
 		//collider added
 
 		myShells.Add(shell);
@@ -88,7 +154,7 @@ void CItemFactory::CreateShellBuffer()
 
 eItemTypes CItemFactory::RandomizeItem()
 {
-	return eItemTypes::eMushroom;
+	return static_cast<eItemTypes>(rand() % 4);
 }
 
 int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userComponent)
@@ -97,13 +163,23 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 	{
 	case eItemTypes::eGreenShell:
 	{
+		if (myShells.Size() <= 0)
+		{
+			myShells.Add(myActiveShells.GetFirst());
+			myActiveShells.Remove(myActiveShells.GetFirst());
+		}
+
 		CGameObject* shell = myShells.GetLast();
 		myShells.Remove(shell);
 		shell->NotifyComponents(eComponentMessageType::eActivate, SComponentMessageData());
 		myActiveShells.Add(shell);
+		CU::Matrix44f transform = userComponent->GetParent()->GetToWorldTransform();
 		CU::Vector3f position = userComponent->GetParent()->GetWorldPosition();
+		shell->GetLocalTransform() = transform;
 		shell->SetWorldPosition(position);
-		shell->Move(CU::Vector3f(0,0,1));
+		//CU::Vector3f forward = userComponent->GetParent()->GetToWorldTransform().myForwardVector;
+		//forward  *=3;
+		shell->Move(CU::Vector3f(0,-0.5f,3));
 		break;
 	}
 	case eItemTypes::eRedShell:
@@ -124,8 +200,13 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 		//boost and have some form of cooldown before 
 		break;
 	case eItemTypes::eStar:
-		//make invincible and boost
+	{
+		SComponentMessageData boostData;
+		boostData.myBoostData = &myStartBoostData;
+		userComponent->GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostData);
+		userComponent->GetParent()->NotifyComponents(eComponentMessageType::eMakeInvurnable,boostData);
 		break;
+	}
 	case eItemTypes::eBulletBill:
 		//activate AI controller on player and make invincible and boost
 		break;
@@ -133,8 +214,26 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 		//postmaster blast all
 		break;
 	case eItemTypes::eBanana:
-		//create banana
+	{
+		if (myBananas.Size() <= 0)
+		{
+			myBananas.Add(myActiveBananas.GetFirst());
+			myActiveBananas.Remove(myActiveBananas.GetFirst());
+		}
+
+		CGameObject* banana = myBananas.GetLast();
+		myBananas.Remove(banana);
+		banana->NotifyComponents(eComponentMessageType::eActivate, SComponentMessageData());
+		myActiveBananas.Add(banana);
+		CU::Matrix44f transform = userComponent->GetParent()->GetToWorldTransform();
+		CU::Vector3f position = userComponent->GetParent()->GetWorldPosition();
+		banana->GetLocalTransform() = transform;
+		banana->SetWorldPosition(position);
+		//CU::Vector3f forward = userComponent->GetParent()->GetToWorldTransform().myForwardVector;
+		//forward  *=3;
+		banana->Move(CU::Vector3f(0, 0.f, -2));
 		break;
+	}
 	default:
 		break;
 	}

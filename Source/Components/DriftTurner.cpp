@@ -5,6 +5,8 @@
 
 Component::CDriftTurner::CDriftTurner()
 {
+	myHasBeenHit = false;
+	myHasBeenHitTotalTime = 0;
 }
 
 
@@ -28,8 +30,13 @@ void Component::CDriftTurner::Receive(const eComponentMessageType aMessageType, 
 		myTargetTurn = CU::Matrix33f::Identity;
 		break;
 	case eComponentMessageType::eUpdate:
-		//DoUpdate(aMessageData.myFloat);
+		DoUpdate(aMessageData.myFloat);
 		break;
+	case eComponentMessageType::eSpinKart:
+	{
+		myHasBeenHit = true;
+		break;
+	}
 	}
 }
 
@@ -44,7 +51,19 @@ void Component::CDriftTurner::Destroy()
 }
 
 const float sleprVal = 10.f;
-void Component::CDriftTurner::DoUpdate(const float aFloat)
+void Component::CDriftTurner::DoUpdate(const float aDeltaTime)
 {
-	GetParent()->GetLocalTransform().SetRotation(Physics::Slerp(GetParent()->GetLocalTransform().GetRotation(), myTargetTurn, ( 1.f / sleprVal) * aFloat).GetRotation());
+	//GetParent()->GetLocalTransform().SetRotation(Physics::Slerp(GetParent()->GetLocalTransform().GetRotation(), myTargetTurn, ( 1.f / sleprVal) * aFloat).GetRotation());
+	if (myHasBeenHit == true)
+	{
+		GetParent()->GetLocalTransform().RotateAroundAxis((3.14 * 2 / 1.5) * aDeltaTime * 2.f, CU::Axees::Y);
+		myHasBeenHitTotalTime += aDeltaTime;
+		if (myHasBeenHitTotalTime > 1.5)
+		{
+			myHasBeenHit = false;
+			myHasBeenHitTotalTime = 0;
+			GetParent()->GetLocalTransform().SetRotation(CU::Matrix33f::Identity);
+		}
+
+	}
 }
