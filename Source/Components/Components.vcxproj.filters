@@ -27,7 +27,6 @@
     <ClCompile Include="PickupComponentManager.cpp" />
     <ClCompile Include="PlayerControllerManager.cpp" />
     <ClCompile Include="PointLightComponent.cpp" />
-    <ClCompile Include="PointLightComponentManager.cpp" />
     <ClCompile Include="RigidBodyComponent.cpp" />
     <ClCompile Include="ScriptComponent.cpp" />
     <ClCompile Include="ScriptComponentManager.cpp" />
@@ -60,6 +59,8 @@
     <ClCompile Include="LapTrackerComponentManager.cpp" />
     <ClCompile Include="ItemWeaponBehaviourComponentManager.cpp" />
     <ClCompile Include="DriftTurner.cpp" />
+    <ClCompile Include="LightComponentManager.cpp" />
+    <ClCompile Include="SpotLightComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -96,7 +97,6 @@
     <ClInclude Include="SphereColliderComponent.h" />
     <ClInclude Include="FireComponent.h" />
     <ClInclude Include="PointLightComponent.h" />
-    <ClInclude Include="PointLightComponentManager.h" />
     <ClInclude Include="ScriptComponent.h" />
     <ClInclude Include="ScriptComponentManager.h" />
     <ClInclude Include="Component.h" />
@@ -127,5 +127,11 @@
     <ClInclude Include="LapTrackerComponentManager.h" />
     <ClInclude Include="ItemWeaponBehaviourComponentManager.h" />
     <ClInclude Include="DriftTurner.h" />
+    <ClInclude Include="AIController.h" />
+    <ClInclude Include="LightComponentManager.h" />
+    <ClInclude Include="SpotLightComponent.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Components.rc" />
   </ItemGroup>
 </Project>
