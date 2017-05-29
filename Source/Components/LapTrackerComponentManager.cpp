@@ -243,11 +243,19 @@ void CLapTrackerComponentManager::SendRaceOverMessage()
 	Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CRaceOverMessage(myWinnerPlacements));
 }
 
-unsigned short CLapTrackerComponentManager::GetSpecificRacerPlacement(CGameObject* aRacer)
+unsigned char CLapTrackerComponentManager::GetSpecificRacerPlacement(CGameObject* aRacer)
 {
 	if(myRacerPlacements.Size() < 2)
 	{
 		return 1;
 	}
 	return myRacerPlacements.Find(aRacer) + 1;
+}
+
+unsigned char CLapTrackerComponentManager::GetSpecificRacerLapIndex(CGameObject* aRacer)
+{
+	SComponentQuestionData whatLap;
+	aRacer->AskComponents(eComponentQuestionType::eGetLapIndex, whatLap);
+
+	return whatLap.myChar;
 }

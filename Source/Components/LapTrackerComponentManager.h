@@ -46,9 +46,13 @@ public:
 	void CalculateRacerPlacement();
 	void Init();
 	CU::GrowingArray<CGameObject*>& GetRacerPlacements();
-	unsigned short GetSpecificRacerPlacement(CGameObject* aRacer);
+	unsigned char GetSpecificRacerPlacement(CGameObject* aRacer);
+	unsigned char GetSpecificRacerLapIndex(CGameObject* aRacer);
+
 	eMessageReturn DoEvent(const CPlayerFinishedMessage& aPlayerFinishedMessage) override;
 	eMessageReturn DoEvent(const CAIFinishedMessage& aAIFinishedMessage) override;
+
+
 private:
 	CLapTrackerComponentManager();
 	void CalculateReversePlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList);
