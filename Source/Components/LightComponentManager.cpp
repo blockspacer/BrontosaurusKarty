@@ -69,3 +69,15 @@ CLightComponentManager::CLightComponentManager(CScene& aScene)
 CLightComponentManager::~CLightComponentManager()
 {
 }
+
+
+void CLightComponentManager::SetSkybox(const char * aPath)
+{
+	myScene.SetSkybox(aPath);
+}
+
+void CLightComponentManager::SetCubemap(const char * aPath)
+{
+	myScene.SetCubemap(aPath);
+}
+
