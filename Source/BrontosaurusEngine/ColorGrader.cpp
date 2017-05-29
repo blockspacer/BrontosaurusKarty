@@ -7,7 +7,7 @@
 #include "FullScreenHelper.h"
 #include "ELUTType.h"
 
-static_assert(ELUTType::eLength == 4, "hola espanjola");
+static_assert(ELUTType::eLength == 1, "hola espanjola");
 
 CColorGrader::CColorGrader()
 {
@@ -66,9 +66,6 @@ void CColorGrader::SetData(const ELUTType aFadeTo, const ELUTType aFadeFrom, con
 void CColorGrader::LoadTextures()
 {
 	myLuts[eDefault] = &TEXTUREMGR.LoadTexture("Lut/defaultLUT.dds");
-	myLuts[eHurt] = &TEXTUREMGR.LoadTexture("Lut/hurtLUT.dds");
-	myLuts[eGUI] = &TEXTUREMGR.LoadTexture("Lut/pauseLUT.dds");
-	myLuts[eNoChange] = &TEXTUREMGR.LoadTexture("Lut/NoChangeLUT.dds");
 }
 
 void CColorGrader::CreateBuffer()
