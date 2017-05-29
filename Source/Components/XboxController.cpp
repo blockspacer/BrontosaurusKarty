@@ -88,7 +88,7 @@ void CXboxController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 	case CU::GAMEPAD::DPAD_RIGHT:
 	{
 		SComponentMessageData data;
-		data.myInt = 1;//Banana
+		data.myInt = 4;//Banana
 		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveItem, data);
 		break;
 	}
