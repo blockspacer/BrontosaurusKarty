@@ -15,3 +15,7 @@
 
 #include "CUTime.h"
 #include "TimerManager.h"
+
+
+#define RANGE(VALUE, LOW, HIGH) ((VALUE) < (LOW)) ? (LOW) : ((VALUE) > (HIGH)) ? (HIGH) : (VALUE)
+#define CLAMP(VALUE, A_MIN, A_MAX) RANGE((VALUE), (A_MIN), (A_MAX))
