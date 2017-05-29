@@ -275,9 +275,6 @@ void CPlayState::Load()
 		CreateAI();
 	}
 
-	myScene->SetSkybox("default_cubemap.dds");
-	myScene->SetCubemap("purpleCubemap.dds");
-
 	///////////////////
 	//     HUD 
 
