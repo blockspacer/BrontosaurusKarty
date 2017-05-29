@@ -184,7 +184,28 @@ void CMenuManager::Update(const CU::Time& aDeltaTime)
 			{
 				mySpriteInstances[myClickAreas[i].mySpriteID].myState = eMenuButtonState::eOnHover;
 			}
-
+			switch (myInput)
+			{
+			case eActionPressed:
+			{
+				int br = 0;
+			}
+				break;
+			case eBackPressed:
+				break;
+			case eLeftPressed:
+				break;
+			case eRightPressed:
+				break;
+			case eStartPressed:
+				break;
+			case eSelectPressed:
+				break;
+			case eNone:
+				break;
+			default:
+				break;
+			}
 			hasCollided = true;
 			break;
 		}
@@ -284,24 +305,34 @@ void CMenuManager::MouseReleased()
 
 void CMenuManager::LeftPressed(const short aPlayerIndex)
 {
-	myIsLeftPressed = true;
+	myInput = eInputAction::eRightPressed;
 	myPlayerThatpressed = aPlayerIndex;
 }
 
 void CMenuManager::RightPressed(const short aPlayerIndex)
 {
-	myIsRightPressed = true;
+	myInput = eInputAction::eRightPressed;
 	myPlayerThatpressed = aPlayerIndex;
 }
 
 void CMenuManager::LeftReleased(const short aPlayerIndex)
 {
-	myIsLeftPressed = false;
 }
 
 void CMenuManager::RightReleased(const short aPlayerIndex)
 {
-	myIsRightPressed = false;
+}
+
+void CMenuManager::ActionPressed(const short aPlayerIndex)
+{
+	myInput = eInputAction::eActionPressed;
+	myPlayerThatpressed = aPlayerIndex;
+}
+
+void CMenuManager::BackButtonPressed(const short aPlayerIndex)
+{
+	myInput = eInputAction::eBackPressed;
+	myPlayerThatpressed = aPlayerIndex;
 }
 
 const SMenuSprite& CMenuManager::GetSprite(unsigned aSpriteId)

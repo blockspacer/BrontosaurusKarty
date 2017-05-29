@@ -282,6 +282,9 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 			{
 				switch (aInputMessage.myGamePad)
 				{
+				case CU::GAMEPAD::A:
+					myMenuManager.ActionPressed(static_cast<short>(myPlayerInputDevices[i]));
+					break;
 				case CU::GAMEPAD::DPAD_LEFT:
 					myMenuManager.LeftPressed(static_cast<short>(myPlayerInputDevices[i]));
 					break;

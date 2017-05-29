@@ -12,6 +12,17 @@ enum class eMenuThingType
 	eSprite
 };
 
+enum eInputAction
+{
+	eActionPressed,
+	eBackPressed,
+	eLeftPressed,
+	eRightPressed,
+	eStartPressed,
+	eSelectPressed,
+	eNone,
+};
+
 
 enum class eMenuButtonState
 {
@@ -74,6 +85,9 @@ public:
 	void LeftReleased(const short aPlayerIndex = 0);
 	void RightReleased(const short aPlayerIndex = 0);
 
+	void ActionPressed(const short aPlayerIndex = 0);
+	void BackButtonPressed(const short aPlayerIndex = 0);
+
 	const SMenuSprite& GetSprite(unsigned aSpriteId);
 
 	void AddAction(const std::string& aActionName, const std::function<bool(std::string)>& aFunction);
@@ -98,6 +112,8 @@ private:
 	int myCurentlyHoveredClickarea;
 
 	short myPlayerThatpressed;
+
+	eInputAction myInput;
 
 	bool myMouseIsPressed;
 	bool myIsLeftPressed;
