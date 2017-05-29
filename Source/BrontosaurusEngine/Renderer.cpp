@@ -431,8 +431,9 @@ void CRenderer::CreateOncePerFrameBuffer()
 	buffer.time = 0.0f;
 	buffer.deltaTime = 0.0f;
 
-	buffer.fogStart = 0.0f;
-	buffer.fogEnd = 0.0f;
+	buffer.fogStart = myFogData.myFogStart;
+	buffer.fogEnd = myFogData.myFogEnd;
+	buffer.fogColor = myFogData.myFogColor;
 
 	myOncePerFrameBuffer = BSR::CreateCBuffer<SOncePerFrameBuffer>(&buffer);
 }
@@ -457,8 +458,9 @@ void CRenderer::UpdateBuffer()
 
 	updatedBuffer.deltaTime = myTimers.GetTimer(myOncePerFrameBufferTimer).GetDeltaTime().GetSeconds();
 	updatedBuffer.time = myTimers.GetTimer(myOncePerFrameBufferTimer).GetLifeTime().GetSeconds();
-	updatedBuffer.fogStart = 0.0f;
-	updatedBuffer.fogEnd = 0.0f;
+	updatedBuffer.fogStart = myFogData.myFogStart;
+	updatedBuffer.fogEnd = myFogData.myFogEnd;
+	updatedBuffer.fogColor = myFogData.myFogColor;
 
 	updatedBuffer.windowSize = CEngine::GetInstance()->GetWindowSize();
 
