@@ -126,5 +126,9 @@ void CKeyboardController::PressedKey(const CU::SInputMessage & aInputMessage)
 	case CU::eKeys::LCONTROL:
 		myControllerComponent.Drift();
 		break;
+
+	case CU::eKeys::RETURN:
+		myControllerComponent.GetHit();
+		break;
 	}
 }

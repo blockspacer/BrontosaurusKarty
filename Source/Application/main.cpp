@@ -39,6 +39,7 @@ void InitAudio();
 void Init(int argc, char* argv[])
 {
 	DL_Debug::Debug::CreateInstance();
+	InitAudio();
 	Postmaster::Threaded::CPostmaster::Create();
 	CommandLineManager::CreateInstance(argc, argv);
 
@@ -145,6 +146,6 @@ void InitAudio()
 
 	result = Audio::CAudioInterface::GetInstance()->Init(bankPath.c_str());
 
-	bankPath = "Audio/Feedback.bnk";
+	bankPath = "Audio/KartSounds.bnk";
 	result = Audio::CAudioInterface::GetInstance()->LoadBank(bankPath.c_str());
 }

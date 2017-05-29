@@ -174,6 +174,7 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myBoostPadComponentManager);
 	SAFE_DELETE(myItemFactory);
 	SAFE_DELETE(myRespawnComponentManager);
+	SAFE_DELETE(myItemBehaviourManager);
 	CLapTrackerComponentManager::DestoyInstance();
 }
 
@@ -276,11 +277,18 @@ void CPlayState::Load()
 
 	myHUDs.Init(myPlayerCount);
 
+	bool myIsOneSplit = false;
+	if (myPlayerCount == 2)
+	{
+		myIsOneSplit = true;
+	}
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
-		myHUDs.Add(new CHUD(i));
+		myHUDs.Add(new CHUD(i, myIsOneSplit));
 		myHUDs[i]->LoadHUD();
 	}
+
+	myCountdownSprite->Render();
 
 	///////////
 	myIsLoaded = true;
@@ -359,7 +367,6 @@ void CPlayState::Render()
 	{
 		myHUDs[i]->Render();
 	}
-
 }
 
 void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
@@ -514,8 +521,6 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 
 	CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&box, playerObject->GetId());
 	CColliderComponent* playerTriggerColliderComponent = myColliderComponentManager->CreateComponent(&triggerbox, playerObject->GetId());
-	CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
-	CU::Vector3f offset = playerObject->GetWorldPosition();
 
 	
 	SRigidBodyData rigidbodah;
@@ -525,11 +530,10 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	rigidbodah.myCollideAgainst = Physics::GetCollideAgainst(Physics::eKart);
 	CColliderComponent* rigidComponent = myColliderComponentManager->CreateComponent(&rigidbodah, playerObject->GetId());
 //	colliderObject->SetWorldPosition({ offset.x, offset.y + 0.1f, offset.z });
-	colliderObject->AddComponent(playerColliderComponent);
-	colliderObject->AddComponent(playerTriggerColliderComponent);
+	playerObject->AddComponent(playerColliderComponent);
+	playerObject->AddComponent(playerTriggerColliderComponent);
+	playerObject->AddComponent(rigidComponent);
 
-	colliderObject->AddComponent(rigidComponent);
-	playerObject->AddComponent(colliderObject);
 
 	playerObject->AddComponent(cameraComponent);
 	myCameraComponents.Add(cameraComponent);
@@ -607,9 +611,4 @@ void CPlayState::RenderCountdown()
 	RENDERER.AddRenderMessage(guiChangeState);
 
 	myCountdownSprite->RenderToGUI(L"countdown");
-}
-
-void CPlayState::SetCameraComponent(CCameraComponent* aCameraComponent)
-{
-	DL_ASSERT("cant add camera component like this right now,,,,,,");
 }
