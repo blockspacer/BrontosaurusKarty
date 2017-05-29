@@ -9,9 +9,9 @@ CLapTrackerComponent::CLapTrackerComponent()
 {
 	mySplineIndex = 0;
 	myLapIndex = 1;
+	myPlacementValue = 0.0f;
 	myIsReadyToEnterGoal = false;
 }
-
 
 CLapTrackerComponent::~CLapTrackerComponent()
 {
@@ -40,6 +40,7 @@ void CLapTrackerComponent::Update()
 			if(splineForwardDistance < splineDistance)
 			{
 				mySplineIndex++;
+				myPlacementValue++;
 			}
 
 		}
@@ -97,6 +98,7 @@ void CLapTrackerComponent::Receive(const eComponentMessageType aMessageType, con
 		{		
 			mySplineIndex = 0;
 			myLapIndex++;
+			myPlacementValue++;
 			if (myLapIndex > 3)
 			{
 				if (GetParent()->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
