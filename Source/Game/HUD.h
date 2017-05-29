@@ -48,4 +48,3 @@ private:
 	CU::Vector2f mySpriteOffset;
 	CGameObject* myPlayer;
 };
-

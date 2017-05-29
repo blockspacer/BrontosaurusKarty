@@ -380,6 +380,17 @@ void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
 {
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eChangeLevel);
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eNetworkMessage);
+
+	CU::CJsonValue levelsFile;
+	std::string errorString = levelsFile.Parse("Json/LevelList.json");
+	if (!errorString.empty()) DL_MESSAGE_BOX(errorString.c_str());
+
+	CU::CJsonValue levelsArray = levelsFile.at("levels");
+
+	const char* song = levelsArray.at(myLevelIndex).GetString().c_str();
+
+	Audio::CAudioInterface::GetInstance()->PostEvent(song);
+
 	InitiateRace();
 }
 
