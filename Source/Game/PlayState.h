@@ -76,6 +76,9 @@ public:
 	void LoadNavigationSpline(const CU::CJsonValue &splineData);
 private:
 	void CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDevice aIntputDevice, unsigned int aPlayerCount);
+	void CreateAI();
+	void CreateKart();
+
 	void InitiateRace();
 	void RenderCountdown();
 
