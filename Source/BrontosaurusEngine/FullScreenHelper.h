@@ -38,7 +38,6 @@ public:
 		eMotionBlur, //ooh
 		eDeferredAmbient, //oh oh oh oh
 		eDeferredDirectional,
-		eDeferredSpotLight,
 		eColorGrading,
 		eAA,
 		eMetaSurface,
@@ -47,7 +46,6 @@ public:
 		eAlphaBlend,
 		eMergeDepth,
 		eFog,
-		//eCombineDepth,
 		eSize,
 	};
 
