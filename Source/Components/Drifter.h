@@ -11,6 +11,13 @@ namespace CU
 class CDrifter
 {
 public:
+	enum class eDriftState
+	{
+		eDriftingLeft,
+		eDriftingRight,
+		eNotDrifting,
+	};
+
 	enum class eDriftBoost
 	{
 		eLarge,
@@ -23,7 +30,7 @@ public:
 	~CDrifter();
 
 	bool Init(const CU::CJsonValue& aJsonValue);
-	void Update(const float aDeltaTime);
+	void GetSteering(float& aSteeringAngle, const float aTurnRate, const float aAngularAcceleration, const float aWay, const float aAirControll, const bool aIsOnGround, const eCurrentAction& aAction, const float aDeltaTime);
 
 	void StartDrifting(const eCurrentAction& aCurrentAction);
 	eDriftBoost StopDrifting();
@@ -48,6 +55,8 @@ private:
 
 	float myLongDriftTime;
 	float myShortDriftTime;
+
+	eDriftState myDriftState;
 
 	bool myIsDrifting;
 };

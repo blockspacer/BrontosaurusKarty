@@ -48,10 +48,11 @@ void CHazardComponent::Receive(const eComponentMessageType aMessageType, const S
 
 			if (data->myLayer == Physics::eKart)
 			{
-				aMessageData.myComponent->GetParent()->NotifyComponents(eComponentMessageType::eGotHit, SComponentMessageData());
+				aMessageData.myComponent->GetParent()->NotifyOnlyComponents(eComponentMessageType::eGotHit, SComponentMessageData());
 				if (myIsPermanent == false)
 				{
-					GetParent()->NotifyComponents(eComponentMessageType::eDeactivate, SComponentMessageData());
+					GetParent()->NotifyOnlyComponents(eComponentMessageType::eDeactivate, SComponentMessageData()); //can be a problem with unity parenting...
+					GetParent()->NotifyOnlyComponents(eComponentMessageType::eDeactivateEmitter, SComponentMessageData());
 				}
 			}
 		}

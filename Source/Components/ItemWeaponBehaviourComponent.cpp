@@ -50,7 +50,7 @@ void CItemWeaponBehaviourComponent::Update(const float aDeltaTime)
 
 		SComponentMessageData messageData;
 		messageData.myFloat = aDeltaTime;
-		GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
+		GetParent()->NotifyOnlyComponents(eComponentMessageType::eMoving, messageData);
 
 		
 	}

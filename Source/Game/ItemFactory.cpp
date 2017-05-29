@@ -61,6 +61,7 @@ void CItemFactory::CreateBananaBuffer()
 		banana->SetName(name.c_str());
 
 		CModelComponent* model = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_Banana_01.fbx");
+		model->FlipVisibility();
 		banana->AddComponent(model);
 
 		CHazardComponent* hazardous = new CHazardComponent;
@@ -109,6 +110,7 @@ void CItemFactory::CreateShellBuffer()
 		shell->SetName(name.c_str());
 
 		CModelComponent* model = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_shell_green_01.fbx");
+		model->FlipVisibility();
 		shell->AddComponent(model);
 
 			CItemWeaponBehaviourComponent* beheviour = myItemBeheviourComponentManager->CreateAndRegisterComponent();

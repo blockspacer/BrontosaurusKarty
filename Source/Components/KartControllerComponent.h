@@ -60,7 +60,6 @@ private:
 	
 
 	std::unique_ptr<CDrifter> myDrifter;
-
 	struct
 	{
 		float width = 1.f;
@@ -100,6 +99,7 @@ private:
 		int myLeftDriftBoostEmitterhandle;
 		int myRightDriftBoostEmitterhandle;
 		int myBoostEmmiterhandle;
+		int myGotHitEmmiterhandle;
 	//} myDriftEmitter;
 
 	Physics::CPhysicsScene* myPhysicsScene;
@@ -107,6 +107,7 @@ private:
 	bool myIsOnGround;
 	bool myCanAccelerate;
 	bool myIsBoosting;
+	bool myHasJumped;
 
 	bool myIsInvurnable;
 	bool myHasGottenHit;

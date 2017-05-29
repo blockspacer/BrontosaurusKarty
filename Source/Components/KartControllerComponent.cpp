@@ -57,6 +57,8 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myInvurnableTime = 0;
 	myElapsedInvurnableTime = 0;
 
+	myHasJumped = false;
+
 	myHasGottenHit = false;
 	myTimeToBeStunned = 1.5f;
 	myElapsedStunTime = 0.f;
@@ -73,6 +75,8 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myLeftDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("FirstStageBoostParticle").GetString());
 	myRightDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("FirstStageBoostParticle").GetString());
 	myBoostEmmiterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GunFire");
+	myGotHitEmmiterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("Stars");
+
 
 	myAirControl = Karts.at("AirControl").GetFloat();
 
@@ -177,6 +181,10 @@ void CKartControllerComponent::StopTurning()
 //Checks if the player is turning left or right and then sets the drift values accordingly
 void CKartControllerComponent::Drift()
 {
+	if (myIsOnGround == false)
+	{
+		return;
+	}
 	if (myHasGottenHit == true)
 	{
 		return;
@@ -261,6 +269,7 @@ void CKartControllerComponent::GetHit()
 		myHasGottenHit = true;
 		StopDrifting();
 		GetParent()->NotifyComponents(eComponentMessageType::eSpinKart, SComponentMessageData());
+		CParticleEmitterManager::GetInstance().Activate(myGotHitEmmiterhandle);
 	}
 	//myAcceleration = 0;
 }
@@ -305,10 +314,12 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	if (myHasGottenHit == true)
 	{
 		myElapsedStunTime += aDeltaTime;
+		CParticleEmitterManager::GetInstance().SetPosition(myGotHitEmmiterhandle, GetParent()->GetWorldPosition());
 		if (myElapsedStunTime >= myTimeToBeStunned)
 		{
 			myElapsedStunTime = 0;
 			myHasGottenHit = false;
+			CParticleEmitterManager::GetInstance().Deactivate(myGotHitEmmiterhandle);
 		}
 	}
 
@@ -440,15 +451,7 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 	if (myDrifter->IsDrifting() == true)
 	{
 		DoDriftingParticles();
-		myDrifter->Update(aDeltaTime);
-		if (myCurrentAction == eCurrentAction::eTurningRight)
-		{
-			steerAngle = (myTurnRate + myDrifter->GetSteerModifier()) * myAngularAcceleration * -way * (myIsOnGround == true ? 1.f : myAirControl);
-		}
-		else if (myCurrentAction == eCurrentAction::eTurningLeft)
-		{
-			steerAngle = (-myTurnRate + myDrifter->GetSteerModifier()) * myAngularAcceleration * -way * (myIsOnGround == true ? 1.f : myAirControl);
-		}
+		myDrifter->GetSteering(steerAngle,myTurnRate,myAngularAcceleration,way,myAirControl,myIsOnGround,myCurrentAction,aDeltaTime);
 	}
 	else
 	{
@@ -537,6 +540,11 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 		if(raycastHitData.distance < controlDist)
 		{
 			myIsOnGround = true;
+			if (myHasJumped == true)
+			{
+				Drift();
+				myHasJumped = false;
+			}
 		}
 		if (raycastHitData.distance < onGroundDist)
 		{
