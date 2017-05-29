@@ -179,19 +179,19 @@ void CKartControllerComponent::StopTurning()
 }
 
 //Checks if the player is turning left or right and then sets the drift values accordingly
-void CKartControllerComponent::Drift()
+bool CKartControllerComponent::Drift()
 {
 	if (myIsOnGround == false)
 	{
-		return;
+		return false;
 	}
 	if (myHasGottenHit == true)
 	{
-		return;
+		return false;
 	}
 	if (myVelocity.Length2() < (myMaxSpeed * myMaxSpeed) * 0.33f)
 	{
-		return;
+		return false;
 	}
 	myDrifter->StartDrifting(myCurrentAction);
 	SComponentMessageData messageData;
@@ -215,6 +215,7 @@ void CKartControllerComponent::Drift()
 	//myVelocity += CU::Vector3f::UnitY * 5;
 	
 	GetParent()->NotifyComponents(eComponentMessageType::eDoDriftBobbing, messageData);
+	return true;
 }
 
 void CKartControllerComponent::StopDrifting()
@@ -388,9 +389,9 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 			CParticleEmitterManager::GetInstance().Deactivate(myBoostEmmiterhandle);
 		}
 
-		//myMaxSpeedModifier = 1.0f + aMessageData.myBoostData->maxSpeedBoost;
-		//myAccelerationModifier = 1.0f + aMessageData.myBoostData->accerationBoost;
-		//myBoostSpeedDecay = myMaxAcceleration * myAccelerationModifier * 1.25f;
+		myMaxSpeedModifier = 1.0f + aMessageData.myBoostData->maxSpeedBoost;
+		myAccelerationModifier = 1.0f + aMessageData.myBoostData->accerationBoost;
+		myBoostSpeedDecay = myMaxAcceleration * myAccelerationModifier * 1.25f;
 		break;
 	}
 }

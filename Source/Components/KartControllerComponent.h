@@ -26,7 +26,7 @@ public:
 	void MoveFoward();
 	void MoveBackWards();
 	void StopTurning();
-	void Drift();
+	bool Drift();
 	void StopDrifting();
 	void GetHit();
 
