@@ -33,10 +33,13 @@ public:
 	void Update(const float aDeltaTime);
 	
 	const CNavigationSpline& GetNavigationSpline();
+	const CU::Vector3f& GetVelocity() const;
 
 	void Receive(const eComponentMessageType, const SComponentMessageData&) override;
 	bool Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData) override;
 	void Init(Physics::CPhysicsScene* aPhysicsScene);
+
+	bool IsFutureGrounded(const float aDistance);
 
 	enum class eCurrentAction
 	{

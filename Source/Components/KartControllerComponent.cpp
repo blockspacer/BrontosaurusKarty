@@ -333,9 +333,9 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 			CParticleEmitterManager::GetInstance().Deactivate(myBoostEmmiterhandle);
 		}
 
-		myMaxSpeedModifier = 1.0f + aMessageData.myBoostData->maxSpeedBoost;
-		myAccelerationModifier = 1.0f + aMessageData.myBoostData->accerationBoost;
-		myBoostSpeedDecay = myMaxAcceleration * myAccelerationModifier * 1.25f;
+		//myMaxSpeedModifier = 1.0f + aMessageData.myBoostData->maxSpeedBoost;
+		//myAccelerationModifier = 1.0f + aMessageData.myBoostData->accerationBoost;
+		//myBoostSpeedDecay = myMaxAcceleration * myAccelerationModifier * 1.25f;
 		break;
 	}
 }
@@ -343,6 +343,22 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 void CKartControllerComponent::Init(Physics::CPhysicsScene* aPhysicsScene)
 {
 	myPhysicsScene = aPhysicsScene;
+}
+
+bool CKartControllerComponent::IsFutureGrounded(const float aDistance)
+{
+	CU::Vector3f orig = GetParent()->GetWorldPosition();
+	orig.y += 50.f;
+	CU::Vector3f down(0.0f, -1.0f, 0.0f);
+	orig += GetParent()->GetToWorldTransform().myForwardVector * aDistance;
+
+	Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(orig, down, 100.0f, Physics::eGround);
+	return raycastHitData.hit;
+}
+
+const CU::Vector3f& CKartControllerComponent::GetVelocity() const
+{
+	return myVelocity;
 }
 
 void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
@@ -423,7 +439,7 @@ void CKartControllerComponent::DoDriftingParticles()
 	}
 }
 
-const float gravity = 9.82f;
+const float gravity = 9.82f * 2.f;
 const float upDistConst = 0.01f;
 const float testLength = 2.f;
 void CKartControllerComponent::DoPhysics(const float aDeltaTime)
