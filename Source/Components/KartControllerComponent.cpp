@@ -75,6 +75,8 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myLeftDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("FirstStageBoostParticle").GetString());
 	myRightDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("FirstStageBoostParticle").GetString());
 	myBoostEmmiterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GunFire");
+	myGotHitEmmiterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("Stars");
+
 
 	myAirControl = Karts.at("AirControl").GetFloat();
 
@@ -267,6 +269,7 @@ void CKartControllerComponent::GetHit()
 		myHasGottenHit = true;
 		StopDrifting();
 		GetParent()->NotifyComponents(eComponentMessageType::eSpinKart, SComponentMessageData());
+		CParticleEmitterManager::GetInstance().Activate(myGotHitEmmiterhandle);
 	}
 	//myAcceleration = 0;
 }
@@ -311,10 +314,12 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	if (myHasGottenHit == true)
 	{
 		myElapsedStunTime += aDeltaTime;
+		CParticleEmitterManager::GetInstance().SetPosition(myGotHitEmmiterhandle, GetParent()->GetWorldPosition());
 		if (myElapsedStunTime >= myTimeToBeStunned)
 		{
 			myElapsedStunTime = 0;
 			myHasGottenHit = false;
+			CParticleEmitterManager::GetInstance().Deactivate(myGotHitEmmiterhandle);
 		}
 	}
 

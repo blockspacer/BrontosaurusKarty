@@ -98,10 +98,6 @@ private:
 	CU::GrowingArray<CSpotLightInstance, InstanceID> mySpotLights;
 	CU::Stack<InstanceID, InstanceID> myFreeSpotlights;
 
-
-	//CU::GrowingArray<CParticleEmitterInstance*, InstanceID> myParticleEmitters;
-	//CU::Stack<InstanceID, InstanceID> myFreeParticleEmitters;
-	
 	CU::GrowingArray<CFireEmitterInstance, InstanceID> myFireEmitters;
 
 	CU::StaticArray<CRenderCamera, static_cast<int>(eCameraType::eLength)> myRenderCameras;
@@ -115,7 +111,6 @@ private:
 	float myFogEnd;
 
 	//CRenderCamera myShadowCamera;
-public:
 };
 
 inline CSkybox& CScene::GetSkybox()

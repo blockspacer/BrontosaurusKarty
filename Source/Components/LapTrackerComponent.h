@@ -12,9 +12,11 @@ public:
 	const float GetDistanceToNextSpline();
 	bool Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData) override;
 	void Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData) override;
+	inline const unsigned short GetPlacementValue() const;
 private:
 	unsigned short myLapIndex;
 	unsigned short mySplineIndex;
+	unsigned short myPlacementValue;
 	bool myIsReadyToEnterGoal;
 };
 
@@ -26,4 +28,9 @@ inline const unsigned short CLapTrackerComponent::GetLapIndex() const
 inline const unsigned short CLapTrackerComponent::GetSplineIndex() const
 {
 	return mySplineIndex;
+}
+
+inline const unsigned short CLapTrackerComponent::GetPlacementValue() const
+{
+	return myPlacementValue;
 }

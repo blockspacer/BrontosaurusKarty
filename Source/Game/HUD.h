@@ -27,7 +27,7 @@ private:
 class CHUD
 {
 public:
-	CHUD(unsigned char aPlayerID);
+	CHUD(unsigned char aPlayerID, bool aIsOneSplit);
 	~CHUD();
 
 	void LoadHUD();
@@ -37,11 +37,15 @@ public:
 private:
 	SHUDElement LoadHUDElement(const CU::CJsonValue& aJsonValue);
 	void LoadLapCounter(const CU::CJsonValue& aJsonValue);
+	void LoadPlacement(const CU::CJsonValue& aJsonValue);
 	void SetGUIToEmilBlend(std::wstring aStr);
 	void SetGUIToEndBlend(std::wstring aStr);
 private:
 	SHUDElement myLapCounterElement;
+	SHUDElement myPlacementElement;
 
+	CU::Vector2f myCameraOffset; //best solution 10/10
+	CU::Vector2f mySpriteOffset;
 	CGameObject* myPlayer;
 };
 

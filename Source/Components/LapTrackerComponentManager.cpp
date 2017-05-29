@@ -7,6 +7,7 @@
 #include "../ThreadedPostmaster/Postmaster.h"
 #include "../ThreadedPostmaster/RaceOverMessage.h"
 
+
 CLapTrackerComponentManager* CLapTrackerComponentManager::ourInstance = nullptr;
 const float updatePlacementCooldown = 0.1f;
 
@@ -81,60 +82,41 @@ void CLapTrackerComponentManager::CalculateRacerPlacement()
 	{
 		SLapCalculateData lapCalculateData;
 		lapCalculateData.lapTrackerComponent = myComponents[i];
-		lapCalculateData.reversePlacement = 0;
-		lapCalculateData.lapIndex = lapCalculateData.lapTrackerComponent->GetLapIndex();
-		lapCalculateData.splineIndex = lapCalculateData.lapTrackerComponent->GetSplineIndex();
+		lapCalculateData.placementValue = lapCalculateData.lapTrackerComponent->GetPlacementValue();
+		lapCalculateData.reversePlacement = lapCalculateData.placementValue;
 		lapCalculateData.nextSplineDistance = lapCalculateData.lapTrackerComponent->GetDistanceToNextSpline();
 		racers.Add(lapCalculateData);
 	}
 
-	DoLapPlacement(racers);
-
-	DoSplinePlacement(racers);
-
-	DoDistanceToNextSplinePlacement(racers);
+	CalculateReversePlacement(racers);
+	CalculateReversePlacement(racers);
 
 	SortPlacement(racers);
 
 	AddToRacerPlacements(racers);
 }
 
-void CLapTrackerComponentManager::DoLapPlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList)
+void CLapTrackerComponentManager::CalculateReversePlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList)
 {
 	for (unsigned int i = 0; i < aLapCalculateDataList.Size(); i++)
 	{
-		for (unsigned int j = i; j < aLapCalculateDataList.Size(); j++)
+		for (unsigned int j = 0; j < aLapCalculateDataList.Size(); j++)
 		{
-			if (aLapCalculateDataList[i].lapIndex > aLapCalculateDataList[j].lapIndex && aLapCalculateDataList[i].reversePlacement < aLapCalculateDataList[j].reversePlacement)
+			if (i == j)
 			{
-				aLapCalculateDataList[i].reversePlacement = aLapCalculateDataList[j].reversePlacement + 1;
+				continue;
 			}
-		}
-	}
-}
-void CLapTrackerComponentManager::DoSplinePlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList)
-{
-	for (unsigned int i = 0; i < aLapCalculateDataList.Size(); i++)
-	{
-		for (unsigned int j = i; j < aLapCalculateDataList.Size(); j++)
-		{
-			if (aLapCalculateDataList[i].splineIndex > aLapCalculateDataList[j].splineIndex && aLapCalculateDataList[i].lapIndex == aLapCalculateDataList[j].lapIndex)
+
+			if (aLapCalculateDataList[i].placementValue > aLapCalculateDataList[j].placementValue)
 			{
-				aLapCalculateDataList[i].reversePlacement = aLapCalculateDataList[j].reversePlacement + 1;
+				aLapCalculateDataList[i].reversePlacement++;
 			}
-		}
-	}
-}
-void CLapTrackerComponentManager::DoDistanceToNextSplinePlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList)
-{
-	for (unsigned int i = 0; i < aLapCalculateDataList.Size(); i++)
-	{
-		for (unsigned int j = i; j < aLapCalculateDataList.Size(); j++)
-		{
-			if (aLapCalculateDataList[i].nextSplineDistance < aLapCalculateDataList[j].nextSplineDistance && aLapCalculateDataList[i].lapIndex == aLapCalculateDataList[j].lapIndex  && aLapCalculateDataList[i].splineIndex == aLapCalculateDataList[j].splineIndex)
+
+			if(aLapCalculateDataList[i].placementValue == aLapCalculateDataList[j].placementValue && aLapCalculateDataList[i].nextSplineDistance < aLapCalculateDataList[j].nextSplineDistance)
 			{
-				aLapCalculateDataList[i].reversePlacement = aLapCalculateDataList[j].reversePlacement + 1;
+				aLapCalculateDataList[i].reversePlacement++;
 			}
+			
 		}
 	}
 }
@@ -142,14 +124,35 @@ void CLapTrackerComponentManager::SortPlacement(CU::GrowingArray<SLapCalculateDa
 {
 	for (unsigned int i = 0; i < aLapCalculateDataList.Size(); i++)
 	{
-		for (unsigned int j = i; j < aLapCalculateDataList.Size(); j++)
+		for (unsigned int j = 0; j < aLapCalculateDataList.Size(); j++)
 		{
-			if (aLapCalculateDataList[i].reversePlacement < aLapCalculateDataList[j].reversePlacement)
+			if(i == j)
 			{
+				continue;
+			}
 
+			
+
+			if (aLapCalculateDataList[i].reversePlacement < aLapCalculateDataList[j].reversePlacement && j > i)
+			{
 				SLapCalculateData tempLapCalculateData = aLapCalculateDataList[j];
-				aLapCalculateDataList.RemoveAtIndex(j);
-				aLapCalculateDataList.Insert(i, tempLapCalculateData);
+				unsigned int startIndex = aLapCalculateDataList.Size() - 2;
+				if(j == aLapCalculateDataList.Size() - 1)
+				{
+					startIndex = aLapCalculateDataList.Size() - 1;
+				}
+				for (unsigned int index = startIndex; index > i; index--)
+				{
+					if(index - 1 == j)
+					{
+						continue;
+					}
+					aLapCalculateDataList[index] = aLapCalculateDataList[index - 1];
+				}
+				aLapCalculateDataList[i] = tempLapCalculateData;
+
+				SortPlacement(aLapCalculateDataList);
+				return;
 			}
 		}
 	}
@@ -238,4 +241,13 @@ void CLapTrackerComponentManager::Init()
 void CLapTrackerComponentManager::SendRaceOverMessage()
 {
 	Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CRaceOverMessage(myWinnerPlacements));
+}
+
+unsigned short CLapTrackerComponentManager::GetSpecificRacerPlacement(CGameObject* aRacer)
+{
+	if(myRacerPlacements.Size() < 2)
+	{
+		return 1;
+	}
+	return myRacerPlacements.Find(aRacer) + 1;
 }

@@ -62,6 +62,7 @@ enum class eComponentMessageType
 	eActivate,
 	eDeactivate,
 	eActivateEmitter,
+	eDeactivateEmitter,
 	eAddForce,
 	eSetLastHitNormal,
 	eSetLastHitPosition,
