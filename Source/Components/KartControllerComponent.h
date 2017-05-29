@@ -99,6 +99,7 @@ private:
 		int myLeftDriftBoostEmitterhandle;
 		int myRightDriftBoostEmitterhandle;
 		int myBoostEmmiterhandle;
+		int myGotHitEmmiterhandle;
 	//} myDriftEmitter;
 
 	Physics::CPhysicsScene* myPhysicsScene;
