@@ -61,7 +61,14 @@ void CHUD::Render()
 
 	if (myLapCounterElement.myHasChanged == true)
 	{
-		//float rektYTop = 
+		unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer);
+
+		if(currentLap == 1)
+			myLapCounterElement.mySprite->SetRect({ 0.f, 0.5f, 1.f, 0.75f });
+		else if (currentLap == 2)
+			myLapCounterElement.mySprite->SetRect({ 0.f, 0.25f, 1.f, 0.5f });
+		else if(currentLap == 3)
+			myLapCounterElement.mySprite->SetRect({ 0.f, 0.f, 1.f, 0.5f });
 
 
 		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"lapCounter", myLapCounterElement.myGUIElement, myLapCounterElement.myPixelSize);
@@ -115,6 +122,8 @@ SHUDElement CHUD::LoadHUDElement(const CU::CJsonValue& aJsonValue)
 	return hudElement;
 }
 
+// Remember - Sprites are bot-left based.
+
 void CHUD::LoadLapCounter(const CU::CJsonValue & aJsonValue)
 {
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
@@ -159,4 +168,9 @@ void CHUD::SetGUIToEndBlend(std::wstring aStr)
 
 	SRenderToGUI* guiChangeState = new SRenderToGUI(aStr, changeStatesMessage);
 	RENDERER.AddRenderMessage(guiChangeState);
+}
+
+void CHUD::AdjustQuadBasedOnNrOfPlayers(CU::Vector2f aTopLeft, CU::Vector2f aBotRight)
+{
+	//Detta låter som en bra ide! -mig själv.
 }

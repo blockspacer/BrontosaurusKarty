@@ -40,6 +40,9 @@ private:
 	void LoadPlacement(const CU::CJsonValue& aJsonValue);
 	void SetGUIToEmilBlend(std::wstring aStr);
 	void SetGUIToEndBlend(std::wstring aStr);
+
+	void AdjustQuadBasedOnNrOfPlayers(CU::Vector2f aTopLeft, CU::Vector2f aBotRight);
+
 private:
 	SHUDElement myLapCounterElement;
 	SHUDElement myPlacementElement;
