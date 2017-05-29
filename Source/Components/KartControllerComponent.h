@@ -42,6 +42,7 @@ public:
 
 	bool IsFutureGrounded(const float aDistance);
 
+	inline bool GetIsGrounded();
 
 private:
 	void DoWallCollision(CColliderComponent& aCollider);
@@ -127,3 +128,10 @@ private:
 	float myDriftAngle;
 	float myAirControl;
 };
+
+
+inline bool CKartControllerComponent::GetIsGrounded()
+{
+	return myIsOnGround;
+}
+
