@@ -222,6 +222,29 @@ namespace CU
 			return *this;
 		}
 
+		Matrix44 GetTransposed()
+		{
+			Matrix44 temp = *this;
+
+			temp.m12 = m21;
+			temp.m13 = m31;
+			temp.m14 = m41;
+
+			temp.m21 = m12;
+			temp.m23 = m32;
+			temp.m24 = m42;
+
+			temp.m31 = m13;
+			temp.m32 = m23;
+			temp.m34 = m43;
+
+			temp.m41 = m14;
+			temp.m42 = m24;
+			temp.m43 = m34;
+
+			return temp;
+		}
+
 		Matrix44 CreateProjectionMatrixLH(TYPE aNear, TYPE aFar, TYPE aWidth, TYPE aHeight, TYPE aFov)
 		{
 	/*		Matrix44 temp;

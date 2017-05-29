@@ -7,6 +7,7 @@
 
 CLapTrackerComponent::CLapTrackerComponent()
 {
+	myType = eComponentType::eLapTracker;
 	mySplineIndex = 0;
 	myLapIndex = 1;
 	myPlacementValue = 0.0f;

@@ -1,5 +1,9 @@
 #pragma once
-#include "../CommonUtilities/JsonValue.h"
+
+namespace CU
+{
+	class CJsonValue;
+}
 
 struct SNavigationPoint
 {

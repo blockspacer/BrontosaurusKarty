@@ -4,6 +4,7 @@
 #include "XboxController.h"
 
 #include "../CommonUtilities/InputMessenger.h"
+#include "AIController.h"
 
 CPlayerControllerManager::CPlayerControllerManager()
 {
@@ -51,4 +52,19 @@ CXboxController* CPlayerControllerManager::CreateXboxController(CKartControllerC
 	myPlayerControllers.Add(controller);
 
 	return controller;
+}
+
+CAIController* CPlayerControllerManager::CreateAIController(CKartControllerComponent& aKartComponent)
+{
+	CAIController* controller = new CAIController(aKartComponent);
+	myPlayerControllers.Add(controller);
+	return controller;
+}
+
+void CPlayerControllerManager::Update(const float aDeltaTime)
+{
+	for (CController* controller : myPlayerControllers)
+	{
+		controller->Update(aDeltaTime);
+	}
 }

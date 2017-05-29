@@ -58,12 +58,19 @@ void CHUD::Update()
 
 void CHUD::Render()
 {
-	unsigned short playerPlacement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myPlayer);
-	float placementRektValue1 = 1.0f - (1.0f / 8.0f) * playerPlacement;
-	float placementRektValue2 = (1.0f + (1.0f / 8.0f)) - (1.0f / 8.0f) * playerPlacement;
 
 	if (myLapCounterElement.myHasChanged == true)
 	{
+		unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer);
+
+		if(currentLap == 1)
+			myLapCounterElement.mySprite->SetRect({ 0.f, 0.5f, 1.f, 0.75f });
+		else if (currentLap == 2)
+			myLapCounterElement.mySprite->SetRect({ 0.f, 0.25f, 1.f, 0.5f });
+		else if(currentLap == 3)
+			myLapCounterElement.mySprite->SetRect({ 0.f, 0.f, 1.f, 0.5f });
+
+
 		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"lapCounter", myLapCounterElement.myGUIElement, myLapCounterElement.myPixelSize);
 
 		RENDERER.AddRenderMessage(guiElement);
@@ -74,6 +81,10 @@ void CHUD::Render()
 
 	if (myPlacementElement.myHasChanged == true)
 	{
+		unsigned short playerPlacement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myPlayer);
+		float placementRektValue1 = 1.0f - (1.0f / 8.0f) * playerPlacement;
+		float placementRektValue2 = (1.0f + (1.0f / 8.0f)) - (1.0f / 8.0f) * playerPlacement;
+
 		myPlacementElement.mySprite->SetPosition(myCameraOffset);
 		myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, placementRektValue1, 1.0f, placementRektValue2));
 		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"placement", myPlacementElement.myGUIElement, myPlacementElement.myPixelSize);
@@ -111,14 +122,16 @@ SHUDElement CHUD::LoadHUDElement(const CU::CJsonValue& aJsonValue)
 	return hudElement;
 }
 
+// Remember - Sprites are bot-left based.
+
 void CHUD::LoadLapCounter(const CU::CJsonValue & aJsonValue)
 {
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
 	myLapCounterElement = LoadHUDElement(aJsonValue);
 
-	myLapCounterElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 1.f,1.f });
-	int br = 0;
+	myLapCounterElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 1.f, 0.25f });
+	myLapCounterElement.mySprite->SetRect({ 0.f, 0.5f, 1.f, 0.75f });
 }
 
 void CHUD::LoadPlacement(const CU::CJsonValue & aJsonValue)
@@ -155,4 +168,9 @@ void CHUD::SetGUIToEndBlend(std::wstring aStr)
 
 	SRenderToGUI* guiChangeState = new SRenderToGUI(aStr, changeStatesMessage);
 	RENDERER.AddRenderMessage(guiChangeState);
+}
+
+void CHUD::AdjustQuadBasedOnNrOfPlayers(CU::Vector2f aTopLeft, CU::Vector2f aBotRight)
+{
+	//Detta låter som en bra ide! -mig själv.
 }

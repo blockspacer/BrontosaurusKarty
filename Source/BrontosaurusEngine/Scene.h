@@ -11,6 +11,7 @@ class CCubemap;
 class CSkybox;
 class CModelInstance;
 class CPointLightInstance;
+class CSpotLightInstance;
 class CParticleEmitterInstance;
 class CFireEmitterInstance;
 class CCascadeShadowMap;
@@ -46,6 +47,8 @@ public:
 	InstanceID AddModelInstance(CModelInstance* aModelInstance); //return int
 	InstanceID AddDirectionalLight(const Lights::SDirectionalLight& aDirectionalLight);
 	InstanceID AddPointLightInstance(const CPointLightInstance& aPointLight);
+	InstanceID AddSpotLightInstance(const CSpotLightInstance & aPointLight);
+
 	//InstanceID AddParticleEmitterInstance(CParticleEmitterInstance* aParticleEmitterInstance);
 	InstanceID AddFireEmitters(const CFireEmitterInstance& aFireEmitter);
 	void AddCamera(const eCameraType aCameraType);
@@ -61,6 +64,7 @@ public:
 	CRenderCamera& GetRenderCamera(const eCameraType aCameraType);
 	//CParticleEmitterInstance* GetParticleEmitterInstance(const InstanceID aParticleEmitterID);
 	CPointLightInstance* GetPointLightInstance(const InstanceID aID);
+	CSpotLightInstance* GetSpotLightInstance(const InstanceID aID);
 	
 	//Delete Shiz here
 	void DeleteModelInstance(CModelInstance* anInstance);
@@ -74,6 +78,7 @@ public:
 	//void DeleteParticleEmitterInstance(const InstanceID anID);
 	void RemovePointLightInstance(const InstanceID anID);
 
+
 	void GenerateCubemap();
 
 	inline CSkybox& GetSkybox();
@@ -81,7 +86,6 @@ public:
 	CRenderCamera& GetPlayerCamera(const int aPlayerIndex);
 
 private:
-	//Inget bör vara pekare sen.
 	CCascadeShadowMap* myShadowMap;
 
 	CU::GrowingArray<CModelInstance*, InstanceID> myModels;
@@ -89,6 +93,10 @@ private:
 
 	CU::GrowingArray<CPointLightInstance, InstanceID> myPointLights;
 	CU::Stack<InstanceID, InstanceID> myFreePointlights;
+
+
+	CU::GrowingArray<CSpotLightInstance, InstanceID> mySpotLights;
+	CU::Stack<InstanceID, InstanceID> myFreeSpotlights;
 
 	CU::GrowingArray<CFireEmitterInstance, InstanceID> myFireEmitters;
 

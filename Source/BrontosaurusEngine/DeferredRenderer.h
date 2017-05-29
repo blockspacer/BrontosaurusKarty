@@ -59,7 +59,8 @@ private:
 	void SetCBuffer();
 
 
-	void InitPointLightModel();
+	void InitLightModels();
+
 	void DoSSAO(CFullScreenHelper& aFullscreenHelper);
 
 private:
@@ -67,7 +68,8 @@ private:
 	CU::GrowingArray<SRenderMessage*> myLightMessages;
 	CU::GrowingArray<int> myBatchedModelIds;
 
-	CLightModel* myLightModel;
+	CLightModel* myPointLightModel;
+	CLightModel* mySpotLightModel;
 
 	ID3D11Buffer* myProjectionInverseBuffer;
 	ID3D11Buffer* myDirectionalLightBuffer;

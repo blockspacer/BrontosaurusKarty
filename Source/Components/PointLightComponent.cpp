@@ -31,7 +31,6 @@ PointLightComponent::PointLightComponent(CScene& aScene)
 
 PointLightComponent::~PointLightComponent()
 {
-	Destroy();
 }
 
 void PointLightComponent::SetColor(const CU::Vector3f& aColor)
@@ -101,10 +100,6 @@ void PointLightComponent::Update(const CU::Time aDeltaTime)
 
 		pointLight->SetColor(f3Lerp(myPreviousColor, myToBeColor, percent));
 	}
-}
-
-void PointLightComponent::Destroy()
-{
 }
 
 void PointLightComponent::Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData)

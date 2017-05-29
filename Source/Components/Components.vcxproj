@@ -361,6 +361,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AIController.h" />
     <ClInclude Include="AudioSourceComponent.h" />
     <ClInclude Include="AudioSourceComponentManager.h" />
     <ClInclude Include="BoostPadComponent.h" />
@@ -409,7 +410,7 @@
     <ClInclude Include="SphereColliderComponent.h" />
     <ClInclude Include="FireComponent.h" />
     <ClInclude Include="PointLightComponent.h" />
-    <ClInclude Include="PointLightComponentManager.h" />
+    <ClInclude Include="LightComponentManager.h" />
     <ClInclude Include="ScriptComponent.h" />
     <ClInclude Include="ScriptComponentManager.h" />
     <ClInclude Include="Component.h" />
@@ -421,6 +422,7 @@
     <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="ParticleEmitterComponent.h" />
     <ClInclude Include="ParticleEmitterComponentManager.h" />
+    <ClInclude Include="SpotLightComponent.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StreakEmitterComponent.h" />
     <ClInclude Include="targetver.h" />
@@ -466,7 +468,7 @@
     <ClCompile Include="KeyboardController.cpp" />
     <ClCompile Include="PlayerControllerManager.cpp" />
     <ClCompile Include="PointLightComponent.cpp" />
-    <ClCompile Include="PointLightComponentManager.cpp" />
+    <ClCompile Include="LightComponentManager.cpp" />
     <ClCompile Include="RespawnComponentManager.cpp" />
     <ClCompile Include="RespawnerComponent.cpp" />
     <ClCompile Include="RigidBodyComponent.cpp" />
@@ -484,6 +486,7 @@
     <ClCompile Include="SpeedHandlerManager.cpp" />
     <ClCompile Include="SpeedHandlerComponent.cpp" />
     <ClCompile Include="SphereColliderComponent.cpp" />
+    <ClCompile Include="SpotLightComponent.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ModelViewer|Win32'">Create</PrecompiledHeader>
