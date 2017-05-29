@@ -17,10 +17,8 @@ struct SHUDElement
 	CU::Vector2ui myPixelSize;
 	bool myHasChanged;
 
-	const CU::Vector2f& GetPos() { return *myPosition; }
 
-private:
-	const CU::Vector2f* myPosition = &myGUIElement.myScreenRect.xy;
+
 };
 
 
