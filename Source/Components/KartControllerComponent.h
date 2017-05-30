@@ -1,6 +1,8 @@
 #pragma once
 #include "Component.h"
 #include "CurrentAction.h"
+#include "../ThreadedPostmaster/Postmaster.h"
+#include "../ThreadedPostmaster/SetVibrationOnController.h"
 
 namespace Physics
 {
@@ -43,14 +45,17 @@ public:
 	bool IsFutureGrounded(const float aDistance);
 
 	inline bool GetIsGrounded();
+	inline bool GetHitGround();
 
 private:
 	void DoWallCollision(CColliderComponent& aCollider);
 	void UpdateMovement(const float aDeltaTime);
 	//void DoDriftingParticles();
 
+	void DoCornerTest(unsigned aCornerIndex, const CU::Matrix33f& aRotationMatrix, const CU::Vector3f& aPosition, const float aHalfWidth, const float aLength);
 	//void SetHeight(float aHeight, const float aDt);
 	//float GetHeightSpeed();
+	void CheckWallKartCollision(const float aDetltaTime);
 	void DoPhysics(const float aDeltaTime);
 
 	enum class AxisPos
@@ -61,6 +66,7 @@ private:
 		LeftFront,
 		Size
 	};
+
 
 
 
@@ -107,6 +113,9 @@ private:
 	float myElapsedStunTime;
 	float myDriftAngle;
 	float myAirControl;
+
+	float myDriftSetupTimer;
+	float myDriftSetupTime;
 	
 	eCurrentAction myCurrentAction;
 
@@ -122,6 +131,7 @@ private:
 
 	bool myIsInvurnable;
 	bool myHasGottenHit;
+	bool myIsOnGroundLast;
 };
 
 
@@ -130,3 +140,18 @@ inline bool CKartControllerComponent::GetIsGrounded()
 	return myIsOnGround;
 }
 
+bool CKartControllerComponent::GetHitGround()
+{
+	bool hitGround = false;
+	if (myIsOnGround == true && myIsOnGroundLast == false)
+	{
+		hitGround = true;
+		myIsOnGroundLast = true;
+	}
+	else if (myIsOnGround == false)
+	{
+		myIsOnGroundLast = false;
+	}
+
+	return hitGround;
+}

@@ -433,18 +433,19 @@ void CInputManager::UpdateGamePad(const CU::Time& aDeltaTime)
 			}
 			if (state->myTimeToRumble > 0)
 			{
-				state->myTimeToRumble -= aDeltaTime.GetSeconds();
-				if (state->myTimeToRumble <= 0)
-				{
-					myXInputWrapper->StopVibration(state->myController);
-					continue;
-				}
 				state->myTimeIHaveRumbled += aDeltaTime.GetSeconds();
 				if (state->myTimeIHaveRumbled >= 2.5f)
 				{
 					state->myTimeIHaveRumbled -= 2.5f;
 					myXInputWrapper->SetLeftVibration(state->myController, state->myLeftIntensity);
 					myXInputWrapper->SetRightVibration(state->myController, state->myRightIntensity);
+				}
+				if (state->myTimeToRumble < state->myTimeIHaveRumbled)
+				{
+					StopVibrationOnController* stopionMessageLeft = new StopVibrationOnController(i);
+					Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(stopionMessageLeft);
+					myXInputWrapper->StopVibration(state->myController);
+					continue;
 				}
 			}
 	}

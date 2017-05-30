@@ -209,7 +209,7 @@ void CMenuManager::Update(const CU::Time& aDeltaTime)
 
 	if (hasCollided == true && myHasPlayedHoverSound == false)
 	{
-		//Audio::CAudioInterface::GetInstance()->PostEvent("Menu_Hover");
+		//Audio::CAudioInterface::GetInstance()->("Menu_Hover");
 		//myHasPlayedHoverSound = true;
 	}
 }
