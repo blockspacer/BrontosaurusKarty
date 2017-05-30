@@ -175,9 +175,11 @@ void CHUD::LoadFinishText(const CU::CJsonValue& aJsonValue)
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
 	myFinishTextElement = LoadHUDElement(aJsonValue);
+	myFinishTextElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
 	myFinishTextElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 1.f,1.f });
-	myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));
+	/*myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));*/
+
 }
 
 void CHUD::SetGUIToEmilBlend(std::wstring aStr)
