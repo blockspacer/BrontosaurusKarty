@@ -13,7 +13,7 @@ public:
 	CRedShellManager();
 	~CRedShellManager();
 
-	void Init(Physics::CPhysicsScene * aPhysicsScene, CKartControllerComponentManager* aKartManager);
+	void Init(Physics::CPhysicsScene * aPhysicsScene, CKartControllerComponentManager* aKartManager, CU::GrowingArray<CGameObject*>& aListOfKarts);
 
 	void Update(const float aDeltatime);
 
@@ -26,5 +26,7 @@ private:
 	Physics::CPhysicsScene* myPhysicsScene;
 
 	CKartControllerComponentManager* myKartManager;
+
+	CU::GrowingArray<CGameObject*>* myListOfKarts;
 };
 

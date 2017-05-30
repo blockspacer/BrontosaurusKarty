@@ -14,7 +14,7 @@ public:
 	CRedShellBehaviourComponent();
 	~CRedShellBehaviourComponent();
 
-	void Init(Physics::CPhysicsScene* aPhysicsScene, CKartControllerComponentManager* aKartManager);
+	void Init(Physics::CPhysicsScene* aPhysicsScene, CKartControllerComponentManager* aKartManager, CU::GrowingArray<CGameObject*>& aListOfKarts);
 
 	void Update(const float aDeltaTime);
 
@@ -24,8 +24,10 @@ public:
 
 private:
 	CU::Vector3f myVelocity;
+	CGameObject* myCurrentUser;
 	Physics::CPhysicsScene* myPhysicsScene;
 	CKartControllerComponentManager* myKartManager;
+	CU::GrowingArray<CGameObject*>* myKartObjects;
 
 	int myCurrentSplineIndex;
 	float Speed;

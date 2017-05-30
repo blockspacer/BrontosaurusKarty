@@ -137,6 +137,7 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	else
 	{
 		myPlayers.Init(1);
+		myKartObjects.Init(8);
 		myPlayerCount = 1;
 		myPlayers.Add(SParticipant());
 		myPlayers[0].myInputDevice = SParticipant::eInputDevice::eKeyboard;
@@ -262,7 +263,7 @@ void CPlayState::Load()
 		CreatePlayer(myScene->GetPlayerCamera(i).GetCamera(), myPlayers[i].myInputDevice, myPlayerCount);
 	}
 
-	for (int i = myPlayerCount; i < 8; ++i)
+	for (int i = myPlayerCount; i < 8 - myPlayerCount; ++i)
 	{
 		CreateAI();
 	}
@@ -298,6 +299,13 @@ void CPlayState::Load()
 
 void CPlayState::Init()
 {
+	for (int i = 0; i < myHUDs.Size(); ++i)
+	{
+		POSTMASTER.Subscribe(myHUDs[i], eMessageType::eCharPressed);
+		POSTMASTER.Subscribe(myHUDs[i], eMessageType::eRaceOver);
+	}
+
+
 	myGameObjectManager->SendObjectsDoneMessage();
 	CLapTrackerComponentManager::GetInstance()->Init();
 }
@@ -441,7 +449,7 @@ void CPlayState::CreateManagersAndFactories()
 	myItemBehaviourManager = new CItemWeaponBehaviourComponentManager();
 	myItemBehaviourManager->Init(myPhysicsScene);
 	myRedShellManager = new CRedShellManager();
-	myRedShellManager->Init(myPhysicsScene, myKartControllerComponentManager);
+	myRedShellManager->Init(myPhysicsScene, myKartControllerComponentManager,myKartObjects);
 	myItemFactory = new CItemFactory();
 	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager,*myRedShellManager);
 	myRespawnComponentManager = new CRespawnComponentManager();
@@ -553,6 +561,8 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	CPollingStation::GetInstance()->AddPlayer(playerObject);
 
 	//playerObject->Move(CU::Vector3f(0, 10, 0));
+
+	myKartObjects.Add(playerObject);
 }
 
 void CPlayState::CreateAI()
@@ -630,6 +640,9 @@ void CPlayState::CreateAI()
 	playerObject->AddComponent(playerColliderComponent);
 	playerObject->AddComponent(playerTriggerColliderComponent);
 	playerObject->AddComponent(rigidComponent);
+
+
+	myKartObjects.Add(playerObject);
 }
 
 void CPlayState::InitiateRace()
