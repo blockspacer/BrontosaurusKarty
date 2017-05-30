@@ -13,10 +13,11 @@ CRedShellManager::~CRedShellManager()
 {
 }
 
-void CRedShellManager::Init(Physics::CPhysicsScene * aPhysicsScene, CKartControllerComponentManager * aKartManager)
+void CRedShellManager::Init(Physics::CPhysicsScene * aPhysicsScene, CKartControllerComponentManager * aKartManager, CU::GrowingArray<CGameObject*>& aListOfKarts)
 {
 	myPhysicsScene = aPhysicsScene;
 	myKartManager = aKartManager;
+	myListOfKarts = &aListOfKarts;
 }
 
 void CRedShellManager::Update(const float aDeltatime)
@@ -30,7 +31,7 @@ void CRedShellManager::Update(const float aDeltatime)
 CRedShellBehaviourComponent * CRedShellManager::CreateAndRegisterComponent()
 {
 	CRedShellBehaviourComponent* redShell = new CRedShellBehaviourComponent();
-	redShell->Init(myPhysicsScene, myKartManager);
+	redShell->Init(myPhysicsScene, myKartManager,*myListOfKarts);
 	
 	myComponents.Add(redShell);
 
