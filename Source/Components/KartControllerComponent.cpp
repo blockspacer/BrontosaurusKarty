@@ -580,6 +580,21 @@ bool CKartControllerComponent::Answer(const eComponentQuestionType aQuestionType
 		aQuestionData.myNavigationPoint = myManager->GetNavigationPoint(aQuestionData.myInt);
 		return true;
 		break;
+	case eComponentQuestionType::eGetRespawnSplineWithIndex:
+		aQuestionData.myNavigationPoint = myManager->GetNavigationPoint(aQuestionData.myInt);
+		if(aQuestionData.myNavigationPoint == nullptr)
+		{
+			if(aQuestionData.myInt - 1 == -1)
+			{
+				aQuestionData.myNavigationPoint = myManager->GetNavigationPoint(0);
+			}
+			else
+			{
+				aQuestionData.myNavigationPoint = myManager->GetNavigationPoint(aQuestionData.myInt - 1);
+			}
+		}
+		return true;
+		break;
 	default:
 		break;
 	}
