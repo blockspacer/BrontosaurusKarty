@@ -51,6 +51,7 @@ void CKartAnimator::OnTurnRight(const float aNormalizedModifier)
 
 	if (myTurnState != eTurnState::eRight && animationEventFactory)
 	{
+		DL_PRINT("TURN RIGHT");
 		myTurnState = eTurnState::eRight;
 
 		myEventQueue.push_back(animationEventFactory->CreateEvent(CAnimationEventFactory::eEventType::eBeginRight, *this));

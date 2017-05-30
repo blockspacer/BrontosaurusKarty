@@ -24,7 +24,7 @@
 #include "../Audio/AudioInterface.h"
 
 #include "../CommonUtilities/CommonUtilities.h"
-CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent)
+CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent, const short aControllerIndex)
 	: myPhysicsScene(nullptr)
 	, myIsOnGround(true)
 	, myCanAccelerate(false)

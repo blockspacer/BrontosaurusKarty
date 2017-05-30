@@ -19,7 +19,7 @@ class CModelComponent;
 class CKartControllerComponent : public CComponent
 {
 public:
-	CKartControllerComponent(CKartControllerComponentManager* aManager, const short aControllerIndex = -1);
+	CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent, const short aControllerIndex = -1);
 	~CKartControllerComponent();
 
 	void Turn(float aDirectionX);

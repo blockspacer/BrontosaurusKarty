@@ -510,7 +510,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 		playerObject->AddComponent(lapTrackerComponent);
 	}
 
-	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent(static_cast<short>(aIntputDevice));
+	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent(*playerModel, static_cast<short>(aIntputDevice));
 	if (myPlayerCount < 2)
 	{
 		AddXboxController();

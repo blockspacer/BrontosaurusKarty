@@ -14,7 +14,7 @@ public:
 	CKartControllerComponentManager();
 	~CKartControllerComponentManager();
 
-	CKartControllerComponent* CreateAndRegisterComponent(const short aControllerIndex = -1);
+	CKartControllerComponent* CreateAndRegisterComponent(CModelComponent& aModelComponent, const short aControllerIndex = -1);
 
 	void Update(const float aDeltaTime);
 	void Init(Physics::CPhysicsScene* aPhysicsScene);
