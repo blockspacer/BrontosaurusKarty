@@ -125,15 +125,6 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	, myIsLoaded(false)
 	, myCountdownShouldRender(false)
 {
-	CommandLineManager* commandLineManager = CommandLineManager::GetInstance();
-	if (commandLineManager)
-	{
-		const std::string& playerCountStr = commandLineManager->GetArgument("-playerCount");
-		if (!playerCountStr.empty())
-		{
-			myPlayerCount = std::atoi(playerCountStr.c_str());
-		}
-	}
 	if (aPlayers.Size() > 0)
 	{
 		myPlayers.Init(aPlayers.Size());
@@ -272,7 +263,7 @@ void CPlayState::Load()
 		CreatePlayer(myScene->GetPlayerCamera(i).GetCamera(), myPlayers[i].myInputDevice, myPlayerCount);
 	}
 
-	for (int i = myPlayerCount; i < 8; ++i)
+	for (int i = myPlayerCount; i < 0; ++i)
 	{
 		CreateAI();
 	}
@@ -469,7 +460,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 {
 	//Create sub sub player object
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
-	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
+	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Animations/M_Kart_01.fbx");
 
 	secondPlayerObject->AddComponent(playerModel);
 	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
@@ -570,7 +561,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 void CPlayState::CreateAI()
 {
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
-	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
+	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Animations/M_Kart_01.fbx");
 
 	secondPlayerObject->AddComponent(playerModel);
 	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
@@ -645,11 +636,6 @@ void CPlayState::CreateAI()
 
 
 	myKartObjects.Add(playerObject);
-}
-
-void CPlayState::CreateKart()
-{
-
 }
 
 void CPlayState::InitiateRace()

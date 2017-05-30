@@ -18,8 +18,6 @@ enum class eComponentType : unsigned char
 	ePointLight,
 	eDoor,
 	eModel,
-	eModelDebug,
-	eDebugSphere,
 	eCamera,
 	eInventory,
 	eStat,
@@ -65,7 +63,6 @@ enum class eComponentType : unsigned char
 	eVertexStream,
 	eLapTracker,
 	eNone,
-
 };
 
 class CComponent
