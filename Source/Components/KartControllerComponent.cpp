@@ -70,11 +70,6 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 
 	myDrifter = std::make_unique<CDrifter>();
 	myDrifter->Init(Karts);
-
-	myLeftWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("DriftParticle").GetString());
-	myRightWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("DriftParticle").GetString());
-	myLeftDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("FirstStageBoostParticle").GetString());
-	myRightDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("FirstStageBoostParticle").GetString());
 	myBoostEmmiterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GunFire");
 	myGotHitEmmiterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("Stars");
 
@@ -197,24 +192,14 @@ bool CKartControllerComponent::Drift()
 	myDrifter->StartDrifting(myCurrentAction);
 	SComponentMessageData messageData;
 	messageData.myFloat = myDriftAngle;
-	if (myCurrentAction == eCurrentAction::eTurningRight)
+	if (myCurrentAction == eCurrentAction::eDefault)
 	{
-		CParticleEmitterManager::GetInstance().Activate(myLeftWheelDriftEmmiterHandle);
-		CParticleEmitterManager::GetInstance().Activate(myRightWheelDriftEmmiterHandle);
+		messageData.myFloat = 0.f;
 	}
 	else if (myCurrentAction == eCurrentAction::eTurningLeft)
 	{
 		messageData.myFloat *= -1.f;
-		CParticleEmitterManager::GetInstance().Activate(myLeftWheelDriftEmmiterHandle);
-		CParticleEmitterManager::GetInstance().Activate(myRightWheelDriftEmmiterHandle);
-	}
-	else
-	{
-		messageData.myFloat = 0.f;
-	}
-
-	//myVelocity += CU::Vector3f::UnitY * 5;
-	
+	}	
 	GetParent()->NotifyComponents(eComponentMessageType::eDoDriftBobbing, messageData);
 	return true;
 }
@@ -222,9 +207,6 @@ bool CKartControllerComponent::Drift()
 void CKartControllerComponent::StopDrifting()
 {
 	GetParent()->NotifyComponents(eComponentMessageType::eCancelDriftBobbing, SComponentMessageData());
-	CParticleEmitterManager::GetInstance().Deactivate(myLeftWheelDriftEmmiterHandle);
-	CParticleEmitterManager::GetInstance().Deactivate(myRightWheelDriftEmmiterHandle);
-
 	CDrifter::eDriftBoost boost = myDrifter->StopDrifting();
 
 	SComponentMessageData boostMessageData;
@@ -241,10 +223,6 @@ void CKartControllerComponent::StopDrifting()
 	case CDrifter::eDriftBoost::eNone:
 		break;
 	}
-
-	CParticleEmitterManager::GetInstance().Deactivate(myLeftDriftBoostEmitterhandle);
-	CParticleEmitterManager::GetInstance().Deactivate(myRightDriftBoostEmitterhandle);
-
 	StopVibrationOnController* stopionMessageLeft = new StopVibrationOnController(0);
 	Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(stopionMessageLeft);
 
@@ -451,7 +429,6 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 	{
 		myVelocity += forwardVector * aDeltaTime * myAcceleration * myGrip * myAccelerationModifier * onGroundModifier;
 	}
-
 	const float maxSpeed2 = myMaxSpeed * myMaxSpeed * myMaxSpeedModifier * myMaxSpeedModifier;
 	const float minSpeed2 = myMinSpeed * myMinSpeed;
 	const float speed2 = myVelocity.Length2() * (dir > 0.f ? 1.f : -1.f);
@@ -471,10 +448,10 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 	}
 	float steerAngle = 0.f;
 	GetParent()->Move(CU::Vector3f::UnitZ * speed * aDeltaTime);
-	GetParent()->Move(CU::Vector3f::UnitY * myVelocity.y * aDeltaTime);
+	GetParent()->Move(CU::Vector3f::UnitY * myVelocity.y * myDrifter->GetDriftBonusSpeed() * aDeltaTime);
 	if (myDrifter->IsDrifting() == true)
 	{
-		DoDriftingParticles();
+		myDrifter->UpdateDriftParticles(GetParent()->GetLocalTransform());
 		myDrifter->GetSteering(steerAngle,myTurnRate,myAngularAcceleration,way,myAirControl,myIsOnGround,myCurrentAction,aDeltaTime);
 	}
 	else
@@ -512,25 +489,6 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 	//Steering
 	CU::Matrix44f& parentTransform = GetParent()->GetLocalTransform();
 	parentTransform.RotateAroundAxis(steerAngle * (abs(speed2) < 0.001f ? 0.f : 1.f) * aDeltaTime, CU::Axees::Y);
-}
-
-void CKartControllerComponent::DoDriftingParticles()
-{
-	CU::Matrix44f particlePosition = GetParent()->GetLocalTransform();
-
-	particlePosition.Move(CU::Vector3f(-0.45f, 0, 0));
-	CParticleEmitterManager::GetInstance().SetPosition(myLeftWheelDriftEmmiterHandle, particlePosition.GetPosition());
-	CParticleEmitterManager::GetInstance().SetPosition(myLeftDriftBoostEmitterhandle, particlePosition.GetPosition());
-	particlePosition.Move(CU::Vector3f(0.9f, 0, 0));
-	CParticleEmitterManager::GetInstance().SetPosition(myRightWheelDriftEmmiterHandle, particlePosition.GetPosition());
-	CParticleEmitterManager::GetInstance().SetPosition(myRightDriftBoostEmitterhandle, particlePosition.GetPosition());
-
-	static bool driftParticlesActivated = false;
-	if (myDrifter->WheelsAreBurning() && driftParticlesActivated == false)
-	{
-		CParticleEmitterManager::GetInstance().Activate(myLeftDriftBoostEmitterhandle);
-		CParticleEmitterManager::GetInstance().Activate(myRightDriftBoostEmitterhandle);
-	}
 }
 
 const float gravity = 9.82f * 2.f;

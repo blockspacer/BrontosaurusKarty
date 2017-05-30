@@ -47,7 +47,7 @@ public:
 private:
 	void DoWallCollision(CColliderComponent& aCollider);
 	void UpdateMovement(const float aDeltaTime);
-	void DoDriftingParticles();
+	//void DoDriftingParticles();
 
 	//void SetHeight(float aHeight, const float aDt);
 	//float GetHeightSpeed();
@@ -101,15 +101,8 @@ private:
 
 	eCurrentAction myCurrentAction;
 
-	//struct SDriftEmitter
-	//{
-		int myLeftWheelDriftEmmiterHandle;
-		int myRightWheelDriftEmmiterHandle;
-		int myLeftDriftBoostEmitterhandle;
-		int myRightDriftBoostEmitterhandle;
-		int myBoostEmmiterhandle;
-		int myGotHitEmmiterhandle;
-	//} myDriftEmitter;
+	int myBoostEmmiterhandle;
+	int myGotHitEmmiterhandle;
 
 	Physics::CPhysicsScene* myPhysicsScene;
 
