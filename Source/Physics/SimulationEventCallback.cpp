@@ -136,6 +136,7 @@ namespace Physics
 
 	void CSimulationEventCallback::onAdvance(const physx::PxRigidBody*const* bodyBuffer, const physx::PxTransform* poseBuffer, const physx::PxU32 count)
 	{
+		int i = 0;
 	}
 
 	void CSimulationEventCallback::onShapeHit(const physx::PxControllerShapeHit& hit)
@@ -166,5 +167,6 @@ namespace Physics
 
 	void CSimulationEventCallback::onObstacleHit(const physx::PxControllerObstacleHit& hit)
 	{
+		int i = 0;
 	}
 }

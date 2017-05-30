@@ -12,6 +12,13 @@ CDrifter::CDrifter()
 
 CDrifter::~CDrifter()
 {
+	CParticleEmitterManager::GetInstance().Release(myLeftDriftDustEmitterHandle);
+	CParticleEmitterManager::GetInstance().Release(myRightDriftDustEmitterHandle);
+	CParticleEmitterManager::GetInstance().Release(myLeftSmallBoostReadyEmitterHandle);
+	CParticleEmitterManager::GetInstance().Release(myRightSmallBoostReadyEmitterHandle);
+	CParticleEmitterManager::GetInstance().Release(myLeftLargeBoostReadyEmitterHandle);
+	CParticleEmitterManager::GetInstance().Release(myRightLargeBoostReadyEmitterHandle);
+
 }
 
 bool CDrifter::Init(const CU::CJsonValue& aJsonValue)

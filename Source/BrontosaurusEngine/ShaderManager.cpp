@@ -220,7 +220,8 @@ ID3D11PixelShader* CShaderManager::CompilePixelShader(std::wstring aString, unsi
 	bool bresult;
 
 	bresult = EffectHelper::CompileShader(aString.c_str(), shaderFunction.c_str(), "ps_5_0", pixelBlob, errorMsg);
-	CHECK_BOOL_RESULT(bresult, errorMsg.c_str());
+	const std::string resultText = (std::string(aString.begin(), aString.end()) + ": " + errorMsg);
+	CHECK_BOOL_RESULT(bresult, resultText.c_str());
 
 	HRESULT result;
 	result = CEngine::GetInstance()->GetFramework()->GetDevice()->CreatePixelShader(pixelBlob->GetBufferPointer(), pixelBlob->GetBufferSize(), NULL, &pixelShader);

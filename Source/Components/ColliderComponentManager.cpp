@@ -120,7 +120,11 @@ CColliderComponent* CColliderComponentManager::CreateBoxCollider(const SBoxColli
 	shape->SetCollisionLayers(aBoxColliderData.myLayer, aBoxColliderData.myCollideAgainst);
 	shape->SetObjectId(anId);
 
-	Physics::CPhysicsActor* actor = myPhysics->CreateStaticActor(shape, aBoxColliderData.IsTrigger);
+	Physics::CPhysicsActor* actor = nullptr;
+		
+	
+	actor = myPhysics->CreateStaticActor(shape, aBoxColliderData.IsTrigger);
+	
 	if (!actor)
 	{
 		DL_ASSERT("Failed to create physics actor");

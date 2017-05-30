@@ -37,6 +37,9 @@
 #include "RespawnComponentManager.h"
 #include "LapTrackerComponentManager.h"
 
+#include "AudioSourceComponent.h"
+#include "AudioSourceComponentManager.h"
+
 //Networking
 #include "ThreadedPostmaster/Postmaster.h"
 #include "ThreadedPostmaster/PostOffice.h"
@@ -129,6 +132,7 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	if (aPlayers.Size() > 0)
 	{
 		myPlayers.Init(aPlayers.Size());
+		myKartObjects.Init(8);
 		myPlayerCount = aPlayers.Size();
 		for (unsigned int i = 0; i < aPlayers.Size(); ++i)
 		{
@@ -141,7 +145,7 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 		myKartObjects.Init(8);
 		myPlayerCount = 1;
 		myPlayers.Add(SParticipant());
-		myPlayers[0].myInputDevice = SParticipant::eInputDevice::eKeyboard;
+		myPlayers[0].myInputDevice = SParticipant::eInputDevice::eController1;
 	}
 
 	if (CAnimationEventFactory::GetInstance() == nullptr)
@@ -433,6 +437,8 @@ void CPlayState::CreateManagersAndFactories()
 
 	CParticleEmitterComponentManager::Create();
 
+	CAudioSourceComponentManager::Create();
+
 	myScene = new CScene();
 
 	CLightComponentManager::Create(*myScene);
@@ -485,6 +491,9 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
 	playerObject->AddComponent(intermediary);
 
+	CAudioSourceComponent* audio = CAudioSourceComponentManager::GetInstance().CreateComponent();
+	playerObject->AddComponent(audio);
+
 	CU::Matrix44f kartTransformation = CKartSpawnPointManager::GetInstance()->PopSpawnPoint().mySpawnTransformaion;
 	playerObject->SetWorldTransformation(kartTransformation);
 	playerObject->Move(CU::Vector3f::UnitY);
@@ -501,15 +510,12 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 		playerObject->AddComponent(lapTrackerComponent);
 	}
 
-	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent(*playerModel);
-	if (aIntputDevice == SParticipant::eInputDevice::eKeyboard)
+	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent(static_cast<short>(aIntputDevice));
+	if (myPlayerCount < 2)
 	{
+		AddXboxController();
+		CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent, static_cast<short>(SParticipant::eInputDevice::eController1));
 		CKeyboardController* controls = myPlayerControllerManager->CreateKeyboardController(*kartComponent);
-		if (myPlayerCount < 2)
-		{
-			AddXboxController();
-			CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent, static_cast<short>(SParticipant::eInputDevice::eController1));
-		}
 	}
 	else
 	{
@@ -531,20 +537,23 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	playerObject->AddComponent(itemHolder);
 
 	playerObject->AddComponent(kartComponent);
-	SBoxColliderData box;
-	box.myHalfExtent = CU::Vector3f(1.0f, 1.0f, 1.0f);
+	/*SBoxColliderData box;
+	box.myHalfExtent = CU::Vector3f(1.f, 1.0f, 1.f);
 	box.center.y = 1.05f;
 	box.myLayer = Physics::eKart;
-	box.myCollideAgainst = Physics::GetCollideAgainst(Physics::eKart);
+	box.myCollideAgainst = Physics::GetCollideAgainst(Physics::eKart);*/
+
+	const CU::Vector3f center = { 0.f,0.0f, 0.f };
 
 	SBoxColliderData triggerbox;
-	triggerbox.myHalfExtent = CU::Vector3f(1.0f, 1.0f, 1.0f);
-	triggerbox.center.y = 1.05f;
+	triggerbox.myHalfExtent = CU::Vector3f(.5f, .5f, 0.5f);
+	triggerbox.center = center;
 	triggerbox.myLayer = Physics::eKart;
 	triggerbox.myCollideAgainst = Physics::GetCollideAgainst(Physics::eKart);
-	triggerbox.IsTrigger = true;
+	
 
-	CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&box, playerObject->GetId());
+	//CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&box, playerObject->GetId());
+	triggerbox.IsTrigger = false;
 	CColliderComponent* playerTriggerColliderComponent = myColliderComponentManager->CreateComponent(&triggerbox, playerObject->GetId());
 
 	
@@ -552,10 +561,11 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	rigidbodah.isKinematic = true;
 	rigidbodah.useGravity = false;
 	rigidbodah.myLayer = Physics::eKart;
+
 	rigidbodah.myCollideAgainst = Physics::GetCollideAgainst(Physics::eKart);
 	CColliderComponent* rigidComponent = myColliderComponentManager->CreateComponent(&rigidbodah, playerObject->GetId());
 //	colliderObject->SetWorldPosition({ offset.x, offset.y + 0.1f, offset.z });
-	playerObject->AddComponent(playerColliderComponent);
+	//playerObject->AddComponent(playerColliderComponent);
 	playerObject->AddComponent(playerTriggerColliderComponent);
 	playerObject->AddComponent(rigidComponent);
 
@@ -608,6 +618,8 @@ void CPlayState::CreateAI()
 		CSpeedHandlerComponent* speedHandlerComponent = CSpeedHandlerManager::GetInstance()->CreateAndRegisterComponent();
 		playerObject->AddComponent(speedHandlerComponent);
 	}
+
+	
 
 	CHazardComponent* hazardComponent = new CHazardComponent();
 	hazardComponent->SetToPermanent();

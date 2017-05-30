@@ -1,6 +1,8 @@
 #pragma once
 #include "Component.h"
 #include "CurrentAction.h"
+#include "../ThreadedPostmaster/Postmaster.h"
+#include "../ThreadedPostmaster/SetVibrationOnController.h"
 
 namespace Physics
 {
@@ -17,7 +19,7 @@ class CModelComponent;
 class CKartControllerComponent : public CComponent
 {
 public:
-	CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent);
+	CKartControllerComponent(CKartControllerComponentManager* aManager, const short aControllerIndex = -1);
 	~CKartControllerComponent();
 
 	void Turn(float aDirectionX);
@@ -44,14 +46,17 @@ public:
 	bool IsFutureGrounded(const float aDistance);
 
 	inline bool GetIsGrounded();
+	inline bool GetHitGround();
 
 private:
 	void DoWallCollision(CColliderComponent& aCollider);
 	void UpdateMovement(const float aDeltaTime);
 	//void DoDriftingParticles();
 
+	void DoCornerTest(unsigned aCornerIndex, const CU::Matrix33f& aRotationMatrix, const CU::Vector3f& aPosition, const float aHalfWidth, const float aLength);
 	//void SetHeight(float aHeight, const float aDt);
 	//float GetHeightSpeed();
+	void CheckWallKartCollision(const float aDetltaTime);
 	void DoPhysics(const float aDeltaTime);
 
 	enum class AxisPos
@@ -62,6 +67,7 @@ private:
 		LeftFront,
 		Size
 	};
+
 
 
 
@@ -78,6 +84,8 @@ private:
 
 	CU::Vector3f myVelocity;
 
+	CKartControllerComponentManager* myManager;
+	Physics::CPhysicsScene* myPhysicsScene;
 	//float myFowrardSpeed;
 	float myMaxSpeed;
 	float myMinSpeed;
@@ -100,12 +108,22 @@ private:
 
 	float myBoostSpeedDecay;
 
+	float myInvurnableTime;
+	float myElapsedInvurnableTime;
+	float myTimeToBeStunned;
+	float myElapsedStunTime;
+	float myDriftAngle;
+	float myAirControl;
+
+	float myDriftSetupTimer;
+	float myDriftSetupTime;
+	
 	eCurrentAction myCurrentAction;
 
 	int myBoostEmmiterhandle;
 	int myGotHitEmmiterhandle;
 
-	Physics::CPhysicsScene* myPhysicsScene;
+	short myControllerHandle;
 
 	bool myIsOnGround;
 	bool myCanAccelerate;
@@ -114,15 +132,7 @@ private:
 
 	bool myIsInvurnable;
 	bool myHasGottenHit;
-	float myInvurnableTime;
-	float myElapsedInvurnableTime;
-	float myTimeToBeStunned;
-	float myElapsedStunTime;
-	
-
-	CKartControllerComponentManager* myManager;
-	float myDriftAngle;
-	float myAirControl;
+	bool myIsOnGroundLast;
 };
 
 
@@ -131,3 +141,18 @@ inline bool CKartControllerComponent::GetIsGrounded()
 	return myIsOnGround;
 }
 
+bool CKartControllerComponent::GetHitGround()
+{
+	bool hitGround = false;
+	if (myIsOnGround == true && myIsOnGroundLast == false)
+	{
+		hitGround = true;
+		myIsOnGroundLast = true;
+	}
+	else if (myIsOnGround == false)
+	{
+		myIsOnGroundLast = false;
+	}
+
+	return hitGround;
+}
