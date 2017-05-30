@@ -7,6 +7,9 @@ class CRaceOverMessage;
 
 class KeyCharPressed; //temp
 
+typedef unsigned int TimerHandle;
+
+
 namespace CU 
 {
 	class CJsonValue;
@@ -43,6 +46,10 @@ private:
 	void SetGUIToEndBlend(std::wstring aStr);
 
 	void AdjustPosBasedOnNrOfPlayers(CU::Vector2f aTopLeft, CU::Vector2f aBotRight);
+
+	void PresentScoreboard();
+	void DisableRedundantGUI();
+
 	eMessageReturn DoEvent(const CRaceOverMessage& aMessage) override;
 	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
 
@@ -51,6 +58,7 @@ private:
 	SHUDElement myLapCounterElement;
 	SHUDElement myPlacementElement;
 	SHUDElement myFinishTextElement;
+	SHUDElement myScoreboardElement;
 
 	CU::Vector2f myCameraOffset; //best solution 10/10
 	CU::Vector2f mySpriteOffset;

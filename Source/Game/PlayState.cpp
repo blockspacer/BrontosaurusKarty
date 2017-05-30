@@ -307,6 +307,13 @@ void CPlayState::Load()
 
 void CPlayState::Init()
 {
+	for (int i = 0; i < myHUDs.Size(); ++i)
+	{
+		POSTMASTER.Subscribe(myHUDs[i], eMessageType::eCharPressed);
+		POSTMASTER.Subscribe(myHUDs[i], eMessageType::eRaceOver);
+	}
+
+
 	myGameObjectManager->SendObjectsDoneMessage();
 	CLapTrackerComponentManager::GetInstance()->Init();
 }
