@@ -23,7 +23,6 @@ CHUD::CHUD(unsigned char aPlayerID, bool aIsOneSplit)
 
 	myLapAdjusterCheat = 0;
 
-	float offsetX = 0.516f;
 	float offsetX = 0.5f;
 	float offsetY = 0.5f;
 
