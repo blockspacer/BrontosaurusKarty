@@ -362,6 +362,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AIController.h" />
+    <ClInclude Include="AnimationEvent.h" />
     <ClInclude Include="AudioSourceComponent.h" />
     <ClInclude Include="AudioSourceComponentManager.h" />
     <ClInclude Include="BoostPadComponent.h" />
@@ -436,6 +437,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AIController.cpp" />
+    <ClCompile Include="AnimationEvent.cpp" />
     <ClCompile Include="AudioSourceComponent.cpp" />
     <ClCompile Include="AudioSourceComponentManager.cpp" />
     <ClCompile Include="BoostPadComponent.cpp" />

@@ -641,11 +641,6 @@ void CPlayState::CreateAI()
 	playerObject->AddComponent(rigidComponent);
 }
 
-void CPlayState::CreateKart()
-{
-
-}
-
 void CPlayState::InitiateRace()
 {
 	auto countdownLambda = [this]() {

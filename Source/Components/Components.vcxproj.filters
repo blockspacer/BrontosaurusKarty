@@ -65,6 +65,7 @@
     <ClCompile Include="RedShellBehaviourComponent.cpp" />
     <ClCompile Include="RedShellManager.cpp" />
     <ClCompile Include="KartAnimatorComponent.cpp" />
+    <ClCompile Include="AnimationEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -139,5 +140,6 @@
     <ClInclude Include="RedShellBehaviourComponent.h" />
     <ClInclude Include="RedShellManager.h" />
     <ClInclude Include="KartAnimatorComponent.h" />
+    <ClInclude Include="AnimationEvent.h" />
   </ItemGroup>
 </Project>
