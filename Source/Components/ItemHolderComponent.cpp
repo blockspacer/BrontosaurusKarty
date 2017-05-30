@@ -26,10 +26,30 @@ void CItemHolderComponent::Receive(const eComponentMessageType aMessageType, con
 		}
 		break;
 	case eComponentMessageType::eUseItem:
- 		myItemFactory.CreateItem(myItem,this);
+		myItemFactory.CreateItem(myItem,this);
 		myItem = eItemTypes::eNone;
 		break;
 	default:
 		break;
 	}
+}
+
+bool CItemHolderComponent::Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData)
+{
+	switch (aQuestionType)
+	{
+	case eComponentQuestionType::eGetHoldItemType:
+	{
+		if(myItem != eItemTypes::eNone)
+		{
+			aQuestionData.myInt = static_cast<int>(myItem);
+			return true;
+		}
+		break;
+	}
+	default:
+		break;
+	}
+
+	return false;
 }

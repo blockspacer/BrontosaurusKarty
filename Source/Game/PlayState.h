@@ -104,6 +104,7 @@ private:
 
 	CU::GrowingArray<CCameraComponent*> myCameraComponents;
 	CU::GrowingArray<SParticipant> myPlayers;
+	CU::GrowingArray<CGameObject*> myKartObjects;
 
 	CU::GrowingArray<CHUD*> myHUDs;
 

@@ -9,14 +9,33 @@
 #include "PollingStation.h"
 #include "RenderMessages.h"
 #include "LapTrackerComponentManager.h"
+#include "ItemTypes.h"
+
+#include <TimerManager.h>
+#include <ThreadPool.h>
+
+#include "..\ThreadedPostmaster\Postmaster.h"
+#include "..\ThreadedPostmaster\PostOffice.h"
+
+#include "..\ThreadedPostmaster\MessageType.h"
+#include "..\ThreadedPostmaster\RaceOverMessage.h"
+#include "..\ThreadedPostmaster\KeyCharPressed.h"
+
 
 CHUD::CHUD(unsigned char aPlayerID, bool aIsOneSplit)
 {
 	myPlayerID = aPlayerID;
+
 	myPlayer = CPollingStation::GetInstance()->GetPlayerAtID(aPlayerID);
 	if (myPlayer == nullptr)
 		DL_ASSERT("HUD - The player retrieved with ID %d was nullptr", aPlayerID);
+
+	//POSTMASTER.Subscribe(this, eMessageType::eCharPressed);
+	//POSTMASTER.Subscribe(this, eMessageType::eRaceOver); // why is this crapper?
+
 	myCameraOffset = CU::Vector2f(0.0f, 0.0f);
+
+	myLapAdjusterCheat = 0;
 
 	float offsetX = 0.5f;
 	float offsetY = 0.5f;
@@ -45,6 +64,7 @@ CHUD::CHUD(unsigned char aPlayerID, bool aIsOneSplit)
 
 CHUD::~CHUD()
 {
+	POSTMASTER.Unsubscribe(this);
 }
 
 void CHUD::LoadHUD()
@@ -55,19 +75,20 @@ void CHUD::LoadHUD()
 	LoadLapCounter(jsonDoc.at("lapCounter"));
 	LoadPlacement(jsonDoc.at("placement"));
 	LoadFinishText(jsonDoc.at("finishText"));
+	LoadItemGui(jsonDoc.at("itemGui"));
 }
 
 void CHUD::Update()
 {
-	
+
 }
 
 void CHUD::Render()
 {
-	unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer);
+	unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer) + myLapAdjusterCheat;
 	unsigned char currentPlacement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myPlayer);
 
-	if (myLapCounterElement.myHasChanged == true) // används inte atm. om det behövs, fixa någon timer lösnings shizz.
+	if (myLapCounterElement.myShouldRender == true)
 	{
 
 		if(currentLap == 1)
@@ -86,7 +107,7 @@ void CHUD::Render()
 		SetGUIToEndBlend(L"lapCounter" + myPlayerID);
 	}
 
-	if (myPlacementElement.myHasChanged == true)
+	if (myPlacementElement.myShouldRender == true)
 	{
 		float placementRektValue1 = 1.0f - (1.0f / 8.0f) * currentPlacement;
 		float placementRektValue2 = (1.0f + (1.0f / 8.0f)) - (1.0f / 8.0f) * currentPlacement;
@@ -102,7 +123,7 @@ void CHUD::Render()
 		SetGUIToEndBlend(L"placement" + myPlayerID);
 	}
 
-	if (myFinishTextElement.myHasChanged == true)
+	if (myFinishTextElement.myShouldRender == true)
 	{
 		if (currentLap > 3)
 		{
@@ -114,6 +135,51 @@ void CHUD::Render()
 			SetGUIToEndBlend(L"finishText" + myPlayerID);
 		}
 	}
+
+	SComponentQuestionData itemQuestionData;
+	if(myPlayer->AskComponents(eComponentQuestionType::eGetHoldItemType, itemQuestionData) == true)
+	{
+		switch (static_cast<eItemTypes>(itemQuestionData.myInt))
+		{
+		case eItemTypes::eBanana:
+		{
+			myItemGuiElement.mySprite = myBananaSprite;
+			break;
+		}
+		case eItemTypes::eMushroom:
+		{
+			myItemGuiElement.mySprite = myMushroomSprite;
+			break;
+		}
+		case eItemTypes::eStar:
+		{
+			myItemGuiElement.mySprite = myStarSprite;
+			break;
+		}
+		case eItemTypes::eGreenShell:
+		{
+			myItemGuiElement.mySprite = myGreenShellSprite;
+			break;
+		}
+		case eItemTypes::eRedShell:
+		{
+			myItemGuiElement.mySprite = myRedShellSprite;
+			break;
+		}
+		default:
+			break;
+		}
+	}
+	else
+	{
+		myItemGuiElement.mySprite = myNullSprite;
+	}
+		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"itemGui" + myPlayerID, myItemGuiElement.myGUIElement, myItemGuiElement.myPixelSize);
+
+	RENDERER.AddRenderMessage(guiElement);
+	SetGUIToEmilBlend(L"itemGui" + myPlayerID);
+	myItemGuiElement.mySprite->RenderToGUI(L"itemGui" + myPlayerID);
+	SetGUIToEndBlend(L"itemGui" + myPlayerID);
 }
 
 SHUDElement CHUD::LoadHUDElement(const CU::CJsonValue& aJsonValue)
@@ -182,6 +248,26 @@ void CHUD::LoadFinishText(const CU::CJsonValue& aJsonValue)
 
 }
 
+void CHUD::LoadItemGui(const CU::CJsonValue& aJsonValue)
+{
+	const std::string spritePath = aJsonValue.at("spritePath").GetString();
+
+	myItemGuiElement = LoadHUDElement(aJsonValue);
+	myItemGuiElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
+
+	float itemGuiWidth = 1.0f;
+	float itemGuiHeight = 1.0f;
+	myMushroomSprite = new CSpriteInstance("Sprites/GUI/mushroom.dds", { itemGuiWidth,itemGuiHeight });
+	myBananaSprite = new CSpriteInstance("Sprites/GUI/banana.dds", { itemGuiWidth,itemGuiHeight });
+	myStarSprite = new CSpriteInstance("Sprites/GUI/star.dds", { itemGuiWidth,itemGuiHeight });
+	myGreenShellSprite = new CSpriteInstance("Sprites/GUI/greenShell.dds", { itemGuiWidth,itemGuiHeight });
+	myRedShellSprite = new CSpriteInstance("Sprites/GUI/redShell.dds", { itemGuiWidth,itemGuiHeight });
+	myNullSprite = new CSpriteInstance("Sprites/GUI/redShell.dds", { 0.0f,0.0f });
+	myItemGuiElement.mySprite = myMushroomSprite;
+	/*myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));*/
+
+}
+
 void CHUD::SetGUIToEmilBlend(std::wstring aStr)
 {
 	SChangeStatesMessage* changeStatesMessage = new SChangeStatesMessage();
@@ -210,4 +296,55 @@ void CHUD::SetGUIToEndBlend(std::wstring aStr)
 void CHUD::AdjustPosBasedOnNrOfPlayers(CU::Vector2f aTopLeft, CU::Vector2f aBotRight)
 {
 	//Detta låter som en bra ide! -mig själv.
+}
+
+void CHUD::PresentScoreboard()
+{
+	DisableRedundantGUI();
+
+	myScoreboardElement.myShouldRender = true;
+}
+
+void CHUD::DisableRedundantGUI()
+{
+	auto lambda = [this]()
+	{
+		CU::TimerManager timerManager;
+		TimerHandle timer = timerManager.CreateTimer();
+
+		while (timerManager.GetTimer(timer).GetLifeTime().GetSeconds() < .05f)
+		{
+			myLapCounterElement.mySprite->SetAlpha(0);
+			myPlacementElement.mySprite->SetAlpha(0);
+		}
+
+		myLapCounterElement.myShouldRender = false;
+		myPlacementElement.myShouldRender = false;
+	};
+
+	CU::Work work(lambda);
+	work.SetName("disableRedundantGUI");
+	CU::ThreadPool::GetInstance()->AddWork(work);
+}
+
+// When the race is finished for all players.
+eMessageReturn CHUD::DoEvent(const CRaceOverMessage& aMessage)
+{
+	aMessage.GetWinnerPlacements();
+	// Present scoreboard. (over the entire screen.)
+	PresentScoreboard();
+	return eMessageReturn::eContinue;
+}
+
+// Debuging
+eMessageReturn CHUD::DoEvent(const KeyCharPressed& aMessage)
+{
+	if (aMessage.GetKey() == 'p')
+		myLapAdjusterCheat += 1;
+
+	unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer) + myLapAdjusterCheat;
+	if (currentLap > 3)
+		PresentScoreboard();
+
+	return eMessageReturn::eContinue;
 }
