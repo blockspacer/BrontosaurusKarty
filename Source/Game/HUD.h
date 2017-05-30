@@ -56,4 +56,6 @@ private:
 	CU::Vector2f mySpriteOffset;
 	CGameObject* myPlayer;
 	unsigned char myLapAdjusterCheat;
+
+	unsigned char myPlayerID;
 };
