@@ -362,7 +362,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AIController.h" />
-    <ClInclude Include="AnimationEvent.h" />
     <ClInclude Include="AudioSourceComponent.h" />
     <ClInclude Include="AudioSourceComponentManager.h" />
     <ClInclude Include="BoostPadComponent.h" />
@@ -387,7 +386,6 @@
     <ClInclude Include="ItemTypes.h" />
     <ClInclude Include="ItemWeaponBehaviourComponent.h" />
     <ClInclude Include="ItemWeaponBehaviourComponentManager.h" />
-    <ClInclude Include="KartAnimatorComponent.h" />
     <ClInclude Include="KartComponent.h" />
     <ClInclude Include="KartComponentManager.h" />
     <ClInclude Include="KartControllerComponentManager.h" />
@@ -437,7 +435,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AIController.cpp" />
-    <ClCompile Include="AnimationEvent.cpp" />
     <ClCompile Include="AudioSourceComponent.cpp" />
     <ClCompile Include="AudioSourceComponentManager.cpp" />
     <ClCompile Include="BoostPadComponent.cpp" />
@@ -460,7 +457,6 @@
     <ClCompile Include="ItemHolderComponent.cpp" />
     <ClCompile Include="ItemWeaponBehaviourComponent.cpp" />
     <ClCompile Include="ItemWeaponBehaviourComponentManager.cpp" />
-    <ClCompile Include="KartAnimatorComponent.cpp" />
     <ClCompile Include="KartComponent.cpp" />
     <ClCompile Include="KartComponentManager.cpp" />
     <ClCompile Include="KartControllerComponentManager.cpp" />
