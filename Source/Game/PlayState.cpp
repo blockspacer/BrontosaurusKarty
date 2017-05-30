@@ -84,6 +84,7 @@
 #include "LapTrackerComponent.h"
 #include "DriftTurner.h"
 #include "HazardComponent.h"
+#include "AnimationEventFactory.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -141,6 +142,11 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 		myPlayerCount = 1;
 		myPlayers.Add(SParticipant());
 		myPlayers[0].myInputDevice = SParticipant::eInputDevice::eKeyboard;
+	}
+
+	if (CAnimationEventFactory::GetInstance() == nullptr)
+	{
+		new CAnimationEventFactory();
 	}
 
 	DL_PRINT("started with %d players", myPlayerCount);
@@ -495,7 +501,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 		playerObject->AddComponent(lapTrackerComponent);
 	}
 
-	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent();
+	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent(*playerModel);
 	if (aIntputDevice == SParticipant::eInputDevice::eKeyboard)
 	{
 		CKeyboardController* controls = myPlayerControllerManager->CreateKeyboardController(*kartComponent);
@@ -593,7 +599,7 @@ void CPlayState::CreateAI()
 		playerObject->AddComponent(lapTrackerComponent);
 	}
 
-	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent();
+	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent(*playerModel);
 
 	myPlayerControllerManager->CreateAIController(*kartComponent);
 

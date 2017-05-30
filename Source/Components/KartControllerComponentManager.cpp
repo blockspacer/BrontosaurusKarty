@@ -14,9 +14,9 @@ CKartControllerComponentManager::~CKartControllerComponentManager()
 {
 }
 
-CKartControllerComponent * CKartControllerComponentManager::CreateAndRegisterComponent()
+CKartControllerComponent* CKartControllerComponentManager::CreateAndRegisterComponent(CModelComponent& aModelComponent)
 {
-	CKartControllerComponent* kartController = new CKartControllerComponent(this);
+	CKartControllerComponent* kartController = new CKartControllerComponent(this, aModelComponent);
 	kartController->Init(myPhysicsScene);
 	CComponentManager::GetInstance().RegisterComponent(kartController);
 	myComponents.Add(kartController);

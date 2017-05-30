@@ -6,6 +6,7 @@ namespace Physics {
 }
 
 class CKartControllerComponent;
+class CModelComponent;
 
 class CKartControllerComponentManager
 {
@@ -13,7 +14,7 @@ public:
 	CKartControllerComponentManager();
 	~CKartControllerComponentManager();
 
-	CKartControllerComponent* CreateAndRegisterComponent();
+	CKartControllerComponent* CreateAndRegisterComponent(CModelComponent& aModelComponent);
 
 	void Update(const float aDeltaTime);
 	void Init(Physics::CPhysicsScene* aPhysicsScene);

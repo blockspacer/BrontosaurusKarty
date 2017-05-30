@@ -21,7 +21,11 @@
 #include "KartControllerComponentManager.h"
 #include "ColliderComponent.h"
 
-CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager): myPhysicsScene(nullptr), myIsOnGround(true), myCanAccelerate(false), myManager(aManager)
+CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent)
+	: myPhysicsScene(nullptr)
+	, myIsOnGround(true)
+	, myCanAccelerate(false)
+	, myManager(aManager)
 {
 	CU::CJsonValue levelsFile;
 	std::string errorString = levelsFile.Parse("Json/KartStats.json");
@@ -70,6 +74,7 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 
 	myDrifter = std::make_unique<CDrifter>();
 	myDrifter->Init(Karts);
+	myAnimator = std::make_unique<CKartAnimator>(aModelComponent);
 	myBoostEmmiterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GunFire");
 	myGotHitEmmiterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("Stars");
 
@@ -118,6 +123,8 @@ void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 	{
 		myDrifter->TurnRight();
 	}
+
+	myAnimator->OnTurnRight(aNormalizedModifier);
 }
 
 void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
@@ -136,6 +143,8 @@ void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 	{
 		myDrifter->TurnLeft();
 	}
+
+	myAnimator->OnTurnLeft(aNormalizedModifier);
 }
 
 void CKartControllerComponent::StopMoving()
@@ -172,6 +181,8 @@ void CKartControllerComponent::StopTurning()
 	{
 		myDrifter->StopTurning();
 	}
+
+	myAnimator->OnStopTurning();
 }
 
 //Checks if the player is turning left or right and then sets the drift values accordingly
@@ -316,6 +327,7 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 
 
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
+	myAnimator->Update(aDeltaTime);
 }
 
 const CNavigationSpline & CKartControllerComponent::GetNavigationSpline()
