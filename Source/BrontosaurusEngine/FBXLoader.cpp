@@ -391,6 +391,11 @@ bool CFBXLoader::LoadGUIScene(const std::string& aFilePath, CLoaderScene& aScene
 	}
 
 	const aiScene* scene = aiImportFile(aFilePath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded);
+	if (!scene)
+	{
+		return false;
+	}
+	ourScenes.Add(scene);
 	aSceneOut.myScene = scene;
 	if (scene->mNumCameras < 1)
 	{
@@ -509,6 +514,11 @@ bool CFBXLoader::LoadModelScene(const std::string& aFilePath, CLoaderScene& aSce
 	}
 
 	const aiScene* scene = aiImportFile(aFilePath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded /*| aiProcess_Debone*/); //DEBONE GJORDE SÅ VAPNENA INTE FICK NÅGRA BEN
+	if (!scene)
+	{
+		return false;
+	}
+	ourScenes.Add(scene);
 	aSceneOut.myScene = scene;
 	aSceneOut.myCamera = nullptr;
 
@@ -626,6 +636,7 @@ bool CFBXLoader::LoadCollisionMesh(const std::string& aFilePath, SLoaderCollisio
 		DL_MESSAGE_BOX("Failed to load collision mesh fbx %s", aFilePath.c_str());
 		return false;
 	}
+	ourScenes.Add(scene);
 
 	if (scene->mNumMeshes != 1)
 	{
@@ -684,7 +695,23 @@ const aiScene* CFBXLoader::GetScene(const std::string& aFBXPath)
 		return nullptr;
 	}
 
-	return aiImportFile(aFBXPath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded);
+	const aiScene* scene = aiImportFile(aFBXPath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded);
+	if (!scene)
+	{
+		return nullptr;
+	}
+	ourScenes.Add(scene);
+	return scene;
+}
+
+void CFBXLoader::ReleaseScenes()
+{
+	for (const aiScene* scene : ourScenes)
+	{
+		aiReleaseImport(scene);
+	}
+
+	ourScenes.RemoveAll();
 }
 
 
@@ -731,6 +758,7 @@ void* CFBXLoader::LoadModelInternal(CLoaderModel* someInput)
 		return nullptr;
 	}
 	scene = aiImportFile(model->myModelPath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded);
+	ourScenes.Add(scene);
 
 	OutputDebugStringA(model->myModelPath.c_str());
 	
@@ -844,3 +872,5 @@ void SVertexCollection::PushVec4(const aiVector3D& aPos)
 	myData[myCurrentPointerPosition++] = aPos.z;
 	myData[myCurrentPointerPosition++] = 1.f;
 }
+
+CU::GrowingArray<const aiScene*> CFBXLoader::ourScenes(512);

@@ -8,7 +8,6 @@ class CModelComponent : public CComponent
 {
 public:
 	CModelComponent(CModelInstance& aModel);
-	CModelComponent(CModelInstance& aModel, const bool aIsDebugSphere);
 	CModelComponent(const CModelComponent& aCopy) = delete;
 	~CModelComponent();
 
