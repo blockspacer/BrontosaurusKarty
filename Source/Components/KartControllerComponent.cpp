@@ -197,17 +197,20 @@ bool CKartControllerComponent::Drift()
 	{
 		messageData.myFloat = 0.f;
 	}
-	else if (myCurrentAction == eCurrentAction::eTurningLeft)
+	else
 	{
-		messageData.myFloat *= -1.f;
-	}	
-	GetParent()->NotifyComponents(eComponentMessageType::eDoDriftBobbing, messageData);
-	if (myControllerHandle != -1 && myControllerHandle < 4)
-	{
-		SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 30, 30);
-		Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+		if (myCurrentAction == eCurrentAction::eTurningLeft)
+		{
+			messageData.myFloat *= -1.f;
+		}
+		if (myControllerHandle != -1 && myControllerHandle < 4)
+		{
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 30, 30);
+			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+		}
 	}
 
+	GetParent()->NotifyComponents(eComponentMessageType::eDoDriftBobbing, messageData);
 	return true;
 }
 
@@ -216,26 +219,36 @@ void CKartControllerComponent::StopDrifting()
 	GetParent()->NotifyComponents(eComponentMessageType::eCancelDriftBobbing, SComponentMessageData());
 	CDrifter::eDriftBoost boost = myDrifter->StopDrifting();
 
+	if (myControllerHandle != -1 && myControllerHandle < 4)
+	{
+		StopVibrationOnController* stopionMessageLeft = new StopVibrationOnController(myControllerHandle);
+		Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(stopionMessageLeft);
+	}
 	SComponentMessageData boostMessageData;
 	switch (boost)
 	{
 	case CDrifter::eDriftBoost::eLarge:
 		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("DriftBoost"));
 		GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+		if (myControllerHandle != -1 && myControllerHandle < 4)
+		{
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 50, 70, 1.5f, false);
+			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+		}
 		break;
 	case  CDrifter::eDriftBoost::eSmall:
 		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("MiniDriftBoost"));
 		GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+		if (myControllerHandle != -1 && myControllerHandle < 4)
+		{
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 30, 50, 0.5f, false);
+			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+		}
 		break;
 	case CDrifter::eDriftBoost::eNone:
 		break;
 	}
 
-	if (myControllerHandle != -1 && myControllerHandle < 4)
-	{
-		StopVibrationOnController* stopionMessageLeft = new StopVibrationOnController(myControllerHandle);
-		Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(stopionMessageLeft);
-	}
 
 	switch (myCurrentAction)
 	{
@@ -257,6 +270,11 @@ void CKartControllerComponent::GetHit()
 {
 	if (myIsInvurnable == false)
 	{
+		if (myControllerHandle != -1 && myControllerHandle < 4)
+		{
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 70, 40, 0.5f, false);
+			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+		}
 		myHasGottenHit = true;
 		StopDrifting();
 		GetParent()->NotifyComponents(eComponentMessageType::eSpinKart, SComponentMessageData());
