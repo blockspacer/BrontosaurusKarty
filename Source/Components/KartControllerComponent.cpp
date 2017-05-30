@@ -22,7 +22,9 @@
 #include "ColliderComponent.h"
 
 #include "../Audio/AudioInterface.h"
-CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager,const short aControllerIndex): myPhysicsScene(nullptr), myIsOnGround(true), myCanAccelerate(false), myManager(aManager)
+
+#include "../CommonUtilities/CommonUtilities.h"
+CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager,const short aControllerIndex): myPhysicsScene(nullptr), myIsOnGround(true), myCanAccelerate(false), myIsOnGroundLast(false), myManager(aManager)
 {
 	CU::CJsonValue levelsFile;
 	std::string errorString = levelsFile.Parse("Json/KartStats.json");
@@ -431,6 +433,8 @@ void CKartControllerComponent::Init(Physics::CPhysicsScene* aPhysicsScene)
 	myPhysicsScene = aPhysicsScene;
 }
 
+
+
 void CKartControllerComponent::DoWallCollision(CColliderComponent& aCollider)
 {
 	myVelocity = -5.f * myVelocity;
@@ -461,6 +465,7 @@ const CU::Vector3f& CKartControllerComponent::GetVelocity() const
 
 void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 {
+	GetHitGround();
 	//Position
 	const CU::Vector3f forwardVector = GetParent()->GetToWorldTransform().myForwardVector;
 	const float speed = forwardVector.Dot(myVelocity);
@@ -563,13 +568,23 @@ void CKartControllerComponent::DoCornerTest(unsigned aCornerIndex, const CU::Mat
 			(top ? aRotationMatrix.myForwardVector : -aRotationMatrix.myForwardVector));
 
 		static const float testDist = 0.25f;
-		Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(cornerPos, testDir, testDist, Physics::eWall);
+		Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(cornerPos, testDir, testDist,
+			static_cast<Physics::ECollisionLayer>(Physics::eWall/* | Physics::eKart*/));
 
 
 		if (raycastHitData.hit == true)
 		{
-			GetParent()->Move(raycastHitData.normal * (raycastHitData.distance - testDist));
-			myVelocity *= -1.f;
+			/*if(raycastHitData.collisionLayer == Physics::eWall)
+			{*/
+				GetParent()->Move(raycastHitData.normal * (raycastHitData.distance - testDist) * -2.f);
+				myVelocity *= 0.75f;
+				const float repulsion = CLAMP(myVelocity.Length() * 50.f, 0.f, myMaxSpeed * 2.f);
+				myVelocity += repulsion * raycastHitData.normal;
+			
+			if(raycastHitData.collisionLayer == Physics::eKart)
+			{
+				int i = 0;
+			}
 		}
 	}
 }

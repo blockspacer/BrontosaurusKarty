@@ -1,6 +1,8 @@
 #pragma once
 #include "Component.h"
 #include "CurrentAction.h"
+#include "../ThreadedPostmaster/Postmaster.h"
+#include "../ThreadedPostmaster/SetVibrationOnController.h"
 
 namespace Physics
 {
@@ -43,6 +45,7 @@ public:
 	bool IsFutureGrounded(const float aDistance);
 
 	inline bool GetIsGrounded();
+	inline bool GetHitGround();
 
 private:
 	void DoWallCollision(CColliderComponent& aCollider);
@@ -128,6 +131,7 @@ private:
 
 	bool myIsInvurnable;
 	bool myHasGottenHit;
+	bool myIsOnGroundLast;
 };
 
 
@@ -136,3 +140,18 @@ inline bool CKartControllerComponent::GetIsGrounded()
 	return myIsOnGround;
 }
 
+bool CKartControllerComponent::GetHitGround()
+{
+	bool hitGround = false;
+	if (myIsOnGround == true && myIsOnGroundLast == false)
+	{
+		hitGround = true;
+		myIsOnGroundLast = true;
+	}
+	else if (myIsOnGround == false)
+	{
+		myIsOnGroundLast = false;
+	}
+
+	return hitGround;
+}
