@@ -37,6 +37,9 @@
 #include "RespawnComponentManager.h"
 #include "LapTrackerComponentManager.h"
 
+#include "AudioSourceComponent.h"
+#include "AudioSourceComponentManager.h"
+
 //Networking
 #include "ThreadedPostmaster/Postmaster.h"
 #include "ThreadedPostmaster/PostOffice.h"
@@ -428,6 +431,8 @@ void CPlayState::CreateManagersAndFactories()
 
 	CParticleEmitterComponentManager::Create();
 
+	CAudioSourceComponentManager::Create();
+
 	myScene = new CScene();
 
 	CLightComponentManager::Create(*myScene);
@@ -479,6 +484,9 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	//Create top player object
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
 	playerObject->AddComponent(intermediary);
+
+	CAudioSourceComponent* audio = CAudioSourceComponentManager::GetInstance().CreateComponent();
+	playerObject->AddComponent(audio);
 
 	CU::Matrix44f kartTransformation = CKartSpawnPointManager::GetInstance()->PopSpawnPoint().mySpawnTransformaion;
 	playerObject->SetWorldTransformation(kartTransformation);
@@ -604,6 +612,8 @@ void CPlayState::CreateAI()
 		CSpeedHandlerComponent* speedHandlerComponent = CSpeedHandlerManager::GetInstance()->CreateAndRegisterComponent();
 		playerObject->AddComponent(speedHandlerComponent);
 	}
+
+	
 
 	CHazardComponent* hazardComponent = new CHazardComponent();
 	hazardComponent->SetToPermanent();

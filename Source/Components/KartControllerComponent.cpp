@@ -299,7 +299,8 @@ void CKartControllerComponent::GetHit()
 		StopDrifting();
 		GetParent()->NotifyComponents(eComponentMessageType::eSpinKart, SComponentMessageData());
 		CParticleEmitterManager::GetInstance().Activate(myGotHitEmmiterhandle);
-		Audio::CAudioInterface::GetInstance()->PostEvent("PlayGetHit");
+		SComponentMessageData sound; sound.myString = "PlayGetHit";
+		GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
 	}
 	//myAcceleration = 0;
 }
@@ -361,6 +362,8 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 		{
 			myElapsedInvurnableTime = 0;
 			myIsInvurnable = false;
+			SComponentMessageData sound; sound.myString = "StopStar";
+			GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
 			GetParent()->NotifyOnlyComponents(eComponentMessageType::eTurnOffHazard, SComponentMessageData());
 		}
 	}
@@ -404,6 +407,8 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 	{
 		myIsInvurnable = true;
 		myInvurnableTime = aMessageData.myBoostData->duration;
+		SComponentMessageData sound; sound.myString = "PlayStar";
+		GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
 		break;
 	}
 	case eComponentMessageType::eSetBoost:
