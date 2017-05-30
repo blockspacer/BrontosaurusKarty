@@ -54,6 +54,7 @@
       <Filter>States\Statestack</Filter>
     </ClCompile>
     <ClCompile Include="HUD.cpp" />
+    <ClCompile Include="KartAnimator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -114,6 +115,7 @@
       <Filter>States\Statestack</Filter>
     </ClInclude>
     <ClInclude Include="HUD.h" />
+    <ClInclude Include="KartAnimator.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="States">
