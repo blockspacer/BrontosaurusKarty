@@ -1,11 +1,13 @@
 #include "stdafx.h"
 #include "RespawnerComponent.h"
+#include "NavigationSpline.h"
 
 const float takeNewGroundCooldown = 0.3f;
 CRespawnerComponent::CRespawnerComponent()
 {
 	myGroundData.Init(20);
 	myTakeNewGroundCountDown = 0.0f;
+	myCurrentSplinePositionY = 0.0f;
 }
 
 
@@ -52,12 +54,21 @@ void CRespawnerComponent::Receive(const eComponentMessageType aMessageType, cons
 		GetParent()->SetWorldTransformation(CU::Matrix44f());
 		GetParent()->SetWorldPosition(myGroundData[0].lastGroundPosition);
 		SComponentQuestionData spineDirectionQuestionData;
-		if (GetParent()->AskComponents(eComponentQuestionType::eGetSplineDirection, spineDirectionQuestionData) == true)
+		if (GetParent()->AskComponents(eComponentQuestionType::eGetCurrentSpline, spineDirectionQuestionData) == true)
 		{
-			CU::Vector3f direction = spineDirectionQuestionData.myVector3f;
-			CU::Vector3f LookTowardsDirection = direction + myGroundData[0].lastGroundPosition;
-			GetParent()->GetLocalTransform().LookAt(LookTowardsDirection);
+			if(spineDirectionQuestionData.myNavigationPoint != nullptr)
+			{
+				GetParent()->SetWorldPosition(CU::Vector3f(spineDirectionQuestionData.myNavigationPoint->myPosition.x, myCurrentSplinePositionY + 5, spineDirectionQuestionData.myNavigationPoint->myPosition.y));
+				CU::Vector3f direction = CU::Vector3f(spineDirectionQuestionData.myNavigationPoint->myForwardDirection.x, 0.0f, spineDirectionQuestionData.myNavigationPoint->myForwardDirection.y);
+				CU::Vector3f LookTowardsDirection = direction + GetParent()->GetWorldPosition();
+				GetParent()->GetLocalTransform().LookAt(LookTowardsDirection);
+			}
 		}
+		break;
+	}
+	case eComponentMessageType::ePassedASpline:
+	{
+		myCurrentSplinePositionY = GetParent()->GetWorldPosition().y;
 		break;
 	}
 	default:

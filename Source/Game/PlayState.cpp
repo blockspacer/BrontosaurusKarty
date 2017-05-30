@@ -37,6 +37,9 @@
 #include "RespawnComponentManager.h"
 #include "LapTrackerComponentManager.h"
 
+#include "AudioSourceComponent.h"
+#include "AudioSourceComponentManager.h"
+
 //Networking
 #include "ThreadedPostmaster/Postmaster.h"
 #include "ThreadedPostmaster/PostOffice.h"
@@ -84,6 +87,7 @@
 #include "LapTrackerComponent.h"
 #include "DriftTurner.h"
 #include "HazardComponent.h"
+#include "AnimationEventFactory.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -142,6 +146,11 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 		myPlayerCount = 1;
 		myPlayers.Add(SParticipant());
 		myPlayers[0].myInputDevice = SParticipant::eInputDevice::eController1;
+	}
+
+	if (CAnimationEventFactory::GetInstance() == nullptr)
+	{
+		new CAnimationEventFactory();
 	}
 
 	DL_PRINT("started with %d players", myPlayerCount);
@@ -428,6 +437,8 @@ void CPlayState::CreateManagersAndFactories()
 
 	CParticleEmitterComponentManager::Create();
 
+	CAudioSourceComponentManager::Create();
+
 	myScene = new CScene();
 
 	CLightComponentManager::Create(*myScene);
@@ -480,6 +491,9 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
 	playerObject->AddComponent(intermediary);
 
+	CAudioSourceComponent* audio = CAudioSourceComponentManager::GetInstance().CreateComponent();
+	playerObject->AddComponent(audio);
+
 	CU::Matrix44f kartTransformation = CKartSpawnPointManager::GetInstance()->PopSpawnPoint().mySpawnTransformaion;
 	playerObject->SetWorldTransformation(kartTransformation);
 	playerObject->Move(CU::Vector3f::UnitY);
@@ -496,7 +510,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 		playerObject->AddComponent(lapTrackerComponent);
 	}
 
-	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent(static_cast<short>(aIntputDevice));
+	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent(*playerModel, static_cast<short>(aIntputDevice));
 	if (myPlayerCount < 2)
 	{
 		AddXboxController();
@@ -595,7 +609,7 @@ void CPlayState::CreateAI()
 		playerObject->AddComponent(lapTrackerComponent);
 	}
 
-	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent();
+	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent(*playerModel);
 
 	myPlayerControllerManager->CreateAIController(*kartComponent);
 
@@ -604,6 +618,8 @@ void CPlayState::CreateAI()
 		CSpeedHandlerComponent* speedHandlerComponent = CSpeedHandlerManager::GetInstance()->CreateAndRegisterComponent();
 		playerObject->AddComponent(speedHandlerComponent);
 	}
+
+	
 
 	CHazardComponent* hazardComponent = new CHazardComponent();
 	hazardComponent->SetToPermanent();

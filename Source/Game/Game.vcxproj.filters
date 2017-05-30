@@ -60,6 +60,9 @@
     <ClCompile Include="KartAnimator.cpp">
       <Filter>Animation</Filter>
     </ClCompile>
+    <ClCompile Include="AnimationEventFactory.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -124,6 +127,9 @@
       <Filter>Animation</Filter>
     </ClInclude>
     <ClInclude Include="KartAnimator.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationEventFactory.h">
       <Filter>Animation</Filter>
     </ClInclude>
   </ItemGroup>

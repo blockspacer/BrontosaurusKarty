@@ -14,12 +14,12 @@ class CParticleEmitterInstance;
 class CKartControllerComponentManager;
 class CDrifter;
 class CKartAnimator;
+class CModelComponent;
 
 class CKartControllerComponent : public CComponent
 {
 public:
-	
-	CKartControllerComponent(CKartControllerComponentManager* aManager, const short aControllerIndex = -1);
+	CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent, const short aControllerIndex = -1);
 	~CKartControllerComponent();
 
 	void Turn(float aDirectionX);
@@ -79,7 +79,7 @@ private:
 	
 
 	std::unique_ptr<CDrifter> myDrifter;
-	std::unique_ptr<CKartAnimator> myAnimatior;
+	std::unique_ptr<CKartAnimator> myAnimator;
 	struct
 	{
 		float width = 1.f;

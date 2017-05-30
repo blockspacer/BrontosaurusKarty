@@ -200,7 +200,6 @@ eMessageReturn CLapTrackerComponentManager::DoEvent(const CAIFinishedMessage& aA
 		if (myComponents[i]->GetParent() == aAIFinishedMessage.GetGameObject())
 		{
 			myWinnerPlacements.Add((myComponents[i]->GetParent()));
-			myComponents.RemoveCyclicAtIndex(i);
 		}
 	}
 

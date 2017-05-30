@@ -11,4 +11,5 @@ namespace WindowsHelper
 	bool StartProgram(const std::string& aExePath);
 	void CloseProgram(const std::string& aExePath);
 	void SetFocus(const HWND& aHwnd);
+	CU::GrowingArray<std::string> GetFilesInDirectory(const std::string& aRelativePath);
 }

@@ -24,7 +24,14 @@
 #include "../Audio/AudioInterface.h"
 
 #include "../CommonUtilities/CommonUtilities.h"
-CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager,const short aControllerIndex): myPhysicsScene(nullptr), myTerrainModifier(1.f), myIsOnGround(true), myCanAccelerate(false), myIsOnGroundLast(false), myLastGroundComponent(nullptr), myManager(aManager)
+CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent, const short aControllerIndex)
+	: myPhysicsScene(nullptr)
+	, myIsOnGround(true)
+	, myCanAccelerate(false)
+	, myManager(aManager)
+	, myTerrainModifier(1.f)
+	, myIsOnGroundLast(false)
+	, myLastGroundComponent(nullptr)
 {
 	CU::CJsonValue levelsFile;
 	std::string errorString = levelsFile.Parse("Json/KartStats.json");
@@ -77,6 +84,7 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 
 	myDrifter = std::make_unique<CDrifter>();
 	myDrifter->Init(Karts);
+	myAnimator = std::make_unique<CKartAnimator>(aModelComponent);
 	myBoostEmmiterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GunFire");
 	myGotHitEmmiterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("Stars");
 
@@ -132,6 +140,8 @@ void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 	{
 		myDrifter->TurnRight();
 	}
+
+	myAnimator->OnTurnRight(aNormalizedModifier);
 }
 
 void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
@@ -157,6 +167,8 @@ void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 	{
 		myDrifter->TurnLeft();
 	}
+
+	myAnimator->OnTurnLeft(aNormalizedModifier);
 }
 
 void CKartControllerComponent::StopMoving()
@@ -193,6 +205,8 @@ void CKartControllerComponent::StopTurning()
 	{
 		myDrifter->StopTurning();
 	}
+
+	myAnimator->OnStopTurning();
 }
 
 //Checks if the player is turning left or right and then sets the drift values accordingly
@@ -226,7 +240,7 @@ bool CKartControllerComponent::Drift()
 		}
 		if (myControllerHandle != -1 && myControllerHandle < 4)
 		{
-			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 30, 30);
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 20, 20);
 			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 		}
 		GetParent()->NotifyComponents(eComponentMessageType::eDoDriftBobbing, messageData);
@@ -254,7 +268,7 @@ void CKartControllerComponent::StopDrifting()
 		GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
 		if (myControllerHandle != -1 && myControllerHandle < 4)
 		{
-			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 50, 70, 1.5f, false);
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 40, 60, 0.8f, false);
 			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 		}
 		break;
@@ -263,7 +277,7 @@ void CKartControllerComponent::StopDrifting()
 		GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
 		if (myControllerHandle != -1 && myControllerHandle < 4)
 		{
-			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 30, 50, 0.5f, false);
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 25, 50, 0.5f, false);
 			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 		}
 		break;
@@ -294,14 +308,15 @@ void CKartControllerComponent::GetHit()
 	{
 		if (myControllerHandle != -1 && myControllerHandle < 4)
 		{
-			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 70, 40, 0.5f, false);
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 70, 30, 0.5f, false);
 			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 		}
 		myHasGottenHit = true;
 		StopDrifting();
 		GetParent()->NotifyComponents(eComponentMessageType::eSpinKart, SComponentMessageData());
 		CParticleEmitterManager::GetInstance().Activate(myGotHitEmmiterhandle);
-		Audio::CAudioInterface::GetInstance()->PostEvent("PlayGetHit");
+		SComponentMessageData sound; sound.myString = "PlayGetHit";
+		GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
 	}
 	//myAcceleration = 0;
 }
@@ -363,12 +378,15 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 		{
 			myElapsedInvurnableTime = 0;
 			myIsInvurnable = false;
+			SComponentMessageData sound; sound.myString = "StopStar";
+			GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
 			GetParent()->NotifyOnlyComponents(eComponentMessageType::eTurnOffHazard, SComponentMessageData());
 		}
 	}
 
 
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
+	myAnimator->Update(aDeltaTime);
 }
 
 const CNavigationSpline & CKartControllerComponent::GetNavigationSpline()
@@ -393,6 +411,8 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 	{
 		myIsInvurnable = true;
 		myInvurnableTime = aMessageData.myBoostData->duration;
+		SComponentMessageData sound; sound.myString = "PlayStar";
+		GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
 		break;
 	}
 	case eComponentMessageType::eSetBoost:
@@ -443,7 +463,14 @@ const CU::Vector3f& CKartControllerComponent::GetVelocity() const
 
 void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 {
-	GetHitGround();
+	if (GetHitGround() == true)
+	{
+		if (myControllerHandle != -1 && myControllerHandle < 4)
+		{
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 35, 70, 0.15f, false);
+			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+		}
+	}
 	//Position
 	const CU::Vector3f forwardVector = GetParent()->GetToWorldTransform().myForwardVector;
 	const float speed = forwardVector.Dot(myVelocity);
@@ -676,6 +703,21 @@ bool CKartControllerComponent::Answer(const eComponentQuestionType aQuestionType
 		break;
 	case eComponentQuestionType::eGetSplineWithIndex:
 		aQuestionData.myNavigationPoint = myManager->GetNavigationPoint(aQuestionData.myInt);
+		return true;
+		break;
+	case eComponentQuestionType::eGetRespawnSplineWithIndex:
+		aQuestionData.myNavigationPoint = myManager->GetNavigationPoint(aQuestionData.myInt);
+		if(aQuestionData.myNavigationPoint == nullptr)
+		{
+			if(aQuestionData.myInt - 1 == -1)
+			{
+				aQuestionData.myNavigationPoint = myManager->GetNavigationPoint(0);
+			}
+			else
+			{
+				aQuestionData.myNavigationPoint = myManager->GetNavigationPoint(aQuestionData.myInt - 1);
+			}
+		}
 		return true;
 		break;
 	default:

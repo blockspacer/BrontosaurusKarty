@@ -45,6 +45,8 @@ enum class eComponentQuestionType
 	eGetSplineWithIndex,
 	eGetLapIndex,
 	eGetHoldItemType,
+	eGetCurrentSpline,
+	eGetRespawnSplineWithIndex,
 	eGetTerrainModifier,
 	eLength,
 };

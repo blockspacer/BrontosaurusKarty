@@ -20,5 +20,6 @@ private:
 private:
 	CU::GrowingArray<SLastGroundData> myGroundData;
 	float myTakeNewGroundCountDown;
+	float myCurrentSplinePositionY;
 };
 
