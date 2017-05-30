@@ -38,15 +38,22 @@ public:
 	void TurnRight();
 	void TurnLeft();
 	void StopTurning();
+	void UpdateDriftParticles(const CU::Matrix44f& aKartOrientation);
 
 	inline float GetDriftRate() const;
 	inline float GetSteerModifier() const;
 	inline bool IsDrifting() const;
 	inline bool WheelsAreBurning() const;
 
+
 	inline const float GetDriftBonusSpeed() const;
 
 private:
+	void SetDriftParticlesReady(const bool aFlag);
+	void SetSmallBoostReady(const bool aFlag);
+	void SetLargeBoostReady(const bool aFlag);
+
+
 	float myDriftRate;
 	float myDriftTimer;
 	float myDriftSteerModifier;
@@ -60,6 +67,13 @@ private:
 
 	float myLongDriftTime;
 	float myShortDriftTime;
+
+	int myLeftDriftDustEmitterHandle;
+	int myRightDriftDustEmitterHandle;
+	int myLeftSmallBoostReadyEmitterHandle;
+	int myRightSmallBoostReadyEmitterHandle;
+	int myLeftLargeBoostReadyEmitterHandle;
+	int myRightLargeBoostReadyEmitterHandle;
 
 	eDriftState myDriftState;
 
