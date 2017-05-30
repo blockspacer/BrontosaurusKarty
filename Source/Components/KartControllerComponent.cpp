@@ -21,6 +21,8 @@
 #include "KartControllerComponentManager.h"
 #include "ColliderComponent.h"
 
+#include "../Audio/AudioInterface.h"
+
 CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager): myPhysicsScene(nullptr), myIsOnGround(true), myCanAccelerate(false), myManager(aManager)
 {
 	CU::CJsonValue levelsFile;
@@ -244,12 +246,13 @@ void CKartControllerComponent::StopDrifting()
 
 void CKartControllerComponent::GetHit()
 {
-	if (myIsInvurnable == false)
+	if (myIsInvurnable == false && myHasGottenHit == false)
 	{
 		myHasGottenHit = true;
 		StopDrifting();
 		GetParent()->NotifyComponents(eComponentMessageType::eSpinKart, SComponentMessageData());
 		CParticleEmitterManager::GetInstance().Activate(myGotHitEmmiterhandle);
+		Audio::CAudioInterface::GetInstance()->PostEvent("PlayGetHit");
 	}
 	//myAcceleration = 0;
 }
