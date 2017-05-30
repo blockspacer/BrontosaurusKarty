@@ -66,6 +66,9 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myElapsedStunTime = 0.f;
 	myModifierCopy = 0.0f;
 
+	myDriftSetupTimer = 0.3f;
+	myDriftSetupTime = 0.3f;
+
 	myControllerHandle = aControllerIndex;
 
 	myBoostSpeedDecay = myMaxAcceleration * myAccelerationModifier * 1.25f;
@@ -104,13 +107,20 @@ void CKartControllerComponent::Turn(float aDirectionX)
 const float rate = 3.2f;
 void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 {
-	myModifierCopy = aNormalizedModifier;
 	if (myHasGottenHit == true)
 	{
 		return;
 	}
 	assert(aNormalizedModifier <= 1.f && aNormalizedModifier >= -1.f && "normalized modifier not normalized mvh carl");
 	myCurrentAction = eCurrentAction::eTurningRight;
+	if (myDriftSetupTimer < myDriftSetupTime)
+	{
+		if (myDrifter->IsDrifting() == false)
+		{
+			Drift();
+		}
+	}
+	myModifierCopy = aNormalizedModifier;
 	if (myDrifter->IsDrifting() == false)
 	{
 		float maxSteering = myTurnRate * aNormalizedModifier;
@@ -129,6 +139,13 @@ void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 		return;
 	}
 	myCurrentAction = eCurrentAction::eTurningLeft;
+	if (myDriftSetupTimer < myDriftSetupTime)
+	{
+		if (myDrifter->IsDrifting() == false)
+		{
+			Drift();
+		}
+	}
 	if (myDrifter->IsDrifting() == false)
 	{
 		float maxSteering = myTurnRate * aNormalizedModifier;
@@ -197,6 +214,7 @@ bool CKartControllerComponent::Drift()
 	if (myCurrentAction == eCurrentAction::eDefault)
 	{
 		messageData.myFloat = 0.f;
+		myDriftSetupTimer = 0.0f;
 	}
 	else
 	{
@@ -209,14 +227,15 @@ bool CKartControllerComponent::Drift()
 			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 30, 30);
 			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 		}
+		GetParent()->NotifyComponents(eComponentMessageType::eDoDriftBobbing, messageData);
 	}
 
-	GetParent()->NotifyComponents(eComponentMessageType::eDoDriftBobbing, messageData);
 	return true;
 }
 
 void CKartControllerComponent::StopDrifting()
 {
+	myDriftSetupTimer = myDriftSetupTime + 1.0f;
 	GetParent()->NotifyComponents(eComponentMessageType::eCancelDriftBobbing, SComponentMessageData());
 	CDrifter::eDriftBoost boost = myDrifter->StopDrifting();
 
@@ -312,7 +331,7 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	SComponentMessageData messageData;
 	messageData.myFloat = aDeltaTime;
 	GetParent()->NotifyComponents(eComponentMessageType::eUpdate, messageData);
-
+	myDriftSetupTimer += aDeltaTime;
 	UpdateMovement(aDeltaTime);
 	
 	if (myIsBoosting == true)

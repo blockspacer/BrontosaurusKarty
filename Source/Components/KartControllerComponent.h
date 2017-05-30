@@ -110,6 +110,9 @@ private:
 	float myElapsedStunTime;
 	float myDriftAngle;
 	float myAirControl;
+
+	float myDriftSetupTimer;
+	float myDriftSetupTime;
 	
 	eCurrentAction myCurrentAction;
 
