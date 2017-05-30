@@ -22,7 +22,9 @@
 #include "ColliderComponent.h"
 
 #include "../Audio/AudioInterface.h"
-CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager,const short aControllerIndex): myPhysicsScene(nullptr), myIsOnGround(true), myCanAccelerate(false), myManager(aManager)
+
+#include "../CommonUtilities/CommonUtilities.h"
+CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager,const short aControllerIndex): myPhysicsScene(nullptr), myIsOnGround(true), myCanAccelerate(false), myIsOnGroundLast(false), myManager(aManager)
 {
 	CU::CJsonValue levelsFile;
 	std::string errorString = levelsFile.Parse("Json/KartStats.json");
@@ -66,6 +68,9 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myElapsedStunTime = 0.f;
 	myModifierCopy = 0.0f;
 
+	myDriftSetupTimer = 0.3f;
+	myDriftSetupTime = 0.3f;
+
 	myControllerHandle = aControllerIndex;
 
 	myBoostSpeedDecay = myMaxAcceleration * myAccelerationModifier * 1.25f;
@@ -104,13 +109,20 @@ void CKartControllerComponent::Turn(float aDirectionX)
 const float rate = 3.2f;
 void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 {
-	myModifierCopy = aNormalizedModifier;
 	if (myHasGottenHit == true)
 	{
 		return;
 	}
 	assert(aNormalizedModifier <= 1.f && aNormalizedModifier >= -1.f && "normalized modifier not normalized mvh carl");
 	myCurrentAction = eCurrentAction::eTurningRight;
+	if (myDriftSetupTimer < myDriftSetupTime)
+	{
+		if (myDrifter->IsDrifting() == false)
+		{
+			Drift();
+		}
+	}
+	myModifierCopy = aNormalizedModifier;
 	if (myDrifter->IsDrifting() == false)
 	{
 		float maxSteering = myTurnRate * aNormalizedModifier;
@@ -129,6 +141,13 @@ void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 		return;
 	}
 	myCurrentAction = eCurrentAction::eTurningLeft;
+	if (myDriftSetupTimer < myDriftSetupTime)
+	{
+		if (myDrifter->IsDrifting() == false)
+		{
+			Drift();
+		}
+	}
 	if (myDrifter->IsDrifting() == false)
 	{
 		float maxSteering = myTurnRate * aNormalizedModifier;
@@ -197,6 +216,7 @@ bool CKartControllerComponent::Drift()
 	if (myCurrentAction == eCurrentAction::eDefault)
 	{
 		messageData.myFloat = 0.f;
+		myDriftSetupTimer = 0.0f;
 	}
 	else
 	{
@@ -209,14 +229,15 @@ bool CKartControllerComponent::Drift()
 			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 30, 30);
 			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 		}
+		GetParent()->NotifyComponents(eComponentMessageType::eDoDriftBobbing, messageData);
 	}
 
-	GetParent()->NotifyComponents(eComponentMessageType::eDoDriftBobbing, messageData);
 	return true;
 }
 
 void CKartControllerComponent::StopDrifting()
 {
+	myDriftSetupTimer = myDriftSetupTime + 1.0f;
 	GetParent()->NotifyComponents(eComponentMessageType::eCancelDriftBobbing, SComponentMessageData());
 	CDrifter::eDriftBoost boost = myDrifter->StopDrifting();
 
@@ -312,7 +333,7 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	SComponentMessageData messageData;
 	messageData.myFloat = aDeltaTime;
 	GetParent()->NotifyComponents(eComponentMessageType::eUpdate, messageData);
-
+	myDriftSetupTimer += aDeltaTime;
 	UpdateMovement(aDeltaTime);
 	
 	if (myIsBoosting == true)
@@ -412,6 +433,8 @@ void CKartControllerComponent::Init(Physics::CPhysicsScene* aPhysicsScene)
 	myPhysicsScene = aPhysicsScene;
 }
 
+
+
 void CKartControllerComponent::DoWallCollision(CColliderComponent& aCollider)
 {
 	myVelocity = -5.f * myVelocity;
@@ -442,6 +465,7 @@ const CU::Vector3f& CKartControllerComponent::GetVelocity() const
 
 void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 {
+	GetHitGround();
 	//Position
 	const CU::Vector3f forwardVector = GetParent()->GetToWorldTransform().myForwardVector;
 	const float speed = forwardVector.Dot(myVelocity);
@@ -554,7 +578,8 @@ void CKartControllerComponent::DoCornerTest(unsigned aCornerIndex, const CU::Mat
 			{*/
 				GetParent()->Move(raycastHitData.normal * (raycastHitData.distance - testDist) * -2.f);
 				myVelocity *= 0.75f;
-				myVelocity += myVelocity.Length() * 5.f * raycastHitData.normal;
+				const float repulsion = CLAMP(myVelocity.Length() * 50.f, 0.f, myMaxSpeed * 2.f);
+				myVelocity += repulsion * raycastHitData.normal;
 			
 			if(raycastHitData.collisionLayer == Physics::eKart)
 			{
