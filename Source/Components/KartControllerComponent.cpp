@@ -465,7 +465,14 @@ const CU::Vector3f& CKartControllerComponent::GetVelocity() const
 
 void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 {
-	GetHitGround();
+	if (GetHitGround() == true)
+	{
+		if (myControllerHandle != -1 && myControllerHandle < 4)
+		{
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 35, 70, 0.15f, false);
+			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+		}
+	}
 	//Position
 	const CU::Vector3f forwardVector = GetParent()->GetToWorldTransform().myForwardVector;
 	const float speed = forwardVector.Dot(myVelocity);
