@@ -16,7 +16,7 @@ class CKartAnimator;
 class CKartControllerComponent : public CComponent
 {
 public:
-	CKartControllerComponent(CKartControllerComponentManager* aManager);
+	CKartControllerComponent(CKartControllerComponentManager* aManager, const short aControllerIndex = -1);
 	~CKartControllerComponent();
 
 	void Turn(float aDirectionX);
@@ -77,6 +77,8 @@ private:
 
 	CU::Vector3f myVelocity;
 
+	CKartControllerComponentManager* myManager;
+	Physics::CPhysicsScene* myPhysicsScene;
 	//float myFowrardSpeed;
 	float myMaxSpeed;
 	float myMinSpeed;
@@ -99,12 +101,19 @@ private:
 
 	float myBoostSpeedDecay;
 
+	float myInvurnableTime;
+	float myElapsedInvurnableTime;
+	float myTimeToBeStunned;
+	float myElapsedStunTime;
+	float myDriftAngle;
+	float myAirControl;
+	
 	eCurrentAction myCurrentAction;
 
 	int myBoostEmmiterhandle;
 	int myGotHitEmmiterhandle;
 
-	Physics::CPhysicsScene* myPhysicsScene;
+	short myControllerHandle;
 
 	bool myIsOnGround;
 	bool myCanAccelerate;
@@ -113,15 +122,6 @@ private:
 
 	bool myIsInvurnable;
 	bool myHasGottenHit;
-	float myInvurnableTime;
-	float myElapsedInvurnableTime;
-	float myTimeToBeStunned;
-	float myElapsedStunTime;
-	
-
-	CKartControllerComponentManager* myManager;
-	float myDriftAngle;
-	float myAirControl;
 };
 
 
