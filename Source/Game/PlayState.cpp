@@ -128,6 +128,7 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	if (aPlayers.Size() > 0)
 	{
 		myPlayers.Init(aPlayers.Size());
+		myKartObjects.Init(8);
 		myPlayerCount = aPlayers.Size();
 		for (unsigned int i = 0; i < aPlayers.Size(); ++i)
 		{
