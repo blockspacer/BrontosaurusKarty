@@ -11,12 +11,6 @@ CModelComponent::CModelComponent(CModelInstance& aModel)
 	myType = eComponentType::eModel;
 }
 
-CModelComponent::CModelComponent(CModelInstance& aModel, const bool aIsDebugSphere)
-	: CModelComponent(aModel)
-{
-	myType = eComponentType::eModelDebug;
-}
-
 CModelComponent::~CModelComponent()
 {
 }

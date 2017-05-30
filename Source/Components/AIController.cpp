@@ -108,34 +108,14 @@ void CAIController::Update(const float aDeltaTime)
 	CU::Vector2f leftPoint(currentSpline->myPosition - splineNormal * (currentSpline->myWidth * 0.5f));
 	CU::Vector2f rightPoint(currentSpline->myPosition + splineNormal * (currentSpline->myWidth * 0.5f));
 
-
-	//CU::Vector2f lineVector = rightPoint - leftPoint;
-	//CU::Vector2f distance = pos - leftPoint;
-
-	//lineVector.Normalize();
-	//float shadowLength = distance.Dot(lineVector);
-
-
-
-	CU::Vector2f closestPoint = /*lineVector * shadowLength*/pDistance(pos.x, pos.y, leftPoint.x, leftPoint.y, rightPoint.x, rightPoint.y);
-
-
-	//CU::Vector2f toClosestPointDirection = closestPoint - pos;
-	//toClosestPointDirection.Normalize();
-	//CU::Vector2f toClosestPointDirectionNormal(-toClosestPointDirection.y, toClosestPointDirection.x);
-	//toClosestPointDirectionNormal.Normalize();
-	//toClosestPointDirectionNormal = splineNormal;
-	//closestPoint = currentSpline->myPosition;
+	CU::Vector2f closestPoint = pDistance(pos.x, pos.y, leftPoint.x, leftPoint.y, rightPoint.x, rightPoint.y);
 	CU::Vector3f closestPoint3D(closestPoint.x, 0.f, closestPoint.y);
-
 
 	CU::Matrix44f newRotation = myControllerComponent.GetParent()->GetToWorldTransform();
 	newRotation.LookAt(closestPoint3D);
 	CU::Matrix44f rotationDifference = newRotation * myControllerComponent.GetParent()->GetToWorldTransform().GetRotation().GetTransposed();
 
-
 	float turnAmount = -rotationDifference.GetEulerRotation().y;
-	//DL_PRINT("turnAmount: %f", turnAmount);
 
 	float turnAmountAbs = std::fabs(turnAmount);
 	if ((turnAmountAbs < 0.2f) ||
@@ -170,7 +150,6 @@ void CAIController::Update(const float aDeltaTime)
 	{
 		if (myIsDrifting == 0)
 		{
-			//DL_PRINT("turn %f, drift %d", turnAmount, (int)myIsDrifting);
 			if (myControllerComponent.Drift())
 			{
 				myIsDrifting = static_cast<char>(signof(turnAmount));

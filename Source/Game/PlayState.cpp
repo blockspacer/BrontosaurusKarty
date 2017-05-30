@@ -276,9 +276,6 @@ void CPlayState::Load()
 		CreateAI();
 	}
 
-	myScene->SetSkybox("default_cubemap.dds");
-	myScene->SetCubemap("purpleCubemap.dds");
-
 	///////////////////
 	//     HUD 
 
@@ -471,7 +468,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 {
 	//Create sub sub player object
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
-	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
+	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Animations/M_Kart_01.fbx");
 
 	secondPlayerObject->AddComponent(playerModel);
 	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
@@ -570,7 +567,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 void CPlayState::CreateAI()
 {
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
-	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
+	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Animations/M_Kart_01.fbx");
 
 	secondPlayerObject->AddComponent(playerModel);
 	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));

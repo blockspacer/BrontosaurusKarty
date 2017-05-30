@@ -54,6 +54,10 @@ public:
 	void SetStates(const SChangeStatesMessage* aState);
 
 	void ClearGui();
+
+
+	inline void SetFogStartEnd(const float aStart, const float aEnd);
+	inline void SetFogColor(const CU::Vector4f& aColor);
 private:
 	bool HandleRenderMessage(SRenderMessage* aRenderMesage, int& aDrawCallCount);
 	void RenderCameraQueue(SRenderCameraQueueMessage* msg, int & aDrawCallCount);
@@ -81,8 +85,9 @@ private:
 	void CreateSamplerStates();
 
 	void DoRenderQueue();
-
 	void DoColorGrading();
+
+
 private:
 
 	struct SHDRData
@@ -116,7 +121,6 @@ private:
 	} myDistortionData;
 
 private:
-
 	CColorGrader myColorGrader;
 
 	CDeferredRenderer myDeferredRenderer;
@@ -143,6 +147,13 @@ private:
 	CU::Camera myCamera;
 
 	ID3D11Buffer* myOncePerFrameBuffer;
+	struct SFogData 
+	{
+		float myFogStart = 40.f;
+		float myFogEnd = 250.f;
+		CU::Vector4f myFogColor = CU::Vector4f::One;
+	} myFogData;
+
 	ID3D11Buffer* myShadowBuffer;
 	CU::TimerHandle myOncePerFrameBufferTimer;
 	CU::TimerHandle myFireTimer;
@@ -159,4 +170,16 @@ inline SRendererSettings& CRenderer::GetSettings()
 inline bool CRenderer::GetIsRunning()
 {
 	return myIsRunning;
+}
+
+
+inline void CRenderer::SetFogStartEnd(const float aStart, const float aEnd)
+{
+	myFogData.myFogStart = aStart;
+	myFogData.myFogEnd = aEnd;
+}
+
+void CRenderer::SetFogColor(const CU::Vector4f& aColor)
+{
+	myFogData.myFogColor = aColor;
 }
