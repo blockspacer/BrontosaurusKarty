@@ -5,6 +5,7 @@
 #include "ParticleEmitterInstance.h"
 #include "ParticleEmitterManager.h"
 #include "Drifter.h"
+#include "KartAnimator.h"
 #include "SmoothRotater.h"
 #include "../CommonUtilities/JsonValue.h"
 
@@ -20,7 +21,8 @@
 #include "KartControllerComponentManager.h"
 #include "ColliderComponent.h"
 
-CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager): myPhysicsScene(nullptr), myIsOnGround(true), myCanAccelerate(false), myManager(aManager)
+#include "../Audio/AudioInterface.h"
+CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager,const short aControllerIndex): myPhysicsScene(nullptr), myIsOnGround(true), myCanAccelerate(false), myManager(aManager)
 {
 	CU::CJsonValue levelsFile;
 	std::string errorString = levelsFile.Parse("Json/KartStats.json");
@@ -64,16 +66,12 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myElapsedStunTime = 0.f;
 	myModifierCopy = 0.0f;
 
+	myControllerHandle = aControllerIndex;
 
 	myBoostSpeedDecay = myMaxAcceleration * myAccelerationModifier * 1.25f;
 
 	myDrifter = std::make_unique<CDrifter>();
 	myDrifter->Init(Karts);
-
-	myLeftWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("DriftParticle").GetString());
-	myRightWheelDriftEmmiterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("DriftParticle").GetString());
-	myLeftDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("FirstStageBoostParticle").GetString());
-	myRightDriftBoostEmitterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(Karts.at("FirstStageBoostParticle").GetString());
 	myBoostEmmiterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GunFire");
 	myGotHitEmmiterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("Stars");
 
@@ -196,24 +194,23 @@ bool CKartControllerComponent::Drift()
 	myDrifter->StartDrifting(myCurrentAction);
 	SComponentMessageData messageData;
 	messageData.myFloat = myDriftAngle;
-	if (myCurrentAction == eCurrentAction::eTurningRight)
-	{
-		CParticleEmitterManager::GetInstance().Activate(myLeftWheelDriftEmmiterHandle);
-		CParticleEmitterManager::GetInstance().Activate(myRightWheelDriftEmmiterHandle);
-	}
-	else if (myCurrentAction == eCurrentAction::eTurningLeft)
-	{
-		messageData.myFloat *= -1.f;
-		CParticleEmitterManager::GetInstance().Activate(myLeftWheelDriftEmmiterHandle);
-		CParticleEmitterManager::GetInstance().Activate(myRightWheelDriftEmmiterHandle);
-	}
-	else
+	if (myCurrentAction == eCurrentAction::eDefault)
 	{
 		messageData.myFloat = 0.f;
 	}
+	else
+	{
+		if (myCurrentAction == eCurrentAction::eTurningLeft)
+		{
+			messageData.myFloat *= -1.f;
+		}
+		if (myControllerHandle != -1 && myControllerHandle < 4)
+		{
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 30, 30);
+			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+		}
+	}
 
-	//myVelocity += CU::Vector3f::UnitY * 5;
-	
 	GetParent()->NotifyComponents(eComponentMessageType::eDoDriftBobbing, messageData);
 	return true;
 }
@@ -221,31 +218,38 @@ bool CKartControllerComponent::Drift()
 void CKartControllerComponent::StopDrifting()
 {
 	GetParent()->NotifyComponents(eComponentMessageType::eCancelDriftBobbing, SComponentMessageData());
-	CParticleEmitterManager::GetInstance().Deactivate(myLeftWheelDriftEmmiterHandle);
-	CParticleEmitterManager::GetInstance().Deactivate(myRightWheelDriftEmmiterHandle);
-
 	CDrifter::eDriftBoost boost = myDrifter->StopDrifting();
 
+	if (myControllerHandle != -1 && myControllerHandle < 4)
+	{
+		StopVibrationOnController* stopionMessageLeft = new StopVibrationOnController(myControllerHandle);
+		Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(stopionMessageLeft);
+	}
 	SComponentMessageData boostMessageData;
 	switch (boost)
 	{
 	case CDrifter::eDriftBoost::eLarge:
 		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("DriftBoost"));
 		GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+		if (myControllerHandle != -1 && myControllerHandle < 4)
+		{
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 50, 70, 1.5f, false);
+			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+		}
 		break;
 	case  CDrifter::eDriftBoost::eSmall:
 		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("MiniDriftBoost"));
 		GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+		if (myControllerHandle != -1 && myControllerHandle < 4)
+		{
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 30, 50, 0.5f, false);
+			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+		}
 		break;
 	case CDrifter::eDriftBoost::eNone:
 		break;
 	}
 
-	CParticleEmitterManager::GetInstance().Deactivate(myLeftDriftBoostEmitterhandle);
-	CParticleEmitterManager::GetInstance().Deactivate(myRightDriftBoostEmitterhandle);
-
-	StopVibrationOnController* stopionMessageLeft = new StopVibrationOnController(0);
-	Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(stopionMessageLeft);
 
 	switch (myCurrentAction)
 	{
@@ -265,12 +269,18 @@ void CKartControllerComponent::StopDrifting()
 
 void CKartControllerComponent::GetHit()
 {
-	if (myIsInvurnable == false)
+	if (myIsInvurnable == false && myHasGottenHit == false)
 	{
+		if (myControllerHandle != -1 && myControllerHandle < 4)
+		{
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 70, 40, 0.5f, false);
+			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+		}
 		myHasGottenHit = true;
 		StopDrifting();
 		GetParent()->NotifyComponents(eComponentMessageType::eSpinKart, SComponentMessageData());
 		CParticleEmitterManager::GetInstance().Activate(myGotHitEmmiterhandle);
+		Audio::CAudioInterface::GetInstance()->PostEvent("PlayGetHit");
 	}
 	//myAcceleration = 0;
 }
@@ -451,7 +461,6 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 	{
 		myVelocity += forwardVector * aDeltaTime * myAcceleration * myGrip * myAccelerationModifier * onGroundModifier;
 	}
-
 	const float maxSpeed2 = myMaxSpeed * myMaxSpeed * myMaxSpeedModifier * myMaxSpeedModifier;
 	const float minSpeed2 = myMinSpeed * myMinSpeed;
 	const float speed2 = myVelocity.Length2() * (dir > 0.f ? 1.f : -1.f);
@@ -471,10 +480,10 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 	}
 	float steerAngle = 0.f;
 	GetParent()->Move(CU::Vector3f::UnitZ * speed * aDeltaTime);
-	GetParent()->Move(CU::Vector3f::UnitY * myVelocity.y * aDeltaTime);
+	GetParent()->Move(CU::Vector3f::UnitY * myVelocity.y * myDrifter->GetDriftBonusSpeed() * aDeltaTime);
 	if (myDrifter->IsDrifting() == true)
 	{
-		DoDriftingParticles();
+		myDrifter->UpdateDriftParticles(GetParent()->GetLocalTransform());
 		myDrifter->GetSteering(steerAngle,myTurnRate,myAngularAcceleration,way,myAirControl,myIsOnGround,myCurrentAction,aDeltaTime);
 	}
 	else
@@ -512,71 +521,6 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 	//Steering
 	CU::Matrix44f& parentTransform = GetParent()->GetLocalTransform();
 	parentTransform.RotateAroundAxis(steerAngle * (abs(speed2) < 0.001f ? 0.f : 1.f) * aDeltaTime, CU::Axees::Y);
-}
-
-void CKartControllerComponent::DoDriftingParticles()
-{
-	CU::Matrix44f particlePosition = GetParent()->GetLocalTransform();
-
-	particlePosition.Move(CU::Vector3f(-0.45f, 0, 0));
-	CParticleEmitterManager::GetInstance().SetPosition(myLeftWheelDriftEmmiterHandle, particlePosition.GetPosition());
-	CParticleEmitterManager::GetInstance().SetPosition(myLeftDriftBoostEmitterhandle, particlePosition.GetPosition());
-	particlePosition.Move(CU::Vector3f(0.9f, 0, 0));
-	CParticleEmitterManager::GetInstance().SetPosition(myRightWheelDriftEmmiterHandle, particlePosition.GetPosition());
-	CParticleEmitterManager::GetInstance().SetPosition(myRightDriftBoostEmitterhandle, particlePosition.GetPosition());
-
-	static bool driftParticlesActivated = false;
-	if (myDrifter->WheelsAreBurning() && driftParticlesActivated == false)
-	{
-		CParticleEmitterManager::GetInstance().Activate(myLeftDriftBoostEmitterhandle);
-		CParticleEmitterManager::GetInstance().Activate(myRightDriftBoostEmitterhandle);
-	}
-}
-
-static const unsigned int numberOfCorners = 4;
-static const unsigned int testsPerCorner = 2;
-
-void CKartControllerComponent::DoCornerTest(unsigned aCornerIndex, const CU::Matrix33f& aRotationMatrix, const CU::Vector3f& aPosition, const float aHalfWidth, const float aLength)
-{
-	const bool right = aCornerIndex < 2;
-	const bool top = aCornerIndex % 2 == 0;
-	
-	const CU::Vector3f cornerPos = aPosition + CU::Vector3f(
-		(right ? aHalfWidth : -aHalfWidth),
-		0.f,
-		(top ? aLength : 0.f)
-	) * aRotationMatrix;
-
-	for (unsigned i = 0; i < testsPerCorner; ++i)
-	{
-		const CU::Vector3f testDir = (i % 2 == 0 ? (
-			right ? aRotationMatrix.myRightVector : -aRotationMatrix.myRightVector):
-			(top ? aRotationMatrix.myForwardVector : - aRotationMatrix.myForwardVector));
-		
-		static const float testDist = 0.25f;
-		Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(cornerPos, testDir, testDist, Physics::eWall);
-
-
-		if(raycastHitData.hit == true)
-		{
-			GetParent()->Move(raycastHitData.normal * (raycastHitData.distance - testDist));
-			myVelocity *= -1.f;
-		}
-	}
-}
-
-
-void CKartControllerComponent::CheckWallKartCollision(const float aDetltaTime)
-{
-	const CU::Matrix33f localSpace = GetParent()->GetToWorldTransform();
-	const CU::Vector3f globalPos = GetParent()->GetWorldPosition();
-	const float halfWidth = myAxisDescription.width / 2.f;
-	const float length = myAxisDescription.length;
-
-	for(unsigned i = 0; i < numberOfCorners; ++i)
-	{
-		DoCornerTest(i, localSpace, globalPos, halfWidth, length);
-	}
 }
 
 const float gravity = 9.82f * 2.f;

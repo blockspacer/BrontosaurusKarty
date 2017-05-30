@@ -38,13 +38,22 @@ public:
 	void TurnRight();
 	void TurnLeft();
 	void StopTurning();
+	void UpdateDriftParticles(const CU::Matrix44f& aKartOrientation);
 
 	inline float GetDriftRate() const;
 	inline float GetSteerModifier() const;
 	inline bool IsDrifting() const;
 	inline bool WheelsAreBurning() const;
 
+
+	inline const float GetDriftBonusSpeed() const;
+
 private:
+	void SetDriftParticlesReady(const bool aFlag);
+	void SetSmallBoostReady(const bool aFlag);
+	void SetLargeBoostReady(const bool aFlag);
+
+
 	float myDriftRate;
 	float myDriftTimer;
 	float myDriftSteerModifier;
@@ -53,8 +62,18 @@ private:
 	float myTimeMultiplier;
 	float myMaxDriftSteerAffection;
 
+	float mySlowExtraSpeed;
+	float myFastExtraSpeed;
+
 	float myLongDriftTime;
 	float myShortDriftTime;
+
+	int myLeftDriftDustEmitterHandle;
+	int myRightDriftDustEmitterHandle;
+	int myLeftSmallBoostReadyEmitterHandle;
+	int myRightSmallBoostReadyEmitterHandle;
+	int myLeftLargeBoostReadyEmitterHandle;
+	int myRightLargeBoostReadyEmitterHandle;
 
 	eDriftState myDriftState;
 
@@ -79,4 +98,17 @@ inline bool CDrifter::IsDrifting() const
 inline bool CDrifter::WheelsAreBurning() const
 {
 	return myDriftTimer > myShortDriftTime;
+}
+
+inline const float CDrifter::GetDriftBonusSpeed() const
+{
+	if (myDriftTimer > myShortDriftTime)
+	{
+		if (myDriftTimer > myLongDriftTime)
+		{
+			return myFastExtraSpeed;
+		}
+		return mySlowExtraSpeed;
+	}
+	return 1.0f;
 }

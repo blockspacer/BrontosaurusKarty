@@ -125,18 +125,10 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	, myIsLoaded(false)
 	, myCountdownShouldRender(false)
 {
-	CommandLineManager* commandLineManager = CommandLineManager::GetInstance();
-	if (commandLineManager)
-	{
-		const std::string& playerCountStr = commandLineManager->GetArgument("-playerCount");
-		if (!playerCountStr.empty())
-		{
-			myPlayerCount = std::atoi(playerCountStr.c_str());
-		}
-	}
 	if (aPlayers.Size() > 0)
 	{
 		myPlayers.Init(aPlayers.Size());
+		myKartObjects.Init(8);
 		myPlayerCount = aPlayers.Size();
 		for (unsigned int i = 0; i < aPlayers.Size(); ++i)
 		{
@@ -146,9 +138,10 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	else
 	{
 		myPlayers.Init(1);
+		myKartObjects.Init(8);
 		myPlayerCount = 1;
 		myPlayers.Add(SParticipant());
-		myPlayers[0].myInputDevice = SParticipant::eInputDevice::eKeyboard;
+		myPlayers[0].myInputDevice = SParticipant::eInputDevice::eController1;
 	}
 
 	DL_PRINT("started with %d players", myPlayerCount);
@@ -271,7 +264,7 @@ void CPlayState::Load()
 		CreatePlayer(myScene->GetPlayerCamera(i).GetCamera(), myPlayers[i].myInputDevice, myPlayerCount);
 	}
 
-	for (int i = myPlayerCount; i < 8; ++i)
+	for (int i = myPlayerCount; i < 8 - myPlayerCount; ++i)
 	{
 		CreateAI();
 	}
@@ -307,6 +300,13 @@ void CPlayState::Load()
 
 void CPlayState::Init()
 {
+	for (int i = 0; i < myHUDs.Size(); ++i)
+	{
+		POSTMASTER.Subscribe(myHUDs[i], eMessageType::eCharPressed);
+		POSTMASTER.Subscribe(myHUDs[i], eMessageType::eRaceOver);
+	}
+
+
 	myGameObjectManager->SendObjectsDoneMessage();
 	CLapTrackerComponentManager::GetInstance()->Init();
 }
@@ -450,7 +450,7 @@ void CPlayState::CreateManagersAndFactories()
 	myItemBehaviourManager = new CItemWeaponBehaviourComponentManager();
 	myItemBehaviourManager->Init(myPhysicsScene);
 	myRedShellManager = new CRedShellManager();
-	myRedShellManager->Init(myPhysicsScene, myKartControllerComponentManager);
+	myRedShellManager->Init(myPhysicsScene, myKartControllerComponentManager,myKartObjects);
 	myItemFactory = new CItemFactory();
 	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager,*myRedShellManager);
 	myRespawnComponentManager = new CRespawnComponentManager();
@@ -468,7 +468,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 {
 	//Create sub sub player object
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
-	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
+	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Animations/M_Kart_01.fbx");
 
 	secondPlayerObject->AddComponent(playerModel);
 	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
@@ -496,15 +496,12 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 		playerObject->AddComponent(lapTrackerComponent);
 	}
 
-	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent();
-	if (aIntputDevice == SParticipant::eInputDevice::eKeyboard)
+	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent(static_cast<short>(aIntputDevice));
+	if (myPlayerCount < 2)
 	{
+		AddXboxController();
+		CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent, static_cast<short>(SParticipant::eInputDevice::eController1));
 		CKeyboardController* controls = myPlayerControllerManager->CreateKeyboardController(*kartComponent);
-		if (myPlayerCount < 2)
-		{
-			AddXboxController();
-			CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent, static_cast<short>(SParticipant::eInputDevice::eController1));
-		}
 	}
 	else
 	{
@@ -566,12 +563,14 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	CPollingStation::GetInstance()->AddPlayer(playerObject);
 
 	//playerObject->Move(CU::Vector3f(0, 10, 0));
+
+	myKartObjects.Add(playerObject);
 }
 
 void CPlayState::CreateAI()
 {
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
-	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Meshes/M_Kart_01.fbx");
+	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Animations/M_Kart_01.fbx");
 
 	secondPlayerObject->AddComponent(playerModel);
 	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
@@ -643,11 +642,9 @@ void CPlayState::CreateAI()
 	playerObject->AddComponent(playerColliderComponent);
 	playerObject->AddComponent(playerTriggerColliderComponent);
 	playerObject->AddComponent(rigidComponent);
-}
 
-void CPlayState::CreateKart()
-{
 
+	myKartObjects.Add(playerObject);
 }
 
 void CPlayState::InitiateRace()

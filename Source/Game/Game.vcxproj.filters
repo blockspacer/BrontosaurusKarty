@@ -54,6 +54,12 @@
       <Filter>States\Statestack</Filter>
     </ClCompile>
     <ClCompile Include="HUD.cpp" />
+    <ClCompile Include="AnimationEvent.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="KartAnimator.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -114,6 +120,12 @@
       <Filter>States\Statestack</Filter>
     </ClInclude>
     <ClInclude Include="HUD.h" />
+    <ClInclude Include="AnimationEvent.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="KartAnimator.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="States">
@@ -145,6 +157,9 @@
     </Filter>
     <Filter Include="States\Statestack">
       <UniqueIdentifier>{f5fa56ec-5c87-4aea-a4c3-2f6a233852ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Animation">
+      <UniqueIdentifier>{90a802bc-b08f-466c-ac2c-5fff61c531be}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

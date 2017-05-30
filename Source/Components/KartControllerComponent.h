@@ -11,12 +11,12 @@ class CNavigationSpline;
 class CParticleEmitterInstance;
 class CKartControllerComponentManager;
 class CDrifter;
+class CKartAnimator;
 
 class CKartControllerComponent : public CComponent
 {
 public:
-
-	CKartControllerComponent(CKartControllerComponentManager* aManager);
+	CKartControllerComponent(CKartControllerComponentManager* aManager, const short aControllerIndex = -1);
 	~CKartControllerComponent();
 
 	void Turn(float aDirectionX);
@@ -47,7 +47,7 @@ public:
 private:
 	void DoWallCollision(CColliderComponent& aCollider);
 	void UpdateMovement(const float aDeltaTime);
-	void DoDriftingParticles();
+	//void DoDriftingParticles();
 
 	void DoCornerTest(unsigned aCornerIndex, const CU::Matrix33f& aRotationMatrix, const CU::Vector3f& aPosition, const float aHalfWidth, const float aLength);
 	//void SetHeight(float aHeight, const float aDt);
@@ -71,6 +71,7 @@ private:
 	
 
 	std::unique_ptr<CDrifter> myDrifter;
+	std::unique_ptr<CKartAnimator> myAnimatior;
 	struct
 	{
 		float width = 1.f;
@@ -79,6 +80,8 @@ private:
 
 	CU::Vector3f myVelocity;
 
+	CKartControllerComponentManager* myManager;
+	Physics::CPhysicsScene* myPhysicsScene;
 	//float myFowrardSpeed;
 	float myMaxSpeed;
 	float myMinSpeed;
@@ -101,19 +104,19 @@ private:
 
 	float myBoostSpeedDecay;
 
+	float myInvurnableTime;
+	float myElapsedInvurnableTime;
+	float myTimeToBeStunned;
+	float myElapsedStunTime;
+	float myDriftAngle;
+	float myAirControl;
+	
 	eCurrentAction myCurrentAction;
 
-	//struct SDriftEmitter
-	//{
-		int myLeftWheelDriftEmmiterHandle;
-		int myRightWheelDriftEmmiterHandle;
-		int myLeftDriftBoostEmitterhandle;
-		int myRightDriftBoostEmitterhandle;
-		int myBoostEmmiterhandle;
-		int myGotHitEmmiterhandle;
-	//} myDriftEmitter;
+	int myBoostEmmiterhandle;
+	int myGotHitEmmiterhandle;
 
-	Physics::CPhysicsScene* myPhysicsScene;
+	short myControllerHandle;
 
 	bool myIsOnGround;
 	bool myCanAccelerate;
@@ -122,15 +125,6 @@ private:
 
 	bool myIsInvurnable;
 	bool myHasGottenHit;
-	float myInvurnableTime;
-	float myElapsedInvurnableTime;
-	float myTimeToBeStunned;
-	float myElapsedStunTime;
-	
-
-	CKartControllerComponentManager* myManager;
-	float myDriftAngle;
-	float myAirControl;
 };
 
 

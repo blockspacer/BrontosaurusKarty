@@ -157,6 +157,7 @@ public:
 
 	const struct aiScene* GetScene(const std::string& aFBXPath);
 
+	static void ReleaseScenes();
 
 private:
 	void LoadMeshChildren(aiNode* aNode, CU::GrowingArray<aiNode*>& aNodesOut);
@@ -165,6 +166,8 @@ private:
 	int DetermineAndLoadVerticies(struct aiMesh* aMesh, CLoaderMesh* aLoaderMesh);
 	void LoadMaterials(const struct aiScene *sc, CLoaderModel* aModel);
 	void LoadTexture(int aType, std::vector<std::string>& someTextures, struct aiMaterial* aMaterial);
+
+	static CU::GrowingArray<const aiScene*> ourScenes;
 
 };
 

@@ -26,6 +26,8 @@ CModelManager::~CModelManager()
 			}
 		}
 	}
+
+	CFBXLoader::ReleaseScenes();
 }
 
 const CModelManager::ModelId CModelManager::LoadModel(const std::string& aModelPath)

@@ -277,6 +277,8 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 		//CU::Vector3f forward = userComponent->GetParent()->GetToWorldTransform().myForwardVector;
 		//forward  *=3;
 		shell->Move(CU::Vector3f(0, -0.5f, 3));
+		SComponentMessageData data; data.myComponent = userComponent;
+		shell->NotifyOnlyComponents(eComponentMessageType::eReInitRedShell, data);
 		break;
 	}
 	case eItemTypes::eBlueShell:

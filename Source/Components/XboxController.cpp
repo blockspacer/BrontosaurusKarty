@@ -176,15 +176,6 @@ void CXboxController::MovedJoystick(const CU::SInputMessage& aInputMessage)
 
 void CXboxController::GamePadLeftTrigger(const CU::SInputMessage& aInputMessage)
 {
-	/*SComponentMessageData boostMessageData;
-	SBoostData* boostData = new SBoostData();
-	boostData->accerationBoost = 5;
-	boostData->duration = 4.0f;
-	boostData->maxSpeedBoost = 2.0f;
-	boostData->hashedName = std::hash<std::string>()("TempBoost");
-	boostMessageData.myBoostData = boostData;
-	myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);*/
-
 	myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eUseItem, SComponentMessageData());
 }
 
@@ -193,9 +184,6 @@ void CXboxController::GamePadRightTrigger(const CU::SInputMessage& aInputMessage
 	if (myIsDrifting == false)
 	{
 		myControllerComponent.Drift();
-
-		SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerIndex, 10, 10);
-		Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 		myIsDrifting = true;
 	}
 }

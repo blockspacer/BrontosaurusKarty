@@ -13,7 +13,7 @@ public:
 	CKartControllerComponentManager();
 	~CKartControllerComponentManager();
 
-	CKartControllerComponent* CreateAndRegisterComponent();
+	CKartControllerComponent* CreateAndRegisterComponent(const short aControllerIndex = -1);
 
 	void Update(const float aDeltaTime);
 	void Init(Physics::CPhysicsScene* aPhysicsScene);
@@ -24,6 +24,7 @@ public:
 
 	const CNavigationSpline& GetNavigationSpline() const;
 	const CU::Vector3f GetClosestSpinesDirection(const CU::Vector3f& aKartPosition);
+	const int GetClosestSpinesIndex(const CU::Vector3f& aKartPosition);
 	const SNavigationPoint* GetNavigationPoint(const int aIndex);
 private:
 	CU::GrowingArray<CKartControllerComponent*> myComponents;

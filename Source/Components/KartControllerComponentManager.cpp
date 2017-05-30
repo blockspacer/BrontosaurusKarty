@@ -14,9 +14,9 @@ CKartControllerComponentManager::~CKartControllerComponentManager()
 {
 }
 
-CKartControllerComponent * CKartControllerComponentManager::CreateAndRegisterComponent()
+CKartControllerComponent * CKartControllerComponentManager::CreateAndRegisterComponent(const short aControllerIndex)
 {
-	CKartControllerComponent* kartController = new CKartControllerComponent(this);
+	CKartControllerComponent* kartController = new CKartControllerComponent(this,aControllerIndex);
 	kartController->Init(myPhysicsScene);
 	CComponentManager::GetInstance().RegisterComponent(kartController);
 	myComponents.Add(kartController);
@@ -78,6 +78,29 @@ const CU::Vector3f CKartControllerComponentManager::GetClosestSpinesDirection(co
 	direction.y = 0.0f;
 	direction.z = myNavigationSpline.GetPoint(index).myForwardDirection.y;
 	return direction;
+}
+
+const int CKartControllerComponentManager::GetClosestSpinesIndex(const CU::Vector3f& aKartPosition)
+{
+	float distance = 999999;
+	unsigned int index = -1;
+
+	for (unsigned int i = 0; i < myNavigationSpline.GetNumberOfPoints(); i++)
+	{
+		float newDistance = CU::Vector2f(myNavigationSpline.GetPoint(i).myPosition - CU::Vector2f(aKartPosition.x, aKartPosition.z)).Length2();
+		if (newDistance < distance)
+		{
+			distance = newDistance;
+			index = i;
+		}
+	}
+
+	if (index > myNavigationSpline.GetNumberOfPoints())
+	{
+		return 0;
+	}
+
+	return index;
 }
 
 const SNavigationPoint* CKartControllerComponentManager::GetNavigationPoint(const int aIndex)
