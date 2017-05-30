@@ -9,6 +9,7 @@
 #include "PollingStation.h"
 #include "RenderMessages.h"
 #include "LapTrackerComponentManager.h"
+#include "ItemTypes.h"
 
 CHUD::CHUD(unsigned char aPlayerID, bool aIsOneSplit)
 {
@@ -55,6 +56,7 @@ void CHUD::LoadHUD()
 	LoadLapCounter(jsonDoc.at("lapCounter"));
 	LoadPlacement(jsonDoc.at("placement"));
 	LoadFinishText(jsonDoc.at("finishText"));
+	LoadItemGui(jsonDoc.at("itemGui"));
 }
 
 void CHUD::Update()
@@ -113,6 +115,54 @@ void CHUD::Render()
 			myFinishTextElement.mySprite->RenderToGUI(L"finishText" + myPlayerID);
 			SetGUIToEndBlend(L"finishText" + myPlayerID);
 		}
+	}
+
+	SComponentQuestionData itemQuestionData;
+	if(myPlayer->AskComponents(eComponentQuestionType::eGetHoldItemType, itemQuestionData) == true)
+	{
+		switch (static_cast<eItemTypes>(itemQuestionData.myInt))
+		{
+		case eItemTypes::eBanana:
+		{
+			myItemGuiElement.mySprite = myBananaSprite;
+			break;
+		}
+		case eItemTypes::eMushroom:
+		{
+			myItemGuiElement.mySprite = myMushroomSprite;
+			break;
+		}
+		case eItemTypes::eStar:
+		{
+			myItemGuiElement.mySprite = myStarSprite;
+			break;
+		}
+		case eItemTypes::eGreenShell:
+		{
+			myItemGuiElement.mySprite = myGreenShellSprite;
+			break;
+		}
+		case eItemTypes::eRedShell:
+		{
+			myItemGuiElement.mySprite = myRedShellSprite;
+			break;
+		}
+		default:
+			break;
+		}
+	}
+	else
+	{
+		myItemGuiElement.mySprite = myNullSprite;
+	}
+	if (myItemGuiElement.myHasChanged == true)
+	{
+		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"itemGui" + myPlayerID, myItemGuiElement.myGUIElement, myItemGuiElement.myPixelSize);
+
+		RENDERER.AddRenderMessage(guiElement);
+		SetGUIToEmilBlend(L"itemGui" + myPlayerID);
+		myItemGuiElement.mySprite->RenderToGUI(L"itemGui" + myPlayerID);
+		SetGUIToEndBlend(L"itemGui" + myPlayerID);
 	}
 }
 
@@ -178,6 +228,26 @@ void CHUD::LoadFinishText(const CU::CJsonValue& aJsonValue)
 	myFinishTextElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
 	myFinishTextElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 1.f,1.f });
+	/*myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));*/
+
+}
+
+void CHUD::LoadItemGui(const CU::CJsonValue& aJsonValue)
+{
+	const std::string spritePath = aJsonValue.at("spritePath").GetString();
+
+	myItemGuiElement = LoadHUDElement(aJsonValue);
+	myItemGuiElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
+
+	float itemGuiWidth = 1.0f;
+	float itemGuiHeight = 1.0f;
+	myMushroomSprite = new CSpriteInstance("Sprites/GUI/mushroom.dds", { itemGuiWidth,itemGuiHeight });
+	myBananaSprite = new CSpriteInstance("Sprites/GUI/banana.dds", { itemGuiWidth,itemGuiHeight });
+	myStarSprite = new CSpriteInstance("Sprites/GUI/star.dds", { itemGuiWidth,itemGuiHeight });
+	myGreenShellSprite = new CSpriteInstance("Sprites/GUI/greenShell.dds", { itemGuiWidth,itemGuiHeight });
+	myRedShellSprite = new CSpriteInstance("Sprites/GUI/redShell.dds", { itemGuiWidth,itemGuiHeight });
+	myNullSprite = new CSpriteInstance("Sprites/GUI/redShell.dds", { 0.0f,0.0f });
+	myItemGuiElement.mySprite = myMushroomSprite;
 	/*myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));*/
 
 }

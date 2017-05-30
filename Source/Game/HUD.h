@@ -37,6 +37,7 @@ private:
 	void LoadLapCounter(const CU::CJsonValue& aJsonValue);
 	void LoadPlacement(const CU::CJsonValue& aJsonValue);
 	void LoadFinishText(const CU::CJsonValue& aJsonValue);
+	void LoadItemGui(const CU::CJsonValue& aJsonValue);
 
 	void SetGUIToEmilBlend(std::wstring aStr);
 	void SetGUIToEndBlend(std::wstring aStr);
@@ -47,6 +48,14 @@ private:
 	SHUDElement myLapCounterElement;
 	SHUDElement myPlacementElement;
 	SHUDElement myFinishTextElement;
+	SHUDElement myItemGuiElement;
+
+	CSpriteInstance* myMushroomSprite;
+	CSpriteInstance* myGreenShellSprite;
+	CSpriteInstance* myRedShellSprite;
+	CSpriteInstance* myBananaSprite;
+	CSpriteInstance* myStarSprite;
+	CSpriteInstance* myNullSprite;
 
 	CU::Vector2f myCameraOffset; //best solution 10/10
 	CU::Vector2f mySpriteOffset;
