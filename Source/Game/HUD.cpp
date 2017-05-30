@@ -64,6 +64,7 @@ void CHUD::Update()
 void CHUD::Render()
 {
 	unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer);
+	unsigned char currentPlacement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myPlayer);
 
 	if (myLapCounterElement.myHasChanged == true) // används inte atm. om det behövs, fixa någon timer lösnings shizz.
 	{
@@ -84,15 +85,10 @@ void CHUD::Render()
 		SetGUIToEndBlend(L"lapCounter");
 	}
 
-
-	unsigned short playerPlacement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myPlayer);
-	float placementRektValue1 = 1.0f - (1.0f / 8.0f) * playerPlacement;
-	float placementRektValue2 = (1.0f + (1.0f / 8.0f)) - (1.0f / 8.0f) * playerPlacement;
 	if (myPlacementElement.myHasChanged == true)
 	{
-		unsigned short playerPlacement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myPlayer);
-		float placementRektValue1 = 1.0f - (1.0f / 8.0f) * playerPlacement;
-		float placementRektValue2 = (1.0f + (1.0f / 8.0f)) - (1.0f / 8.0f) * playerPlacement;
+		float placementRektValue1 = 1.0f - (1.0f / 8.0f) * currentPlacement;
+		float placementRektValue2 = (1.0f + (1.0f / 8.0f)) - (1.0f / 8.0f) * currentPlacement;
 
 		myPlacementElement.mySprite->SetPosition(myCameraOffset);
 		myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, placementRektValue1, 1.7f, placementRektValue2));
