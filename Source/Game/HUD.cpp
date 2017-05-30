@@ -97,12 +97,12 @@ void CHUD::Render()
 			myLapCounterElement.mySprite->SetRect({ 0.f, 0.f, 1.f, 0.25f });
 
 
-		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"lapCounter", myLapCounterElement.myGUIElement, myLapCounterElement.myPixelSize);
+		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"lapCounter" + myPlayerID, myLapCounterElement.myGUIElement, myLapCounterElement.myPixelSize);
 
 		RENDERER.AddRenderMessage(guiElement);
-		SetGUIToEmilBlend(L"lapCounter");
-		myLapCounterElement.mySprite->RenderToGUI(L"lapCounter");
-		SetGUIToEndBlend(L"lapCounter");
+		SetGUIToEmilBlend(L"lapCounter" + myPlayerID);
+		myLapCounterElement.mySprite->RenderToGUI(L"lapCounter" + myPlayerID);
+		SetGUIToEndBlend(L"lapCounter" + myPlayerID);
 	}
 
 	if (myPlacementElement.myShouldRender == true)
@@ -125,12 +125,12 @@ void CHUD::Render()
 	{
 		if (currentLap > 3)
 		{
-			SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"finishText", myFinishTextElement.myGUIElement, myFinishTextElement.myPixelSize);
+			SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"finishText" + myPlayerID, myFinishTextElement.myGUIElement, myFinishTextElement.myPixelSize);
 
 			RENDERER.AddRenderMessage(guiElement);
-			SetGUIToEmilBlend(L"finishText");
-			myFinishTextElement.mySprite->RenderToGUI(L"finishText");
-			SetGUIToEndBlend(L"finishText");
+			SetGUIToEmilBlend(L"finishText" + myPlayerID);
+			myFinishTextElement.mySprite->RenderToGUI(L"finishText" + myPlayerID);
+			SetGUIToEndBlend(L"finishText" + myPlayerID);
 		}
 	}
 }
@@ -168,6 +168,7 @@ void CHUD::LoadLapCounter(const CU::CJsonValue& aJsonValue)
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
 	myLapCounterElement = LoadHUDElement(aJsonValue);
+	myLapCounterElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
 	myLapCounterElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 1.f, 0.25f });
 	myLapCounterElement.mySprite->SetRect({ 0.f, 0.5f, 1.f, 0.75f });
@@ -193,9 +194,11 @@ void CHUD::LoadFinishText(const CU::CJsonValue& aJsonValue)
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
 	myFinishTextElement = LoadHUDElement(aJsonValue);
+	myFinishTextElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
 	myFinishTextElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 1.f,1.f });
-	myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));
+	/*myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));*/
+
 }
 
 void CHUD::SetGUIToEmilBlend(std::wstring aStr)

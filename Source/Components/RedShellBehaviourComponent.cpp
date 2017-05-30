@@ -17,9 +17,9 @@ CRedShellBehaviourComponent::CRedShellBehaviourComponent()
 	std::string filePath = "Json/Items.json";
 	const std::string& errorString = boostList.Parse(filePath);
 	CU::CJsonValue levelsArray = boostList.at("Items");
-	CU::CJsonValue Item = levelsArray.at("GreenShell");
+	CU::CJsonValue Item = levelsArray.at("RedShell");
 
-	Speed = 10;//Item.at("MaxSpeed").GetFloat();
+	Speed = Item.at("MaxSpeed").GetFloat();
 
 	myVelocity = CU::Vector3f::UnitZ*	Speed;
 
@@ -31,10 +31,11 @@ CRedShellBehaviourComponent::~CRedShellBehaviourComponent()
 {
 }
 
-void CRedShellBehaviourComponent::Init(Physics::CPhysicsScene * aPhysicsScene, CKartControllerComponentManager* aKartManager)
+void CRedShellBehaviourComponent::Init(Physics::CPhysicsScene * aPhysicsScene, CKartControllerComponentManager* aKartManager, CU::GrowingArray<CGameObject*>& aListOfKarts)
 {
 	myPhysicsScene = aPhysicsScene;
 	myKartManager = aKartManager;
+	myKartObjects = &aListOfKarts;
 }
 
 void CRedShellBehaviourComponent::Update(const float aDeltaTime)
@@ -57,6 +58,8 @@ void CRedShellBehaviourComponent::Update(const float aDeltaTime)
 		myCurrentSplineIndex++;
 		myCurrentSplineIndex %= myKartManager->GetNavigationSpline().GetNumberOfPoints();
 		currentSpline = &myKartManager->GetNavigationSpline().GetPoint(myCurrentSplineIndex);
+
+		
 	}
 
 	CU::Vector2f splineNormal(-currentSpline->myForwardDirection.y, currentSpline->myForwardDirection.x);
@@ -83,10 +86,22 @@ void CRedShellBehaviourComponent::Update(const float aDeltaTime)
 	//closestPoint = currentSpline->myPosition;
 	CU::Vector3f closestPoint3D(closestPoint.x, 0.f, closestPoint.y);
 
+	myKartManager->GetClosestSpinesDirection(GetParent()->GetWorldPosition());
 
 	CU::Matrix44f newRotation = GetParent()->GetToWorldTransform();
 	newRotation.LookAt(closestPoint3D);
 	CU::Matrix44f rotationDifference = newRotation * GetParent()->GetToWorldTransform().GetRotation().GetTransposed();
+
+	for (int i = 0; i < myKartObjects->Size(); i++)
+	{
+		if (myCurrentUser != myKartObjects->At(i))
+		{
+			if (CU::Vector3f(myKartObjects->At(i)->GetWorldPosition() - newRotation.GetPosition()).Length2() < 20*20)
+			{
+				newRotation.LookAt(myKartObjects->At(i)->GetWorldPosition());
+			}
+		}
+	}
 
 	newRotation.Move(myVelocity*aDeltaTime);
 
@@ -150,6 +165,29 @@ void CRedShellBehaviourComponent::DoPhysics(const float aDeltaTime)
 
 void CRedShellBehaviourComponent::Receive(const eComponentMessageType aMessageType, const SComponentMessageData & aMessageData)
 {
+	switch (aMessageType)
+	{
+
+	case eComponentMessageType::eDeactivate:
+	{
+		break;
+	}
+	case eComponentMessageType::eActivate:
+	{
+		myVelocity = CU::Vector3f::UnitZ*Speed;
+		break;
+	}
+	case eComponentMessageType::eReInitRedShell:
+	{
+		short index = 0;
+		index = myKartManager->GetClosestSpinesIndex(GetParent()->GetWorldPosition());
+		myCurrentUser = aMessageData.myComponent->GetParent();
+		//myKartManager->GetNavigationSpline().GetNavigationPoints().Find(*myKartManager->GetNavigationPoint(myCurrentSplineIndex),index);
+		myCurrentSplineIndex = index;
+		break;
+	}
+
+	}
 }
 
 

@@ -81,6 +81,7 @@ Particles::ParticleEmitterID CParticleEmitterManager::GetEmitterInstance(Particl
 
 	if (freeInstances.Size() == 0)
 	{
+	
 		CParticleEmitter* emitter = GetEmitter(aId);
 		if(emitter != nullptr && emitter->CanInstansiate() == true)
 		{

@@ -24,6 +24,7 @@ public:
 
 	const CNavigationSpline& GetNavigationSpline() const;
 	const CU::Vector3f GetClosestSpinesDirection(const CU::Vector3f& aKartPosition);
+	const int GetClosestSpinesIndex(const CU::Vector3f& aKartPosition);
 	const SNavigationPoint* GetNavigationPoint(const int aIndex);
 private:
 	CU::GrowingArray<CKartControllerComponent*> myComponents;
