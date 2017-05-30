@@ -21,7 +21,7 @@
 #include "KartControllerComponentManager.h"
 #include "ColliderComponent.h"
 
-CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager): myPhysicsScene(nullptr), myIsOnGround(true), myCanAccelerate(false), myManager(aManager)
+CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager,const short aControllerIndex): myPhysicsScene(nullptr), myIsOnGround(true), myCanAccelerate(false), myManager(aManager)
 {
 	CU::CJsonValue levelsFile;
 	std::string errorString = levelsFile.Parse("Json/KartStats.json");
@@ -65,6 +65,7 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myElapsedStunTime = 0.f;
 	myModifierCopy = 0.0f;
 
+	myControllerHandle = aControllerIndex;
 
 	myBoostSpeedDecay = myMaxAcceleration * myAccelerationModifier * 1.25f;
 
@@ -201,6 +202,12 @@ bool CKartControllerComponent::Drift()
 		messageData.myFloat *= -1.f;
 	}	
 	GetParent()->NotifyComponents(eComponentMessageType::eDoDriftBobbing, messageData);
+	if (myControllerHandle != -1 && myControllerHandle < 4)
+	{
+		SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 30, 30);
+		Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+	}
+
 	return true;
 }
 
@@ -223,8 +230,12 @@ void CKartControllerComponent::StopDrifting()
 	case CDrifter::eDriftBoost::eNone:
 		break;
 	}
-	StopVibrationOnController* stopionMessageLeft = new StopVibrationOnController(0);
-	Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(stopionMessageLeft);
+
+	if (myControllerHandle != -1 && myControllerHandle < 4)
+	{
+		StopVibrationOnController* stopionMessageLeft = new StopVibrationOnController(myControllerHandle);
+		Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(stopionMessageLeft);
+	}
 
 	switch (myCurrentAction)
 	{
