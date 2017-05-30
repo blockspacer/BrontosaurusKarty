@@ -139,7 +139,7 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 		myPlayers.Init(1);
 		myPlayerCount = 1;
 		myPlayers.Add(SParticipant());
-		myPlayers[0].myInputDevice = SParticipant::eInputDevice::eKeyboard;
+		myPlayers[0].myInputDevice = SParticipant::eInputDevice::eController1;
 	}
 
 	DL_PRINT("started with %d players", myPlayerCount);
@@ -487,15 +487,12 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 		playerObject->AddComponent(lapTrackerComponent);
 	}
 
-	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent();
-	if (aIntputDevice == SParticipant::eInputDevice::eKeyboard)
+	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent(static_cast<short>(aIntputDevice));
+	if (myPlayerCount < 2)
 	{
+		AddXboxController();
+		CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent, static_cast<short>(SParticipant::eInputDevice::eController1));
 		CKeyboardController* controls = myPlayerControllerManager->CreateKeyboardController(*kartComponent);
-		if (myPlayerCount < 2)
-		{
-			AddXboxController();
-			CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent, static_cast<short>(SParticipant::eInputDevice::eController1));
-		}
 	}
 	else
 	{

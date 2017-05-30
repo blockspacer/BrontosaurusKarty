@@ -440,9 +440,9 @@ void CInputManager::UpdateGamePad(const CU::Time& aDeltaTime)
 					continue;
 				}
 				state->myTimeIHaveRumbled += aDeltaTime.GetSeconds();
-				if (state->myTimeIHaveRumbled >= 3.0f)
+				if (state->myTimeIHaveRumbled >= 2.5f)
 				{
-					state->myTimeIHaveRumbled -= 3.0f;
+					state->myTimeIHaveRumbled -= 2.5f;
 					myXInputWrapper->SetLeftVibration(state->myController, state->myLeftIntensity);
 					myXInputWrapper->SetRightVibration(state->myController, state->myRightIntensity);
 				}
