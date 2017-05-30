@@ -301,6 +301,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AnimationEvent.cpp" />
     <ClCompile Include="BackgroundLoadingManager.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameEventMessenger.cpp" />
@@ -328,6 +329,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimationEvent.h" />
     <ClInclude Include="BackgroundLoadingManager.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameEventMessenger.h" />

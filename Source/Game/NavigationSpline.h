@@ -7,6 +7,22 @@ namespace CU
 
 struct SNavigationPoint
 {
+	SNavigationPoint SNagigationPoint(const SNavigationPoint* aCopy)
+	{
+		myPosition = aCopy->myPosition;
+		myForwardDirection = aCopy->myForwardDirection;
+		myWidth = aCopy->myWidth;
+	}
+
+	bool operator == (const SNavigationPoint aCompare)
+	{
+		if (aCompare.myPosition == myPosition && aCompare.myForwardDirection == myForwardDirection && aCompare.myWidth == myWidth)
+		{
+			return true;
+		}
+		return false;
+	}
+
 	CU::Vector2f myPosition;
 	CU::Vector2f myForwardDirection;
 	float myWidth;
@@ -22,6 +38,7 @@ public:
 	void LoadFromJson(const CU::CJsonValue& aJsonValue);
 	const SNavigationPoint& GetPoint(const int anIndex) const;
 	short GetNumberOfPoints() const;
+	const CU::GrowingArray<SNavigationPoint, short> GetNavigationPoints() const;
 
 private:
 	CU::GrowingArray<SNavigationPoint,  short> myNavPoints;
@@ -41,3 +58,10 @@ inline short CNavigationSpline::GetNumberOfPoints() const
 {
 	return myNavPoints.Size();
 }
+
+inline const CU::GrowingArray<SNavigationPoint, short> CNavigationSpline::GetNavigationPoints() const
+{
+	return myNavPoints;
+}
+
+

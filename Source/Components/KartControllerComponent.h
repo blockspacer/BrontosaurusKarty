@@ -11,11 +11,11 @@ class CNavigationSpline;
 class CParticleEmitterInstance;
 class CKartControllerComponentManager;
 class CDrifter;
+class CKartAnimator;
 
 class CKartControllerComponent : public CComponent
 {
 public:
-
 	CKartControllerComponent(CKartControllerComponentManager* aManager);
 	~CKartControllerComponent();
 
@@ -47,7 +47,7 @@ public:
 private:
 	void DoWallCollision(CColliderComponent& aCollider);
 	void UpdateMovement(const float aDeltaTime);
-	void DoDriftingParticles();
+	//void DoDriftingParticles();
 
 	//void SetHeight(float aHeight, const float aDt);
 	//float GetHeightSpeed();
@@ -68,6 +68,7 @@ private:
 	
 
 	std::unique_ptr<CDrifter> myDrifter;
+	std::unique_ptr<CKartAnimator> myAnimatior;
 	struct
 	{
 		float width = 1.f;
@@ -100,15 +101,8 @@ private:
 
 	eCurrentAction myCurrentAction;
 
-	//struct SDriftEmitter
-	//{
-		int myLeftWheelDriftEmmiterHandle;
-		int myRightWheelDriftEmmiterHandle;
-		int myLeftDriftBoostEmitterhandle;
-		int myRightDriftBoostEmitterhandle;
-		int myBoostEmmiterhandle;
-		int myGotHitEmmiterhandle;
-	//} myDriftEmitter;
+	int myBoostEmmiterhandle;
+	int myGotHitEmmiterhandle;
 
 	Physics::CPhysicsScene* myPhysicsScene;
 

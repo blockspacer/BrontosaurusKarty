@@ -1,7 +1,14 @@
 #pragma once
 #include "GUIElement.h"
+#include "../ThreadedPostmaster/Subscriber.h"
 
 class CSpriteInstance;
+class CRaceOverMessage;
+
+class KeyCharPressed; //temp
+
+typedef unsigned int TimerHandle;
+
 
 namespace CU 
 {
@@ -10,19 +17,16 @@ namespace CU
 
 struct SHUDElement
 {
-	SHUDElement() { mySprite = nullptr; myHasChanged = true; }
+	SHUDElement() { mySprite = nullptr; myShouldRender = true; }
 
 	CSpriteInstance* mySprite;
 	SGUIElement myGUIElement;
 	CU::Vector2ui myPixelSize;
-	bool myHasChanged;
-
-
-
+	bool myShouldRender;
 };
 
 
-class CHUD
+class CHUD : public Postmaster::ISubscriber
 {
 public:
 	CHUD(unsigned char aPlayerID, bool aIsOneSplit);
@@ -44,10 +48,18 @@ private:
 
 	void AdjustPosBasedOnNrOfPlayers(CU::Vector2f aTopLeft, CU::Vector2f aBotRight);
 
+	void PresentScoreboard();
+	void DisableRedundantGUI();
+
+	eMessageReturn DoEvent(const CRaceOverMessage& aMessage) override;
+	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
+
+
 private:
 	SHUDElement myLapCounterElement;
 	SHUDElement myPlacementElement;
 	SHUDElement myFinishTextElement;
+	SHUDElement myScoreboardElement;
 	SHUDElement myItemGuiElement;
 
 	CSpriteInstance* myMushroomSprite;
@@ -60,6 +72,7 @@ private:
 	CU::Vector2f myCameraOffset; //best solution 10/10
 	CU::Vector2f mySpriteOffset;
 	CGameObject* myPlayer;
+	unsigned char myLapAdjusterCheat;
 
 	unsigned char myPlayerID;
 };

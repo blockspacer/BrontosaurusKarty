@@ -87,6 +87,7 @@ enum class eComponentMessageType
 	eSpinKart,
 	eEnteredGoal,
 	eTurnOffHazard,
+	eReInitRedShell,
 	eLength,
 };
 
