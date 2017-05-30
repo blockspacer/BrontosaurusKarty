@@ -226,7 +226,7 @@ bool CKartControllerComponent::Drift()
 		}
 		if (myControllerHandle != -1 && myControllerHandle < 4)
 		{
-			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 30, 30);
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 20, 20);
 			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 		}
 		GetParent()->NotifyComponents(eComponentMessageType::eDoDriftBobbing, messageData);
@@ -254,7 +254,7 @@ void CKartControllerComponent::StopDrifting()
 		GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
 		if (myControllerHandle != -1 && myControllerHandle < 4)
 		{
-			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 50, 70, 1.5f, false);
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 40, 60, 0.8f, false);
 			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 		}
 		break;
@@ -263,7 +263,7 @@ void CKartControllerComponent::StopDrifting()
 		GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
 		if (myControllerHandle != -1 && myControllerHandle < 4)
 		{
-			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 30, 50, 0.5f, false);
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 25, 50, 0.5f, false);
 			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 		}
 		break;
@@ -294,7 +294,7 @@ void CKartControllerComponent::GetHit()
 	{
 		if (myControllerHandle != -1 && myControllerHandle < 4)
 		{
-			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 70, 40, 0.5f, false);
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 70, 30, 0.5f, false);
 			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 		}
 		myHasGottenHit = true;
@@ -470,7 +470,14 @@ const CU::Vector3f& CKartControllerComponent::GetVelocity() const
 
 void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 {
-	GetHitGround();
+	if (GetHitGround() == true)
+	{
+		if (myControllerHandle != -1 && myControllerHandle < 4)
+		{
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 35, 70, 0.15f, false);
+			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+		}
+	}
 	//Position
 	const CU::Vector3f forwardVector = GetParent()->GetToWorldTransform().myForwardVector;
 	const float speed = forwardVector.Dot(myVelocity);
