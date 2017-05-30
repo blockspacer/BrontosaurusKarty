@@ -174,15 +174,12 @@ void CHUD::Render()
 	{
 		myItemGuiElement.mySprite = myNullSprite;
 	}
-	if (myItemGuiElement.myHasChanged == true)
-	{
 		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"itemGui" + myPlayerID, myItemGuiElement.myGUIElement, myItemGuiElement.myPixelSize);
 
-		RENDERER.AddRenderMessage(guiElement);
-		SetGUIToEmilBlend(L"itemGui" + myPlayerID);
-		myItemGuiElement.mySprite->RenderToGUI(L"itemGui" + myPlayerID);
-		SetGUIToEndBlend(L"itemGui" + myPlayerID);
-	}
+	RENDERER.AddRenderMessage(guiElement);
+	SetGUIToEmilBlend(L"itemGui" + myPlayerID);
+	myItemGuiElement.mySprite->RenderToGUI(L"itemGui" + myPlayerID);
+	SetGUIToEndBlend(L"itemGui" + myPlayerID);
 }
 
 SHUDElement CHUD::LoadHUDElement(const CU::CJsonValue& aJsonValue)
