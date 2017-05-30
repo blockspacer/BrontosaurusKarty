@@ -544,13 +544,22 @@ void CKartControllerComponent::DoCornerTest(unsigned aCornerIndex, const CU::Mat
 			(top ? aRotationMatrix.myForwardVector : -aRotationMatrix.myForwardVector));
 
 		static const float testDist = 0.25f;
-		Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(cornerPos, testDir, testDist, Physics::eWall);
+		Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(cornerPos, testDir, testDist,
+			static_cast<Physics::ECollisionLayer>(Physics::eWall/* | Physics::eKart*/));
 
 
 		if (raycastHitData.hit == true)
 		{
-			GetParent()->Move(raycastHitData.normal * (raycastHitData.distance - testDist));
-			myVelocity *= -1.f;
+			/*if(raycastHitData.collisionLayer == Physics::eWall)
+			{*/
+				GetParent()->Move(raycastHitData.normal * (raycastHitData.distance - testDist) * -2.f);
+				myVelocity *= 0.75f;
+				myVelocity += myVelocity.Length() * 5.f * raycastHitData.normal;
+			
+			if(raycastHitData.collisionLayer == Physics::eKart)
+			{
+				int i = 0;
+			}
 		}
 	}
 }
