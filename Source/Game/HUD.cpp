@@ -11,6 +11,7 @@
 #include "LapTrackerComponentManager.h"
 
 #include "..\ThreadedPostmaster\RaceOverMessage.h"
+#include "..\ThreadedPostmaster\KeyCharPressed.h"
 
 CHUD::CHUD(unsigned char aPlayerID, bool aIsOneSplit)
 {
@@ -18,6 +19,8 @@ CHUD::CHUD(unsigned char aPlayerID, bool aIsOneSplit)
 	if (myPlayer == nullptr)
 		DL_ASSERT("HUD - The player retrieved with ID %d was nullptr", aPlayerID);
 	myCameraOffset = CU::Vector2f(0.0f, 0.0f);
+
+	myLapAdjusterCheat = 0;
 
 	float offsetX = 0.516f;
 	float offsetY = 0.5f;
@@ -65,10 +68,10 @@ void CHUD::Update()
 
 void CHUD::Render()
 {
-	unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer);
+	unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer) + myLapAdjusterCheat;
 	unsigned char currentPlacement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myPlayer);
 
-	if (myLapCounterElement.myShouldRender == true) // används inte atm. om det behövs, fixa någon timer lösnings shizz.
+	if (myLapCounterElement.myShouldRender == true)
 	{
 
 		if(currentLap == 1)
@@ -210,10 +213,18 @@ void CHUD::AdjustPosBasedOnNrOfPlayers(CU::Vector2f aTopLeft, CU::Vector2f aBotR
 }
 
 // When the race is finished for all players.
-eMessageReturn CHUD::DoEvent(const CRaceOverMessage & aMessage)
+eMessageReturn CHUD::DoEvent(const CRaceOverMessage& aMessage)
 {
 	aMessage.GetWinnerPlacements();
 	// Present scoreboard. (over the entire screen.)
+
+	return eMessageReturn::eContinue;
+}
+
+eMessageReturn CHUD::DoEvent(const KeyCharPressed& aMessage)
+{
+	if (aMessage.GetKey() == 'p')
+		myLapAdjusterCheat += 1;
 
 	return eMessageReturn::eContinue;
 }

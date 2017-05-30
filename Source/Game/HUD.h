@@ -5,6 +5,8 @@
 class CSpriteInstance;
 class CRaceOverMessage;
 
+class KeyCharPressed; //temp
+
 namespace CU 
 {
 	class CJsonValue;
@@ -42,6 +44,8 @@ private:
 
 	void AdjustPosBasedOnNrOfPlayers(CU::Vector2f aTopLeft, CU::Vector2f aBotRight);
 	eMessageReturn DoEvent(const CRaceOverMessage& aMessage) override;
+	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
+
 
 private:
 	SHUDElement myLapCounterElement;
@@ -51,4 +55,5 @@ private:
 	CU::Vector2f myCameraOffset; //best solution 10/10
 	CU::Vector2f mySpriteOffset;
 	CGameObject* myPlayer;
+	unsigned char myLapAdjusterCheat;
 };
