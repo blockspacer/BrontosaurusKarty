@@ -217,7 +217,7 @@ void CHUD::LoadLapCounter(const CU::CJsonValue& aJsonValue)
 	myLapCounterElement = LoadHUDElement(aJsonValue);
 	myLapCounterElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
-	myLapCounterElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 1.f, 0.25f });
+	myLapCounterElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 0.8f, 0.35f });
 	myLapCounterElement.mySprite->SetRect({ 0.f, 0.5f, 1.f, 0.75f });
 }
 
@@ -228,7 +228,7 @@ void CHUD::LoadPlacement(const CU::CJsonValue& aJsonValue)
 	myPlacementElement = LoadHUDElement(aJsonValue);
 	myPlacementElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
-	myPlacementElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 1.0f,0.4125f });
+	myPlacementElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 1.0f,1.0f });
 	myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.875f, 1.0f, 1.0f));
 	//myPlacementElement.myGUIElement.myScreenRect.x = myCameraOffset.x;
 	//myPlacementElement.myGUIElement.myScreenRect.y = myCameraOffset.y;
@@ -256,7 +256,7 @@ void CHUD::LoadItemGui(const CU::CJsonValue& aJsonValue)
 	myItemGuiElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
 	float itemGuiWidth = 1.0f;
-	float itemGuiHeight = 1.0f;
+	float itemGuiHeight = 1.1f;
 	myMushroomSprite = new CSpriteInstance("Sprites/GUI/mushroom.dds", { itemGuiWidth,itemGuiHeight });
 	myBananaSprite = new CSpriteInstance("Sprites/GUI/banana.dds", { itemGuiWidth,itemGuiHeight });
 	myStarSprite = new CSpriteInstance("Sprites/GUI/star.dds", { itemGuiWidth,itemGuiHeight });
