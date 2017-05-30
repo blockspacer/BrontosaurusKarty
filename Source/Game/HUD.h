@@ -1,7 +1,9 @@
 #pragma once
 #include "GUIElement.h"
+#include "../ThreadedPostmaster/Subscriber.h"
 
 class CSpriteInstance;
+class CRaceOverMessage;
 
 namespace CU 
 {
@@ -10,19 +12,16 @@ namespace CU
 
 struct SHUDElement
 {
-	SHUDElement() { mySprite = nullptr; myHasChanged = true; }
+	SHUDElement() { mySprite = nullptr; myShouldRender = true; }
 
 	CSpriteInstance* mySprite;
 	SGUIElement myGUIElement;
 	CU::Vector2ui myPixelSize;
-	bool myHasChanged;
-
-
-
+	bool myShouldRender;
 };
 
 
-class CHUD
+class CHUD : public Postmaster::ISubscriber
 {
 public:
 	CHUD(unsigned char aPlayerID, bool aIsOneSplit);
@@ -42,6 +41,7 @@ private:
 	void SetGUIToEndBlend(std::wstring aStr);
 
 	void AdjustPosBasedOnNrOfPlayers(CU::Vector2f aTopLeft, CU::Vector2f aBotRight);
+	eMessageReturn DoEvent(const CRaceOverMessage& aMessage) override;
 
 private:
 	SHUDElement myLapCounterElement;

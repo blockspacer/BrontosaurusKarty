@@ -10,6 +10,8 @@
 #include "RenderMessages.h"
 #include "LapTrackerComponentManager.h"
 
+#include "..\ThreadedPostmaster\RaceOverMessage.h"
+
 CHUD::CHUD(unsigned char aPlayerID, bool aIsOneSplit)
 {
 	myPlayer = CPollingStation::GetInstance()->GetPlayerAtID(aPlayerID);
@@ -66,7 +68,7 @@ void CHUD::Render()
 	unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer);
 	unsigned char currentPlacement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myPlayer);
 
-	if (myLapCounterElement.myHasChanged == true) // används inte atm. om det behövs, fixa någon timer lösnings shizz.
+	if (myLapCounterElement.myShouldRender == true) // används inte atm. om det behövs, fixa någon timer lösnings shizz.
 	{
 
 		if(currentLap == 1)
@@ -85,14 +87,13 @@ void CHUD::Render()
 		SetGUIToEndBlend(L"lapCounter");
 	}
 
-	if (myPlacementElement.myHasChanged == true)
+	if (myPlacementElement.myShouldRender == true)
 	{
 		float placementRektValue1 = 1.0f - (1.0f / 8.0f) * currentPlacement;
 		float placementRektValue2 = (1.0f + (1.0f / 8.0f)) - (1.0f / 8.0f) * currentPlacement;
 
 		myPlacementElement.mySprite->SetPosition(myCameraOffset);
 		myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, placementRektValue1, 1.7f, placementRektValue2));
-
 		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"placement", myPlacementElement.myGUIElement, myPlacementElement.myPixelSize);
 
 		RENDERER.AddRenderMessage(guiElement);
@@ -101,7 +102,7 @@ void CHUD::Render()
 		SetGUIToEndBlend(L"placement");
 	}
 
-	if (myFinishTextElement.myHasChanged == true)
+	if (myFinishTextElement.myShouldRender == true)
 	{
 		if (currentLap > 3)
 		{
@@ -206,4 +207,13 @@ void CHUD::SetGUIToEndBlend(std::wstring aStr)
 void CHUD::AdjustPosBasedOnNrOfPlayers(CU::Vector2f aTopLeft, CU::Vector2f aBotRight)
 {
 	//Detta låter som en bra ide! -mig själv.
+}
+
+// When the race is finished for all players.
+eMessageReturn CHUD::DoEvent(const CRaceOverMessage & aMessage)
+{
+	aMessage.GetWinnerPlacements();
+	// Present scoreboard. (over the entire screen.)
+
+	return eMessageReturn::eContinue;
 }
