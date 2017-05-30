@@ -296,6 +296,7 @@ void CKartControllerComponent::CheckZKill()
 void CKartControllerComponent::Update(const float aDeltaTime)
 {
 	DoPhysics(aDeltaTime);
+	CheckWallKartCollision(aDeltaTime);
 	CheckZKill();
 	
 	SComponentMessageData messageData;
@@ -529,6 +530,52 @@ void CKartControllerComponent::DoDriftingParticles()
 	{
 		CParticleEmitterManager::GetInstance().Activate(myLeftDriftBoostEmitterhandle);
 		CParticleEmitterManager::GetInstance().Activate(myRightDriftBoostEmitterhandle);
+	}
+}
+
+static const unsigned int numberOfCorners = 4;
+static const unsigned int testsPerCorner = 2;
+
+void CKartControllerComponent::DoCornerTest(unsigned aCornerIndex, const CU::Matrix33f& aRotationMatrix, const CU::Vector3f& aPosition, const float aHalfWidth, const float aLength)
+{
+	const bool right = aCornerIndex < 2;
+	const bool top = aCornerIndex % 2 == 0;
+	
+	const CU::Vector3f cornerPos = aPosition + CU::Vector3f(
+		(right ? aHalfWidth : -aHalfWidth),
+		0.f,
+		(top ? aLength : 0.f)
+	) * aRotationMatrix;
+
+	for (unsigned i = 0; i < testsPerCorner; ++i)
+	{
+		const CU::Vector3f testDir = (i % 2 == 0 ? (
+			right ? aRotationMatrix.myRightVector : -aRotationMatrix.myRightVector):
+			(top ? aRotationMatrix.myForwardVector : - aRotationMatrix.myForwardVector));
+		
+		static const float testDist = 0.25f;
+		Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(cornerPos, testDir, testDist, Physics::eWall);
+
+
+		if(raycastHitData.hit == true)
+		{
+			GetParent()->Move(raycastHitData.normal * (raycastHitData.distance - testDist));
+			myVelocity *= -1.f;
+		}
+	}
+}
+
+
+void CKartControllerComponent::CheckWallKartCollision(const float aDetltaTime)
+{
+	const CU::Matrix33f localSpace = GetParent()->GetToWorldTransform();
+	const CU::Vector3f globalPos = GetParent()->GetWorldPosition();
+	const float halfWidth = myAxisDescription.width / 2.f;
+	const float length = myAxisDescription.length;
+
+	for(unsigned i = 0; i < numberOfCorners; ++i)
+	{
+		DoCornerTest(i, localSpace, globalPos, halfWidth, length);
 	}
 }
 

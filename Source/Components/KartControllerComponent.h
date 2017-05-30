@@ -49,8 +49,10 @@ private:
 	void UpdateMovement(const float aDeltaTime);
 	void DoDriftingParticles();
 
+	void DoCornerTest(unsigned aCornerIndex, const CU::Matrix33f& aRotationMatrix, const CU::Vector3f& aPosition, const float aHalfWidth, const float aLength);
 	//void SetHeight(float aHeight, const float aDt);
 	//float GetHeightSpeed();
+	void CheckWallKartCollision(const float aDetltaTime);
 	void DoPhysics(const float aDeltaTime);
 
 	enum class AxisPos
@@ -61,6 +63,7 @@ private:
 		LeftFront,
 		Size
 	};
+
 
 
 

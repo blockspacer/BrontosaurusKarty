@@ -39,6 +39,11 @@ void CRedShellBehaviourComponent::Init(Physics::CPhysicsScene * aPhysicsScene, C
 
 void CRedShellBehaviourComponent::Update(const float aDeltaTime)
 {
+	if (myKartManager->GetNavigationSpline().GetNumberOfPoints() == 0)
+	{
+		return;
+	}
+
 	DoPhysics(aDeltaTime);
 
 	CU::Vector3f piss = GetParent()->GetToWorldTransform().GetPosition();
