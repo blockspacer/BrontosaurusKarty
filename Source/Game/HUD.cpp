@@ -78,12 +78,12 @@ void CHUD::Render()
 			myLapCounterElement.mySprite->SetRect({ 0.f, 0.f, 1.f, 0.25f });
 
 
-		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"lapCounter", myLapCounterElement.myGUIElement, myLapCounterElement.myPixelSize);
+		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"lapCounter" + myPlayerID, myLapCounterElement.myGUIElement, myLapCounterElement.myPixelSize);
 
 		RENDERER.AddRenderMessage(guiElement);
-		SetGUIToEmilBlend(L"lapCounter");
-		myLapCounterElement.mySprite->RenderToGUI(L"lapCounter");
-		SetGUIToEndBlend(L"lapCounter");
+		SetGUIToEmilBlend(L"lapCounter" + myPlayerID);
+		myLapCounterElement.mySprite->RenderToGUI(L"lapCounter" + myPlayerID);
+		SetGUIToEndBlend(L"lapCounter" + myPlayerID);
 	}
 
 	if (myPlacementElement.myHasChanged == true)
@@ -149,6 +149,7 @@ void CHUD::LoadLapCounter(const CU::CJsonValue& aJsonValue)
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
 	myLapCounterElement = LoadHUDElement(aJsonValue);
+	myLapCounterElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
 	myLapCounterElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 1.f, 0.25f });
 	myLapCounterElement.mySprite->SetRect({ 0.f, 0.5f, 1.f, 0.75f });
