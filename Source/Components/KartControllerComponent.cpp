@@ -224,7 +224,7 @@ bool CKartControllerComponent::Drift()
 		}
 		if (myControllerHandle != -1 && myControllerHandle < 4)
 		{
-			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 30, 30);
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 20, 20);
 			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 		}
 		GetParent()->NotifyComponents(eComponentMessageType::eDoDriftBobbing, messageData);
@@ -252,7 +252,7 @@ void CKartControllerComponent::StopDrifting()
 		GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
 		if (myControllerHandle != -1 && myControllerHandle < 4)
 		{
-			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 50, 70, 1.5f, false);
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 40, 60, 0.8f, false);
 			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 		}
 		break;
@@ -261,7 +261,7 @@ void CKartControllerComponent::StopDrifting()
 		GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
 		if (myControllerHandle != -1 && myControllerHandle < 4)
 		{
-			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 30, 50, 0.5f, false);
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 25, 50, 0.5f, false);
 			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 		}
 		break;
@@ -292,7 +292,7 @@ void CKartControllerComponent::GetHit()
 	{
 		if (myControllerHandle != -1 && myControllerHandle < 4)
 		{
-			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 70, 40, 0.5f, false);
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 70, 30, 0.5f, false);
 			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 		}
 		myHasGottenHit = true;
