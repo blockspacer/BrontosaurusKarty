@@ -11,11 +11,11 @@ class CNavigationSpline;
 class CParticleEmitterInstance;
 class CKartControllerComponentManager;
 class CDrifter;
+class CKartAnimator;
 
 class CKartControllerComponent : public CComponent
 {
 public:
-
 	CKartControllerComponent(CKartControllerComponentManager* aManager);
 	~CKartControllerComponent();
 
@@ -68,6 +68,7 @@ private:
 	
 
 	std::unique_ptr<CDrifter> myDrifter;
+	std::unique_ptr<CKartAnimator> myAnimatior;
 	struct
 	{
 		float width = 1.f;

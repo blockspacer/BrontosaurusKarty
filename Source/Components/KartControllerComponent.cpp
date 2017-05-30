@@ -5,6 +5,7 @@
 #include "ParticleEmitterInstance.h"
 #include "ParticleEmitterManager.h"
 #include "Drifter.h"
+#include "KartAnimator.h"
 #include "SmoothRotater.h"
 #include "../CommonUtilities/JsonValue.h"
 

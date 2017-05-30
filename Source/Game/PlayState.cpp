@@ -125,15 +125,6 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	, myIsLoaded(false)
 	, myCountdownShouldRender(false)
 {
-	CommandLineManager* commandLineManager = CommandLineManager::GetInstance();
-	if (commandLineManager)
-	{
-		const std::string& playerCountStr = commandLineManager->GetArgument("-playerCount");
-		if (!playerCountStr.empty())
-		{
-			myPlayerCount = std::atoi(playerCountStr.c_str());
-		}
-	}
 	if (aPlayers.Size() > 0)
 	{
 		myPlayers.Init(aPlayers.Size());
