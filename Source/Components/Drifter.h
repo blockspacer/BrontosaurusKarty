@@ -44,6 +44,8 @@ public:
 	inline bool IsDrifting() const;
 	inline bool WheelsAreBurning() const;
 
+	inline const float GetDriftBonusSpeed() const;
+
 private:
 	float myDriftRate;
 	float myDriftTimer;
@@ -52,6 +54,9 @@ private:
 	float myMaxDriftRate;
 	float myTimeMultiplier;
 	float myMaxDriftSteerAffection;
+
+	float mySlowExtraSpeed;
+	float myFastExtraSpeed;
 
 	float myLongDriftTime;
 	float myShortDriftTime;
@@ -79,4 +84,17 @@ inline bool CDrifter::IsDrifting() const
 inline bool CDrifter::WheelsAreBurning() const
 {
 	return myDriftTimer > myShortDriftTime;
+}
+
+inline const float CDrifter::GetDriftBonusSpeed() const
+{
+	if (myDriftTimer > myShortDriftTime)
+	{
+		if (myDriftTimer > myLongDriftTime)
+		{
+			return myFastExtraSpeed;
+		}
+		return mySlowExtraSpeed;
+	}
+	return 1.0f;
 }

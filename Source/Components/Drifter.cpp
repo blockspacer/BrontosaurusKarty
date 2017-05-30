@@ -26,6 +26,9 @@ bool CDrifter::Init(const CU::CJsonValue& aJsonValue)
 	myLongDriftTime = aJsonValue.at("LargeBoostAt").GetFloat();
 	myShortDriftTime = aJsonValue.at("SmallBoostAt").GetFloat();
 
+	mySlowExtraSpeed = aJsonValue.at("SmallDriftSpeed").GetFloat();
+	myFastExtraSpeed = aJsonValue.at("LargeDriftSpeed").GetFloat();
+
 	myDriftState = eDriftState::eNotDrifting;
 
 	return true;

@@ -450,7 +450,6 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 	{
 		myVelocity += forwardVector * aDeltaTime * myAcceleration * myGrip * myAccelerationModifier * onGroundModifier;
 	}
-
 	const float maxSpeed2 = myMaxSpeed * myMaxSpeed * myMaxSpeedModifier * myMaxSpeedModifier;
 	const float minSpeed2 = myMinSpeed * myMinSpeed;
 	const float speed2 = myVelocity.Length2() * (dir > 0.f ? 1.f : -1.f);
@@ -470,7 +469,7 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 	}
 	float steerAngle = 0.f;
 	GetParent()->Move(CU::Vector3f::UnitZ * speed * aDeltaTime);
-	GetParent()->Move(CU::Vector3f::UnitY * myVelocity.y * aDeltaTime);
+	GetParent()->Move(CU::Vector3f::UnitY * myVelocity.y * myDrifter->GetDriftBonusSpeed() * aDeltaTime);
 	if (myDrifter->IsDrifting() == true)
 	{
 		DoDriftingParticles();
