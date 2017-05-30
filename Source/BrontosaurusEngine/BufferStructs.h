@@ -50,6 +50,9 @@ struct SOncePerFrameBuffer
 
 	CU::Vector2ui windowSize;
 	float garbage[1];
+
+	CU::Vector4f fogColor;
+
 };
 
 struct SAnimationBoneStruct 

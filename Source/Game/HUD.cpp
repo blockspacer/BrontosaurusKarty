@@ -15,26 +15,30 @@ CHUD::CHUD(unsigned char aPlayerID, bool aIsOneSplit)
 	myPlayer = CPollingStation::GetInstance()->GetPlayerAtID(aPlayerID);
 	if (myPlayer == nullptr)
 		DL_ASSERT("HUD - The player retrieved with ID %d was nullptr", aPlayerID);
+	myCameraOffset = CU::Vector2f(0.0f, 0.0f);
+
+	float offsetX = 0.516f;
+	float offsetY = 0.5f;
 
 	if (aPlayerID == 1)
 	{
 		if (aIsOneSplit == true)
 		{
-			myCameraOffset.y = 0.5f;
+			myCameraOffset.y = offsetY;
 		}
 		else
 		{
-			myCameraOffset.x = 0.5f;
+			myCameraOffset.x = offsetX;
 		}
 	}
 	else if (aPlayerID == 2)
 	{
-		myCameraOffset.y = 0.5f;
+		myCameraOffset.y = offsetY;
 	}
 	else if (aPlayerID == 3)
 	{
-		myCameraOffset.x = 0.5f;
-		myCameraOffset.y = 0.5f;
+		myCameraOffset.x = offsetX;
+		myCameraOffset.y = offsetY;
 	}
 }
 
@@ -60,6 +64,7 @@ void CHUD::Update()
 void CHUD::Render()
 {
 	unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer);
+	unsigned char currentPlacement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myPlayer);
 
 	if (myLapCounterElement.myHasChanged == true) // används inte atm. om det behövs, fixa någon timer lösnings shizz.
 	{
@@ -82,12 +87,12 @@ void CHUD::Render()
 
 	if (myPlacementElement.myHasChanged == true)
 	{
-		unsigned short playerPlacement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myPlayer);
-		float placementRektValue1 = 1.0f - (1.0f / 8.0f) * playerPlacement;
-		float placementRektValue2 = (1.0f + (1.0f / 8.0f)) - (1.0f / 8.0f) * playerPlacement;
+		float placementRektValue1 = 1.0f - (1.0f / 8.0f) * currentPlacement;
+		float placementRektValue2 = (1.0f + (1.0f / 8.0f)) - (1.0f / 8.0f) * currentPlacement;
 
 		myPlacementElement.mySprite->SetPosition(myCameraOffset);
-		myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, placementRektValue1, 1.0f, placementRektValue2));
+		myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, placementRektValue1, 1.7f, placementRektValue2));
+
 		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"placement", myPlacementElement.myGUIElement, myPlacementElement.myPixelSize);
 
 		RENDERER.AddRenderMessage(guiElement);
@@ -127,8 +132,8 @@ SHUDElement CHUD::LoadHUDElement(const CU::CJsonValue& aJsonValue)
 	float rectWidth = sizeObject.at("screenSpaceWidth").GetFloat();
 	float rectHeight = sizeObject.at("screenSpaceHeight").GetFloat();
 
-	float topLeftX = hudElement.myGUIElement.myScreenRect.x ;
-	float topLeftY = hudElement.myGUIElement.myScreenRect.y ;
+	float topLeftX = hudElement.myGUIElement.myScreenRect.x;
+	float topLeftY = hudElement.myGUIElement.myScreenRect.y;
 
 	hudElement.myGUIElement.myScreenRect.z = rectWidth + topLeftX ;
 	hudElement.myGUIElement.myScreenRect.w = rectHeight + topLeftY ;
@@ -153,10 +158,14 @@ void CHUD::LoadPlacement(const CU::CJsonValue& aJsonValue)
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
 	myPlacementElement = LoadHUDElement(aJsonValue);
+	myPlacementElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
-	myPlacementElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 1.f,0.125f });
+	myPlacementElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 0.25f,0.06125f });
 	myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.875f, 1.0f, 1.0f));
-	mySpriteOffset = myPlacementElement.mySprite->GetPosition();
+	//myPlacementElement.myGUIElement.myScreenRect.x = myCameraOffset.x;
+	//myPlacementElement.myGUIElement.myScreenRect.y = myCameraOffset.y;
+	//myPlacementElement.myGUIElement.myScreenRect.z = myCameraOffset.x + 0.2f;
+	//myPlacementElement.myGUIElement.myScreenRect.w = myCameraOffset.y + 0.5185f;
 }
 
 void CHUD::LoadFinishText(const CU::CJsonValue& aJsonValue)
