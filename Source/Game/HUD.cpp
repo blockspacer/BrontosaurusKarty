@@ -106,12 +106,12 @@ void CHUD::Render()
 	{
 		if (currentLap > 3)
 		{
-			SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"finishText", myFinishTextElement.myGUIElement, myFinishTextElement.myPixelSize);
+			SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"finishText" + myPlayerID, myFinishTextElement.myGUIElement, myFinishTextElement.myPixelSize);
 
 			RENDERER.AddRenderMessage(guiElement);
-			SetGUIToEmilBlend(L"finishText");
-			myFinishTextElement.mySprite->RenderToGUI(L"finishText");
-			SetGUIToEndBlend(L"finishText");
+			SetGUIToEmilBlend(L"finishText" + myPlayerID);
+			myFinishTextElement.mySprite->RenderToGUI(L"finishText" + myPlayerID);
+			SetGUIToEndBlend(L"finishText" + myPlayerID);
 		}
 	}
 }
