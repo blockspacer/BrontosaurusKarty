@@ -18,6 +18,7 @@ class CKartAnimator;
 class CKartControllerComponent : public CComponent
 {
 public:
+	
 	CKartControllerComponent(CKartControllerComponentManager* aManager, const short aControllerIndex = -1);
 	~CKartControllerComponent();
 
@@ -44,11 +45,15 @@ public:
 
 	bool IsFutureGrounded(const float aDistance);
 
-	inline bool GetIsGrounded();
+	inline bool GetIsGrounded() const;
 	inline bool GetHitGround();
 
+	inline float GetMaxSpeed() const;
+	inline float GetMaxSpeed2() const;
+	inline float GetMaxAcceleration() const;
+	inline float GetAcceleratiot();
 private:
-	void DoWallCollision(CColliderComponent& aCollider);
+	
 	void UpdateMovement(const float aDeltaTime);
 	//void DoDriftingParticles();
 
@@ -117,6 +122,8 @@ private:
 	float myDriftSetupTimer;
 	float myDriftSetupTime;
 	
+	float myTerrainModifier;
+	
 	eCurrentAction myCurrentAction;
 
 	int myBoostEmmiterhandle;
@@ -132,10 +139,11 @@ private:
 	bool myIsInvurnable;
 	bool myHasGottenHit;
 	bool myIsOnGroundLast;
+	CComponent* myLastGroundComponent;
 };
 
 
-inline bool CKartControllerComponent::GetIsGrounded()
+inline bool CKartControllerComponent::GetIsGrounded() const
 {
 	return myIsOnGround;
 }
@@ -154,4 +162,24 @@ bool CKartControllerComponent::GetHitGround()
 	}
 
 	return hitGround;
+}
+
+float CKartControllerComponent::GetMaxSpeed() const
+{
+	return myMaxSpeed * myTerrainModifier;
+}
+
+float CKartControllerComponent::GetMaxSpeed2() const
+{
+	return GetMaxSpeed() * GetMaxSpeed();
+}
+
+float CKartControllerComponent::GetMaxAcceleration() const
+{
+	return myMaxAcceleration;
+}
+
+float CKartControllerComponent::GetAcceleratiot()
+{
+	return myAcceleration * myTerrainModifier;
 }

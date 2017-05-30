@@ -58,6 +58,9 @@
     <ClInclude Include="LoadGoal.h">
       <Filter>LoadThings\LoadGoal</Filter>
     </ClInclude>
+    <ClInclude Include="LoadTerrainComponent.h">
+      <Filter>LoadThings\LoadTerrainComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -113,6 +116,9 @@
     </ClCompile>
     <ClCompile Include="LoadGoal.cpp">
       <Filter>LoadThings\LoadGoal</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadTerrainComponent.cpp">
+      <Filter>LoadThings\LoadTerrainComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -172,6 +178,9 @@
     </Filter>
     <Filter Include="LoadThings\LoadGoal">
       <UniqueIdentifier>{bdc25b41-0371-471b-aefc-b00727255e3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LoadThings\LoadTerrainComponent">
+      <UniqueIdentifier>{e7363b44-f118-4110-9206-4f787aa80260}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

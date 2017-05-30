@@ -19,6 +19,7 @@
 #include "LoadBoostPad.h"
 #include "LoadBezierCurve.h"
 #include "LoadGoal.h"
+#include "LoadTerrainComponent.h"
 
 LoadManager* LoadManager::ourInstance = nullptr;
 
@@ -69,6 +70,7 @@ void LoadManager::RegisterFunctions()
 	loader.RegisterComponentLoadFunction("Rigidbody", LoadRigidBody);
 	loader.RegisterComponentLoadFunction("CharacterController", LoadCharacterController);
 	//loader.RegisterComponentLoadFunction("ScriptComponent", LoadScriptComponent);
+	loader.RegisterComponentLoadFunction("TerrainComponent", LoadTerrainComponent);
 	loader.RegisterComponentLoadFunction("HighlightComponent",LoadHighlightComponent);
 	loader.RegisterComponentLoadFunction("Light", LoadPointLightComponent);
 	loader.RegisterComponentLoadFunction("Pickup", LoadWeapoCrateComponent);
