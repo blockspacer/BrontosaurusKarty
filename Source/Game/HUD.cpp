@@ -12,12 +12,13 @@
 
 CHUD::CHUD(unsigned char aPlayerID, bool aIsOneSplit)
 {
+	myPlayerID = aPlayerID;
 	myPlayer = CPollingStation::GetInstance()->GetPlayerAtID(aPlayerID);
 	if (myPlayer == nullptr)
 		DL_ASSERT("HUD - The player retrieved with ID %d was nullptr", aPlayerID);
 	myCameraOffset = CU::Vector2f(0.0f, 0.0f);
 
-	float offsetX = 0.516f;
+	float offsetX = 0.5f;
 	float offsetY = 0.5f;
 
 	if (aPlayerID == 1)
@@ -77,12 +78,12 @@ void CHUD::Render()
 			myLapCounterElement.mySprite->SetRect({ 0.f, 0.f, 1.f, 0.25f });
 
 
-		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"lapCounter", myLapCounterElement.myGUIElement, myLapCounterElement.myPixelSize);
+		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"lapCounter" + myPlayerID, myLapCounterElement.myGUIElement, myLapCounterElement.myPixelSize);
 
 		RENDERER.AddRenderMessage(guiElement);
-		SetGUIToEmilBlend(L"lapCounter");
-		myLapCounterElement.mySprite->RenderToGUI(L"lapCounter");
-		SetGUIToEndBlend(L"lapCounter");
+		SetGUIToEmilBlend(L"lapCounter" + myPlayerID);
+		myLapCounterElement.mySprite->RenderToGUI(L"lapCounter" + myPlayerID);
+		SetGUIToEndBlend(L"lapCounter" + myPlayerID);
 	}
 
 	if (myPlacementElement.myHasChanged == true)
@@ -90,15 +91,15 @@ void CHUD::Render()
 		float placementRektValue1 = 1.0f - (1.0f / 8.0f) * currentPlacement;
 		float placementRektValue2 = (1.0f + (1.0f / 8.0f)) - (1.0f / 8.0f) * currentPlacement;
 
-		myPlacementElement.mySprite->SetPosition(myCameraOffset);
+		//myPlacementElement.mySprite->SetPosition(myCameraOffset);
 		myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, placementRektValue1, 1.7f, placementRektValue2));
 
-		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"placement", myPlacementElement.myGUIElement, myPlacementElement.myPixelSize);
+		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"placement" + myPlayerID, myPlacementElement.myGUIElement, myPlacementElement.myPixelSize);
 
 		RENDERER.AddRenderMessage(guiElement);
-		SetGUIToEmilBlend(L"placement");
-		myPlacementElement.mySprite->RenderToGUI(L"placement");
-		SetGUIToEndBlend(L"placement");
+		SetGUIToEmilBlend(L"placement" + myPlayerID);
+		myPlacementElement.mySprite->RenderToGUI(L"placement" + myPlayerID);
+		SetGUIToEndBlend(L"placement" + myPlayerID);
 	}
 
 	if (myFinishTextElement.myHasChanged == true)
@@ -123,7 +124,7 @@ SHUDElement CHUD::LoadHUDElement(const CU::CJsonValue& aJsonValue)
 	hudElement.myGUIElement.myAnchor[(char)eAnchors::eTop] = true;
 	hudElement.myGUIElement.myAnchor[(char)eAnchors::eLeft] = true;
 
-	hudElement.myGUIElement.myScreenRect = CU::Vector4f(aJsonValue.at("position").GetVector2f());
+	hudElement.myGUIElement.myScreenRect = CU::Vector4f(aJsonValue.at("position").GetVector2f()+ myCameraOffset);
 
 	const CU::CJsonValue sizeObject = aJsonValue.at("size");
 	hudElement.myPixelSize.x = sizeObject.at("pixelWidth").GetUInt();
@@ -148,6 +149,7 @@ void CHUD::LoadLapCounter(const CU::CJsonValue& aJsonValue)
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
 	myLapCounterElement = LoadHUDElement(aJsonValue);
+	myLapCounterElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
 	myLapCounterElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 1.f, 0.25f });
 	myLapCounterElement.mySprite->SetRect({ 0.f, 0.5f, 1.f, 0.75f });
@@ -160,7 +162,7 @@ void CHUD::LoadPlacement(const CU::CJsonValue& aJsonValue)
 	myPlacementElement = LoadHUDElement(aJsonValue);
 	myPlacementElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
-	myPlacementElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 0.25f,0.06125f });
+	myPlacementElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 1.0f,0.4125f });
 	myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.875f, 1.0f, 1.0f));
 	//myPlacementElement.myGUIElement.myScreenRect.x = myCameraOffset.x;
 	//myPlacementElement.myGUIElement.myScreenRect.y = myCameraOffset.y;

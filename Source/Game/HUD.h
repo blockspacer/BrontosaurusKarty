@@ -51,4 +51,6 @@ private:
 	CU::Vector2f myCameraOffset; //best solution 10/10
 	CU::Vector2f mySpriteOffset;
 	CGameObject* myPlayer;
+
+	unsigned char myPlayerID;
 };
