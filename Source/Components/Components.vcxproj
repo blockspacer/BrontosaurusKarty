@@ -428,6 +428,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StreakEmitterComponent.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TerrainComponent.h" />
     <ClInclude Include="VertexStreamComponent.h" />
     <ClInclude Include="WeaponCratePickupComponent.h" />
     <ClInclude Include="XboxController.h" />
@@ -504,6 +505,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Retail|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="StreakEmitterComponent.cpp" />
+    <ClCompile Include="TerrainComponent.cpp" />
     <ClCompile Include="VertexStreamComponent.cpp" />
     <ClCompile Include="WeaponCratePickupComponent.cpp" />
     <ClCompile Include="XboxController.cpp" />

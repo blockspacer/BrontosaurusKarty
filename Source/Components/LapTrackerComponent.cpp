@@ -20,34 +20,38 @@ CLapTrackerComponent::~CLapTrackerComponent()
 
 void CLapTrackerComponent::Update()
 {
-	SComponentQuestionData splineQuestionData;
-	splineQuestionData.myInt = mySplineIndex;
-	if(GetParent()->AskComponents(eComponentQuestionType::eGetSplineWithIndex, splineQuestionData) == true)
+	if (GetParent()->AskComponents(eComponentQuestionType::eGetIsGrounded, SComponentQuestionData()) == true)
 	{
-		if(splineQuestionData.myNavigationPoint != nullptr)
+		SComponentQuestionData splineQuestionData;
+		splineQuestionData.myInt = mySplineIndex;
+		if (GetParent()->AskComponents(eComponentQuestionType::eGetSplineWithIndex, splineQuestionData) == true)
 		{
-			CU::Vector2f splinePosition2D = splineQuestionData.myNavigationPoint->myPosition;
-			CU::Vector2f splineDirection2D = splineQuestionData.myNavigationPoint->myForwardDirection;
-			CU::Vector3f kartPosition = GetParent()->GetWorldPosition();
-			CU::Vector3f splinePosition(splinePosition2D.x, kartPosition.y, splinePosition2D.y);
-			CU::Vector3f splineForwardPosition;
-			splineForwardPosition.x = splinePosition.x + splineDirection2D.x;
-			splineForwardPosition.z = splinePosition.z + splineDirection2D.y;
-			splineForwardPosition.y = kartPosition.y;
-
-			float splineDistance = CU::Vector3f(splinePosition - kartPosition).Length2();
-			float splineForwardDistance = CU::Vector3f(splineForwardPosition - kartPosition).Length2();
-
-			if(splineForwardDistance < splineDistance)
+			if (splineQuestionData.myNavigationPoint != nullptr)
 			{
-				mySplineIndex++;
-				myPlacementValue++;
-			}
+				CU::Vector2f splinePosition2D = splineQuestionData.myNavigationPoint->myPosition;
+				CU::Vector2f splineDirection2D = splineQuestionData.myNavigationPoint->myForwardDirection;
+				CU::Vector3f kartPosition = GetParent()->GetWorldPosition();
+				CU::Vector3f splinePosition(splinePosition2D.x, kartPosition.y, splinePosition2D.y);
+				CU::Vector3f splineForwardPosition;
+				splineForwardPosition.x = splinePosition.x + splineDirection2D.x;
+				splineForwardPosition.z = splinePosition.z + splineDirection2D.y;
+				splineForwardPosition.y = kartPosition.y;
 
-		}
-		else
-		{
-			myIsReadyToEnterGoal = true;
+				float splineDistance = CU::Vector3f(splinePosition - kartPosition).Length2();
+				float splineForwardDistance = CU::Vector3f(splineForwardPosition - kartPosition).Length2();
+
+				if (splineForwardDistance < splineDistance)
+				{
+					mySplineIndex++;
+					myPlacementValue++;
+					GetParent()->NotifyOnlyComponents(eComponentMessageType::ePassedASpline, SComponentMessageData());
+				}
+
+			}
+			else
+			{
+				myIsReadyToEnterGoal = true;
+			}
 		}
 	}
 }
@@ -83,6 +87,17 @@ bool CLapTrackerComponent::Answer(const eComponentQuestionType aQuestionType, SC
 		return true;
 		break;
 	}
+	case eComponentQuestionType::eGetCurrentSpline:
+	{
+		SComponentQuestionData splineQuestionData;
+		splineQuestionData.myInt = mySplineIndex;
+		if (GetParent()->AskComponents(eComponentQuestionType::eGetRespawnSplineWithIndex, splineQuestionData) == true)
+		{
+			aQuestionData.myNavigationPoint = splineQuestionData.myNavigationPoint;
+			return true;
+		}
+		break;
+	}
 	default:
 		break;
 	}
@@ -100,6 +115,7 @@ void CLapTrackerComponent::Receive(const eComponentMessageType aMessageType, con
 			mySplineIndex = 0;
 			myLapIndex++;
 			myPlacementValue++;
+			myIsReadyToEnterGoal = false;
 			if (myLapIndex > 3)
 			{
 				if (GetParent()->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)

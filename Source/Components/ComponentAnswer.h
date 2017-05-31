@@ -1,4 +1,5 @@
 #pragma once
+#include "KartControllerComponent.h"
 
 class CColliderComponent;
 struct SNavigationPoint;
@@ -44,6 +45,9 @@ enum class eComponentQuestionType
 	eGetSplineWithIndex,
 	eGetLapIndex,
 	eGetHoldItemType,
+	eGetCurrentSpline,
+	eGetRespawnSplineWithIndex,
+	eGetTerrainModifier,
 	eLength,
 };
 struct SComponentQuestionData
@@ -57,6 +61,7 @@ struct SComponentQuestionData
 		CColliderComponent* myCollider;
 
 		int myInt;
+		float myFloat;
 
 		bool myBool;
 		char myChar;
@@ -65,6 +70,7 @@ struct SComponentQuestionData
 		CGameObject* myGameObject;
 		const SNavigationPoint* myNavigationPoint;
 	};
+
 };
 
 inline SComponentQuestionData::SComponentQuestionData(): myVector3f()

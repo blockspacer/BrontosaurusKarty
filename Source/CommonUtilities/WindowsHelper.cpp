@@ -117,4 +117,34 @@ namespace WindowsHelper
 	{
 		::SetForegroundWindow(aHwnd);
 	}
+
+	CU::GrowingArray<std::string> GetFilesInDirectory(const std::string& aRelativePath)
+	{
+		CU::GrowingArray<std::string> files(20u);
+
+		char buffer[MAX_PATH];
+		GetModuleFileNameA(NULL, buffer, MAX_PATH);
+		std::string filePath = buffer;
+		filePath = filePath.substr(0, filePath.find_last_of("\\/"));
+		filePath += "\\";
+		filePath += aRelativePath;
+		filePath += "\\*";
+
+		WIN32_FIND_DATAA data;
+		HANDLE file = FindFirstFileA(filePath.c_str(), &data);
+		if (file != INVALID_HANDLE_VALUE)
+		{
+			do 
+			{
+				if (strlen(data.cFileName) > 3)
+				{
+					files.Add(data.cFileName);
+				}
+			} while (FindNextFileA(file, &data));
+
+			FindClose(file);
+		}
+
+		return files;
+	}
 }

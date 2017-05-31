@@ -49,10 +49,12 @@ public:
 	void Rotate(float aRotation, CU::Axees aAxis) { myTransformation.Rotate(aRotation, aAxis); }
 
 	float GetAnimationDuration(const eAnimationState aAnimationState) const;
+	void SetAnimationManualUpdate(const bool aShouldManuallyUpdate);
 	void SetAnimation(const eAnimationState aAnimationKey);
 	void SetAnimationLerpie(const float aLerpValue);
 	void SetNextAnimation(const eAnimationState aAnimationKey);
 	void SetAnimationLooping(const bool aValue);
+	void SetAnimationCounter(const float aValue);
 	void ResetAnimation();
 	eAnimationState GetAnimationState() const;
 	float GetAnimationCounter() const;
@@ -88,6 +90,8 @@ private:
 	bool myIsVisible;
 	bool myHasAnimations;
 	bool myAnimationLooping;
+	bool myShouldManuallyUpdate;
+
 	bool myIgnoreDepth;
 	CTexture* myVertexTexture;
 };

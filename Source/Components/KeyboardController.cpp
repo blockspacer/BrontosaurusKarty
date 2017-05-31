@@ -60,20 +60,28 @@ void CKeyboardController::ReleasedKey(const CU::SInputMessage & aInputMessage)
 		break;
 	case CU::eKeys::LEFT:
 	case CU::eKeys::A:
-		myControllerComponent.StopTurning();
+		//myControllerComponent.StopTurning();
 		myIsTurningLeft = false;
 		if (myIsTurningRight == true)
 		{
 			myControllerComponent.TurnRight();
 		}
+		else
+		{
+			myControllerComponent.StopTurning();
+		}
 		break;
 	case CU::eKeys::RIGHT:
 	case CU::eKeys::D:
-		myControllerComponent.StopTurning();
+		//myControllerComponent.StopTurning();
 		myIsTurningRight = false;
 		if (myIsTurningLeft == true)
 		{
 			myControllerComponent.TurnLeft();
+		}
+		else
+		{
+			myControllerComponent.StopTurning();
 		}
 		break;
 	case CU::eKeys::LCONTROL:

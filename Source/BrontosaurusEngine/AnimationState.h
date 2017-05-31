@@ -4,17 +4,17 @@
 enum class e##name { __VA_ARGS__, eLength };									\
 constexpr int name##hiddenlength = static_cast<int>(e##name::eLength);			\
 using S##name = TAnimationState<name##hiddenlength>;							\
-static S##name locHiddenAnimationState##name(#__VA_ARGS__);
+static S##name loc##name(#__VA_ARGS__);
 
 template<int NumStates>
 struct TAnimationState
 {
 	TAnimationState(const char* aCommaSeperatedString);
-	static CU::StaticArray<std::string, NumStates> AnimationStates;
+	CU::StaticArray<std::string, NumStates> AnimationStates;
 };
 
-template <int NumStates>
-CU::StaticArray<std::string, NumStates> TAnimationState<NumStates>::AnimationStates;
+//template <int NumStates>
+//CU::StaticArray<std::string, NumStates> TAnimationState<NumStates>::AnimationStates;
 
 template<int NumStates>
 inline TAnimationState<NumStates>::TAnimationState(const char* aCommaSeperatedString)
@@ -35,4 +35,4 @@ inline TAnimationState<NumStates>::TAnimationState(const char* aCommaSeperatedSt
 }
 
 #define DECLARE_ANIMATION_ENUM_AND_STRINGS \
-ENUM_STRING_MACRO(AnimationState, idle01, walk01, run01, shot01, equip01, unequip01, jump01, death01, meleeAttack01, throwAttack01, jumpLift01, jumpLanding01, jumpAttackOnly01, chargeRun01, chargeStart01, invisible, none)
+ENUM_STRING_MACRO(AnimationState, idle01, turnRight01, turnLeft01, shot01, invisible, none)

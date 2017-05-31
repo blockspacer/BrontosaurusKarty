@@ -85,9 +85,14 @@ bool samesign(const T aLeft, const U aRight)
 
 void CAIController::Update(const float aDeltaTime)
 {
-	if (GetNavigationSpline().GetNumberOfPoints() == 0)
+	/*if (GetNavigationSpline().GetNumberOfPoints() == 0)
 	{
 		return;
+	}*/
+
+	if(myControllerComponent.GetParent()->AskComponents(eComponentQuestionType::eGetHoldItemType, SComponentQuestionData()) == true)
+	{
+		myControllerComponent.GetParent()->NotifyOnlyComponents(eComponentMessageType::eUseItem, SComponentMessageData());
 	}
 
 	CU::Vector3f piss = myControllerComponent.GetParent()->GetToWorldTransform().GetPosition();
