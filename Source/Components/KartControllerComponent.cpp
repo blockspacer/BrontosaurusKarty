@@ -141,7 +141,10 @@ void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 		myDrifter->TurnRight();
 	}
 
-	myAnimator->OnTurnRight(aNormalizedModifier);
+	if (mySteering <= 0.f)
+	{
+		myAnimator->OnTurnRight(aNormalizedModifier);
+	}
 }
 
 void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
@@ -168,7 +171,10 @@ void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 		myDrifter->TurnLeft();
 	}
 
-	myAnimator->OnTurnLeft(aNormalizedModifier);
+	if (mySteering >= 0.f)
+	{
+		myAnimator->OnTurnLeft(aNormalizedModifier);
+	}
 }
 
 void CKartControllerComponent::StopMoving()
@@ -196,6 +202,14 @@ void CKartControllerComponent::MoveBackWards()
 
 void CKartControllerComponent::StopTurning()
 {
+	if (myCurrentAction == eCurrentAction::eTurningLeft/*mySteering < 0.f*/)
+	{
+		myAnimator->OnStopTurningLeft();
+	}
+	else if (myCurrentAction == eCurrentAction::eTurningRight /*mySteering > 0.f*/)
+	{
+		myAnimator->OnStopTurningRight();
+	}
 	myCurrentAction = eCurrentAction::eDefault;
 	if (myDrifter->IsDrifting() == false)
 	{
@@ -205,8 +219,6 @@ void CKartControllerComponent::StopTurning()
 	{
 		myDrifter->StopTurning();
 	}
-
-	myAnimator->OnStopTurning();
 }
 
 //Checks if the player is turning left or right and then sets the drift values accordingly

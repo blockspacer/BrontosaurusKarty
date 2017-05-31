@@ -4,7 +4,7 @@ class CAnimationEvent;
 class CAnimationEventFactory;
 class CModelComponent;
 
-enum class eAnimationType;
+enum class eEventType;
 
 class CKartAnimator
 {
@@ -12,7 +12,7 @@ public:
 	CKartAnimator(CModelComponent& aModelComponent);
 	~CKartAnimator();
 
-	void AddAnimation(const eAnimationType aType);
+	void AddAnimation(const eEventType aType);
 	void Update(const float aDeltaTime);
 
 	void OnTurnRight(const float aNormalizedModifier);
@@ -20,7 +20,8 @@ public:
 	void OnStopMoving();
 	void OnMoveFoward();
 	void OnMoveBackWards();
-	void OnStopTurning();
+	void OnStopTurningLeft();
+	void OnStopTurningRight();
 	void OnDrift();
 	void OnStopDrifting();
 	void OnGetHit();
