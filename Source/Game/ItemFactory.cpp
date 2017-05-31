@@ -17,6 +17,8 @@
 #include "ModelComponentManager.h"
 #include "ConcaveMeshCollider.h"
 
+#include "LapTrackerComponentManager.h"
+
 #include "CommonUtilities/JsonValue.h"
 
 
@@ -30,6 +32,8 @@ CItemFactory::CItemFactory()
 
 	myRedShells.Init(26);
 	myActiveRedShells.Init(26);
+
+	myPlacementDrops.Init(8);
 
 	CU::CJsonValue boostList;
 	std::string filePath = "Json/Items.json";
@@ -58,6 +62,7 @@ void CItemFactory::Init(CGameObjectManager& aGameObjectManager, CItemWeaponBehav
 	CreateShellBuffer();
 	CreateBananaBuffer();
 	CreateRedShellBuffer();
+	CreatePlacementDrops();
 }
 
 void CItemFactory::CreateBananaBuffer()
@@ -226,9 +231,193 @@ void CItemFactory::CreateRedShellBuffer()
 	}
 }
 
-eItemTypes CItemFactory::RandomizeItem()
+void CItemFactory::CreatePlacementDrops()
 {
-	return static_cast<eItemTypes>(rand() % 5);
+	SItemDrop item;
+	CU::GrowingArray<SItemDrop> drops; drops.Init(8);
+
+	//firstplace
+	item.myType = eItemTypes::eGreenShell;
+	item.myChance = 10;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eBanana;
+	item.myChance = 100;
+	drops.Add(item);
+
+	myPlacementDrops.Add(drops);
+
+	drops.RemoveAll();
+
+	//secondplace
+	item.myType = eItemTypes::eMushroom;
+	item.myChance = 10;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eRedShell;
+	item.myChance = 30;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eGreenShell;
+	item.myChance = 50;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eBanana;
+	item.myChance = 100;
+	drops.Add(item);
+
+	myPlacementDrops.Add(drops);
+
+	drops.RemoveAll();
+
+	//thirdplace
+	item.myType = eItemTypes::eMushroom;
+	item.myChance = 10;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eRedShell;
+	item.myChance = 30;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eGreenShell;
+	item.myChance = 50;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eBanana;
+	item.myChance = 100;
+	drops.Add(item);
+
+	myPlacementDrops.Add(drops);
+
+	drops.RemoveAll();
+
+	//forthplace
+	item.myType = eItemTypes::eMushroom;
+	item.myChance = 20;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eRedShell;
+	item.myChance = 30;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eGreenShell;
+	item.myChance = 50;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eBanana;
+	item.myChance = 100;
+	drops.Add(item);
+
+	myPlacementDrops.Add(drops);
+
+	drops.RemoveAll();
+
+	//fifthplace
+	item.myType = eItemTypes::eMushroom;
+	item.myChance = 30;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eRedShell;
+	item.myChance = 40;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eGreenShell;
+	item.myChance = 50;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eBanana;
+	item.myChance = 100;
+	drops.Add(item);
+
+	myPlacementDrops.Add(drops);
+
+	drops.RemoveAll();
+
+	//sixthplace
+	item.myType = eItemTypes::eStar;
+	item.myChance = 20;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eMushroom;
+	item.myChance = 40;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eRedShell;
+	item.myChance = 60;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eGreenShell;
+	item.myChance = 100;
+	drops.Add(item);
+
+	drops.Add(item);
+
+	myPlacementDrops.Add(drops);
+
+	drops.RemoveAll();
+
+	//seventhplace
+	item.myType = eItemTypes::eMushroom;
+	item.myChance = 10;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eRedShell;
+	item.myChance = 40;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eStar;
+	item.myChance = 100;
+	drops.Add(item);
+
+	myPlacementDrops.Add(drops);
+
+	drops.RemoveAll();
+
+	//eigthplace
+	item.myType = eItemTypes::eMushroom;
+	item.myChance = 10;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eRedShell;
+	item.myChance = 30;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eStar;
+	item.myChance = 100;
+	drops.Add(item);
+
+	myPlacementDrops.Add(drops);
+
+	drops.RemoveAll();
+
+}
+
+eItemTypes CItemFactory::RandomizeItem(CComponent* aPlayerCollider)
+{
+	unsigned char placement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(aPlayerCollider->GetParent());
+	char itemrange = 1;
+
+	char result = 0;
+	eItemTypes item = eItemTypes::eBanana;
+
+	char banana = 0;
+	char greenshell = 0;
+	char mushroom = 0;
+	char redshell = 0;
+	char star = 0;
+
+	result = (rand() % 100)+1;
+
+	for (int i = 0; i < myPlacementDrops[placement].Size(); i++)
+	{
+		if (result <= myPlacementDrops[placement][i].myChance)
+		{
+			 item = myPlacementDrops[placement][i].myType;
+			 break;
+		}
+	}
+
+	return item;
 }
 
 int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userComponent)
@@ -307,8 +496,26 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 		//activate AI controller on player and make invincible and boost
 		break;
 	case eItemTypes::eLightning:
-		//postmaster blast all
+	{
+		for (int i = 0; i < myRedShellManager->GetKarts().Size(); i++)
+		{
+			if (myRedShellManager->GetKarts()[i] != userComponent->GetParent())
+			{
+				myRedShellManager->GetKarts()[i]->NotifyOnlyComponents(eComponentMessageType::eGotHit, SComponentMessageData());
+
+				unsigned char placement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myRedShellManager->GetKarts()[i]);
+
+				SBoostData slow;
+				slow.accerationBoost = 0.0001f;
+				slow.maxSpeedBoost = 0.0002f;
+				slow.duration = myRedShellManager->GetKarts().Size() - placement;
+
+				SComponentMessageData slowdata; slowdata.myBoostData = &slow;
+				myRedShellManager->GetKarts()[i]->NotifyOnlyComponents(eComponentMessageType::eGiveBoost, slowdata);
+			}
+		}
 		break;
+	}
 	case eItemTypes::eBanana:
 	{
 		if (myBananas.Size() <= 0)

@@ -17,6 +17,8 @@ public:
 
 	void Update(const float aDeltatime);
 
+	CU::GrowingArray<CGameObject*> GetKarts();
+
 	CRedShellBehaviourComponent* CreateAndRegisterComponent();
 
 private:

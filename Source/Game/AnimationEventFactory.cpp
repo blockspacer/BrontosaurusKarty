@@ -6,6 +6,9 @@
 #include "KartAnimator.h"
 DECLARE_ANIMATION_ENUM_AND_STRINGS;
 
+#define DECLARE_ANIMATION_ENUM_AND_STRINGS_TWO \
+ENUM_STRING_MACRO(JsonStrings, eBeginRight, eContinueRight, eFinishRight, eBeginLeft, eContinueLeft, eFinishLeft, eGarbage)
+
 #include "../CommonUtilities/WindowsHelper.h"
 #include "CommonUtilities/JsonValue.h"
 
@@ -15,8 +18,9 @@ void PrintDocs()
 	std::ofstream docFile("Json/Animation/types.txt");
 	docFile << "Animation event types: " << std::endl << std::endl;
 
-	ENUM_STRING_MACRO(JsonStrings, eBeginRight, eContinueRight, eFinnishRight, eBeginLeft, eContinueLeft, eFinnishLeft);
-	for (const std::string& str : SJsonStrings::AnimationStates)
+	DECLARE_ANIMATION_ENUM_AND_STRINGS_TWO;
+	static_assert(sizeof(SJsonStrings) != sizeof(SAnimationState), "can't have same number of animation states and json strings for animations");
+	for (const std::string& str : locJsonStrings.AnimationStates)
 	{
 		docFile << str << std::endl;
 	}
@@ -38,26 +42,27 @@ CAnimationEventFactory::CAnimationEventFactory()
 	ourInstance = this;
 	PrintDocs();
 
-	ENUM_STRING_MACRO(JsonStrings, eBeginRight, eContinueRight, eFinnishRight, eBeginLeft, eContinueLeft, eFinnishLeft);
 	CU::GrowingArray<std::string> filePaths = WindowsHelper::GetFilesInDirectory("Json\\Animation");
 
 	filePaths.RemoveCyclic("types.txt");
+	DECLARE_ANIMATION_ENUM_AND_STRINGS_TWO;
 
 	for (const std::string& filePath : filePaths)
 	{
 		if (filePath.rfind(".json") == std::string::npos) continue;
 
 		CU::CJsonValue animationFile("Json\\Animation\\" + filePath);
-		
+
+		float frameRate = animationFile["framesPerSecond"].GetFloat();
 		CU::CJsonValue animations = animationFile["animations"];
 		for (int i = 0; i < animations.Size(); ++i)
 		{
-			int index = SJsonStrings::AnimationStates.Find(animations[i]["type"].GetString());
-			if (index != SJsonStrings::AnimationStates.FoundNone)
+			int index = locJsonStrings.AnimationStates.Find(animations[i]["type"].GetString());
+			if (index != locJsonStrings.AnimationStates.FoundNone)
 			{
 				const std::string& stateStr = animations[i]["state"].GetString();
-				int state = SAnimationState::AnimationStates.Find(stateStr);
-				if (state == SAnimationState::AnimationStates.FoundNone)
+				int state = locAnimationState.AnimationStates.Find(stateStr);
+				if (state == locAnimationState.AnimationStates.FoundNone)
 				{
 					DL_MESSAGE_BOX("%s is not an animation state", stateStr.c_str());
 					continue;
@@ -65,6 +70,9 @@ CAnimationEventFactory::CAnimationEventFactory()
 				myAnimationEvents[static_cast<eEventType>(index)].state = static_cast<eAnimationState>(state);
 				myAnimationEvents[static_cast<eEventType>(index)].start = animations[i]["start"].GetFloat();
 				myAnimationEvents[static_cast<eEventType>(index)].end = animations[i]["end"].GetFloat();
+
+				myAnimationEvents[static_cast<eEventType>(index)].start = animations[i]["start"].GetFloat() / frameRate;
+				myAnimationEvents[static_cast<eEventType>(index)].end = animations[i]["end"].GetFloat() / frameRate;
 			}
 		}
 	}
@@ -94,14 +102,14 @@ CAnimationEvent CAnimationEventFactory::CreateEvent(const eEventType aType, CKar
 
 	switch (aType)
 	{
-	case CAnimationEventFactory::eEventType::eBeginRight:
-	case CAnimationEventFactory::eEventType::eFinnishRight:
-	case CAnimationEventFactory::eEventType::eBeginLeft:
-	case CAnimationEventFactory::eEventType::eFinnishLeft:
+	case eEventType::eBeginRight:
+	case eEventType::eFinishRight:
+	case eEventType::eBeginLeft:
+	case eEventType::eFinishLeft:
 		return CAnimationEvent([start, end](float aTimer) -> bool { return aTimer + start < end; }, data.state, start, end);
-	case CAnimationEventFactory::eEventType::eContinueRight:
+	case eEventType::eContinueRight:
 		return CAnimationEvent([&aKartAnimator](float) -> bool { return aKartAnimator.IsTurningRight(); }, data.state, start, end);
-	case CAnimationEventFactory::eEventType::eContinueLeft:
+	case eEventType::eContinueLeft:
 		return CAnimationEvent([&aKartAnimator](float) -> bool { return aKartAnimator.IsTurningLeft(); }, data.state, start, end);
 	}
 

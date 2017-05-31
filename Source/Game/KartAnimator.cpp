@@ -23,9 +23,10 @@ CKartAnimator::~CKartAnimator()
 {
 }
 
-void CKartAnimator::AddAnimation(const eAnimationType aType)
+void CKartAnimator::AddAnimation(const eEventType aType)
 {
-	myEventQueue.insert(myEventQueue.begin(), CAnimationEvent());
+	CAnimationEventFactory* animationEventFactory = CAnimationEventFactory::GetInstance();
+	myEventQueue.insert(myEventQueue.begin(), animationEventFactory->CreateEvent(aType, *this));
 }
 
 void CKartAnimator::Update(const float aDeltaTime)
@@ -47,30 +48,37 @@ void CKartAnimator::Update(const float aDeltaTime)
 
 void CKartAnimator::OnTurnRight(const float aNormalizedModifier)
 {
-	CAnimationEventFactory* animationEventFactory = CAnimationEventFactory::GetInstance();
-
-	if (myTurnState != eTurnState::eRight && animationEventFactory)
+	if (myTurnState != eTurnState::eRight)
 	{
-		DL_PRINT("TURN RIGHT");
+		myEventQueue.clear();
+		if (myTurnState == eTurnState::eLeft)
+		{
+			AddAnimation(eEventType::eFinishLeft);
+		}
+		
 		myTurnState = eTurnState::eRight;
 
-		myEventQueue.push_back(animationEventFactory->CreateEvent(CAnimationEventFactory::eEventType::eBeginRight, *this));
-		myEventQueue.push_back(animationEventFactory->CreateEvent(CAnimationEventFactory::eEventType::eContinueRight, *this));
-		myEventQueue.push_back(animationEventFactory->CreateEvent(CAnimationEventFactory::eEventType::eFinnishRight, *this));
+		AddAnimation(eEventType::eBeginRight);
+		AddAnimation(eEventType::eContinueRight);
+		AddAnimation(eEventType::eFinishRight);
 	}
 }
 
 void CKartAnimator::OnTurnLeft(const float aNormalizedModifier)
 {
-	CAnimationEventFactory* animationEventFactory = CAnimationEventFactory::GetInstance();
-
-	if (myTurnState != eTurnState::eLeft && animationEventFactory)
+	if (myTurnState != eTurnState::eLeft)
 	{
+		myEventQueue.clear();
+		if (myTurnState == eTurnState::eRight)
+		{
+			AddAnimation(eEventType::eFinishRight);
+		}
+
 		myTurnState = eTurnState::eLeft;
 
-		myEventQueue.push_back(animationEventFactory->CreateEvent(CAnimationEventFactory::eEventType::eBeginRight, *this));
-		myEventQueue.push_back(animationEventFactory->CreateEvent(CAnimationEventFactory::eEventType::eContinueRight, *this));
-		myEventQueue.push_back(animationEventFactory->CreateEvent(CAnimationEventFactory::eEventType::eFinnishRight, *this));
+		AddAnimation(eEventType::eBeginLeft);
+		AddAnimation(eEventType::eContinueLeft);
+		AddAnimation(eEventType::eFinishLeft);
 	}
 }
 
@@ -86,9 +94,20 @@ void CKartAnimator::OnMoveBackWards()
 {
 }
 
-void CKartAnimator::OnStopTurning()
+void CKartAnimator::OnStopTurningLeft()
 {
-	myTurnState = eTurnState::eNone;
+	if (myTurnState == eTurnState::eLeft)
+	{
+		myTurnState = eTurnState::eNone;
+	}
+}
+
+void CKartAnimator::OnStopTurningRight()
+{
+	if (myTurnState == eTurnState::eRight)
+	{
+		myTurnState = eTurnState::eNone;
+	}
 }
 
 void CKartAnimator::OnDrift()
