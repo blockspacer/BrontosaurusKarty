@@ -633,13 +633,11 @@ void CPlayState::CreateAI()
 	playerObject->AddComponent(kartComponent);
 	SBoxColliderData box;
 	box.myHalfExtent = CU::Vector3f(.5f, .5f, .5f);
-	box.center.y = 1.f;
 	box.myLayer = Physics::eKart;
 	box.myCollideAgainst = Physics::GetCollideAgainst(Physics::eKart);
 
 	SBoxColliderData triggerbox;
 	triggerbox.myHalfExtent = CU::Vector3f(0.5f, 0.5f, 0.5f);
-	triggerbox.center.y = 1.f;
 	triggerbox.myLayer = Physics::eKart;
 	triggerbox.myCollideAgainst = Physics::GetCollideAgainst(Physics::eKart);
 	triggerbox.IsTrigger = false;

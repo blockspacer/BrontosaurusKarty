@@ -344,7 +344,7 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 
 	SComponentMessageData messageData;
 
-	/*myIsOnGround = true;
+	myIsOnGround = true;
 	myCanAccelerate = true;
 	DoPhysics(aDeltaTime);
 	CheckWallKartCollision(aDeltaTime);
@@ -386,11 +386,11 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 			GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
 			GetParent()->NotifyOnlyComponents(eComponentMessageType::eTurnOffHazard, SComponentMessageData());
 		}
-	}*/
+	}
 
 
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
-	//myAnimator->Update(aDeltaTime);
+	myAnimator->Update(aDeltaTime);
 }
 
 const CNavigationSpline & CKartControllerComponent::GetNavigationSpline()
