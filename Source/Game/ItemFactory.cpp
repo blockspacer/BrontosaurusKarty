@@ -412,7 +412,8 @@ eItemTypes CItemFactory::RandomizeItem(CComponent* aPlayerCollider)
 	{
 		if (result <= myPlacementDrops[placement][i].myChance)
 		{
-			item = myPlacementDrops[placement][i].myType;
+			 item = myPlacementDrops[placement][i].myType;
+			 break;
 		}
 	}
 
