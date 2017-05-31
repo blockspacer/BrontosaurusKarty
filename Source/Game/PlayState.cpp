@@ -196,6 +196,11 @@ void CPlayState::Load()
 
 	myCountdownElement = new SGUIElement();
 	myCountdownElement->myAnchor = (char)eAnchors::eTop | (char)eAnchors::eLeft;
+	myCountdownElement->myScreenRect = CU::Vector4f( myCountdownSprite->GetPosition() );
+	myCountdownElement->myScreenRect.z = myCountdownSprite->GetPosition().x - (0.26f / 2);
+	myCountdownElement->myScreenRect.w = myCountdownSprite->GetPosition().y - (0.27f / 2);
+
+
 	// Render in Renderfunc.
 
 
