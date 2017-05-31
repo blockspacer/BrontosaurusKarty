@@ -101,6 +101,7 @@ void CXboxController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 	}
 	case CU::GAMEPAD::A:
 		myControllerComponent.MoveFoward();
+		myControllerComponent.IncreasePreGameBoostValue();
 		myIsMovingFoward = true;
 		break;
 	case CU::GAMEPAD::B:
@@ -132,6 +133,7 @@ void CXboxController::GamePadReleasedKey(const CU::SInputMessage& aInputMessage)
 	{
 	case CU::GAMEPAD::A:
 		myControllerComponent.StopMoving();
+		myControllerComponent.DecreasePreGameBoostValue();
 		myIsMovingFoward = false;
 		if (myIsMovingBackwards == true)
 		{

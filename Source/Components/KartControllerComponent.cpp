@@ -88,12 +88,15 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myBoostEmmiterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GunFire");
 	myGotHitEmmiterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("Stars");
 
+	myPreRaceBoostRate = 0.0f;
+	myPreRaceBoostValue = 0.0f;
+	myPreRaceRate = Karts.at("CountDownBoostRate").GetFloat();
+	myPreRaceBoostTarget = Karts.at("CountDownBoostTarget").GetFloat();
 
 	myAirControl = Karts.at("AirControl").GetFloat();
 
 	myCurrentAction = eCurrentAction::eDefault;
 }
-
 
 CKartControllerComponent::~CKartControllerComponent()
 {
@@ -114,6 +117,7 @@ void CKartControllerComponent::Turn(float aDirectionX)
 		TurnRight(aDirectionX * std::fabs(aDirectionX));
 	}
 }
+
 const float rate = 3.2f;
 void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 {
@@ -333,6 +337,39 @@ void CKartControllerComponent::GetHit()
 	//myAcceleration = 0;
 }
 
+void CKartControllerComponent::ApplyStartBoost()
+{
+	if (myPreRaceBoostValue > myPreRaceBoostTarget * 0.6)
+	{
+		if (myPreRaceBoostValue > myPreRaceBoostTarget * 0.8f)
+		{
+			if (myPreRaceBoostValue > myPreRaceBoostTarget)
+			{
+				GetHit();
+				return;
+			}
+			SComponentMessageData boostMessageData;
+			boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("DriftBoost"));
+			GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+			return;
+		}
+		SComponentMessageData boostMessageData;
+		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("MiniDriftBoost"));
+		GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+		return;
+	}
+}
+
+void CKartControllerComponent::IncreasePreGameBoostValue()
+{
+	myPreRaceBoostRate = myPreRaceRate;
+}
+
+void CKartControllerComponent::DecreasePreGameBoostValue()
+{
+	myPreRaceBoostRate = -myPreRaceRate * 0.6f;
+}
+
 //TODO: Hard coded, not good, change soon
 const float killHeight = -50;
 
@@ -353,7 +390,6 @@ void CKartControllerComponent::CheckZKill()
 
 void CKartControllerComponent::Update(const float aDeltaTime)
 {
-
 	SComponentMessageData messageData;
 
 	myIsOnGround = true;
@@ -361,12 +397,12 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	DoPhysics(aDeltaTime);
 	CheckWallKartCollision(aDeltaTime);
 	CheckZKill();
-	
+
 	messageData.myFloat = aDeltaTime;
 	GetParent()->NotifyComponents(eComponentMessageType::eUpdate, messageData);
 	myDriftSetupTimer += aDeltaTime;
 	UpdateMovement(aDeltaTime);
-	
+
 	if (myIsBoosting == true)
 	{
 		CU::Matrix44f particlePosition = GetParent()->GetLocalTransform();
@@ -400,9 +436,17 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 		}
 	}
 
-
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
 	myAnimator->Update(aDeltaTime);
+}
+
+void CKartControllerComponent::CountDownUpdate(const float aDeltaTime)
+{
+	myPreRaceBoostValue += myPreRaceBoostRate * aDeltaTime;
+	if (myPreRaceBoostValue < 0.0f)
+	{
+		myPreRaceBoostValue = 0.0f;
+	}
 }
 
 const CNavigationSpline & CKartControllerComponent::GetNavigationSpline()
@@ -456,8 +500,6 @@ void CKartControllerComponent::Init(Physics::CPhysicsScene* aPhysicsScene)
 	myPhysicsScene = aPhysicsScene;
 }
 
-
-
 bool CKartControllerComponent::IsFutureGrounded(const float aDistance)
 {
 	CU::Vector3f orig = GetParent()->GetWorldPosition();
@@ -473,9 +515,6 @@ const CU::Vector3f& CKartControllerComponent::GetVelocity() const
 {
 	return myVelocity;
 }
-
-
-
 
 void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 {
@@ -524,7 +563,7 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 
 	}
 	float steerAngle = 0.f;
-	GetParent()->Move(CU::Vector3f::UnitZ * speed * aDeltaTime);
+	GetParent()->Move(CU::Vector3f::UnitZ * speed * myDrifter->GetDriftBonusSpeed() * aDeltaTime);
 	GetParent()->Move(CU::Vector3f::UnitY * myVelocity.y * myDrifter->GetDriftBonusSpeed() * aDeltaTime);
 	if (myDrifter->IsDrifting() == true)
 	{
@@ -609,7 +648,6 @@ void CKartControllerComponent::DoCornerTest(unsigned aCornerIndex, const CU::Mat
 		}
 	}
 }
-
 
 void CKartControllerComponent::CheckWallKartCollision(const float aDetltaTime)
 {

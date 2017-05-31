@@ -25,9 +25,26 @@ CKartControllerComponent * CKartControllerComponentManager::CreateAndRegisterCom
 
 void CKartControllerComponentManager::Update(const float aDeltaTime)
 {
+	static bool lastShouldUpdate = false;
 	if (myShouldUpdate == false)
-			return;
-
+	{
+		for (int i = 0; i < myComponents.Size(); i++)
+		{
+			myComponents[i]->CountDownUpdate(aDeltaTime);
+		}
+		return;
+	}
+	if (myShouldUpdate != lastShouldUpdate)
+	{
+		if (myShouldUpdate == true)
+		{
+			for (int i = 0; i < myComponents.Size(); i++)
+			{
+				myComponents[i]->ApplyStartBoost();
+			}
+		}
+		lastShouldUpdate = myShouldUpdate;
+	}
 	for (int i = 0; i < myComponents.Size(); i++)
 	{
 		myComponents[i]->Update(aDeltaTime);
