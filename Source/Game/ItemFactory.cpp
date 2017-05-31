@@ -505,12 +505,12 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 
 				unsigned char placement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myRedShellManager->GetKarts()[i]);
 
-				SBoostData slow;
-				slow.accerationBoost = 0.0001f;
-				slow.maxSpeedBoost = 0.0002f;
-				slow.duration = myRedShellManager->GetKarts().Size() - placement;
+				SBoostData* slow = new SBoostData();
+				slow->accerationBoost = -0.8f;
+				slow->maxSpeedBoost = -0.8f;
+				slow->duration = myRedShellManager->GetKarts().Size() - placement;
 
-				SComponentMessageData slowdata; slowdata.myBoostData = &slow;
+				SComponentMessageData slowdata; slowdata.myBoostData = slow;
 				myRedShellManager->GetKarts()[i]->NotifyOnlyComponents(eComponentMessageType::eGiveBoost, slowdata);
 			}
 		}
