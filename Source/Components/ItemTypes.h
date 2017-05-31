@@ -7,9 +7,9 @@ enum class eItemTypes
 	eMushroom,
 	eRedShell,
 	eStar,
+	eLightning,
 	eBlueShell,
 	eGoldenMushroom,
 	eBulletBill,
-	eLightning,
 	eNone,
 };

@@ -29,20 +29,27 @@ public:
 	void MoveFoward();
 	void MoveBackWards();
 	void StopTurning();
-	bool Drift();
 	void StopDrifting();
 	void GetHit();
+	void ApplyStartBoost();
+
+	void IncreasePreGameBoostValue();
+	void DecreasePreGameBoostValue();
+
+
+	void Init(Physics::CPhysicsScene* aPhysicsScene);
 
 	void CheckZKill();
 	void Update(const float aDeltaTime);
+	void CountDownUpdate(const float aDeltaTime);
+	void Receive(const eComponentMessageType, const SComponentMessageData&) override;
 	
 	const CNavigationSpline& GetNavigationSpline();
 	const CU::Vector3f& GetVelocity() const;
 
-	void Receive(const eComponentMessageType, const SComponentMessageData&) override;
-	bool Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData) override;
-	void Init(Physics::CPhysicsScene* aPhysicsScene);
 
+	bool Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData) override;
+	bool Drift();
 	bool IsFutureGrounded(const float aDistance);
 
 	inline bool GetIsGrounded() const;
@@ -55,11 +62,8 @@ public:
 private:
 	
 	void UpdateMovement(const float aDeltaTime);
-	//void DoDriftingParticles();
 
 	void DoCornerTest(unsigned aCornerIndex, const CU::Matrix33f& aRotationMatrix, const CU::Vector3f& aPosition, const float aHalfWidth, const float aLength);
-	//void SetHeight(float aHeight, const float aDt);
-	//float GetHeightSpeed();
 	void CheckWallKartCollision(const float aDetltaTime);
 	void DoPhysics(const float aDeltaTime);
 
@@ -71,12 +75,6 @@ private:
 		LeftFront,
 		Size
 	};
-
-
-
-
-	//std::function<bool(const CU::Vector3f&, const CU::Vector3f&, float)> myIsGrounded;
-	
 
 	std::unique_ptr<CDrifter> myDrifter;
 	std::unique_ptr<CKartAnimator> myAnimator;
@@ -90,7 +88,7 @@ private:
 
 	CKartControllerComponentManager* myManager;
 	Physics::CPhysicsScene* myPhysicsScene;
-	//float myFowrardSpeed;
+
 	float myMaxSpeed;
 	float myMinSpeed;
 
@@ -123,6 +121,13 @@ private:
 	float myDriftSetupTime;
 	
 	float myTerrainModifier;
+
+	
+	bool increaseCountdownValue;
+	float myPreRaceBoostRate;
+	float myPreRaceRate;
+	float myPreRaceBoostValue;
+	float myPreRaceBoostTarget;
 	
 	eCurrentAction myCurrentAction;
 

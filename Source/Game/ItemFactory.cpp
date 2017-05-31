@@ -412,7 +412,8 @@ eItemTypes CItemFactory::RandomizeItem(CComponent* aPlayerCollider)
 	{
 		if (result <= myPlacementDrops[placement][i].myChance)
 		{
-			item = myPlacementDrops[placement][i].myType;
+			 item = myPlacementDrops[placement][i].myType;
+			 break;
 		}
 	}
 
@@ -495,8 +496,26 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 		//activate AI controller on player and make invincible and boost
 		break;
 	case eItemTypes::eLightning:
-		//postmaster blast all
+	{
+		for (int i = 0; i < myRedShellManager->GetKarts().Size(); i++)
+		{
+			if (myRedShellManager->GetKarts()[i] != userComponent->GetParent())
+			{
+				myRedShellManager->GetKarts()[i]->NotifyOnlyComponents(eComponentMessageType::eGotHit, SComponentMessageData());
+
+				unsigned char placement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myRedShellManager->GetKarts()[i]);
+
+				SBoostData slow;
+				slow.accerationBoost = 0.0001f;
+				slow.maxSpeedBoost = 0.0002f;
+				slow.duration = myRedShellManager->GetKarts().Size() - placement;
+
+				SComponentMessageData slowdata; slowdata.myBoostData = &slow;
+				myRedShellManager->GetKarts()[i]->NotifyOnlyComponents(eComponentMessageType::eGiveBoost, slowdata);
+			}
+		}
 		break;
+	}
 	case eItemTypes::eBanana:
 	{
 		if (myBananas.Size() <= 0)

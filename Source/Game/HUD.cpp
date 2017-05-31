@@ -219,6 +219,22 @@ SHUDElement CHUD::LoadHUDElement(const CU::CJsonValue& aJsonValue, eGuiType aGui
 	{
 		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.25f, 0.0f), CU::Vector2f());
 	}
+	else if (myAmountOfPlayers >= 3 && aGuiType == eGuiType::eLapCounter && myPlayerID % 2 == 1)
+	{
+		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.4f, 0.04f), CU::Vector2f());
+	}
+	else if (myAmountOfPlayers >= 3 && aGuiType == eGuiType::ePlacement && myPlayerID % 2 == 1)
+	{
+		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.375f, 0.01f), CU::Vector2f(0.0f, 0.03f));
+	}
+	else if (myAmountOfPlayers >= 3 && aGuiType == eGuiType::eLapCounter && myPlayerID % 2 == 0)
+	{
+		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.0f, 0.04f), CU::Vector2f());
+	}
+	else if (myAmountOfPlayers >= 3 && aGuiType == eGuiType::ePlacement && myPlayerID % 2 == 0)
+	{
+		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.0f, 0.01f), CU::Vector2f(0.0f, 0.03f));
+	}
 	else
 	{
 		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(), CU::Vector2f());
