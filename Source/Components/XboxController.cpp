@@ -157,7 +157,10 @@ void CXboxController::MovedJoystick(const CU::SInputMessage& aInputMessage)
 {
 	if (aInputMessage.myJoyStickPosition.x == 0.f)
 	{
-		myControllerComponent.StopTurning();
+		if (aInputMessage.myJoyStickPosition.y == 0.f)
+		{
+			myControllerComponent.StopTurning();
+		}
 	}
 	else
 	{

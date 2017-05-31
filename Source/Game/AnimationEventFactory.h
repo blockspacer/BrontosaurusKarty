@@ -3,19 +3,20 @@
 class CAnimationEvent;
 class CKartAnimator;
 
+enum class eEventType
+{
+	eBeginRight,
+	eContinueRight,
+	eFinishRight,
+	eBeginLeft,
+	eContinueLeft,
+	eFinishLeft,
+};
+
+
 class CAnimationEventFactory
 {
 public:
-	enum class eEventType
-	{
-		eBeginRight,
-		eContinueRight,
-		eFinnishRight,
-		eBeginLeft,
-		eContinueLeft,
-		eFinnishLeft,
-	};
-
 	CAnimationEventFactory();
 	~CAnimationEventFactory();
 

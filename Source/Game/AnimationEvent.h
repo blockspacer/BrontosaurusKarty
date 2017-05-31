@@ -21,6 +21,7 @@ public:
 
 	eAnimationState GetCurrent() const;
 	float GetAnimationCounter();
+	bool IsBeginner() const;
 
 private:
 	std::function<bool(float)> myShouldContinue;
