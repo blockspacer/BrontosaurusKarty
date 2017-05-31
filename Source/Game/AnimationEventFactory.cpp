@@ -45,6 +45,8 @@ CAnimationEventFactory::CAnimationEventFactory()
 
 	for (const std::string& filePath : filePaths)
 	{
+		if (filePath.rfind(".json") == std::string::npos) continue;
+
 		CU::CJsonValue animationFile("Json\\Animation\\" + filePath);
 		
 		CU::CJsonValue animations = animationFile["animations"];
