@@ -90,6 +90,11 @@ void CAIController::Update(const float aDeltaTime)
 		return;
 	}*/
 
+	if(myControllerComponent.GetParent()->AskComponents(eComponentQuestionType::eGetHoldItemType, SComponentQuestionData()) == true)
+	{
+		myControllerComponent.GetParent()->NotifyOnlyComponents(eComponentMessageType::eUseItem, SComponentMessageData());
+	}
+
 	CU::Vector3f piss = myControllerComponent.GetParent()->GetToWorldTransform().GetPosition();
 	CU::Vector2f pos(piss.x, piss.z);
 
