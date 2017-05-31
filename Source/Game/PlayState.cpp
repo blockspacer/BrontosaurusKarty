@@ -295,7 +295,7 @@ void CPlayState::Load()
 	}
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
-		myHUDs.Add(new CHUD(i, myIsOneSplit));
+		myHUDs.Add(new CHUD(i, myPlayerCount));
 		myHUDs[i]->LoadHUD();
 	}
 
