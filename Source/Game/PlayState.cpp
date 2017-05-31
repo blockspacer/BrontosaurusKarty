@@ -199,10 +199,7 @@ void CPlayState::Load()
 	myCountdownElement->myScreenRect = CU::Vector4f( myCountdownSprite->GetPosition() );
 	myCountdownElement->myScreenRect.z = myCountdownSprite->GetPosition().x - (0.26f / 2);
 	myCountdownElement->myScreenRect.w = myCountdownSprite->GetPosition().y - (0.27f / 2);
-
-
 	// Render in Renderfunc.
-
 
 
 	srand(static_cast<unsigned int>(time(nullptr)));
