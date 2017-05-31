@@ -425,10 +425,14 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 	}
 	case eComponentMessageType::eMakeInvurnable:
 	{
-		myIsInvurnable = true;
 		myInvurnableTime = aMessageData.myBoostData->duration;
-		SComponentMessageData sound; sound.myString = "PlayStar";
-		GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
+		myElapsedInvurnableTime = 0;
+		if (myIsInvurnable == false)
+		{
+			SComponentMessageData sound; sound.myString = "PlayStar";
+			GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
+		}
+		myIsInvurnable = true;
 		break;
 	}
 	case eComponentMessageType::eSetBoost:
