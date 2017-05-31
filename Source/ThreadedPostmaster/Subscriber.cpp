@@ -120,6 +120,11 @@ eMessageReturn Postmaster::ISubscriber::DoEvent(const CRaceOverMessage& aRaceOve
 	return eMessageReturn::eContinue;
 }
 
+eMessageReturn Postmaster::ISubscriber::DoEvent(const CRaceStartedMessage& aRaceOverMessage)
+{
+	return eMessageReturn::eContinue;
+}
+
 void Postmaster::ISubscriber::SetSubscribedThread(const std::thread::id & aId)
 {
 	if(mySubscribedId != std::thread::id() && mySubscribedId != aId)
