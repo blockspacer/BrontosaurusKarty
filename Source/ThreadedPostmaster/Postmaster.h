@@ -2,6 +2,8 @@
 #include "../CommonUtilities/LocklessQueue.h"
 #include "NarrowcastStruct.h"
 
+#define POSTMASTER Postmaster::Threaded::CPostmaster::GetInstance()
+
 enum class eMessageType;
 
 namespace Postmaster

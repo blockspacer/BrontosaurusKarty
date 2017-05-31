@@ -19,6 +19,9 @@ public:
 	PointLightComponent* CreateAndRegisterPointLightComponent();
 	CSpotLightComponent* CreateAndRegisterSpotLightComponent();
 
+	void SetSkybox(const char* aPath);
+	void SetCubemap(const char* aPath);
+
 	void Update(const CU::Time aDeltaTime);
 
 	void AddDirectionalLightToScene(const Lights::SDirectionalLight& aDirectionalLight);

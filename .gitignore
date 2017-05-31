@@ -431,4 +431,5 @@ Bin/Folder Cleanup/
 
 *.psd
 Bin/KartMultiplayer.bat
-Bin/Lut/RGBTable16x1_NoChange.png
+*.png
+Bin/Json/Animation/types.txt

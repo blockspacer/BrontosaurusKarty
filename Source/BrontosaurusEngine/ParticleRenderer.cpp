@@ -78,14 +78,18 @@ void CParticleRenderer::DoRenderQueue(ID3D11ShaderResourceView* aDepthResource, 
 	myDepthStencilResourceToUse = aDepthResource;
 	//myInteremediate.Clear();
 	//UpdateCameraBuffer(mySharedRenderer.GetCamera().GetTransformation(), mySharedRenderer.GetCamera().GetProjectionInverse());
+	ID3D11ShaderResourceView* depthResources[2];
+	depthResources[0] = mySecondaryDepthStencil;
+	depthResources[1] = myDepthStencilResourceToUse;
+
+	DEVICE_CONTEXT->PSSetShaderResources(20, 2, depthResources);
 	for (int i = 0; i < myParticleMessages.Size(); ++i)
 	{
 		
 
-		if (mySecondaryDepthStencil != nullptr)
-		{
-			DEVICE_CONTEXT->PSSetShaderResources(20, 1,& mySecondaryDepthStencil);
-		}
+		
+		
+		
 		
 		SRenderParticlesMessage* msg = static_cast<SRenderParticlesMessage*>(myParticleMessages[i]);
 		CParticleEmitter* emitter = CParticleEmitterManager::GetInstance().GetEmitter(msg->particleEmitter);

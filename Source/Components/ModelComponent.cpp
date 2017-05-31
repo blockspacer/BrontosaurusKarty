@@ -11,12 +11,6 @@ CModelComponent::CModelComponent(CModelInstance& aModel)
 	myType = eComponentType::eModel;
 }
 
-CModelComponent::CModelComponent(CModelInstance& aModel, const bool aIsDebugSphere)
-	: CModelComponent(aModel)
-{
-	myType = eComponentType::eModelDebug;
-}
-
 CModelComponent::~CModelComponent()
 {
 }
@@ -127,6 +121,16 @@ void CModelComponent::SetAnimationLerpValue(const float aLerpValue)
 void CModelComponent::SetAnimationLooping(const bool aIsLooping)
 {
 	myModel.SetAnimationLooping(aIsLooping);
+}
+
+void CModelComponent::SetAnimationManualUpdate(const bool aShouldManuallyUpdate)
+{
+	myModel.SetAnimationManualUpdate(aShouldManuallyUpdate);
+}
+
+void CModelComponent::SetAnimationCounter(const float aValue)
+{
+	myModel.SetAnimationCounter(aValue);
 }
 
 void CModelComponent::ResetAnimation()

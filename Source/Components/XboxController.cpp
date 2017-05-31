@@ -88,7 +88,7 @@ void CXboxController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 	case CU::GAMEPAD::DPAD_RIGHT:
 	{
 		SComponentMessageData data;
-		data.myInt = 1;//Banana
+		data.myInt = 4;//Banana
 		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveItem, data);
 		break;
 	}
@@ -157,7 +157,10 @@ void CXboxController::MovedJoystick(const CU::SInputMessage& aInputMessage)
 {
 	if (aInputMessage.myJoyStickPosition.x == 0.f)
 	{
-		myControllerComponent.StopTurning();
+		if (aInputMessage.myJoyStickPosition.y == 0.f)
+		{
+			myControllerComponent.StopTurning();
+		}
 	}
 	else
 	{
@@ -176,15 +179,6 @@ void CXboxController::MovedJoystick(const CU::SInputMessage& aInputMessage)
 
 void CXboxController::GamePadLeftTrigger(const CU::SInputMessage& aInputMessage)
 {
-	/*SComponentMessageData boostMessageData;
-	SBoostData* boostData = new SBoostData();
-	boostData->accerationBoost = 5;
-	boostData->duration = 4.0f;
-	boostData->maxSpeedBoost = 2.0f;
-	boostData->hashedName = std::hash<std::string>()("TempBoost");
-	boostMessageData.myBoostData = boostData;
-	myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);*/
-
 	myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eUseItem, SComponentMessageData());
 }
 
@@ -193,9 +187,6 @@ void CXboxController::GamePadRightTrigger(const CU::SInputMessage& aInputMessage
 	if (myIsDrifting == false)
 	{
 		myControllerComponent.Drift();
-
-		SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerIndex, 10, 10);
-		Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 		myIsDrifting = true;
 	}
 }

@@ -6,7 +6,7 @@ class CController
 {
 public:
 	CController(CKartControllerComponent& aKartComponent);
-	~CController();
+	virtual ~CController();
 
 	virtual void Update(const float aDeltaTime);
 

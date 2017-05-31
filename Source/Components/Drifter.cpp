@@ -2,6 +2,8 @@
 #include "Drifter.h"
 #include "..\CommonUtilities\JsonValue.h"
 #include "CurrentAction.h"
+#include "ParticleEmitterInstance.h"
+#include "ParticleEmitterManager.h"
 
 
 CDrifter::CDrifter()
@@ -10,6 +12,13 @@ CDrifter::CDrifter()
 
 CDrifter::~CDrifter()
 {
+	CParticleEmitterManager::GetInstance().Release(myLeftDriftDustEmitterHandle);
+	CParticleEmitterManager::GetInstance().Release(myRightDriftDustEmitterHandle);
+	CParticleEmitterManager::GetInstance().Release(myLeftSmallBoostReadyEmitterHandle);
+	CParticleEmitterManager::GetInstance().Release(myRightSmallBoostReadyEmitterHandle);
+	CParticleEmitterManager::GetInstance().Release(myLeftLargeBoostReadyEmitterHandle);
+	CParticleEmitterManager::GetInstance().Release(myRightLargeBoostReadyEmitterHandle);
+
 }
 
 bool CDrifter::Init(const CU::CJsonValue& aJsonValue)
@@ -25,6 +34,16 @@ bool CDrifter::Init(const CU::CJsonValue& aJsonValue)
 
 	myLongDriftTime = aJsonValue.at("LargeBoostAt").GetFloat();
 	myShortDriftTime = aJsonValue.at("SmallBoostAt").GetFloat();
+
+	mySlowExtraSpeed = aJsonValue.at("SmallDriftSpeed").GetFloat();
+	myFastExtraSpeed = aJsonValue.at("LargeDriftSpeed").GetFloat();
+
+	myLeftSmallBoostReadyEmitterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(aJsonValue.at("SmallBoostParticle").GetString());
+	myRightSmallBoostReadyEmitterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(aJsonValue.at("SmallBoostParticle").GetString());
+	myLeftDriftDustEmitterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(aJsonValue.at("DriftParticle").GetString());
+	myRightDriftDustEmitterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(aJsonValue.at("DriftParticle").GetString());
+	myLeftLargeBoostReadyEmitterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(aJsonValue.at("LargeBoostParticle").GetString());
+	myRightLargeBoostReadyEmitterHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance(aJsonValue.at("LargeBoostParticle").GetString());
 
 	myDriftState = eDriftState::eNotDrifting;
 
@@ -66,6 +85,7 @@ void CDrifter::StartDrifting(const eCurrentAction& aCurrentAction)
 	default:
 		break;
 	}
+	SetDriftParticlesReady(true);
 }
 
 CDrifter::eDriftBoost CDrifter::StopDrifting()
@@ -86,7 +106,9 @@ CDrifter::eDriftBoost CDrifter::StopDrifting()
 	myDriftTimer = 0;
 	myDriftSteerModifier = 0;
 	myDriftState = eDriftState::eNotDrifting;
-
+	SetDriftParticlesReady(false);
+	SetSmallBoostReady(false);
+	SetLargeBoostReady(false);
 	return boost;
 }
 
@@ -104,3 +126,63 @@ void CDrifter::StopTurning()
 {
 	myDriftSteerModifier = 0;
 }
+
+void CDrifter::UpdateDriftParticles(const CU::Matrix44f & aKartOrientation)
+{
+	CU::Matrix44f particlePosition = aKartOrientation;
+
+	particlePosition.Move(CU::Vector3f(-0.45f, 0, 0));
+	CParticleEmitterManager::GetInstance().SetPosition(myLeftDriftDustEmitterHandle, particlePosition.GetPosition());
+	CParticleEmitterManager::GetInstance().SetPosition(myLeftSmallBoostReadyEmitterHandle, particlePosition.GetPosition());
+	CParticleEmitterManager::GetInstance().SetPosition(myLeftLargeBoostReadyEmitterHandle, particlePosition.GetPosition());
+	particlePosition.Move(CU::Vector3f(0.9f, 0, 0));
+	CParticleEmitterManager::GetInstance().SetPosition(myRightDriftDustEmitterHandle, particlePosition.GetPosition());
+	CParticleEmitterManager::GetInstance().SetPosition(myRightSmallBoostReadyEmitterHandle, particlePosition.GetPosition());
+	CParticleEmitterManager::GetInstance().SetPosition(myRightLargeBoostReadyEmitterHandle, particlePosition.GetPosition());;
+
+	if (myDriftTimer > myShortDriftTime)
+	{
+		if (myDriftTimer > myLongDriftTime)
+		{
+			SetSmallBoostReady(false);
+			SetLargeBoostReady(true);
+			return;
+		}
+		SetSmallBoostReady(true);
+	}
+}
+
+void CDrifter::SetDriftParticlesReady(const bool aFlag)
+{
+	if (aFlag == true)
+	{
+		CParticleEmitterManager::GetInstance().Activate(myLeftDriftDustEmitterHandle);
+		CParticleEmitterManager::GetInstance().Activate(myRightDriftDustEmitterHandle);
+		return;
+	}
+	CParticleEmitterManager::GetInstance().Deactivate(myLeftDriftDustEmitterHandle);
+	CParticleEmitterManager::GetInstance().Deactivate(myRightDriftDustEmitterHandle);
+}
+void CDrifter::SetSmallBoostReady(const bool aFlag)
+{
+	if (aFlag == true)
+	{
+		CParticleEmitterManager::GetInstance().Activate(myLeftSmallBoostReadyEmitterHandle);
+		CParticleEmitterManager::GetInstance().Activate(myRightSmallBoostReadyEmitterHandle);
+		return;
+	}
+	CParticleEmitterManager::GetInstance().Deactivate(myLeftSmallBoostReadyEmitterHandle);
+	CParticleEmitterManager::GetInstance().Deactivate(myRightSmallBoostReadyEmitterHandle);
+}
+void CDrifter::SetLargeBoostReady(const bool aFlag)
+{
+	if (aFlag == true)
+	{
+		CParticleEmitterManager::GetInstance().Activate(myLeftLargeBoostReadyEmitterHandle);
+		CParticleEmitterManager::GetInstance().Activate(myRightLargeBoostReadyEmitterHandle);
+		return;
+	}
+	CParticleEmitterManager::GetInstance().Deactivate(myLeftLargeBoostReadyEmitterHandle);
+	CParticleEmitterManager::GetInstance().Deactivate(myRightLargeBoostReadyEmitterHandle);
+}
+

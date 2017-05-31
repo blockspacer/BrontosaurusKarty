@@ -26,6 +26,8 @@ CModelManager::~CModelManager()
 			}
 		}
 	}
+
+	CFBXLoader::ReleaseScenes();
 }
 
 const CModelManager::ModelId CModelManager::LoadModel(const std::string& aModelPath)
@@ -130,9 +132,9 @@ void CModelManager::LoadAnimations(const std::string& aPath, const ModelId aMode
 
 		mdl->mySceneAnimators.clear();
 		CFBXLoader loader;
-		for (int i = 0; i < SAnimationState::AnimationStates.Size(); ++i)
+		for (int i = 0; i < locAnimationState.AnimationStates.Size(); ++i)
 		{
-			const std::string& animationName = SAnimationState::AnimationStates[i];
+			const std::string& animationName = locAnimationState.AnimationStates[i];
 
 			const aiScene* animationScene = loader.GetScene(modelName + animationName + ".fbx");
 			

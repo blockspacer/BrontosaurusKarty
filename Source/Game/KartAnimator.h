@@ -1,0 +1,43 @@
+#pragma once
+
+class CAnimationEvent;
+class CAnimationEventFactory;
+class CModelComponent;
+
+enum class eEventType;
+
+class CKartAnimator
+{
+public:
+	CKartAnimator(CModelComponent& aModelComponent);
+	~CKartAnimator();
+
+	void AddAnimation(const eEventType aType);
+	void Update(const float aDeltaTime);
+
+	void OnTurnRight(const float aNormalizedModifier);
+	void OnTurnLeft(const float aNormalizedModifier);
+	void OnStopMoving();
+	void OnMoveFoward();
+	void OnMoveBackWards();
+	void OnStopTurningLeft();
+	void OnStopTurningRight();
+	void OnDrift();
+	void OnStopDrifting();
+	void OnGetHit();
+
+	bool IsTurningRight() const;
+	bool IsTurningLeft() const;
+
+private:
+	std::vector<CAnimationEvent> myEventQueue;
+	std::unique_ptr<CAnimationEvent> myDefaultAnimation;
+	CModelComponent& myModelComponent;
+
+	enum class eTurnState
+	{
+		eRight,
+		eLeft,
+		eNone
+	} myTurnState;
+};

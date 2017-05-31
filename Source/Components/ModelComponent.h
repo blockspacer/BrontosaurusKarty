@@ -8,7 +8,6 @@ class CModelComponent : public CComponent
 {
 public:
 	CModelComponent(CModelInstance& aModel);
-	CModelComponent(CModelInstance& aModel, const bool aIsDebugSphere);
 	CModelComponent(const CModelComponent& aCopy) = delete;
 	~CModelComponent();
 
@@ -23,6 +22,8 @@ public:
 	void SetNextAnimation(const eAnimationState aAnimationKey);
 	void SetAnimationLerpValue(const float aLerpValue);
 	void SetAnimationLooping(const bool aIsLooping);
+	void SetAnimationManualUpdate(const bool aShouldManuallyUpdate);
+	void SetAnimationCounter(const float aValue);
 	void ResetAnimation();
 	void SetIgnoreDepth(bool aShouldIgnoreDepth);
 

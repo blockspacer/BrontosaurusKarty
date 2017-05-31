@@ -62,6 +62,9 @@
     <ClCompile Include="GoalComponent.cpp" />
     <ClCompile Include="LightComponentManager.cpp" />
     <ClCompile Include="SpotLightComponent.cpp" />
+    <ClCompile Include="RedShellBehaviourComponent.cpp" />
+    <ClCompile Include="RedShellManager.cpp" />
+    <ClCompile Include="TerrainComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -133,5 +136,8 @@
     <ClInclude Include="AIController.h" />
     <ClInclude Include="LightComponentManager.h" />
     <ClInclude Include="SpotLightComponent.h" />
+    <ClInclude Include="RedShellBehaviourComponent.h" />
+    <ClInclude Include="RedShellManager.h" />
+    <ClInclude Include="TerrainComponent.h" />
   </ItemGroup>
 </Project>

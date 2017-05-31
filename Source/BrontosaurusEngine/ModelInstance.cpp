@@ -27,6 +27,7 @@ CModelInstance::CModelInstance(const std::string& aModelPath): myVertexTexture(n
 
 	myAnimationLerpie = 0.f;
 	myAnimationCounter = 0.f;
+	myShouldManuallyUpdate = false;
 	myHighlightIntencity = 0.f;
 
 	myIsVisible = true;
@@ -258,7 +259,10 @@ void CModelInstance::RenderDeferred(CRenderCamera & aRenderToCamera)
 
 void CModelInstance::Update(const CU::Time aDeltaTime)
 {
-	myAnimationCounter += aDeltaTime.GetSeconds();
+	if (!myShouldManuallyUpdate)
+	{
+		myAnimationCounter += aDeltaTime.GetSeconds();
+	}
 }
 
 void CModelInstance::SetTransformation(const CU::Matrix44f& aTransformation)
@@ -317,6 +321,12 @@ float CModelInstance::GetAnimationDuration(const eAnimationState aAnimationState
 
 	return 0.f;
 }
+
+void CModelInstance::SetAnimationManualUpdate(const bool aShouldManuallyUpdate)
+{
+	myShouldManuallyUpdate = aShouldManuallyUpdate;
+}
+
 void CModelInstance::SetAnimation(const eAnimationState aAnimationKey)
 {
 	myCurrentAnimation = aAnimationKey;
@@ -338,6 +348,11 @@ void CModelInstance::SetAnimationLooping(const bool aValue)
 {
 	myAnimationLooping = aValue;
 	//myAnimationCounter = 0.0f;
+}
+
+void CModelInstance::SetAnimationCounter(const float aValue)
+{
+	myAnimationCounter = aValue;
 }
 
 void CModelInstance::ResetAnimation()

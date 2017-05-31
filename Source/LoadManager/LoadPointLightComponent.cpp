@@ -7,6 +7,8 @@
 #include "SpotLightComponent.h"
 #include "LightComponentManager.h"
 #include "GameObject.h"
+#include "Engine.h"
+#include "Renderer.h"
 
 int LoadPointLightComponent(KLoader::SLoadedComponentData someData)
 {
@@ -40,4 +42,29 @@ int LoadPointLightComponent(KLoader::SLoadedComponentData someData)
 
 		return NULL_COMPONENT;
 	}
+}
+
+int LoadEnvironmentSettings(KLoader::SLoadedComponentData someData)
+{
+	std::string directory = "Models/Textures/";
+	std::string skybox = directory + someData.myData.at("skybox").GetString();
+	std::string cubemap = directory + someData.myData.at("cubemap").GetString();
+
+	CLightComponentManager::GetInstance().SetSkybox(skybox.c_str());
+	CLightComponentManager::GetInstance().SetCubemap(cubemap.c_str());
+
+	CEngine* engine = CEngine::GetInstance();
+	assert(engine && "Could not get engine instance");
+	CRenderer& renderer = engine->GetRenderer();
+
+	float start, end;
+	start = someData.myData.at("fogStart").GetFloat();
+	end = someData.myData.at("fogEnd").GetFloat();
+	renderer.SetFogStartEnd(start, end);
+
+	CU::Vector4f color = someData.myData.at("fogColor").GetVector4f();
+	color /= 255.f;
+	renderer.SetFogColor(color);
+
+	return NULL_COMPONENT;
 }

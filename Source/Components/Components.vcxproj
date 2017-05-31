@@ -399,6 +399,8 @@
     <ClInclude Include="PickupComponentManager.h" />
     <ClInclude Include="KeyboardController.h" />
     <ClInclude Include="PlayerControllerManager.h" />
+    <ClInclude Include="RedShellBehaviourComponent.h" />
+    <ClInclude Include="RedShellManager.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RespawnComponentManager.h" />
     <ClInclude Include="RespawnerComponent.h" />
@@ -426,6 +428,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StreakEmitterComponent.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TerrainComponent.h" />
     <ClInclude Include="VertexStreamComponent.h" />
     <ClInclude Include="WeaponCratePickupComponent.h" />
     <ClInclude Include="XboxController.h" />
@@ -469,6 +472,8 @@
     <ClCompile Include="PlayerControllerManager.cpp" />
     <ClCompile Include="PointLightComponent.cpp" />
     <ClCompile Include="LightComponentManager.cpp" />
+    <ClCompile Include="RedShellBehaviourComponent.cpp" />
+    <ClCompile Include="RedShellManager.cpp" />
     <ClCompile Include="RespawnComponentManager.cpp" />
     <ClCompile Include="RespawnerComponent.cpp" />
     <ClCompile Include="RigidBodyComponent.cpp" />
@@ -500,6 +505,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Retail|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="StreakEmitterComponent.cpp" />
+    <ClCompile Include="TerrainComponent.cpp" />
     <ClCompile Include="VertexStreamComponent.cpp" />
     <ClCompile Include="WeaponCratePickupComponent.cpp" />
     <ClCompile Include="XboxController.cpp" />
