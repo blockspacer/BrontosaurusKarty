@@ -126,7 +126,7 @@ void CHUD::Render()
 
 	if (myFinishTextElement.myShouldRender == true)
 	{
-		if (currentLap > 1)
+		if (currentLap > 3)
 		{
 			SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"finishText" + myPlayerID, myFinishTextElement.myGUIElement, myFinishTextElement.myPixelSize);
 
