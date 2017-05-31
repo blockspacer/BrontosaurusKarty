@@ -587,7 +587,8 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 	}
 
 
-	myVelocity += downAccl * (friction / (myCanAccelerate == true ? myGrip / myWeight : 1.f)) *gravity * aDeltaTime;
+
+	myVelocity += downAccl * gravity * aDeltaTime;
 }
 
 bool CKartControllerComponent::Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData)
