@@ -267,7 +267,7 @@ void CDeferredRenderer::DoLightingPass(CFullScreenHelper& aFullscreenHelper, CRe
 		changeStateMessage.myBlendState = eBlendState::eNoBlend;
 		changeStateMessage.mySamplerState = eSamplerState::eClamp;
 		aRenderer.SetStates(&changeStateMessage);
-		//DoAmbientLighting(aFullscreenHelper);
+		DoAmbientLighting(aFullscreenHelper);
 		DoDirectLighting(aFullscreenHelper, aRenderer);
 		break;
 	default:
