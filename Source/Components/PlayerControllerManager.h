@@ -1,12 +1,15 @@
 #pragma once
+#include "../ThreadedPostmaster/Subscriber.h"
 
 class CController;
 class CKeyboardController;
 class CXboxController;
 class CAIController;
 class CKartControllerComponent;
+class CPlayerFinishedMessage;
+class CRaceStartedMessage;
 
-class CPlayerControllerManager
+class CPlayerControllerManager : public Postmaster::ISubscriber
 {
 public:
 	CPlayerControllerManager();
@@ -18,7 +21,10 @@ public:
 
 	void Update(const float aDeltaTime);
 
-
+private:
+	eMessageReturn DoEvent(const CPlayerFinishedMessage& aMessage) override;
+	eMessageReturn DoEvent(const CRaceStartedMessage& aMessage) override;
+	
 private:
 	CU::GrowingArray<CController*> myPlayerControllers;
 
