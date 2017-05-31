@@ -246,14 +246,7 @@ void CPlayState::Load()
 	{
 		DL_MESSAGE_BOX("Loading Failed");
 	}
-
-	Lights::SDirectionalLight dirLight;
-	dirLight.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	dirLight.direction = { -1.0f, -1.0f, 1.0f, 1.0f };
-	dirLight.shadowIndex = 0;
-	myScene->AddDirectionalLight(dirLight);
-
-
+	
 	//myScene->AddCamera(CScene::eCameraType::ePlayerOneCamera);
 	//CRenderCamera& playerCamera = myScene->GetRenderCamera(CScene::eCameraType::ePlayerOneCamera);
 	//playerCamera.InitPerspective(90, WINDOW_SIZE_F.x, WINDOW_SIZE_F.y, 0.1f, 500.f);
