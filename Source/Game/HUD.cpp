@@ -316,10 +316,12 @@ void CHUD::DisableRedundantGUI()
 		{
 			myLapCounterElement.mySprite->SetAlpha(0);
 			myPlacementElement.mySprite->SetAlpha(0);
+			myItemGuiElement.mySprite->SetAlpha(0);
 		}
 
 		myLapCounterElement.myShouldRender = false;
 		myPlacementElement.myShouldRender = false;
+		myItemGuiElement.myShouldRender = false;
 	};
 
 	CU::Work work(lambda);
