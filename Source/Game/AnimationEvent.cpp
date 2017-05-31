@@ -45,3 +45,8 @@ float CAnimationEvent::GetAnimationCounter()
 
 	return myTimer + myStart;
 }
+
+bool CAnimationEvent::IsBeginner() const
+{
+	return myStart == 0.f;
+}
