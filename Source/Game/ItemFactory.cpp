@@ -344,6 +344,10 @@ void CItemFactory::CreatePlacementDrops()
 	item.myChance = 20;
 	drops.Add(item);
 
+	item.myType = eItemTypes::eLightning;
+	item.myChance = 30;
+	drops.Add(item);
+
 	item.myType = eItemTypes::eMushroom;
 	item.myChance = 40;
 	drops.Add(item);
@@ -371,6 +375,10 @@ void CItemFactory::CreatePlacementDrops()
 	item.myChance = 40;
 	drops.Add(item);
 
+	item.myType = eItemTypes::eLightning;
+	item.myChance = 60;
+	drops.Add(item);
+
 	item.myType = eItemTypes::eStar;
 	item.myChance = 100;
 	drops.Add(item);
@@ -386,6 +394,10 @@ void CItemFactory::CreatePlacementDrops()
 
 	item.myType = eItemTypes::eRedShell;
 	item.myChance = 30;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eLightning;
+	item.myChance = 70;
 	drops.Add(item);
 
 	item.myType = eItemTypes::eStar;
