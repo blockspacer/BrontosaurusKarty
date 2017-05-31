@@ -74,7 +74,7 @@ void CXboxController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 	case CU::GAMEPAD::DPAD_DOWN:
 	{
 		SComponentMessageData data;
-		data.myInt = 0; //GreenShell
+		data.myInt = 5; //GreenShell
 		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveItem, data);
 		break;
 	}
