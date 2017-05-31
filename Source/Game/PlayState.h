@@ -81,6 +81,7 @@ private:
 
 	void InitiateRace();
 	void RenderCountdown();
+	void BroadcastRaceStart();
 
 private:
 	Physics::CPhysicsScene* myPhysicsScene;

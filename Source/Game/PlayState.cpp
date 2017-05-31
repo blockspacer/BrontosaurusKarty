@@ -65,6 +65,7 @@
 #include "LightComponentManager.h"
 #include "BrontosaurusEngine/SpriteInstance.h"
 #include "ThreadedPostmaster/GameEventMessage.h"
+#include "..\ThreadedPostmaster\RaceStartedMessage.h"
 #include <LuaWrapper/SSlua/SSlua.h>
 #include <GUIElement.h>
 #include "HUD.h"
@@ -317,6 +318,8 @@ void CPlayState::Init()
 		POSTMASTER.Subscribe(myHUDs[i], eMessageType::eRaceOver);
 	}
 
+	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::ePlayerFinished);
+	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::eRaceStarted);
 
 	myGameObjectManager->SendObjectsDoneMessage();
 	CLapTrackerComponentManager::GetInstance()->Init();
@@ -690,6 +693,7 @@ void CPlayState::InitiateRace()
 				{
 					myCountdownSprite->SetRect({ 0.f,0.00f,1.f,0.25f });
 					myKartControllerComponentManager->ShouldUpdate(true);
+					POSTMASTER.Broadcast(new CRaceStartedMessage());
 				}
 			}
 		}
@@ -710,7 +714,6 @@ void CPlayState::InitiateRace()
 		}
 
 		myCountdownShouldRender = false;
-
 	};
 
 	work.SetFinishedCallback(callback);
