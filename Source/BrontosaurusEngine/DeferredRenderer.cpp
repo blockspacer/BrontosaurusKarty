@@ -126,16 +126,7 @@ void CDeferredRenderer::DoRenderQueue(CRenderer& aRenderer)
 
 			CModel* model = modelManager->GetModel(msg->myModelID);
 			if (!model) break;
-
-			if (msg->myRenderParams.myIgnoreDepth == true)
-			{
-				myGbuffer.BindOutput(CGeometryBuffer::eALL, CGeometryBuffer::eEmissive);
-			}
 			model->Render(msg->myRenderParams, Render::SEffectData());
-			if (msg->myRenderParams.myIgnoreDepth == true)
-			{
-				myGbuffer.BindOutput();
-			}
 			break;
 		}
 		case SRenderMessage::eRenderMessageType::eRenderModelInstanced:
@@ -196,7 +187,6 @@ void CDeferredRenderer::AddRenderMessage(SRenderMessage* aRenderMessage)
 	case SRenderMessage::eRenderMessageType::eRenderDirectionalLight:
 		myLightMessages.Add(aRenderMessage);
 		break;
-	//case SRenderMessage::eRenderMessageType::eRenderModelDeferred:
 	default:
 		myRenderMessages.Add(aRenderMessage);
 		break;
@@ -278,13 +268,7 @@ void CDeferredRenderer::DoLightingPass(CFullScreenHelper& aFullscreenHelper, CRe
 		changeStateMessage.mySamplerState = eSamplerState::eClamp;
 		aRenderer.SetStates(&changeStateMessage);
 		DoAmbientLighting(aFullscreenHelper);
-		changeStateMessage.myRasterizerState = eRasterizerState::eNoCulling;
-		changeStateMessage.myDepthStencilState = eDepthStencilState::eDisableDepth;
-		changeStateMessage.myBlendState = eBlendState::eAddBlend;
-		changeStateMessage.mySamplerState = eSamplerState::eClamp;
-		aRenderer.SetStates(&changeStateMessage);
-		DoDirectLighting(aFullscreenHelper);
-		DoHighlight(aFullscreenHelper,aRenderer);
+		DoDirectLighting(aFullscreenHelper, aRenderer);
 		break;
 	default:
 		break;
@@ -303,7 +287,6 @@ void CDeferredRenderer::DoLightingPass(CFullScreenHelper& aFullscreenHelper, CRe
 		changeStateMessage.mySamplerState = eSamplerState::eClamp;
 		aRenderer.SetStates(&changeStateMessage);
 		DoDirectLighting(aFullscreenHelper);
-		DoHighlight(aFullscreenHelper, aRenderer);
 #endif
 }
 
@@ -350,14 +333,30 @@ void CDeferredRenderer::DoAmbientLighting(CFullScreenHelper& aFullscreenHelper)
 	aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eDeferredAmbient);
 }
 
-void CDeferredRenderer::DoDirectLighting(CFullScreenHelper& aFullscreenHelper)
+void CDeferredRenderer::DoDirectLighting(CFullScreenHelper& aFullscreenHelper, CRenderer& aRenderer)
 {
+	SChangeStatesMessage cullfrontStates;
+	cullfrontStates.myRasterizerState = eRasterizerState::eCullFront;
+	cullfrontStates.myDepthStencilState = eDepthStencilState::eDisableDepth;
+	cullfrontStates.myBlendState = eBlendState::eAddBlend;
+	cullfrontStates.mySamplerState = eSamplerState::eClamp;
+
+	SChangeStatesMessage noCullStates;
+	noCullStates.myRasterizerState = eRasterizerState::eNoCulling;
+	noCullStates.myDepthStencilState = eDepthStencilState::eDisableDepth;
+	noCullStates.myBlendState = eBlendState::eAddBlend;
+	noCullStates.mySamplerState = eSamplerState::eClamp;
+
+	aRenderer.SetStates(&cullfrontStates);
+
 	for (SRenderMessage* renderMessage : myLightMessages)
 	{
 		switch (renderMessage->myType)
 		{
 		case SRenderMessage::eRenderMessageType::eRenderDirectionalLight:
+			aRenderer.SetStates(&noCullStates);
 			RenderDirectionalLight(renderMessage, aFullscreenHelper);
+			aRenderer.SetStates(&cullfrontStates);
 			break;
 		case SRenderMessage::eRenderMessageType::eRenderPointLight:
 			RenderPointLight(renderMessage, aFullscreenHelper);
@@ -394,29 +393,24 @@ void CDeferredRenderer::RenderPointLight(SRenderMessage* aRenderMessage, CFullSc
 void CDeferredRenderer::RenderSpotLight(SRenderMessage* aRenderMessage, CFullScreenHelper& aFullscreenHelper)
 {
 	SRenderSpotLight* msg = static_cast<SRenderSpotLight*>(aRenderMessage);
-	BSR::UpdateCBuffer<Lights::SSpotLight>(mySpotLightBuffer, &msg->spotLight);
-	myFramework->GetDeviceContext()->PSSetConstantBuffers(2, 1, &mySpotLightBuffer);
+
 	
 	CU::Matrix44f spotLightTransformation = msg->rotation;
 	spotLightTransformation.myPosition = msg->spotLight.position;
 
-	float scaleXY = msg->spotLight.spotAngle / (3.141592f * 0.5f);
+	float scaleXY = (msg->spotLight.spotAngle) / (3.141592f * 0.5f);
 	float scaleZ = msg->spotLight.range;
 	scaleXY *= scaleZ;
 
 	spotLightTransformation.SetScale({ scaleXY, scaleXY, scaleZ });
-	mySpotLightModel->Render(spotLightTransformation);
-}
 
-void CDeferredRenderer::DoHighlight(CFullScreenHelper& aFullscreenHelper, CRenderer& aRenderer)
-{
-	SChangeStatesMessage changeStateMessage;
-	changeStateMessage.myRasterizerState = eRasterizerState::eNoCulling;
-	changeStateMessage.myDepthStencilState = eDepthStencilState::eDisableDepth;
-	changeStateMessage.myBlendState = eBlendState::eEmilBlend;
-	changeStateMessage.mySamplerState = eSamplerState::eClamp;
-	aRenderer.SetStates(&changeStateMessage);
-	//aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopy, &myGbuffer.GetRenderPackage(CGeometryBuffer::eEmissive));
+
+	msg->spotLight.spotAngle = std::cos(msg->spotLight.spotAngle / 2.0f);
+	BSR::UpdateCBuffer<Lights::SSpotLight>(mySpotLightBuffer, &msg->spotLight);
+	myFramework->GetDeviceContext()->PSSetConstantBuffers(2, 1, &mySpotLightBuffer);
+
+
+	mySpotLightModel->Render(spotLightTransformation);
 }
 
 void CDeferredRenderer::DoSSAO(CFullScreenHelper& aFullscreenHelper)

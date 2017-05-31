@@ -105,6 +105,7 @@ CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
 	, myCountdownShouldRender(false)
+	,myIsCountingDown(true)
 {
 	myPlayers.Init(1);
 	myPlayerCount = 1;
@@ -260,14 +261,7 @@ void CPlayState::Load()
 	{
 		DL_MESSAGE_BOX("Loading Failed");
 	}
-
-	Lights::SDirectionalLight dirLight;
-	dirLight.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	dirLight.direction = { -1.0f, -1.0f, 1.0f, 1.0f };
-	dirLight.shadowIndex = 0;
-	myScene->AddDirectionalLight(dirLight);
-
-
+	
 	//myScene->AddCamera(CScene::eCameraType::ePlayerOneCamera);
 	//CRenderCamera& playerCamera = myScene->GetRenderCamera(CScene::eCameraType::ePlayerOneCamera);
 	//playerCamera.InitPerspective(90, WINDOW_SIZE_F.x, WINDOW_SIZE_F.y, 0.1f, 500.f);
@@ -295,7 +289,7 @@ void CPlayState::Load()
 	}
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
-		myHUDs.Add(new CHUD(i, myIsOneSplit));
+		myHUDs.Add(new CHUD(i, myPlayerCount));
 		myHUDs[i]->LoadHUD();
 	}
 
@@ -395,17 +389,22 @@ void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eChangeLevel);
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eNetworkMessage);
 
-	CU::CJsonValue levelsFile;
-	std::string errorString = levelsFile.Parse("Json/LevelList.json");
-	if (!errorString.empty()) DL_MESSAGE_BOX(errorString.c_str());
 
-	CU::CJsonValue levelsArray = levelsFile.at("levels");
+	if (myIsCountingDown == false)
+	{
+		CU::CJsonValue levelsFile;
+		std::string errorString = levelsFile.Parse("Json/LevelList.json");
+		if (!errorString.empty()) DL_MESSAGE_BOX(errorString.c_str());
 
-	const char* song = levelsArray.at(myLevelIndex).GetString().c_str();
+		CU::CJsonValue levelsArray = levelsFile.at("levels");
 
-	Audio::CAudioInterface::GetInstance()->PostEvent(song);
+		const char* song = levelsArray.at(myLevelIndex).GetString().c_str();
+
+		Audio::CAudioInterface::GetInstance()->PostEvent(song);
+	}
 
 	InitiateRace();
+
 }
 
 void CPlayState::OnExit(const bool /*aLetThroughRender*/)
@@ -676,6 +675,9 @@ void CPlayState::InitiateRace()
 		float floatTime = 0.f;
 
 		myCountdownShouldRender = true;
+		myIsCountingDown = true;
+
+		Audio::CAudioInterface::GetInstance()->PostEvent("PlayStartCountDown");
 
 		while (floatTime <= 3.5)
 		{
@@ -712,7 +714,19 @@ void CPlayState::InitiateRace()
 			myCountdownSprite->SetAlpha(0);
 		}
 
+		myIsCountingDown = false;
 		myCountdownShouldRender = false;
+
+
+		CU::CJsonValue levelsFile;
+		std::string errorString = levelsFile.Parse("Json/LevelList.json");
+		if (!errorString.empty()) DL_MESSAGE_BOX(errorString.c_str());
+
+		CU::CJsonValue levelsArray = levelsFile.at("levels");
+
+		const char* song = levelsArray.at(myLevelIndex).GetString().c_str();
+
+		Audio::CAudioInterface::GetInstance()->PostEvent(song);
 
 	};
 

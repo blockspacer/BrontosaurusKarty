@@ -9,6 +9,13 @@ class KeyCharPressed; //temp
 
 typedef unsigned int TimerHandle;
 
+enum class eGuiType
+{
+	eLapCounter,
+	ePlacement,
+	eFinish,
+	eItem
+};
 
 namespace CU 
 {
@@ -29,7 +36,7 @@ struct SHUDElement
 class CHUD : public Postmaster::ISubscriber
 {
 public:
-	CHUD(unsigned char aPlayerID, bool aIsOneSplit);
+	CHUD(unsigned char aPlayerID, unsigned short aAmountOfPlayers);
 	~CHUD();
 
 	void LoadHUD();
@@ -37,7 +44,8 @@ public:
 	void Render();
 
 private:
-	SHUDElement LoadHUDElement(const CU::CJsonValue& aJsonValue);
+	SHUDElement LoadHUDElement(const CU::CJsonValue& aJsonValue, eGuiType aGuiType);
+	void LoadHUDElementValues(const CU::CJsonValue& aJsonValue, SHUDElement& aHUDElement, CU::Vector2f aPositionOffset, CU::Vector2f aSizeOffset);
 	void LoadLapCounter(const CU::CJsonValue& aJsonValue);
 	void LoadPlacement(const CU::CJsonValue& aJsonValue);
 	void LoadFinishText(const CU::CJsonValue& aJsonValue);
@@ -72,6 +80,9 @@ private:
 	CU::Vector2f myCameraOffset; //best solution 10/10
 	CU::Vector2f mySpriteOffset;
 	CGameObject* myPlayer;
+
+	unsigned short myAmountOfPlayers;
+
 	unsigned char myLapAdjusterCheat;
 
 	unsigned char myPlayerID;
