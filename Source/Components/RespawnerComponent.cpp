@@ -62,6 +62,7 @@ void CRespawnerComponent::Receive(const eComponentMessageType aMessageType, cons
 				CU::Vector3f direction = CU::Vector3f(spineDirectionQuestionData.myNavigationPoint->myForwardDirection.x, 0.0f, spineDirectionQuestionData.myNavigationPoint->myForwardDirection.y);
 				CU::Vector3f LookTowardsDirection = direction + GetParent()->GetWorldPosition();
 				GetParent()->GetLocalTransform().LookAt(LookTowardsDirection);
+				myCurrentSplinePositionY += 2;
 			}
 		}
 		break;
