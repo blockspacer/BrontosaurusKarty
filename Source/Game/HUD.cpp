@@ -15,11 +15,12 @@
 #include <ThreadPool.h>
 
 #include "..\ThreadedPostmaster\Postmaster.h"
-#include "..\ThreadedPostmaster\PostOffice.h"
-
-#include "..\ThreadedPostmaster\MessageType.h"
 #include "..\ThreadedPostmaster\RaceOverMessage.h"
+
+//Debug
 #include "..\ThreadedPostmaster\KeyCharPressed.h"
+#include "..\ThreadedPostmaster\PlayerFinishedMessage.h"
+#include "..\ThreadedPostmaster\RaceStartedMessage.h"
 
 
 CHUD::CHUD(unsigned char aPlayerID, bool aIsOneSplit)
@@ -343,6 +344,11 @@ eMessageReturn CHUD::DoEvent(const KeyCharPressed& aMessage)
 {
 	if (aMessage.GetKey() == 'p')
 		myLapAdjusterCheat += 1;
+
+	if (aMessage.GetKey() == 'l')
+	//POSTMASTER.Broadcast(new CPlayerFinishedMessage(myPlayer));
+		POSTMASTER.Broadcast(new CRaceStartedMessage());
+
 
 	unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer) + myLapAdjusterCheat;
 	if (currentLap > 3)
