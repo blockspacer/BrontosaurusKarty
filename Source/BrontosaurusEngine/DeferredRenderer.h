@@ -45,13 +45,12 @@ public:
 	CRenderPackage& GetSecondPackage();
 private:
 	void DoAmbientLighting(CFullScreenHelper& aFullscreenHelper);
-	void DoDirectLighting(CFullScreenHelper& aFullscreenHelper);
+	void DoDirectLighting(CFullScreenHelper& aFullscreenHelper, CRenderer& aRenderer);
 
 	void RenderDirectionalLight(SRenderMessage* aRenderMessage, CFullScreenHelper& aFullscreenHelper);
 	void RenderPointLight(SRenderMessage* aRenderMessage, CFullScreenHelper& aFullscreenHelper);
 
 	void RenderSpotLight(SRenderMessage* aRenderMessage, CFullScreenHelper& aFullscreenHelper);
-	void DoHighlight(CFullScreenHelper& aFullscreenHelper, CRenderer& aRenderer);
 
 	void ActivateIntermediate();
 	void SetRMAOSRV();
