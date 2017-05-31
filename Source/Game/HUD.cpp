@@ -22,9 +22,10 @@
 #include "..\ThreadedPostmaster\KeyCharPressed.h"
 
 
-CHUD::CHUD(unsigned char aPlayerID, bool aIsOneSplit)
+CHUD::CHUD(unsigned char aPlayerID, unsigned short aAmountOfPlayers)
 {
 	myPlayerID = aPlayerID;
+	myAmountOfPlayers = aAmountOfPlayers;
 
 	myPlayer = CPollingStation::GetInstance()->GetPlayerAtID(aPlayerID);
 	if (myPlayer == nullptr)
@@ -42,7 +43,7 @@ CHUD::CHUD(unsigned char aPlayerID, bool aIsOneSplit)
 
 	if (aPlayerID == 1)
 	{
-		if (aIsOneSplit == true)
+		if (myAmountOfPlayers == 2)
 		{
 			myCameraOffset.y = offsetY;
 		}
@@ -125,7 +126,7 @@ void CHUD::Render()
 
 	if (myFinishTextElement.myShouldRender == true)
 	{
-		if (currentLap > 3)
+		if (currentLap > 1)
 		{
 			SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"finishText" + myPlayerID, myFinishTextElement.myGUIElement, myFinishTextElement.myPixelSize);
 
@@ -182,7 +183,7 @@ void CHUD::Render()
 	SetGUIToEndBlend(L"itemGui" + myPlayerID);
 }
 
-SHUDElement CHUD::LoadHUDElement(const CU::CJsonValue& aJsonValue)
+SHUDElement CHUD::LoadHUDElement(const CU::CJsonValue& aJsonValue, eGuiType aGuiType)
 {
 	SHUDElement hudElement;
 
@@ -190,31 +191,68 @@ SHUDElement CHUD::LoadHUDElement(const CU::CJsonValue& aJsonValue)
 	hudElement.myGUIElement.myAnchor[(char)eAnchors::eTop] = true;
 	hudElement.myGUIElement.myAnchor[(char)eAnchors::eLeft] = true;
 
-	hudElement.myGUIElement.myScreenRect = CU::Vector4f(aJsonValue.at("position").GetVector2f()+ myCameraOffset);
-
-	const CU::CJsonValue sizeObject = aJsonValue.at("size");
-	hudElement.myPixelSize.x = sizeObject.at("pixelWidth").GetUInt();
-	hudElement.myPixelSize.y = sizeObject.at("pixelHeight").GetUInt();
-
-	float rectWidth = sizeObject.at("screenSpaceWidth").GetFloat();
-	float rectHeight = sizeObject.at("screenSpaceHeight").GetFloat();
-
-	float topLeftX = hudElement.myGUIElement.myScreenRect.x;
-	float topLeftY = hudElement.myGUIElement.myScreenRect.y;
-
-	hudElement.myGUIElement.myScreenRect.z = rectWidth + topLeftX ;
-	hudElement.myGUIElement.myScreenRect.w = rectHeight + topLeftY ;
+	if(myAmountOfPlayers == 1 && aGuiType == eGuiType::ePlacement)
+	{
+		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.0f, 0.40f), CU::Vector2f(0.09f, 0.08f));
+	}
+	else if (myAmountOfPlayers == 1 && aGuiType == eGuiType::eLapCounter)
+	{
+		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.0f, 0.48f), CU::Vector2f());
+	}
+	else if (myAmountOfPlayers == 1 && aGuiType == eGuiType::eFinish)
+	{
+		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.25f, 0.25f), CU::Vector2f());
+	}
+	else if (myAmountOfPlayers == 2 && aGuiType == eGuiType::ePlacement)
+	{
+		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.0f, 0.0f), CU::Vector2f(0.09f, 0.08f));
+	}
+	else if (myAmountOfPlayers == 2 && aGuiType == eGuiType::eLapCounter && myPlayerID == 0)
+	{
+		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.9f, -0.38f), CU::Vector2f());
+	}
+	else if (myAmountOfPlayers == 2 && aGuiType == eGuiType::eLapCounter && myPlayerID == 1)
+	{
+		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.9f, 0.02f), CU::Vector2f());
+	}
+	else if (myAmountOfPlayers == 2 && aGuiType == eGuiType::eFinish)
+	{
+		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.25f, 0.0f), CU::Vector2f());
+	}
+	else
+	{
+		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(), CU::Vector2f());
+	}
+	
 
 	return hudElement;
 }
 
+void CHUD::LoadHUDElementValues(const CU::CJsonValue& aJsonValue, SHUDElement& aHUDElement, CU::Vector2f aPositionOffset, CU::Vector2f aSizeOffset)
+{
+	aHUDElement.myGUIElement.myScreenRect = CU::Vector4f(aJsonValue.at("position").GetVector2f() + myCameraOffset + aPositionOffset);
+
+	const CU::CJsonValue sizeObject = aJsonValue.at("size");
+	aHUDElement.myPixelSize.x = sizeObject.at("pixelWidth").GetUInt();
+	aHUDElement.myPixelSize.y = sizeObject.at("pixelHeight").GetUInt();
+
+	float rectWidth = sizeObject.at("screenSpaceWidth").GetFloat() + aSizeOffset.x;
+	float rectHeight = sizeObject.at("screenSpaceHeight").GetFloat() + aSizeOffset.y;
+
+	float topLeftX = aHUDElement.myGUIElement.myScreenRect.x;
+	float topLeftY = aHUDElement.myGUIElement.myScreenRect.y;
+
+	aHUDElement.myGUIElement.myScreenRect.z = rectWidth + topLeftX;
+	aHUDElement.myGUIElement.myScreenRect.w = rectHeight + topLeftY;
+
+}
 // Remember - Sprites are bot-left based.
 
 void CHUD::LoadLapCounter(const CU::CJsonValue& aJsonValue)
 {
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
-	myLapCounterElement = LoadHUDElement(aJsonValue);
+	myLapCounterElement = LoadHUDElement(aJsonValue, eGuiType::eLapCounter);
 	myLapCounterElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
 	myLapCounterElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 0.8f, 0.35f });
@@ -225,22 +263,20 @@ void CHUD::LoadPlacement(const CU::CJsonValue& aJsonValue)
 {
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
-	myPlacementElement = LoadHUDElement(aJsonValue);
+	myPlacementElement = LoadHUDElement(aJsonValue, eGuiType::ePlacement);
 	myPlacementElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
-	myPlacementElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 1.0f,1.0f });
+	CU::Vector2f spriteSize(1.0f, 1.0f);
+	myPlacementElement.mySprite = new CSpriteInstance(spritePath.c_str(), spriteSize);
 	myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.875f, 1.0f, 1.0f));
-	//myPlacementElement.myGUIElement.myScreenRect.x = myCameraOffset.x;
-	//myPlacementElement.myGUIElement.myScreenRect.y = myCameraOffset.y;
-	//myPlacementElement.myGUIElement.myScreenRect.z = myCameraOffset.x + 0.2f;
-	//myPlacementElement.myGUIElement.myScreenRect.w = myCameraOffset.y + 0.5185f;
+
 }
 
 void CHUD::LoadFinishText(const CU::CJsonValue& aJsonValue)
 {
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
-	myFinishTextElement = LoadHUDElement(aJsonValue);
+	myFinishTextElement = LoadHUDElement(aJsonValue, eGuiType::eFinish);
 	myFinishTextElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
 	myFinishTextElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 1.f,1.f });
@@ -252,7 +288,7 @@ void CHUD::LoadItemGui(const CU::CJsonValue& aJsonValue)
 {
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
-	myItemGuiElement = LoadHUDElement(aJsonValue);
+	myItemGuiElement = LoadHUDElement(aJsonValue, eGuiType::eItem);
 	myItemGuiElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
 	float itemGuiWidth = 1.0f;
@@ -263,7 +299,7 @@ void CHUD::LoadItemGui(const CU::CJsonValue& aJsonValue)
 	myGreenShellSprite = new CSpriteInstance("Sprites/GUI/greenShell.dds", { itemGuiWidth,itemGuiHeight });
 	myRedShellSprite = new CSpriteInstance("Sprites/GUI/redShell.dds", { itemGuiWidth,itemGuiHeight });
 	myNullSprite = new CSpriteInstance("Sprites/GUI/redShell.dds", { 0.0f,0.0f });
-	myItemGuiElement.mySprite = myMushroomSprite;
+	myItemGuiElement.mySprite = myNullSprite;
 	/*myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));*/
 
 }
