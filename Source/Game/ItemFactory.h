@@ -12,6 +12,12 @@ class CGameObjectManager;
 class CColliderComponentManager;
 class CRedShellManager;
 
+struct SItemDrop
+{
+	eItemTypes myType;
+	char myChance;
+};
+
 class CItemFactory
 {
 public:
@@ -21,7 +27,7 @@ public:
 	void Init(CGameObjectManager& aGameObjectManager ,CItemWeaponBehaviourComponentManager& aManager, Physics::CPhysicsScene* aPhysicsScene, CColliderComponentManager& aColliderManager, CRedShellManager& aRedShellManager);
 
 
-	eItemTypes RandomizeItem();
+	eItemTypes RandomizeItem(CComponent* aPlayerCollider);
 
 	int CreateItem(const eItemTypes aItemType, CComponent* userComponent);
 
@@ -29,6 +35,7 @@ private:
 	void CreateBananaBuffer();
 	void CreateShellBuffer();
 	void CreateRedShellBuffer();
+	void CreatePlacementDrops();
 
 private:
 	Physics::CPhysicsScene* myPhysicsScene;
@@ -48,5 +55,7 @@ private:
 
 	SBoostData myStartBoostData;
 
+
+	CU::GrowingArray<CU::GrowingArray<SItemDrop>> myPlacementDrops;
 };
 

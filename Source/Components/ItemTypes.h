@@ -2,11 +2,11 @@
 
 enum class eItemTypes
 {
-	eGreenShell,
 	eBanana,
+	eGreenShell,
 	eMushroom,
-	eStar,
 	eRedShell,
+	eStar,
 	eBlueShell,
 	eGoldenMushroom,
 	eBulletBill,
