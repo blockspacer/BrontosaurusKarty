@@ -24,7 +24,7 @@ CScene::CScene()
 {
 	myModels.Init(4096);
 	myPointLights.Init(32);
-	mySpotLights.Init(16);
+	mySpotLights.Init(512);
 	//myParticleEmitters.Init(8);
 	myFireEmitters.Init(8);
 	mySkybox = nullptr;
