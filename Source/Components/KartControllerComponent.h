@@ -87,6 +87,7 @@ private:
 	} myAxisDescription;
 
 	CU::Vector3f myVelocity;
+	CU::Vector3f myGroundNormal;
 
 	CKartControllerComponentManager* myManager;
 	Physics::CPhysicsScene* myPhysicsScene;
@@ -140,6 +141,7 @@ private:
 	bool myHasGottenHit;
 	bool myIsOnGroundLast;
 	CComponent* myLastGroundComponent;
+
 };
 
 

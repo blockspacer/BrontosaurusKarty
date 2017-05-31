@@ -488,7 +488,16 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 		}
 	}
 	//Position
-	const CU::Vector3f forwardVector = GetParent()->GetToWorldTransform().myForwardVector;
+
+	CU::Vector3f forwardVector(CU::Vector3f::UnitZ);
+
+	if (myIsOnGround == true)
+	{
+		const CU::Vector3f localSpaceNormal = myGroundNormal * GetParent()->GetToWorldTransform().GetRotation().GetInverted();
+		const CU::Vector3f localSpceNormalXForward = localSpaceNormal.Cross(CU::Vector3f::UnitZ);
+		forwardVector = localSpceNormalXForward.Cross(localSpaceNormal);
+	}
+
 	const float speed = forwardVector.Dot(myVelocity);
 	const float dir = myVelocity.Dot(forwardVector);
 
@@ -524,8 +533,15 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 
 	}
 	float steerAngle = 0.f;
-	GetParent()->Move(CU::Vector3f::UnitZ * speed * aDeltaTime);
-	GetParent()->Move(CU::Vector3f::UnitY * myVelocity.y * myDrifter->GetDriftBonusSpeed() * aDeltaTime);
+
+
+
+	//GetParent()->Move(CU::Vector3f::UnitZ * speed * aDeltaTime);
+	//GetParent()->Move(CU::Vector3f::UnitY * myVelocity.y * aDeltaTime);
+
+
+	GetParent()->Move(myVelocity* aDeltaTime);
+
 	if (myDrifter->IsDrifting() == true)
 	{
 		myDrifter->UpdateDriftParticles(GetParent()->GetLocalTransform());
@@ -652,6 +668,7 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 	if (raycastHitData.hit == true)
 	{
 		const CU::Vector3f& norm = raycastHitData.normal;
+		myGroundNormal = norm;
 		if(raycastHitData.distance < controlDist)
 		{
 			myIsOnGround = true;
@@ -700,8 +717,10 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 	}
 
 
-
-	myVelocity += downAccl * gravity * aDeltaTime;
+	if (myCanAccelerate == false)
+	{
+		myVelocity += downAccl * (friction / (myCanAccelerate == true ? myGrip / myWeight : 1.f)) *gravity * aDeltaTime;
+	}
 }
 
 bool CKartControllerComponent::Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData)
