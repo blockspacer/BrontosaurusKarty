@@ -398,8 +398,7 @@ eMessageReturn CHUD::DoEvent(const KeyCharPressed& aMessage)
 		myLapAdjusterCheat += 1;
 
 	if (aMessage.GetKey() == 'l')
-	//POSTMASTER.Broadcast(new CPlayerFinishedMessage(myPlayer));
-		POSTMASTER.Broadcast(new CRaceStartedMessage());
+		POSTMASTER.Broadcast(new CPlayerFinishedMessage(myPlayer));
 
 
 	unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer) + myLapAdjusterCheat;
