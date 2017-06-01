@@ -34,6 +34,7 @@
 #include "../Components/PickupComponentManager.h"
 #include "ItemWeaponBehaviourComponentManager.h"
 #include "RedShellManager.h"
+#include "BlueShellComponentManager.h"
 #include "RespawnComponentManager.h"
 #include "LapTrackerComponentManager.h"
 
@@ -361,6 +362,7 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	}
 
 	myRedShellManager->Update(aDeltaTime.GetSeconds());
+	myBlueShellManager->Update(aDeltaTime.GetSeconds());
 
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
@@ -466,8 +468,9 @@ void CPlayState::CreateManagersAndFactories()
 	myItemBehaviourManager->Init(myPhysicsScene);
 	myRedShellManager = new CRedShellManager();
 	myRedShellManager->Init(myPhysicsScene, myKartControllerComponentManager,myKartObjects);
+	myBlueShellManager = new CBlueShellComponentManager(myKartObjects);
 	myItemFactory = new CItemFactory();
-	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager,*myRedShellManager);
+	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager,*myRedShellManager,*myBlueShellManager);
 	myRespawnComponentManager = new CRespawnComponentManager();
 	CLapTrackerComponentManager::CreateInstance();
 	CKartSpawnPointManager::GetInstance()->Create();
@@ -648,7 +651,6 @@ void CPlayState::CreateAI()
 
 	CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&box, playerObject->GetId());
 	CColliderComponent* playerTriggerColliderComponent = myColliderComponentManager->CreateComponent(&triggerbox, playerObject->GetId());
-
 
 	SRigidBodyData rigidbodah;
 	rigidbodah.isKinematic = true;
