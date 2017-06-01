@@ -604,7 +604,7 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 
 	const float onGroundModifier = (myCanAccelerate == true ? 1.f : 0.f);
 	const float gripOverWeight = (myGrip / myWeight);
-	myVelocity -= myVelocity * myGrip * aDeltaTime * onGroundModifier;
+	myVelocity -= myVelocity * CU::Vector3f(40.f, 1.f, 1.f) * myGrip * aDeltaTime * onGroundModifier;
 
 	if (myHasGottenHit == false)
 	{
@@ -701,19 +701,22 @@ void CKartControllerComponent::DoCornerTest(unsigned aCornerIndex, const CU::Mat
 		if (raycastHitData.hit == true)
 		{
 			static const float bounceEffect = 2.5f;
+			const CU::Matrix33f rot = GetParent()->GetToWorldTransform().GetRotation().GetInverted();
+			const CU::Vector3f pos = aPosition;
+			const CU::Vector3f dir = raycastHitData.normal * rot;//(pos - raycastHitData.position).Normalize() * rot;
 			if (raycastHitData.collisionLayer == Physics::eWall)
 			{
-				GetParent()->Move(raycastHitData.normal * (raycastHitData.distance - testDist) * -2.f);
+				GetParent()->Move(dir * (raycastHitData.distance - testDist) * -2.f);
 				myVelocity *= 0.75f;
 				const float repulsion = CLAMP(myVelocity.Length() * bounceEffect, 0.f, GetMaxSpeed() * 2.f);
-				myVelocity += repulsion * raycastHitData.normal;
+				myVelocity += repulsion * dir;
 			}
 			else if(raycastHitData.collisionLayer == Physics::eKart && reinterpret_cast<CComponent*>(raycastHitData.actor->GetCallbackData()->GetUserData())->GetParent() != GetParent())
 			{
-				GetParent()->Move(raycastHitData.normal * (raycastHitData.distance - testDist) * -2.f);
+				GetParent()->Move(dir * (raycastHitData.distance - testDist) * -2.f);
 				myVelocity *= 0.75f;
-				const float repulsion = CLAMP(myVelocity.Length() * bounceEffect, 0.f, GetMaxSpeed() * 2.f);
-				myVelocity += repulsion * raycastHitData.normal;
+				const float repulsion = CLAMP(bounceEffect, 0.f, GetMaxSpeed() * 2.f);
+				myVelocity += repulsion * dir;
 			}
 		}
 	}
