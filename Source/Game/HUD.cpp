@@ -162,7 +162,7 @@ void CHUD::Render()
 
 	if (myFinishTextElement.myShouldRender == true)
 	{
-		if (currentLap > 1)
+		if (currentLap > 3)
 		{
 			myItemGuiElement.mySprite = myNullSprite;
 			myItemGuiElement.myShouldRender = false;
