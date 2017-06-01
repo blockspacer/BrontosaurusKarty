@@ -11,6 +11,7 @@ class CItemWeaponBehaviourComponentManager;
 class CGameObjectManager;
 class CColliderComponentManager;
 class CRedShellManager;
+class CBlueShellComponentManager;
 
 struct SItemDrop
 {
@@ -24,7 +25,7 @@ public:
 	CItemFactory();
 	~CItemFactory();
 
-	void Init(CGameObjectManager& aGameObjectManager ,CItemWeaponBehaviourComponentManager& aManager, Physics::CPhysicsScene* aPhysicsScene, CColliderComponentManager& aColliderManager, CRedShellManager& aRedShellManager);
+	void Init(CGameObjectManager& aGameObjectManager ,CItemWeaponBehaviourComponentManager& aManager, Physics::CPhysicsScene* aPhysicsScene, CColliderComponentManager& aColliderManager, CRedShellManager& aRedShellManager, CBlueShellComponentManager& aBlueShellManager);
 
 
 	eItemTypes RandomizeItem(CComponent* aPlayerCollider);
@@ -35,6 +36,7 @@ private:
 	void CreateBananaBuffer();
 	void CreateShellBuffer();
 	void CreateRedShellBuffer();
+	void CreateBlueShellBuffer();
 	void CreatePlacementDrops();
 
 private:
@@ -43,12 +45,16 @@ private:
 	CGameObjectManager* myGameObjectManager;
 	CColliderComponentManager* myColliderManager;
 	CRedShellManager* myRedShellManager;
+	CBlueShellComponentManager* myBlueShellManager;
 
 	CU::GrowingArray<CGameObject*> myShells;
 	CU::GrowingArray<CGameObject*> myActiveShells;
 
 	CU::GrowingArray<CGameObject*> myRedShells;
 	CU::GrowingArray<CGameObject*> myActiveRedShells;
+
+	CU::GrowingArray<CGameObject*> myBlueShells;
+	CU::GrowingArray<CGameObject*> myActiveBlueShells;
 
 	CU::GrowingArray<CGameObject*> myBananas;
 	CU::GrowingArray<CGameObject*> myActiveBananas;
