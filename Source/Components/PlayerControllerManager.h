@@ -27,6 +27,6 @@ private:
 	
 private:
 	CU::GrowingArray<CController*> myPlayerControllers;
-
+	CU::GrowingArray<CController*> myCotrollersAtStart;
 };
 
