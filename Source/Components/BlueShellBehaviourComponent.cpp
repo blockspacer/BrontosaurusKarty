@@ -31,7 +31,7 @@ void CBlueShellBehaviourComponent::Update(const float aDeltaTime)
 	if (myElapsedTime < myTeleportDelay)
 	{
 		myElapsedTime += aDeltaTime;
-		CU::Vector3f flyUp(0, 45, 0);
+		CU::Vector3f flyUp(0, 20, 0);
 		GetParent()->Move(flyUp*aDeltaTime);
 
 		if (myElapsedTime >= myTeleportDelay)
@@ -66,9 +66,16 @@ void CBlueShellBehaviourComponent::Update(const float aDeltaTime)
 		}
 	}
 
-	GetParent()->GetToWorldTransform().LookAt(target.GetPosition());
+	CU::Matrix44f transform = GetParent()->GetToWorldTransform();
 
-	GetParent()->GetToWorldTransform().Move(myVelocity*aDeltaTime);
+	transform.LookAt(target.GetPosition());
+
+	transform.Move(myVelocity*aDeltaTime);
+
+	GetParent()->SetWorldTransformation(transform);
+
+	SComponentMessageData data; data.myFloat = aDeltaTime;
+	GetParent()->NotifyOnlyComponents(eComponentMessageType::eMoving, data);
 
 }
 
