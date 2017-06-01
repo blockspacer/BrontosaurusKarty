@@ -54,8 +54,9 @@ private:
 	CU::GrowingArray<CGameObject*> myActiveBananas;
 
 	SBoostData myStartBoostData;
+	SBoostData myLightningBoostData;
 
-
+	CU::GrowingArray<SBoostData> myLightningBoostBuffer;
 	CU::GrowingArray<CU::GrowingArray<SItemDrop>> myPlacementDrops;
 };
 

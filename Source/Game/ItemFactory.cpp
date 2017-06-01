@@ -34,6 +34,7 @@ CItemFactory::CItemFactory()
 	myActiveRedShells.Init(26);
 
 	myPlacementDrops.Init(8);
+	myLightningBoostBuffer.Init(8);
 
 	CU::CJsonValue boostList;
 	std::string filePath = "Json/Items.json";
@@ -44,6 +45,11 @@ CItemFactory::CItemFactory()
 	myStartBoostData.duration = Item.at("Duration").GetFloat();
 	myStartBoostData.accerationBoost = Item.at("AccelerationPercentModifier").GetFloat()/100.0f;
 	myStartBoostData.maxSpeedBoost = Item.at("MaxSpeedPercentModifier").GetFloat()/100.0f;
+
+	Item = levelsArray.at("Lightning");
+
+	myLightningBoostData.accerationBoost = Item.at("AccelerationPercentModifier").GetFloat() / 100.0f;
+	myLightningBoostData.maxSpeedBoost = Item.at("MaxSpeedPercentModifier").GetFloat() / 100.0f;
 }
 
 
@@ -338,6 +344,10 @@ void CItemFactory::CreatePlacementDrops()
 	item.myChance = 20;
 	drops.Add(item);
 
+	item.myType = eItemTypes::eLightning;
+	item.myChance = 30;
+	drops.Add(item);
+
 	item.myType = eItemTypes::eMushroom;
 	item.myChance = 40;
 	drops.Add(item);
@@ -365,6 +375,10 @@ void CItemFactory::CreatePlacementDrops()
 	item.myChance = 40;
 	drops.Add(item);
 
+	item.myType = eItemTypes::eLightning;
+	item.myChance = 60;
+	drops.Add(item);
+
 	item.myType = eItemTypes::eStar;
 	item.myChance = 100;
 	drops.Add(item);
@@ -382,6 +396,10 @@ void CItemFactory::CreatePlacementDrops()
 	item.myChance = 30;
 	drops.Add(item);
 
+	item.myType = eItemTypes::eLightning;
+	item.myChance = 70;
+	drops.Add(item);
+
 	item.myType = eItemTypes::eStar;
 	item.myChance = 100;
 	drops.Add(item);
@@ -394,7 +412,7 @@ void CItemFactory::CreatePlacementDrops()
 
 eItemTypes CItemFactory::RandomizeItem(CComponent* aPlayerCollider)
 {
-	unsigned char placement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(aPlayerCollider->GetParent());
+	unsigned char placement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(aPlayerCollider->GetParent() - 1);
 	char itemrange = 1;
 
 	char result = 0;
@@ -505,15 +523,15 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 
 				unsigned char placement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myRedShellManager->GetKarts()[i]);
 
-				SBoostData slow;
-				slow.accerationBoost = 0.0001f;
-				slow.maxSpeedBoost = 0.0002f;
-				slow.duration = myRedShellManager->GetKarts().Size() - placement;
+				myLightningBoostData.duration = myRedShellManager->GetKarts().Size() - placement;
+				myLightningBoostBuffer.Add(myLightningBoostData);
 
-				SComponentMessageData slowdata; slowdata.myBoostData = &slow;
+				SComponentMessageData slowdata; 
+				slowdata.myBoostData = &myLightningBoostBuffer.GetLast();
 				myRedShellManager->GetKarts()[i]->NotifyOnlyComponents(eComponentMessageType::eGiveBoost, slowdata);
 			}
 		}
+		myLightningBoostBuffer.RemoveAll();
 		break;
 	}
 	case eItemTypes::eBanana:

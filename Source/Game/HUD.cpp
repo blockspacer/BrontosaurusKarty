@@ -168,6 +168,11 @@ void CHUD::Render()
 			myItemGuiElement.mySprite = myRedShellSprite;
 			break;
 		}
+		case eItemTypes::eLightning:
+		{
+			myItemGuiElement.mySprite = myLightningSprite;
+			break;
+		}
 		default:
 			break;
 		}
@@ -309,12 +314,13 @@ void CHUD::LoadItemGui(const CU::CJsonValue& aJsonValue)
 	myItemGuiElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
 	float itemGuiWidth = 1.0f;
-	float itemGuiHeight = 1.1f;
+	float itemGuiHeight = 1.0f;
 	myMushroomSprite = new CSpriteInstance("Sprites/GUI/mushroom.dds", { itemGuiWidth,itemGuiHeight });
 	myBananaSprite = new CSpriteInstance("Sprites/GUI/banana.dds", { itemGuiWidth,itemGuiHeight });
 	myStarSprite = new CSpriteInstance("Sprites/GUI/star.dds", { itemGuiWidth,itemGuiHeight });
 	myGreenShellSprite = new CSpriteInstance("Sprites/GUI/greenShell.dds", { itemGuiWidth,itemGuiHeight });
 	myRedShellSprite = new CSpriteInstance("Sprites/GUI/redShell.dds", { itemGuiWidth,itemGuiHeight });
+	myLightningSprite = new CSpriteInstance("Sprites/GUI/lightning.dds", { itemGuiWidth,itemGuiHeight });
 	myNullSprite = new CSpriteInstance("Sprites/GUI/redShell.dds", { 0.0f,0.0f });
 	myItemGuiElement.mySprite = myNullSprite;
 	/*myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));*/
