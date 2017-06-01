@@ -27,7 +27,7 @@ void PrintDocs()
 	docFile.close();
 }
 
-struct CAnimationEventFactory::SAnimationData 
+struct CAnimationEventFactory::SAnimationData
 {
 	eAnimationState state;
 	float start;
@@ -54,6 +54,11 @@ CAnimationEventFactory::CAnimationEventFactory()
 		CU::CJsonValue animationFile("Json\\Animation\\" + filePath);
 
 		float frameRate = animationFile["framesPerSecond"].GetFloat();
+		if (frameRate == 0.f)
+		{
+			DL_MESSAGE_BOX("Animation frame rate set to 0\n%s", filePath.c_str());
+			continue;
+		}
 		CU::CJsonValue animations = animationFile["animations"];
 		for (int i = 0; i < animations.Size(); ++i)
 		{
@@ -67,12 +72,10 @@ CAnimationEventFactory::CAnimationEventFactory()
 					DL_MESSAGE_BOX("%s is not an animation state", stateStr.c_str());
 					continue;
 				}
-				myAnimationEvents[static_cast<eEventType>(index)].state = static_cast<eAnimationState>(state);
-				myAnimationEvents[static_cast<eEventType>(index)].start = animations[i]["start"].GetFloat();
-				myAnimationEvents[static_cast<eEventType>(index)].end = animations[i]["end"].GetFloat();
-
-				myAnimationEvents[static_cast<eEventType>(index)].start = animations[i]["start"].GetFloat() / frameRate;
-				myAnimationEvents[static_cast<eEventType>(index)].end = animations[i]["end"].GetFloat() / frameRate;
+				eEventType type = static_cast<eEventType>(index);
+				myAnimationEvents[type].state = static_cast<eAnimationState>(state);
+				myAnimationEvents[type].start = animations[i]["start"].GetFloat() / frameRate;
+				myAnimationEvents[type].end = animations[i]["end"].GetFloat() / frameRate;
 			}
 		}
 	}
