@@ -412,7 +412,7 @@ void CItemFactory::CreatePlacementDrops()
 
 eItemTypes CItemFactory::RandomizeItem(CComponent* aPlayerCollider)
 {
-	unsigned char placement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(aPlayerCollider->GetParent());
+	unsigned char placement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(aPlayerCollider->GetParent() - 1);
 	char itemrange = 1;
 
 	char result = 0;
