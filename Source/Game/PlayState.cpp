@@ -503,7 +503,6 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 
 	CU::Matrix44f kartTransformation = CKartSpawnPointManager::GetInstance()->PopSpawnPoint().mySpawnTransformaion;
 	playerObject->SetWorldTransformation(kartTransformation);
-	playerObject->Move(CU::Vector3f::UnitY);
 	CCameraComponent* cameraComponent = new CCameraComponent(aPlayerCount);
 	CComponentManager::GetInstance().RegisterComponent(cameraComponent);
 	cameraComponent->SetCamera(aCamera);
@@ -526,7 +525,14 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	}
 	else
 	{
-		CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent, static_cast<short>(aIntputDevice));
+		if (aIntputDevice == SParticipant::eInputDevice::eKeyboard)
+		{
+			CKeyboardController* controls = myPlayerControllerManager->CreateKeyboardController(*kartComponent);
+		}
+		else
+		{
+			CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent, static_cast<short>(aIntputDevice));
+		}
 	}
 	if(CSpeedHandlerManager::GetInstance() != nullptr)
 	{
@@ -605,7 +611,6 @@ void CPlayState::CreateAI()
 
 	CU::Matrix44f kartTransformation = CKartSpawnPointManager::GetInstance()->PopSpawnPoint().mySpawnTransformaion;
 	playerObject->SetWorldTransformation(kartTransformation);
-	playerObject->Move(CU::Vector3f::UnitY);
 
 	CRespawnerComponent* respawnComponent = myRespawnComponentManager->CreateAndRegisterComponent();
 	playerObject->AddComponent(respawnComponent);

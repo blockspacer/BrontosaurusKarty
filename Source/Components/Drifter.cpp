@@ -74,12 +74,14 @@ void CDrifter::StartDrifting(const eCurrentAction& aCurrentAction)
 		myIsDrifting = true;
 		myDriftRate = myMaxDriftRate;
 		myDriftTimer = 0.0f;
+		TurnLeft();
 		myDriftState = eDriftState::eDriftingLeft;
 		break;
 	case eCurrentAction::eTurningRight:
 		myIsDrifting = true;
 		myDriftRate = -myMaxDriftRate;
 		myDriftTimer = 0.0f;
+		TurnRight();
 		myDriftState = eDriftState::eDriftingRight;
 		break;
 	default:
