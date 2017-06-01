@@ -115,7 +115,6 @@ private:
 	CSpriteInstance* myCountdownSprite;
 	SGUIElement* myCountdownElement;
 	bool myCountdownShouldRender;
-
 	bool myIsCountingDown;
 
 	int myPlayerCount;

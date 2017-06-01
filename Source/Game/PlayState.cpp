@@ -106,7 +106,7 @@ CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
 	, myCountdownShouldRender(false)
-	,myIsCountingDown(true)
+	, myIsCountingDown(true)
 {
 	myPlayers.Init(1);
 	myPlayerCount = 1;
@@ -301,7 +301,6 @@ void CPlayState::Load()
 	float time = loadPlaystateTimer.GetDeltaTime().GetMilliseconds();
 	GAMEPLAY_LOG("Game Inited in %f ms", time);
 	Postmaster::Threaded::CPostmaster::GetInstance().GetThreadOffice().HandleMessages();
-
 }
 
 void CPlayState::Init()
@@ -696,6 +695,7 @@ void CPlayState::InitiateRace()
 					myCountdownSprite->SetRect({ 0.f,0.00f,1.f,0.25f });
 					myKartControllerComponentManager->ShouldUpdate(true);
 					POSTMASTER.Broadcast(new CRaceStartedMessage());
+					POSTMASTER.GetThreadOffice().HandleMessages();
 				}
 			}
 		}
