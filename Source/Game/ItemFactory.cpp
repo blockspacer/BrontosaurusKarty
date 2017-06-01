@@ -526,7 +526,8 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 				myLightningBoostData.duration = myRedShellManager->GetKarts().Size() - placement;
 				myLightningBoostBuffer.Add(myLightningBoostData);
 
-				SComponentMessageData slowdata; slowdata.myBoostData = &myLightningBoostBuffer.GetLast();
+				SComponentMessageData slowdata; 
+				slowdata.myBoostData = &myLightningBoostBuffer.GetLast();
 				myRedShellManager->GetKarts()[i]->NotifyOnlyComponents(eComponentMessageType::eGiveBoost, slowdata);
 			}
 		}
