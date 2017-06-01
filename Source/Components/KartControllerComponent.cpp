@@ -134,6 +134,7 @@ void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 		if (myDrifter->IsDrifting() == false)
 		{
 			Drift();
+			myDrifter->TurnRight();
 		}
 	}
 	myModifierCopy = aNormalizedModifier;
@@ -165,6 +166,7 @@ void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 		if (myDrifter->IsDrifting() == false)
 		{
 			Drift();
+			myDrifter->TurnLeft();
 		}
 	}
 	if (myDrifter->IsDrifting() == false)
@@ -344,7 +346,9 @@ void CKartControllerComponent::GetHit()
 
 void CKartControllerComponent::ApplyStartBoost()
 {
-	if (myPreRaceBoostValue > myPreRaceBoostTarget * 0.6)
+	float smallboost = myPreRaceBoostTarget * 0.6f;
+	float bigboost = myPreRaceBoostTarget * 0.85f;
+	if (myPreRaceBoostValue > myPreRaceBoostTarget * 0.6f)
 	{
 		if (myPreRaceBoostValue > myPreRaceBoostTarget * 0.8f)
 		{
@@ -356,11 +360,21 @@ void CKartControllerComponent::ApplyStartBoost()
 			SComponentMessageData boostMessageData;
 			boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("DriftBoost"));
 			GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+			if (myControllerHandle != -1 && myControllerHandle < 4)
+			{
+				SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 40, 60, 0.8f, false);
+				Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+			}
 			return;
 		}
 		SComponentMessageData boostMessageData;
 		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("MiniDriftBoost"));
 		GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+		if (myControllerHandle != -1 && myControllerHandle < 4)
+		{
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 25, 50, 0.5f, false);
+			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+		}
 		return;
 	}
 }
@@ -384,9 +398,6 @@ void CKartControllerComponent::CheckZKill()
 
 	if(height < killHeight)
 	{
-		/*GetParent()->SetWorldTransformation(CU::Matrix44f());
-		GetParent()->SetWorldPosition(CU::Vector3f(0.f, 1.f, 0.f));*/
-		//myFowrardSpeed = 0.f;
 		myVelocity = CU::Vector3f::Zero;
 		GetParent()->NotifyComponents(eComponentMessageType::eKill, SComponentMessageData());
 		GetParent()->NotifyComponents(eComponentMessageType::eRespawn, SComponentMessageData());

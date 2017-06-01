@@ -526,7 +526,14 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	}
 	else
 	{
-		CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent, static_cast<short>(aIntputDevice));
+		if (aIntputDevice == SParticipant::eInputDevice::eKeyboard)
+		{
+			CKeyboardController* controls = myPlayerControllerManager->CreateKeyboardController(*kartComponent);
+		}
+		else
+		{
+			CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent, static_cast<short>(aIntputDevice));
+		}
 	}
 	if(CSpeedHandlerManager::GetInstance() != nullptr)
 	{
