@@ -88,6 +88,7 @@ enum class eComponentMessageType
 	eEnteredGoal,
 	eTurnOffHazard,
 	eReInitRedShell,
+	eReInitBlueShell,
 	ePassedASpline,
 	eLength,
 };

@@ -65,6 +65,8 @@
     <ClCompile Include="RedShellBehaviourComponent.cpp" />
     <ClCompile Include="RedShellManager.cpp" />
     <ClCompile Include="TerrainComponent.cpp" />
+    <ClCompile Include="BlueShellBehaviourComponent.cpp" />
+    <ClCompile Include="BlueShellComponentManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -139,5 +141,7 @@
     <ClInclude Include="RedShellBehaviourComponent.h" />
     <ClInclude Include="RedShellManager.h" />
     <ClInclude Include="TerrainComponent.h" />
+    <ClInclude Include="BlueShellBehaviourComponent.h" />
+    <ClInclude Include="BlueShellComponentManager.h" />
   </ItemGroup>
 </Project>
