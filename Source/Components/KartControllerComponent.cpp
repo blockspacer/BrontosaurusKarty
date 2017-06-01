@@ -87,6 +87,8 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myAnimator = std::make_unique<CKartAnimator>(aModelComponent);
 	myBoostEmmiterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GunFire");
 	myGotHitEmmiterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("Stars");
+	myStarEmmiterhandle1 = CParticleEmitterManager::GetInstance().GetEmitterInstance("StarBoost");
+	myStarEmmiterhandle2 = CParticleEmitterManager::GetInstance().GetEmitterInstance("StarBoost");
 
 	myPreRaceBoostRate = 0.0f;
 	myPreRaceBoostValue = 0.0f;
@@ -429,6 +431,21 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	if (myIsInvurnable == true)
 	{
 		myElapsedInvurnableTime += aDeltaTime;
+
+		CU::Matrix44f transform = GetParent()->GetToWorldTransform();
+
+		transform.Move(CU::Vector3f(0.5f, 0, 0));
+
+		CParticleEmitterManager::GetInstance().SetPosition(myStarEmmiterhandle1, transform.GetPosition());
+
+		transform = GetParent()->GetToWorldTransform();
+
+		transform.Move(CU::Vector3f(-0.5f, 0, 0));
+
+		CParticleEmitterManager::GetInstance().SetPosition(myStarEmmiterhandle2, transform.GetPosition());
+
+
+
 		if (myElapsedInvurnableTime >= myInvurnableTime)
 		{
 			myElapsedInvurnableTime = 0;
@@ -436,6 +453,8 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 			SComponentMessageData sound; sound.myString = "StopStar";
 			GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
 			GetParent()->NotifyOnlyComponents(eComponentMessageType::eTurnOffHazard, SComponentMessageData());
+			CParticleEmitterManager::GetInstance().Deactivate(myStarEmmiterhandle1);
+			CParticleEmitterManager::GetInstance().Deactivate(myStarEmmiterhandle2);
 		}
 	}
 
@@ -474,6 +493,8 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 	{
 		myInvurnableTime = aMessageData.myBoostData->duration;
 		myElapsedInvurnableTime = 0;
+		CParticleEmitterManager::GetInstance().Activate(myStarEmmiterhandle1);
+		CParticleEmitterManager::GetInstance().Activate(myStarEmmiterhandle2);
 		if (myIsInvurnable == false)
 		{
 			SComponentMessageData sound; sound.myString = "PlayStar";
