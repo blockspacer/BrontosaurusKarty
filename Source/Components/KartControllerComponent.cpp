@@ -120,7 +120,7 @@ void CKartControllerComponent::Turn(float aDirectionX)
 	}
 }
 
-const float rate = 3.2f;
+const float rate = 4.f;
 void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 {
 	if (myHasGottenHit == true)
