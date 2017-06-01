@@ -6,7 +6,7 @@
 #include "ParticleEmitterManager.h"
 
 
-CDrifter::CDrifter()
+CDrifter::CDrifter() : myLargeBoostOn(false), mySmallBoostOn(false)
 {
 }
 
@@ -165,14 +165,19 @@ void CDrifter::SetDriftParticlesReady(const bool aFlag)
 }
 void CDrifter::SetSmallBoostReady(const bool aFlag)
 {
-	if (aFlag == true)
+	if (aFlag == true && mySmallBoostOn == false)
 	{
+		
 		CParticleEmitterManager::GetInstance().Activate(myLeftSmallBoostReadyEmitterHandle);
 		CParticleEmitterManager::GetInstance().Activate(myRightSmallBoostReadyEmitterHandle);
-		return;
+		
 	}
-	CParticleEmitterManager::GetInstance().Deactivate(myLeftSmallBoostReadyEmitterHandle);
-	CParticleEmitterManager::GetInstance().Deactivate(myRightSmallBoostReadyEmitterHandle);
+	else if(aFlag == false && mySmallBoostOn == true)
+	{
+		CParticleEmitterManager::GetInstance().Deactivate(myLeftSmallBoostReadyEmitterHandle);
+		CParticleEmitterManager::GetInstance().Deactivate(myRightSmallBoostReadyEmitterHandle);
+	}
+	mySmallBoostOn = aFlag;
 }
 void CDrifter::SetLargeBoostReady(const bool aFlag)
 {
@@ -180,9 +185,13 @@ void CDrifter::SetLargeBoostReady(const bool aFlag)
 	{
 		CParticleEmitterManager::GetInstance().Activate(myLeftLargeBoostReadyEmitterHandle);
 		CParticleEmitterManager::GetInstance().Activate(myRightLargeBoostReadyEmitterHandle);
-		return;
 	}
-	CParticleEmitterManager::GetInstance().Deactivate(myLeftLargeBoostReadyEmitterHandle);
-	CParticleEmitterManager::GetInstance().Deactivate(myRightLargeBoostReadyEmitterHandle);
+	else if(aFlag == false && myLargeBoostOn == true)
+	{
+		CParticleEmitterManager::GetInstance().Deactivate(myLeftLargeBoostReadyEmitterHandle);
+		CParticleEmitterManager::GetInstance().Deactivate(myRightLargeBoostReadyEmitterHandle);
+	}
+
+	myLargeBoostOn = aFlag;;
 }
 

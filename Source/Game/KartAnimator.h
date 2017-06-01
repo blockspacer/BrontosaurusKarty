@@ -13,13 +13,13 @@ public:
 	~CKartAnimator();
 
 	void AddAnimation(const eEventType aType);
-	void Update(const float aDeltaTime);
+	void Update(const float aDeltaTime, const float aForwardVelocity);
 
 	void OnTurnRight(const float aNormalizedModifier);
 	void OnTurnLeft(const float aNormalizedModifier);
 	void OnStopMoving();
 	void OnMoveFoward();
-	void OnMoveBackWards();
+	void OnMoveBackWards(const float aCurrentSpeed2);
 	void OnStopTurningLeft();
 	void OnStopTurningRight();
 	void OnDrift();
@@ -28,6 +28,7 @@ public:
 
 	bool IsTurningRight() const;
 	bool IsTurningLeft() const;
+	bool IsBreaking() const;
 
 private:
 	std::vector<CAnimationEvent> myEventQueue;
@@ -40,4 +41,7 @@ private:
 		eLeft,
 		eNone
 	} myTurnState;
+
+	bool myIsBreaking;
+	bool myIsGoingBackwards;
 };

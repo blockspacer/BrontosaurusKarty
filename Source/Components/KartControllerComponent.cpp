@@ -184,6 +184,7 @@ void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 void CKartControllerComponent::StopMoving()
 {
 	myAcceleration = 0;
+	myAnimator->OnStopMoving();
 }
 
 void CKartControllerComponent::MoveFoward()
@@ -193,6 +194,7 @@ void CKartControllerComponent::MoveFoward()
 		return;
 	}
 	myAcceleration = GetMaxAcceleration();
+	myAnimator->OnMoveFoward();
 }
 
 void CKartControllerComponent::MoveBackWards()
@@ -202,6 +204,7 @@ void CKartControllerComponent::MoveBackWards()
 		return;
 	}
 	myAcceleration = myMinAcceleration;
+	myAnimator->OnMoveBackWards(myVelocity.z);
 }
 
 void CKartControllerComponent::StopTurning()
@@ -449,7 +452,7 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	}
 
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
-	myAnimator->Update(aDeltaTime);
+	myAnimator->Update(aDeltaTime, myVelocity.z);
 }
 
 void CKartControllerComponent::CountDownUpdate(const float aDeltaTime)
@@ -543,7 +546,16 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 		}
 	}
 	//Position
-	const CU::Vector3f forwardVector = GetParent()->GetToWorldTransform().myForwardVector;
+
+	CU::Vector3f forwardVector(CU::Vector3f::UnitZ);
+
+	if (myIsOnGround == true)
+	{
+		const CU::Vector3f localSpaceNormal = myGroundNormal * GetParent()->GetToWorldTransform().GetRotation().GetInverted();
+		const CU::Vector3f localSpceNormalXForward = localSpaceNormal.Cross(CU::Vector3f::UnitZ);
+		forwardVector = localSpceNormalXForward.Cross(localSpaceNormal);
+	}
+
 	const float speed = forwardVector.Dot(myVelocity);
 	const float dir = myVelocity.Dot(forwardVector);
 
@@ -579,8 +591,9 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 
 	}
 	float steerAngle = 0.f;
-	GetParent()->Move(CU::Vector3f::UnitZ * speed * myDrifter->GetDriftBonusSpeed() * aDeltaTime);
-	GetParent()->Move(CU::Vector3f::UnitY * myVelocity.y * myDrifter->GetDriftBonusSpeed() * aDeltaTime);
+
+	GetParent()->Move(myVelocity* myDrifter->GetDriftBonusSpeed() *aDeltaTime);
+
 	if (myDrifter->IsDrifting() == true)
 	{
 		myDrifter->UpdateDriftParticles(GetParent()->GetLocalTransform());
@@ -645,21 +658,24 @@ void CKartControllerComponent::DoCornerTest(unsigned aCornerIndex, const CU::Mat
 
 		static const float testDist = 0.25f;
 		Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(cornerPos, testDir, testDist,
-			static_cast<Physics::ECollisionLayer>(Physics::eWall/* | Physics::eKart*/));
+			static_cast<Physics::ECollisionLayer>(Physics::eWall | Physics::eKart));
 
 
 		if (raycastHitData.hit == true)
 		{
-			/*if(raycastHitData.collisionLayer == Physics::eWall)
-			{*/
+			if (raycastHitData.collisionLayer == Physics::eWall)
+			{
 				GetParent()->Move(raycastHitData.normal * (raycastHitData.distance - testDist) * -2.f);
 				myVelocity *= 0.75f;
 				const float repulsion = CLAMP(myVelocity.Length() * 50.f, 0.f, GetMaxSpeed() * 2.f);
 				myVelocity += repulsion * raycastHitData.normal;
-			
-			if(raycastHitData.collisionLayer == Physics::eKart)
+			}
+			else if(raycastHitData.collisionLayer == Physics::eKart && reinterpret_cast<CComponent*>(raycastHitData.actor->GetCallbackData()->GetUserData())->GetParent() != GetParent())
 			{
-				int i = 0;
+				GetParent()->Move(raycastHitData.normal * (raycastHitData.distance - testDist) * -2.f);
+				myVelocity *= 0.75f;
+				const float repulsion = CLAMP(myVelocity.Length() * 50.f, 0.f, GetMaxSpeed() * 2.f);
+				myVelocity += repulsion * raycastHitData.normal;
 			}
 		}
 	}
@@ -706,6 +722,7 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 	if (raycastHitData.hit == true)
 	{
 		const CU::Vector3f& norm = raycastHitData.normal;
+		myGroundNormal = norm;
 		if(raycastHitData.distance < controlDist)
 		{
 			myIsOnGround = true;
@@ -754,7 +771,10 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 	}
 
 
-	myVelocity += downAccl * (friction / (myCanAccelerate == true ? myGrip / myWeight : 1.f)) *gravity * aDeltaTime;
+	if (myCanAccelerate == false)
+	{
+		myVelocity += downAccl * (friction / (myCanAccelerate == true ? myGrip / myWeight : 1.f)) *gravity * aDeltaTime;
+	}
 }
 
 bool CKartControllerComponent::Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData)

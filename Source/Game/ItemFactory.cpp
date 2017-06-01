@@ -4,15 +4,17 @@
 #include "../Physics/PhysicsScene.h"
 #include "GameObjectManager.h"
 #include "ItemWeaponBehaviourComponentManager.h"
+#include "ParticleEmitterComponentManager.h"
 #include "RedShellManager.h"
+#include "BlueShellComponentManager.h"
 #include "ColliderComponentManager.h"
 
 #include "ItemWeaponBehaviourComponent.h"
 #include "RedShellBehaviourComponent.h"
+#include "BlueShellBehaviourComponent.h"
 #include "HazardComponent.h"
 #include "ModelComponent.h"
 #include "ParticleEmitterComponent.h"
-#include "ParticleEmitterComponentManager.h"
 
 #include "ModelComponentManager.h"
 #include "ConcaveMeshCollider.h"
@@ -33,7 +35,11 @@ CItemFactory::CItemFactory()
 	myRedShells.Init(26);
 	myActiveRedShells.Init(26);
 
+	myBlueShells.Init(8);
+	myActiveBlueShells.Init(8);
+
 	myPlacementDrops.Init(8);
+	myLightningBoostBuffer.Init(8);
 
 	CU::CJsonValue boostList;
 	std::string filePath = "Json/Items.json";
@@ -44,6 +50,11 @@ CItemFactory::CItemFactory()
 	myStartBoostData.duration = Item.at("Duration").GetFloat();
 	myStartBoostData.accerationBoost = Item.at("AccelerationPercentModifier").GetFloat()/100.0f;
 	myStartBoostData.maxSpeedBoost = Item.at("MaxSpeedPercentModifier").GetFloat()/100.0f;
+
+	Item = levelsArray.at("Lightning");
+
+	myLightningBoostData.accerationBoost = Item.at("AccelerationPercentModifier").GetFloat() / 100.0f;
+	myLightningBoostData.maxSpeedBoost = Item.at("MaxSpeedPercentModifier").GetFloat() / 100.0f;
 }
 
 
@@ -51,17 +62,19 @@ CItemFactory::~CItemFactory()
 {
 }
 
-void CItemFactory::Init(CGameObjectManager& aGameObjectManager, CItemWeaponBehaviourComponentManager & aManager, Physics::CPhysicsScene* aPhysicsScene, CColliderComponentManager& aColliderManager, CRedShellManager& aRedShellManager)
+void CItemFactory::Init(CGameObjectManager& aGameObjectManager, CItemWeaponBehaviourComponentManager & aManager, Physics::CPhysicsScene* aPhysicsScene, CColliderComponentManager& aColliderManager, CRedShellManager& aRedShellManager, CBlueShellComponentManager& aBlueShellManager)
 {
 	myItemBeheviourComponentManager = &aManager;
 	myPhysicsScene = aPhysicsScene;
 	myGameObjectManager = &aGameObjectManager;
 	myColliderManager = &aColliderManager;
 	myRedShellManager = &aRedShellManager;
+	myBlueShellManager = &aBlueShellManager;
 
 	CreateShellBuffer();
 	CreateBananaBuffer();
 	CreateRedShellBuffer();
+	CreateBlueShellBuffer();
 	CreatePlacementDrops();
 }
 
@@ -231,6 +244,59 @@ void CItemFactory::CreateRedShellBuffer()
 	}
 }
 
+void CItemFactory::CreateBlueShellBuffer()
+{
+	for (int i = 0; i < 5; i++)
+	{
+		CGameObject* shell = myGameObjectManager->CreateGameObject();
+		std::string name = "blue shell ";
+		name += std::to_string(i);
+		shell->SetName(name.c_str());
+
+		CModelComponent* model = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_Shell_Blue_01.fbx");
+		model->FlipVisibility();
+		shell->AddComponent(model);
+
+		CBlueShellBehaviourComponent* behaviour = myBlueShellManager->CreateAndRegisterComponent();
+		shell->AddComponent(behaviour);
+
+
+		CHazardComponent* hazardous = new CHazardComponent;
+		CComponentManager::GetInstance().RegisterComponent(hazardous);
+		shell->AddComponent(hazardous);
+
+		//adds collider
+		SBoxColliderData crystalMeshColliderData;
+		crystalMeshColliderData.IsTrigger = true;
+		crystalMeshColliderData.myLayer = Physics::eHazzard;
+		crystalMeshColliderData.myCollideAgainst = Physics::GetCollideAgainst(crystalMeshColliderData.myLayer);
+		crystalMeshColliderData.material.aDynamicFriction = 0.5f;
+		crystalMeshColliderData.material.aRestitution = 0.5f;
+		crystalMeshColliderData.material.aStaticFriction = 0.5f;
+		crystalMeshColliderData.center.y = 0.5f;
+		crystalMeshColliderData.myHalfExtent = CU::Vector3f(0.5f, 0.5f, 0.5f);
+		CColliderComponent* shellColliderComponent = myColliderManager->CreateComponent(&crystalMeshColliderData, shell->GetId());
+		//CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
+		CU::Vector3f offset = shell->GetWorldPosition();
+
+		SRigidBodyData rigidbodah;
+		rigidbodah.isKinematic = true;
+		rigidbodah.useGravity = false;
+		rigidbodah.myLayer = Physics::eHazzard;
+		rigidbodah.myCollideAgainst = Physics::GetCollideAgainst(rigidbodah.myLayer);
+
+		CColliderComponent* rigidComponent = myColliderManager->CreateComponent(&rigidbodah, shell->GetId());
+		//	colliderObject->SetWorldPosition({ offset.x, offset.y + 0.1f, offset.z });
+		shell->AddComponent(shellColliderComponent);
+		shell->AddComponent(rigidComponent);
+
+		//shell->AddComponent(colliderObject);
+		//collider added
+
+		myBlueShells.Add(shell);
+	}
+}
+
 void CItemFactory::CreatePlacementDrops()
 {
 	SItemDrop item;
@@ -338,6 +404,10 @@ void CItemFactory::CreatePlacementDrops()
 	item.myChance = 20;
 	drops.Add(item);
 
+	item.myType = eItemTypes::eLightning;
+	item.myChance = 30;
+	drops.Add(item);
+
 	item.myType = eItemTypes::eMushroom;
 	item.myChance = 40;
 	drops.Add(item);
@@ -365,6 +435,10 @@ void CItemFactory::CreatePlacementDrops()
 	item.myChance = 40;
 	drops.Add(item);
 
+	item.myType = eItemTypes::eLightning;
+	item.myChance = 60;
+	drops.Add(item);
+
 	item.myType = eItemTypes::eStar;
 	item.myChance = 100;
 	drops.Add(item);
@@ -382,6 +456,10 @@ void CItemFactory::CreatePlacementDrops()
 	item.myChance = 30;
 	drops.Add(item);
 
+	item.myType = eItemTypes::eLightning;
+	item.myChance = 70;
+	drops.Add(item);
+
 	item.myType = eItemTypes::eStar;
 	item.myChance = 100;
 	drops.Add(item);
@@ -394,7 +472,7 @@ void CItemFactory::CreatePlacementDrops()
 
 eItemTypes CItemFactory::RandomizeItem(CComponent* aPlayerCollider)
 {
-	unsigned char placement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(aPlayerCollider->GetParent());
+	unsigned char placement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(aPlayerCollider->GetParent() - 1);
 	char itemrange = 1;
 
 	char result = 0;
@@ -412,7 +490,8 @@ eItemTypes CItemFactory::RandomizeItem(CComponent* aPlayerCollider)
 	{
 		if (result <= myPlacementDrops[placement][i].myChance)
 		{
-			item = myPlacementDrops[placement][i].myType;
+			 item = myPlacementDrops[placement][i].myType;
+			 break;
 		}
 	}
 
@@ -470,8 +549,27 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 		break;
 	}
 	case eItemTypes::eBlueShell:
-		//Create shell that homes in on the leader
+	{
+		if (myBlueShells.Size() <= 0)
+		{
+			myBlueShells.Add(myActiveBlueShells.GetFirst());
+			myActiveBlueShells.Remove(myActiveBlueShells.GetFirst());
+		}
+
+		CGameObject* shell = myBlueShells.GetLast();
+		myBlueShells.Remove(shell);
+		shell->NotifyOnlyComponents(eComponentMessageType::eActivate, SComponentMessageData());
+		myActiveBlueShells.Add(shell);
+		CU::Matrix44f transform = userComponent->GetParent()->GetToWorldTransform();
+		CU::Vector3f position = userComponent->GetParent()->GetWorldPosition();
+		shell->GetLocalTransform() = transform;
+		shell->SetWorldPosition(position);
+		//CU::Vector3f forward = userComponent->GetParent()->GetToWorldTransform().myForwardVector;
+		//forward  *=3;
+		shell->Move(CU::Vector3f(0, -0.5f, 3));
+		shell->NotifyOnlyComponents(eComponentMessageType::eReInitBlueShell, SComponentMessageData());
 		break;
+	}
 	case eItemTypes::eMushroom:
 	{
 		SComponentMessageData boostMessageData;
@@ -495,8 +593,26 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 		//activate AI controller on player and make invincible and boost
 		break;
 	case eItemTypes::eLightning:
-		//postmaster blast all
+	{
+		for (int i = 0; i < myRedShellManager->GetKarts().Size(); i++)
+		{
+			if (myRedShellManager->GetKarts()[i] != userComponent->GetParent())
+			{
+				myRedShellManager->GetKarts()[i]->NotifyOnlyComponents(eComponentMessageType::eGotHit, SComponentMessageData());
+
+				unsigned char placement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myRedShellManager->GetKarts()[i]);
+
+				myLightningBoostData.duration = myRedShellManager->GetKarts().Size() - placement;
+				myLightningBoostBuffer.Add(myLightningBoostData);
+
+				SComponentMessageData slowdata; 
+				slowdata.myBoostData = &myLightningBoostBuffer.GetLast();
+				myRedShellManager->GetKarts()[i]->NotifyOnlyComponents(eComponentMessageType::eGiveBoost, slowdata);
+			}
+		}
+		myLightningBoostBuffer.RemoveAll();
 		break;
+	}
 	case eItemTypes::eBanana:
 	{
 		if (myBananas.Size() <= 0)

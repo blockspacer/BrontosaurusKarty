@@ -9,6 +9,7 @@ public:
 
 	void AddPlayer(CGameObject* aPlayer);
 	CGameObject* GetPlayerAtID(unsigned char aID);
+	unsigned char GetIDFromPlayer(CGameObject* aPlayer);
 
 private:
 	CPollingStation();

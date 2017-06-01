@@ -55,9 +55,9 @@ public:
 
 	void ClearGui();
 
-
 	inline void SetFogStartEnd(const float aStart, const float aEnd);
 	inline void SetFogColor(const CU::Vector4f& aColor);
+	inline void SetAmbientIntensity(const float aIntensity);
 private:
 	bool HandleRenderMessage(SRenderMessage* aRenderMesage, int& aDrawCallCount);
 	void RenderCameraQueue(SRenderCameraQueueMessage* msg, int & aDrawCallCount);
@@ -76,8 +76,6 @@ private:
 	void CreateShadowBuffer();
 	void UpdateBuffer();
 	void UpdateShadowBuffer(SSetShadowBuffer* msg);
-
-	//void UpdateBuffer(SSetShadowBuffer * msg);
 
 	void CreateRasterizerStates();
 	void CreateBlendStates();
@@ -147,12 +145,13 @@ private:
 	CU::Camera myCamera;
 
 	ID3D11Buffer* myOncePerFrameBuffer;
-	struct SFogData 
+	struct SOncePerFrameData 
 	{
+		float ambientIntensity = 1.0f;
 		float myFogStart = 40.f;
 		float myFogEnd = 250.f;
 		CU::Vector4f myFogColor = CU::Vector4f::One;
-	} myFogData;
+	} myOPFBData;
 
 	ID3D11Buffer* myShadowBuffer;
 	CU::TimerHandle myOncePerFrameBufferTimer;
@@ -172,14 +171,18 @@ inline bool CRenderer::GetIsRunning()
 	return myIsRunning;
 }
 
-
 inline void CRenderer::SetFogStartEnd(const float aStart, const float aEnd)
 {
-	myFogData.myFogStart = aStart;
-	myFogData.myFogEnd = aEnd;
+	myOPFBData.myFogStart = aStart;
+	myOPFBData.myFogEnd = aEnd;
 }
 
-void CRenderer::SetFogColor(const CU::Vector4f& aColor)
+inline void CRenderer::SetFogColor(const CU::Vector4f& aColor)
 {
-	myFogData.myFogColor = aColor;
+	myOPFBData.myFogColor = aColor;
+}
+
+inline void CRenderer::SetAmbientIntensity(const float aIntensity)
+{
+	myOPFBData.ambientIntensity = aIntensity;
 }

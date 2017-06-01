@@ -3,6 +3,7 @@
 #include <PxScene.h>
 #include <PxRigidActor.h>
 #include "PhysicsActor.h"
+#include "Components/ColliderComponent.h"
 
 
 namespace Physics
@@ -60,7 +61,7 @@ namespace Physics
 				outData.normal = { hit.block.normal.x, hit.block.normal.y, hit.block.normal.z };
 				outData.faceIndex = hit.block.faceIndex;
 				outData.actor = static_cast<CPhysicsCallbackActor*>(hit.block.actor->userData);
-				
+				outData.collisionLayer = reinterpret_cast<CColliderComponent*>(outData.actor->GetCallbackData()->GetUserData())->GetData()->myLayer;
 				return outData;
 			}
 		}

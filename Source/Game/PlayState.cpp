@@ -34,6 +34,7 @@
 #include "../Components/PickupComponentManager.h"
 #include "ItemWeaponBehaviourComponentManager.h"
 #include "RedShellManager.h"
+#include "BlueShellComponentManager.h"
 #include "RespawnComponentManager.h"
 #include "LapTrackerComponentManager.h"
 
@@ -65,6 +66,7 @@
 #include "LightComponentManager.h"
 #include "BrontosaurusEngine/SpriteInstance.h"
 #include "ThreadedPostmaster/GameEventMessage.h"
+#include "..\ThreadedPostmaster\RaceStartedMessage.h"
 #include <LuaWrapper/SSlua/SSlua.h>
 #include <GUIElement.h>
 #include "HUD.h"
@@ -200,10 +202,7 @@ void CPlayState::Load()
 	myCountdownElement->myScreenRect = CU::Vector4f( myCountdownSprite->GetPosition() );
 	myCountdownElement->myScreenRect.z = myCountdownSprite->GetPosition().x - (0.26f / 2);
 	myCountdownElement->myScreenRect.w = myCountdownSprite->GetPosition().y - (0.27f / 2);
-
-
 	// Render in Renderfunc.
-
 
 
 	srand(static_cast<unsigned int>(time(nullptr)));
@@ -272,7 +271,7 @@ void CPlayState::Load()
 		CreatePlayer(myScene->GetPlayerCamera(i).GetCamera(), myPlayers[i].myInputDevice, myPlayerCount);
 	}
 
-	for (int i = myPlayerCount; i < 8 - myPlayerCount; ++i)
+	for (int i = 0; i < 8 - myPlayerCount; ++i)
 	{
 		CreateAI();
 	}
@@ -314,6 +313,8 @@ void CPlayState::Init()
 		POSTMASTER.Subscribe(myHUDs[i], eMessageType::eRaceOver);
 	}
 
+	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::ePlayerFinished);
+	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::eRaceStarted);
 
 	myGameObjectManager->SendObjectsDoneMessage();
 	CLapTrackerComponentManager::GetInstance()->Init();
@@ -361,6 +362,7 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	}
 
 	myRedShellManager->Update(aDeltaTime.GetSeconds());
+	myBlueShellManager->Update(aDeltaTime.GetSeconds());
 
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
@@ -466,8 +468,9 @@ void CPlayState::CreateManagersAndFactories()
 	myItemBehaviourManager->Init(myPhysicsScene);
 	myRedShellManager = new CRedShellManager();
 	myRedShellManager->Init(myPhysicsScene, myKartControllerComponentManager,myKartObjects);
+	myBlueShellManager = new CBlueShellComponentManager(myKartObjects);
 	myItemFactory = new CItemFactory();
-	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager,*myRedShellManager);
+	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager,*myRedShellManager,*myBlueShellManager);
 	myRespawnComponentManager = new CRespawnComponentManager();
 	CLapTrackerComponentManager::CreateInstance();
 	CKartSpawnPointManager::GetInstance()->Create();
@@ -649,7 +652,6 @@ void CPlayState::CreateAI()
 	CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&box, playerObject->GetId());
 	CColliderComponent* playerTriggerColliderComponent = myColliderComponentManager->CreateComponent(&triggerbox, playerObject->GetId());
 
-
 	SRigidBodyData rigidbodah;
 	rigidbodah.isKinematic = true;
 	rigidbodah.useGravity = false;
@@ -695,6 +697,7 @@ void CPlayState::InitiateRace()
 				{
 					myCountdownSprite->SetRect({ 0.f,0.00f,1.f,0.25f });
 					myKartControllerComponentManager->ShouldUpdate(true);
+					POSTMASTER.Broadcast(new CRaceStartedMessage());
 				}
 			}
 		}

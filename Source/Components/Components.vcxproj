@@ -364,6 +364,8 @@
     <ClInclude Include="AIController.h" />
     <ClInclude Include="AudioSourceComponent.h" />
     <ClInclude Include="AudioSourceComponentManager.h" />
+    <ClInclude Include="BlueShellBehaviourComponent.h" />
+    <ClInclude Include="BlueShellComponentManager.h" />
     <ClInclude Include="BoostPadComponent.h" />
     <ClInclude Include="BoostPadComponentManager.h" />
     <ClInclude Include="BoxColliderComponent.h" />
@@ -438,6 +440,8 @@
     <ClCompile Include="AIController.cpp" />
     <ClCompile Include="AudioSourceComponent.cpp" />
     <ClCompile Include="AudioSourceComponentManager.cpp" />
+    <ClCompile Include="BlueShellBehaviourComponent.cpp" />
+    <ClCompile Include="BlueShellComponentManager.cpp" />
     <ClCompile Include="BoostPadComponent.cpp" />
     <ClCompile Include="BoostPadComponentManager.cpp" />
     <ClCompile Include="BoxColliderComponent.cpp" />
