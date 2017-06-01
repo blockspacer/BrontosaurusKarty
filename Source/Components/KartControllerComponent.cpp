@@ -339,7 +339,9 @@ void CKartControllerComponent::GetHit()
 
 void CKartControllerComponent::ApplyStartBoost()
 {
-	if (myPreRaceBoostValue > myPreRaceBoostTarget * 0.6)
+	float smallboost = myPreRaceBoostTarget * 0.6f;
+	float bigboost = myPreRaceBoostTarget * 0.85f;
+	if (myPreRaceBoostValue > myPreRaceBoostTarget * 0.6f)
 	{
 		if (myPreRaceBoostValue > myPreRaceBoostTarget * 0.8f)
 		{
@@ -351,11 +353,21 @@ void CKartControllerComponent::ApplyStartBoost()
 			SComponentMessageData boostMessageData;
 			boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("DriftBoost"));
 			GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+			if (myControllerHandle != -1 && myControllerHandle < 4)
+			{
+				SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 40, 60, 0.8f, false);
+				Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+			}
 			return;
 		}
 		SComponentMessageData boostMessageData;
 		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("MiniDriftBoost"));
 		GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+		if (myControllerHandle != -1 && myControllerHandle < 4)
+		{
+			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 25, 50, 0.5f, false);
+			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+		}
 		return;
 	}
 }
