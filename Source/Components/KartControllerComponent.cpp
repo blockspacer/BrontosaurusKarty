@@ -132,6 +132,7 @@ void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 		if (myDrifter->IsDrifting() == false)
 		{
 			Drift();
+			myDrifter->TurnRight();
 		}
 	}
 	myModifierCopy = aNormalizedModifier;
@@ -163,6 +164,7 @@ void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 		if (myDrifter->IsDrifting() == false)
 		{
 			Drift();
+			myDrifter->TurnLeft();
 		}
 	}
 	if (myDrifter->IsDrifting() == false)
@@ -394,9 +396,6 @@ void CKartControllerComponent::CheckZKill()
 
 	if(height < killHeight)
 	{
-		/*GetParent()->SetWorldTransformation(CU::Matrix44f());
-		GetParent()->SetWorldPosition(CU::Vector3f(0.f, 1.f, 0.f));*/
-		//myFowrardSpeed = 0.f;
 		myVelocity = CU::Vector3f::Zero;
 		GetParent()->NotifyComponents(eComponentMessageType::eKill, SComponentMessageData());
 		GetParent()->NotifyComponents(eComponentMessageType::eRespawn, SComponentMessageData());
