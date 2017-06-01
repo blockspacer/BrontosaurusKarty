@@ -472,7 +472,7 @@ void CItemFactory::CreatePlacementDrops()
 
 eItemTypes CItemFactory::RandomizeItem(CComponent* aPlayerCollider)
 {
-	unsigned char placement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(aPlayerCollider->GetParent());
+	unsigned char placement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(aPlayerCollider->GetParent() - 1);
 	char itemrange = 1;
 
 	char result = 0;
@@ -605,7 +605,8 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 				myLightningBoostData.duration = myRedShellManager->GetKarts().Size() - placement;
 				myLightningBoostBuffer.Add(myLightningBoostData);
 
-				SComponentMessageData slowdata; slowdata.myBoostData = &myLightningBoostBuffer.GetLast();
+				SComponentMessageData slowdata; 
+				slowdata.myBoostData = &myLightningBoostBuffer.GetLast();
 				myRedShellManager->GetKarts()[i]->NotifyOnlyComponents(eComponentMessageType::eGiveBoost, slowdata);
 			}
 		}

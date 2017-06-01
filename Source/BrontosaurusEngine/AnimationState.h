@@ -35,4 +35,4 @@ inline TAnimationState<NumStates>::TAnimationState(const char* aCommaSeperatedSt
 }
 
 #define DECLARE_ANIMATION_ENUM_AND_STRINGS \
-ENUM_STRING_MACRO(AnimationState, idle01, turnRight01, turnLeft01, shot01, invisible, none)
+ENUM_STRING_MACRO(AnimationState, idle01, turnRight01, turnLeft01, break01, shot01, invisible, none)

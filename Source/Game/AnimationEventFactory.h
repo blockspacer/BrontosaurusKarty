@@ -11,6 +11,9 @@ enum class eEventType
 	eBeginLeft,
 	eContinueLeft,
 	eFinishLeft,
+	eBeginBreak,
+	eContinueBreak,
+	eFinishBreak
 };
 
 

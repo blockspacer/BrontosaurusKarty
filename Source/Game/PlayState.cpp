@@ -271,7 +271,7 @@ void CPlayState::Load()
 		CreatePlayer(myScene->GetPlayerCamera(i).GetCamera(), myPlayers[i].myInputDevice, myPlayerCount);
 	}
 
-	for (int i = myPlayerCount; i < 8 - myPlayerCount; ++i)
+	for (int i = 0; i < 8 - myPlayerCount; ++i)
 	{
 		CreateAI();
 	}

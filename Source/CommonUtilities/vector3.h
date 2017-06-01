@@ -51,6 +51,8 @@ namespace CU
 		__forceinline bool operator==(const Vector3& aRight) const;
 		__forceinline bool operator!=(const Vector3& aRight) const;
 
+		Vector2<TYPE> xz() const;
+
 		TYPE Length() const;
 		TYPE Length2() const;
 		__forceinline TYPE Dot(const Vector3& aRight) const;
@@ -346,6 +348,12 @@ namespace CU
 	__forceinline bool Vector3<TYPE>::operator!=(const Vector3& aRight) const
 	{
 		return !(self == aRight);
+	}
+
+	template<typename TYPE>
+	inline Vector2<TYPE> Vector3<TYPE>::xz() const
+	{
+		return Vector2<TYPE>(x, z);
 	}
 
 	template<typename TYPE>
