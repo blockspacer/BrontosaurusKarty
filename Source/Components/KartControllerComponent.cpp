@@ -89,6 +89,7 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myGotHitEmmiterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("Stars");
 	myStarEmmiterhandle1 = CParticleEmitterManager::GetInstance().GetEmitterInstance("StarBoost");
 	myStarEmmiterhandle2 = CParticleEmitterManager::GetInstance().GetEmitterInstance("StarBoost");
+	mySlowMovment = CParticleEmitterManager::GetInstance().GetEmitterInstance("SlowSmoke");
 
 	myPreRaceBoostRate = 0.0f;
 	myPreRaceBoostValue = 0.0f;
@@ -425,6 +426,22 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 
 		particlePosition.Move(CU::Vector3f(0.f, 0, 0));
 		CParticleEmitterManager::GetInstance().SetPosition(myBoostEmmiterhandle, particlePosition.GetPosition());
+	}
+
+	if (myMaxSpeedModifier < 1)
+	{
+		//start to emmit
+		CParticleEmitterManager::GetInstance().Activate(mySlowMovment);
+
+		CU::Matrix44f transform = GetParent()->GetToWorldTransform();
+
+		transform.Move(CU::Vector3f(0, 0.5f, 0));
+
+		CParticleEmitterManager::GetInstance().SetPosition(mySlowMovment, transform.GetPosition());
+	}
+	else
+	{
+		CParticleEmitterManager::GetInstance().Deactivate(mySlowMovment);
 	}
 
 	if (myHasGottenHit == true)
