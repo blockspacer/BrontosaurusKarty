@@ -23,6 +23,7 @@ class GetAvailableController;
 class CPlayerFinishedMessage;
 class CAIFinishedMessage;
 class CRaceOverMessage;
+class CRaceStartedMessage;
 
 namespace Postmaster
 {
@@ -58,6 +59,7 @@ namespace Postmaster
 		virtual eMessageReturn DoEvent(const CPlayerFinishedMessage& aPlayerFinishedMessage);
 		virtual eMessageReturn DoEvent(const CAIFinishedMessage& aAIFinishedMessage);
 		virtual eMessageReturn DoEvent(const CRaceOverMessage& aRaceOverMessage);
+		virtual eMessageReturn DoEvent(const CRaceStartedMessage& aRaceOverMessage);
 
 		void SetSubscribedThread(const std::thread::id& aId);
 		const std::thread::id& GetSubscribedId() const;

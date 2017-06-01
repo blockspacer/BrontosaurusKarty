@@ -57,9 +57,6 @@ CRenderer::CRenderer() : myParticleRenderer(*this, myFullScreenHelper)
 	changeStateMessage.myBlendState = eBlendState::eNoBlend;
 	changeStateMessage.mySamplerState = eSamplerState::eClamp0Wrap1;
 
-
-
-
 	SetStates(&changeStateMessage);
 }
 
@@ -121,27 +118,6 @@ void CRenderer::Render()
 	}
 
 	DoRenderQueue();
-
-	//SChangeStatesMessage changeStateMessage = {};
-	//changeStateMessage.myRasterizerState = eRasterizerState::eDefault;
-	//changeStateMessage.myDepthStencilState = eDepthStencilState::eDefault;
-	//changeStateMessage.myBlendState = eBlendState::eNoBlend;
-	//changeStateMessage.mySamplerState = eSamplerState::eClamp;
-	//SetStates(&changeStateMessage);
-	//myDeferredRenderer.DoRenderQueue(*this);
-	//changeStateMessage.myRasterizerState = eRasterizerState::eDefault;
-	//changeStateMessage.myDepthStencilState = eDepthStencilState::eDefault;
-	//changeStateMessage.myBlendState = eBlendState::eAlphaBlend;
-	//changeStateMessage.mySamplerState = eSamplerState::eClamp;
-	//SetStates(&changeStateMessage);
-	//myDeferredRenderer.UpdateCameraBuffer(myCamera.GetTransformation(), myCamera.GetProjectionInverse());
-	//myParticleRenderer.DoRenderQueue(myDeferredRenderer.GetDepthStencil(), myDeferredRenderer.GetDepthResource());
-	//myDeferredRenderer.DoLightingPass(myFullScreenHelper, *this);
-	//changeStateMessage.myRasterizerState = eRasterizerState::eNoCulling;
-	//changeStateMessage.myDepthStencilState = eDepthStencilState::eDisableDepth;
-	//changeStateMessage.myBlendState = eBlendState::eAlphaBlend;
-	//changeStateMessage.mySamplerState = eSamplerState::eClamp;
-	//SetStates(&changeStateMessage);
 
 	renderTo->Activate();
 
@@ -431,9 +407,10 @@ void CRenderer::CreateOncePerFrameBuffer()
 	buffer.time = 0.0f;
 	buffer.deltaTime = 0.0f;
 
-	buffer.fogStart = myFogData.myFogStart;
-	buffer.fogEnd = myFogData.myFogEnd;
-	buffer.fogColor = myFogData.myFogColor;
+	buffer.fogStart = myOPFBData.myFogStart;
+	buffer.fogEnd = myOPFBData.myFogEnd;
+	buffer.fogColor = myOPFBData.myFogColor;
+	buffer.ambientIntensity = myOPFBData.ambientIntensity;
 
 	myOncePerFrameBuffer = BSR::CreateCBuffer<SOncePerFrameBuffer>(&buffer);
 }
@@ -458,9 +435,10 @@ void CRenderer::UpdateBuffer()
 
 	updatedBuffer.deltaTime = myTimers.GetTimer(myOncePerFrameBufferTimer).GetDeltaTime().GetSeconds();
 	updatedBuffer.time = myTimers.GetTimer(myOncePerFrameBufferTimer).GetLifeTime().GetSeconds();
-	updatedBuffer.fogStart = myFogData.myFogStart;
-	updatedBuffer.fogEnd = myFogData.myFogEnd;
-	updatedBuffer.fogColor = myFogData.myFogColor;
+	updatedBuffer.fogStart = myOPFBData.myFogStart;
+	updatedBuffer.fogEnd = myOPFBData.myFogEnd;
+	updatedBuffer.fogColor = myOPFBData.myFogColor;
+	updatedBuffer.ambientIntensity = myOPFBData.ambientIntensity;
 
 	updatedBuffer.windowSize = CEngine::GetInstance()->GetWindowSize();
 

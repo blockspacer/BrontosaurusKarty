@@ -30,6 +30,11 @@ CGameObject* CPollingStation::GetPlayerAtID(unsigned char aID)
 	return myPlayers[aID];
 }
 
+unsigned char CPollingStation::GetIDFromPlayer(CGameObject * aPlayer)
+{
+	return myPlayers.Find(aPlayer);
+}
+
 CPollingStation::CPollingStation()
 {
 	myPlayers.Init(4);

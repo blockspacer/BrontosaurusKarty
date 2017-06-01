@@ -81,6 +81,7 @@ private:
 
 	void InitiateRace();
 	void RenderCountdown();
+	void BroadcastRaceStart();
 
 private:
 	Physics::CPhysicsScene* myPhysicsScene;
@@ -114,6 +115,8 @@ private:
 	CSpriteInstance* myCountdownSprite;
 	SGUIElement* myCountdownElement;
 	bool myCountdownShouldRender;
+
+	bool myIsCountingDown;
 
 	int myPlayerCount;
 	int myLevelIndex;
