@@ -287,8 +287,7 @@ void CMenuState::LoadElement(const CU::CJsonValue& aJsonValue, const std::string
 
 void CMenuState::MenuLoad(const std::string& aFile)
 {
-	CU::CJsonValue root;
-	root.Parse(aFile);
+	CU::CJsonValue root(aFile);
 
 	myManager.SetMousePointer(new CSpriteInstance(root.at("cursor").GetString().c_str()));
 	const std::string &folderPath = root.at("folder").GetString();

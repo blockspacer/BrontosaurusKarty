@@ -4,15 +4,17 @@
 #include "../Physics/PhysicsScene.h"
 #include "GameObjectManager.h"
 #include "ItemWeaponBehaviourComponentManager.h"
+#include "ParticleEmitterComponentManager.h"
 #include "RedShellManager.h"
+#include "BlueShellComponentManager.h"
 #include "ColliderComponentManager.h"
 
 #include "ItemWeaponBehaviourComponent.h"
 #include "RedShellBehaviourComponent.h"
+#include "BlueShellBehaviourComponent.h"
 #include "HazardComponent.h"
 #include "ModelComponent.h"
 #include "ParticleEmitterComponent.h"
-#include "ParticleEmitterComponentManager.h"
 
 #include "ModelComponentManager.h"
 #include "ConcaveMeshCollider.h"
@@ -32,6 +34,9 @@ CItemFactory::CItemFactory()
 
 	myRedShells.Init(26);
 	myActiveRedShells.Init(26);
+
+	myBlueShells.Init(8);
+	myActiveBlueShells.Init(8);
 
 	myPlacementDrops.Init(8);
 	myLightningBoostBuffer.Init(8);
@@ -57,17 +62,19 @@ CItemFactory::~CItemFactory()
 {
 }
 
-void CItemFactory::Init(CGameObjectManager& aGameObjectManager, CItemWeaponBehaviourComponentManager & aManager, Physics::CPhysicsScene* aPhysicsScene, CColliderComponentManager& aColliderManager, CRedShellManager& aRedShellManager)
+void CItemFactory::Init(CGameObjectManager& aGameObjectManager, CItemWeaponBehaviourComponentManager & aManager, Physics::CPhysicsScene* aPhysicsScene, CColliderComponentManager& aColliderManager, CRedShellManager& aRedShellManager, CBlueShellComponentManager& aBlueShellManager)
 {
 	myItemBeheviourComponentManager = &aManager;
 	myPhysicsScene = aPhysicsScene;
 	myGameObjectManager = &aGameObjectManager;
 	myColliderManager = &aColliderManager;
 	myRedShellManager = &aRedShellManager;
+	myBlueShellManager = &aBlueShellManager;
 
 	CreateShellBuffer();
 	CreateBananaBuffer();
 	CreateRedShellBuffer();
+	CreateBlueShellBuffer();
 	CreatePlacementDrops();
 }
 
@@ -234,6 +241,59 @@ void CItemFactory::CreateRedShellBuffer()
 		//collider added
 
 		myRedShells.Add(shell);
+	}
+}
+
+void CItemFactory::CreateBlueShellBuffer()
+{
+	for (int i = 0; i < 5; i++)
+	{
+		CGameObject* shell = myGameObjectManager->CreateGameObject();
+		std::string name = "blue shell ";
+		name += std::to_string(i);
+		shell->SetName(name.c_str());
+
+		CModelComponent* model = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_Shell_Blue_01.fbx");
+		model->FlipVisibility();
+		shell->AddComponent(model);
+
+		CBlueShellBehaviourComponent* behaviour = myBlueShellManager->CreateAndRegisterComponent();
+		shell->AddComponent(behaviour);
+
+
+		CHazardComponent* hazardous = new CHazardComponent;
+		CComponentManager::GetInstance().RegisterComponent(hazardous);
+		shell->AddComponent(hazardous);
+
+		//adds collider
+		SBoxColliderData crystalMeshColliderData;
+		crystalMeshColliderData.IsTrigger = true;
+		crystalMeshColliderData.myLayer = Physics::eHazzard;
+		crystalMeshColliderData.myCollideAgainst = Physics::GetCollideAgainst(crystalMeshColliderData.myLayer);
+		crystalMeshColliderData.material.aDynamicFriction = 0.5f;
+		crystalMeshColliderData.material.aRestitution = 0.5f;
+		crystalMeshColliderData.material.aStaticFriction = 0.5f;
+		crystalMeshColliderData.center.y = 0.5f;
+		crystalMeshColliderData.myHalfExtent = CU::Vector3f(0.5f, 0.5f, 0.5f);
+		CColliderComponent* shellColliderComponent = myColliderManager->CreateComponent(&crystalMeshColliderData, shell->GetId());
+		//CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
+		CU::Vector3f offset = shell->GetWorldPosition();
+
+		SRigidBodyData rigidbodah;
+		rigidbodah.isKinematic = true;
+		rigidbodah.useGravity = false;
+		rigidbodah.myLayer = Physics::eHazzard;
+		rigidbodah.myCollideAgainst = Physics::GetCollideAgainst(rigidbodah.myLayer);
+
+		CColliderComponent* rigidComponent = myColliderManager->CreateComponent(&rigidbodah, shell->GetId());
+		//	colliderObject->SetWorldPosition({ offset.x, offset.y + 0.1f, offset.z });
+		shell->AddComponent(shellColliderComponent);
+		shell->AddComponent(rigidComponent);
+
+		//shell->AddComponent(colliderObject);
+		//collider added
+
+		myBlueShells.Add(shell);
 	}
 }
 
@@ -489,8 +549,27 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 		break;
 	}
 	case eItemTypes::eBlueShell:
-		//Create shell that homes in on the leader
+	{
+		if (myBlueShells.Size() <= 0)
+		{
+			myBlueShells.Add(myActiveBlueShells.GetFirst());
+			myActiveBlueShells.Remove(myActiveBlueShells.GetFirst());
+		}
+
+		CGameObject* shell = myBlueShells.GetLast();
+		myBlueShells.Remove(shell);
+		shell->NotifyOnlyComponents(eComponentMessageType::eActivate, SComponentMessageData());
+		myActiveBlueShells.Add(shell);
+		CU::Matrix44f transform = userComponent->GetParent()->GetToWorldTransform();
+		CU::Vector3f position = userComponent->GetParent()->GetWorldPosition();
+		shell->GetLocalTransform() = transform;
+		shell->SetWorldPosition(position);
+		//CU::Vector3f forward = userComponent->GetParent()->GetToWorldTransform().myForwardVector;
+		//forward  *=3;
+		shell->Move(CU::Vector3f(0, -0.5f, 3));
+		shell->NotifyOnlyComponents(eComponentMessageType::eReInitBlueShell, SComponentMessageData());
 		break;
+	}
 	case eItemTypes::eMushroom:
 	{
 		SComponentMessageData boostMessageData;

@@ -11,6 +11,8 @@ DECLARE_ANIMATION_ENUM_AND_STRINGS;
 CKartAnimator::CKartAnimator(CModelComponent& aModelComponent)
 	: myModelComponent(aModelComponent)
 	, myTurnState(eTurnState::eNone)
+	, myIsBreaking(false)
+	, myIsGoingBackwards(false)
 {
 	myDefaultAnimation = std::make_unique<CAnimationEvent>();
 	myModelComponent.SetAnimationManualUpdate(true);
@@ -29,7 +31,7 @@ void CKartAnimator::AddAnimation(const eEventType aType)
 	myEventQueue.insert(myEventQueue.begin(), animationEventFactory->CreateEvent(aType, *this));
 }
 
-void CKartAnimator::Update(const float aDeltaTime)
+void CKartAnimator::Update(const float aDeltaTime, const float aForwardVelocity)
 {
 	CAnimationEvent* currentAnimation = myDefaultAnimation.get();
 	if (!myEventQueue.empty())
@@ -43,6 +45,11 @@ void CKartAnimator::Update(const float aDeltaTime)
 	if (!currentAnimation->Update(aDeltaTime))
 	{
 		myEventQueue.pop_back();
+	}
+
+	if (myIsBreaking && aForwardVelocity < 0.f)
+	{
+		myIsBreaking = false;
 	}
 }
 
@@ -84,14 +91,32 @@ void CKartAnimator::OnTurnLeft(const float aNormalizedModifier)
 
 void CKartAnimator::OnStopMoving()
 {
+	myIsBreaking = false;
+	myIsGoingBackwards = false;
 }
 
 void CKartAnimator::OnMoveFoward()
 {
+	myIsBreaking = false;
+	myIsGoingBackwards = false;
 }
 
-void CKartAnimator::OnMoveBackWards()
+void CKartAnimator::OnMoveBackWards(const float aCurrentSpeed2)
 {
+	if (myIsBreaking == false && aCurrentSpeed2 > 0.f)
+	{
+		myEventQueue.clear();
+		AddAnimation(eEventType::eBeginBreak);
+		AddAnimation(eEventType::eContinueBreak);
+		AddAnimation(eEventType::eFinishBreak);
+		myIsBreaking = true;
+		myIsGoingBackwards = false;
+	}
+	else if (myIsGoingBackwards == false)
+	{
+		myIsBreaking = false;
+		myIsGoingBackwards = true;
+	}
 }
 
 void CKartAnimator::OnStopTurningLeft()
@@ -130,4 +155,9 @@ bool CKartAnimator::IsTurningRight() const
 bool CKartAnimator::IsTurningLeft() const
 {
 	return myTurnState == CKartAnimator::eTurnState::eLeft;
+}
+
+bool CKartAnimator::IsBreaking() const
+{
+	return myIsBreaking;
 }
