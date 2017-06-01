@@ -60,6 +60,7 @@ private:
 	void AddToRacerPlacements(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList);
 	bool HaveAllPlayersFinished();
 	void SendRaceOverMessage();
+	void AddEveryoneToVictoryList();
 private:
 	CU::GrowingArray<CLapTrackerComponent*> myComponents;
 	CU::GrowingArray<CGameObject*> myRacerPlacements;
