@@ -129,6 +129,11 @@ void CHUD::Render()
 	{
 		if (currentLap > 3)
 		{
+			myItemGuiElement.mySprite = myNullSprite;
+			myItemGuiElement.myShouldRender = false;
+			myLapCounterElement.mySprite = myNullSprite;
+			myPlacementElement.mySprite = myNullSprite;
+
 			SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"finishText" + myPlayerID, myFinishTextElement.myGUIElement, myFinishTextElement.myPixelSize);
 
 			RENDERER.AddRenderMessage(guiElement);
@@ -138,50 +143,59 @@ void CHUD::Render()
 		}
 	}
 
-	SComponentQuestionData itemQuestionData;
-	if(myPlayer->AskComponents(eComponentQuestionType::eGetHoldItemType, itemQuestionData) == true)
+	if(myItemGuiElement.myShouldRender == true)
 	{
-		switch (static_cast<eItemTypes>(itemQuestionData.myInt))
+		SComponentQuestionData itemQuestionData;
+		if (myPlayer->AskComponents(eComponentQuestionType::eGetHoldItemType, itemQuestionData) == true)
 		{
-		case eItemTypes::eBanana:
-		{
-			myItemGuiElement.mySprite = myBananaSprite;
-			break;
+			switch (static_cast<eItemTypes>(itemQuestionData.myInt))
+			{
+			case eItemTypes::eBanana:
+			{
+				myItemGuiElement.mySprite = myBananaSprite;
+				break;
+			}
+			case eItemTypes::eMushroom:
+			{
+				myItemGuiElement.mySprite = myMushroomSprite;
+				break;
+			}
+			case eItemTypes::eStar:
+			{
+				myItemGuiElement.mySprite = myStarSprite;
+				break;
+			}
+			case eItemTypes::eGreenShell:
+			{
+				myItemGuiElement.mySprite = myGreenShellSprite;
+				break;
+			}
+			case eItemTypes::eRedShell:
+			{
+				myItemGuiElement.mySprite = myRedShellSprite;
+				break;
+			}
+			case eItemTypes::eLightning:
+			{
+				myItemGuiElement.mySprite = myLightningSprite;
+				break;
+			}
+			case eItemTypes::eBlueShell:
+			{
+				myItemGuiElement.mySprite = myBlueShellSprite;
+				break;
+			}
+			default:
+				break;
+			}
 		}
-		case eItemTypes::eMushroom:
+		else
 		{
-			myItemGuiElement.mySprite = myMushroomSprite;
-			break;
-		}
-		case eItemTypes::eStar:
-		{
-			myItemGuiElement.mySprite = myStarSprite;
-			break;
-		}
-		case eItemTypes::eGreenShell:
-		{
-			myItemGuiElement.mySprite = myGreenShellSprite;
-			break;
-		}
-		case eItemTypes::eRedShell:
-		{
-			myItemGuiElement.mySprite = myRedShellSprite;
-			break;
-		}
-		case eItemTypes::eLightning:
-		{
-			myItemGuiElement.mySprite = myLightningSprite;
-			break;
-		}
-		default:
-			break;
+			myItemGuiElement.mySprite = myNullSprite;
 		}
 	}
-	else
-	{
-		myItemGuiElement.mySprite = myNullSprite;
-	}
-		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"itemGui" + myPlayerID, myItemGuiElement.myGUIElement, myItemGuiElement.myPixelSize);
+	
+	SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"itemGui" + myPlayerID, myItemGuiElement.myGUIElement, myItemGuiElement.myPixelSize);
 
 	RENDERER.AddRenderMessage(guiElement);
 	SetGUIToEmilBlend(L"itemGui" + myPlayerID);
@@ -321,6 +335,7 @@ void CHUD::LoadItemGui(const CU::CJsonValue& aJsonValue)
 	myGreenShellSprite = new CSpriteInstance("Sprites/GUI/greenShell.dds", { itemGuiWidth,itemGuiHeight });
 	myRedShellSprite = new CSpriteInstance("Sprites/GUI/redShell.dds", { itemGuiWidth,itemGuiHeight });
 	myLightningSprite = new CSpriteInstance("Sprites/GUI/lightning.dds", { itemGuiWidth,itemGuiHeight });
+	myBlueShellSprite = new CSpriteInstance("Sprites/GUI/blueShell.dds", { itemGuiWidth,itemGuiHeight });
 	myNullSprite = new CSpriteInstance("Sprites/GUI/redShell.dds", { 0.0f,0.0f });
 	myItemGuiElement.mySprite = myNullSprite;
 	/*myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));*/
