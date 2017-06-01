@@ -7,7 +7,7 @@
 DECLARE_ANIMATION_ENUM_AND_STRINGS;
 
 #define DECLARE_ANIMATION_ENUM_AND_STRINGS_TWO \
-ENUM_STRING_MACRO(JsonStrings, eBeginRight, eContinueRight, eFinishRight, eBeginLeft, eContinueLeft, eFinishLeft, eGarbage)
+ENUM_STRING_MACRO(JsonStrings, eBeginRight, eContinueRight, eFinishRight, eBeginLeft, eContinueLeft, eFinishLeft, eBeginBreak, eContinueBreak, eFinishBreak)
 
 #include "../CommonUtilities/WindowsHelper.h"
 #include "CommonUtilities/JsonValue.h"
@@ -106,11 +106,15 @@ CAnimationEvent CAnimationEventFactory::CreateEvent(const eEventType aType, CKar
 	case eEventType::eFinishRight:
 	case eEventType::eBeginLeft:
 	case eEventType::eFinishLeft:
+	case eEventType::eBeginBreak:
+	case eEventType::eFinishBreak:
 		return CAnimationEvent([start, end](float aTimer) -> bool { return aTimer + start < end; }, data.state, start, end);
 	case eEventType::eContinueRight:
 		return CAnimationEvent([&aKartAnimator](float) -> bool { return aKartAnimator.IsTurningRight(); }, data.state, start, end);
 	case eEventType::eContinueLeft:
 		return CAnimationEvent([&aKartAnimator](float) -> bool { return aKartAnimator.IsTurningLeft(); }, data.state, start, end);
+	case eEventType::eContinueBreak:
+		return CAnimationEvent([&aKartAnimator](float) -> bool { return aKartAnimator.IsBreaking(); }, data.state, start, end);
 	}
 
 	return CAnimationEvent();

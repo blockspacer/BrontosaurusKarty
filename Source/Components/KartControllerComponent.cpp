@@ -180,6 +180,7 @@ void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 void CKartControllerComponent::StopMoving()
 {
 	myAcceleration = 0;
+	myAnimator->OnStopMoving();
 }
 
 void CKartControllerComponent::MoveFoward()
@@ -189,6 +190,7 @@ void CKartControllerComponent::MoveFoward()
 		return;
 	}
 	myAcceleration = GetMaxAcceleration();
+	myAnimator->OnMoveFoward();
 }
 
 void CKartControllerComponent::MoveBackWards()
@@ -198,6 +200,7 @@ void CKartControllerComponent::MoveBackWards()
 		return;
 	}
 	myAcceleration = myMinAcceleration;
+	myAnimator->OnMoveBackWards(myVelocity.z);
 }
 
 void CKartControllerComponent::StopTurning()
@@ -402,7 +405,7 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 
 
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
-	myAnimator->Update(aDeltaTime);
+	myAnimator->Update(aDeltaTime, myVelocity.z);
 }
 
 const CNavigationSpline & CKartControllerComponent::GetNavigationSpline()
