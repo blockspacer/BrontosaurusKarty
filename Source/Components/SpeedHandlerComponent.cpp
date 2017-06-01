@@ -46,6 +46,7 @@ void CSpeedHandlerComponent::Update(float aDeltaTime)
 	{
 		if(myBoostList[i].data->duration > 0.0f)
 		{
+			float duration = myBoostList[i].data->duration;
 			if(myBoostList[i].elapsedBoostingTime < myBoostList[i].data->duration)
 			{
 				myBoostList[i].elapsedBoostingTime += aDeltaTime;
@@ -65,7 +66,7 @@ const SBoostData* CSpeedHandlerComponent::GetFastestBoost() const
 	const SBoostData* returnData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("NoBoost"));
 	for(unsigned int i = 0; i < myBoostList.Size(); i++)
 	{
-		if(fastestBoostSpeed < myBoostList[i].data->maxSpeedBoost)
+		if(fastestBoostSpeed < myBoostList[i].data->maxSpeedBoost && myBoostList[i].data->maxSpeedBoost != 0.0f)
 		{
 			fastestBoostSpeed = myBoostList[i].data->maxSpeedBoost;
 			returnData = myBoostList[i].data;

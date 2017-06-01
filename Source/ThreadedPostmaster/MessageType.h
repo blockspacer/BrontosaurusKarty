@@ -31,6 +31,7 @@ enum class eMessageType
 	ePlayerFinished,
 	eAIFInished,
 	eRaceOver,
+	eRaceStarted,
 	eLength,
 };
 

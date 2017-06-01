@@ -28,6 +28,11 @@ void CRedShellManager::Update(const float aDeltatime)
 	}
 }
 
+CU::GrowingArray<CGameObject*> CRedShellManager::GetKarts()
+{
+	return *myListOfKarts;
+}
+
 CRedShellBehaviourComponent * CRedShellManager::CreateAndRegisterComponent()
 {
 	CRedShellBehaviourComponent* redShell = new CRedShellBehaviourComponent();

@@ -49,7 +49,7 @@ struct SOncePerFrameBuffer
 	unsigned int shadows;
 
 	CU::Vector2ui windowSize;
-	float garbage[1];
+	float ambientIntensity = 1.0f;
 
 	CU::Vector4f fogColor;
 

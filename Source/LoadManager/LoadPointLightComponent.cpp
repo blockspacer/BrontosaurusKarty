@@ -20,6 +20,12 @@ int LoadPointLightComponent(KLoader::SLoadedComponentData someData)
 		spotLight->SetRange(someData.myData.at("range").GetFloat());
 		spotLight->SetSpotAngle(someData.myData.at("spotAngle").GetFloat() * (3.141692f / 180.f));
 
+		int id = KLoader::CKevinLoader::GetInstance().GetCurrentObjectIndex();
+		CGameObject* parent = reinterpret_cast<CGameObject*>(CComponentManager::GetInstance().GetComponent(id));
+		CU::Matrix44f rotated = parent->GetToWorldTransform();
+		rotated.RotateAroundAxis(3.141592f, CU::Axees::Y);
+		parent->SetWorldTransformation(rotated);
+
 		return spotLight->GetId();
 	}
 	else if (someData.myData.HasKey("range"))
@@ -35,7 +41,7 @@ int LoadPointLightComponent(KLoader::SLoadedComponentData someData)
 		int id = KLoader::CKevinLoader::GetInstance().GetCurrentObjectIndex();
 		CGameObject* parent = reinterpret_cast<CGameObject*>(CComponentManager::GetInstance().GetComponent(id));
 		Lights::SDirectionalLight directionalLight;
-		directionalLight.direction = -parent->GetToWorldTransform().myForwardVector;
+		directionalLight.direction = -parent->GetToWorldTransform().myForwardVector;// *CU::Matrix44f::CreateRotateAroundY(3.141592f);
 		directionalLight.intensity = someData.myData.at("intensity").GetFloat();
 		directionalLight.color = someData.myData.at("color").GetVector4f("xyzw") / 255.f;
 		CLightComponentManager::GetInstance().AddDirectionalLightToScene(directionalLight);
@@ -57,10 +63,13 @@ int LoadEnvironmentSettings(KLoader::SLoadedComponentData someData)
 	assert(engine && "Could not get engine instance");
 	CRenderer& renderer = engine->GetRenderer();
 
-	float start, end;
+	float start, end, ambientIntensity;
 	start = someData.myData.at("fogStart").GetFloat();
 	end = someData.myData.at("fogEnd").GetFloat();
+	ambientIntensity = someData.myData.at("ambientIntensity").GetFloat();
+	
 	renderer.SetFogStartEnd(start, end);
+	renderer.SetAmbientIntensity(ambientIntensity);
 
 	CU::Vector4f color = someData.myData.at("fogColor").GetVector4f();
 	color /= 255.f;
