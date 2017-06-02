@@ -84,18 +84,17 @@ eMessageReturn CPlayerControllerManager::DoEvent(const CPlayerFinishedMessage& a
 
 	//delete myPlayerControllers[idOfPlayer];
 	//myPlayerControllers[idOfPlayer] = new CAIController(*(CAIController*)myPlayerControllers[7]); // mebbeeee ?
-	
+
+
+	SComponentMessageData pointlessData;
+	((CGameObject*)aMessage.GetGameObject())->NotifyComponents(eComponentMessageType::eAITakeOver, pointlessData);
 	
 	return eMessageReturn::eContinue;
 }
 
 eMessageReturn CPlayerControllerManager::DoEvent(const CRaceStartedMessage& aMessage)
 {
-	myCotrollersAtStart.Init(myPlayerControllers.Size());
-	for (int i  = 0; i < myPlayerControllers.Size(); ++i)
-	{
-		myCotrollersAtStart.Add(myPlayerControllers[i]);
-	}
+
 	// Copy controllers.
 	return eMessageReturn::eContinue;
 }
