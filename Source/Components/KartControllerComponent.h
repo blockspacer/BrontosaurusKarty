@@ -198,5 +198,5 @@ bool CKartControllerComponent::GetIsControlledByAI() const
 
 float CKartControllerComponent::GetAcceleratiot()
 {
-	return myAcceleration * myTerrainModifier;
+	return myAcceleration * (myIsBoosting == false ? myTerrainModifier : 1.f);
 }
