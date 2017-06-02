@@ -198,6 +198,10 @@ bool CLapTrackerComponentManager::HaveAllPlayersFinished()
 	
 	for (unsigned int i = 0; i < myComponents.Size(); i++)
 	{
+		if (myWinnerPlacements.Find(myRacerPlacements[i]) != myWinnerPlacements.FoundNone)
+		{
+			continue;
+		}
 		if(myComponents[i]->GetParent()->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
 		{
 			havePlayersFinished = false;
@@ -220,6 +224,8 @@ void CLapTrackerComponentManager::Init()
 
 void CLapTrackerComponentManager::SendRaceOverMessage()
 {
+	AddEveryoneToVictoryList();
+	myWinnerPlacements;
 	Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CRaceOverMessage(myWinnerPlacements));
 }
 
@@ -238,4 +244,15 @@ unsigned char CLapTrackerComponentManager::GetSpecificRacerLapIndex(CGameObject*
 	aRacer->AskComponents(eComponentQuestionType::eGetLapIndex, whatLap);
 
 	return whatLap.myChar;
+}
+
+void CLapTrackerComponentManager::AddEveryoneToVictoryList()
+{
+	for(unsigned int i = 0; i < myRacerPlacements.Size(); i++)
+	{
+		if(myWinnerPlacements.Find(myRacerPlacements[i]) == myWinnerPlacements.FoundNone)
+		{
+			myWinnerPlacements.Add(myRacerPlacements[i]);
+		}
+	}
 }
