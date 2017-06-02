@@ -80,13 +80,21 @@ void CPlayerControllerManager::Update(const float aDeltaTime)
 eMessageReturn CPlayerControllerManager::DoEvent(const CPlayerFinishedMessage& aMessage)
 {
 	unsigned char idOfPlayer = CPollingStation::GetInstance()->GetIDFromPlayer((CGameObject*)aMessage.GetGameObject());
-	// replace controlls at ID with AI. ...assuming they're in order.
+	// Antagandes att spelarens ID ligger i fas med spelarens position i myPlayerControllers.
+
+	//delete myPlayerControllers[idOfPlayer];
+	//myPlayerControllers[idOfPlayer] = new CAIController(*(CAIController*)myPlayerControllers[7]); // mebbeeee ?
+
+
+	SComponentMessageData pointlessData;
+	((CGameObject*)aMessage.GetGameObject())->NotifyComponents(eComponentMessageType::eAITakeOver, pointlessData);
+	
 	return eMessageReturn::eContinue;
 }
 
 eMessageReturn CPlayerControllerManager::DoEvent(const CRaceStartedMessage& aMessage)
 {
-	int br = 0;
+
 	// Copy controllers.
 	return eMessageReturn::eContinue;
 }

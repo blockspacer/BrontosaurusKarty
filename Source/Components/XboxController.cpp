@@ -13,6 +13,9 @@
 #include "..\ThreadedPostmaster\SetVibrationOnController.h"
 #include "..\ThreadedPostmaster\Postmaster.h"
 
+#include "AIController.h"
+#include "..\BrontosaurusEngine\Engine.h"
+
 CXboxController::CXboxController(CKartControllerComponent& aKartComponent)
 	: CController(aKartComponent)
 	, myControllerIndex(-1)
@@ -20,6 +23,7 @@ CXboxController::CXboxController(CKartControllerComponent& aKartComponent)
 	, myIsMovingBackwards(false)
 	, myIsDrifting(false)
 {
+	myAIController = new CAIController(aKartComponent);
 }
 
 CXboxController::~CXboxController()
@@ -33,6 +37,9 @@ void CXboxController::SetIndex(const int aIndex)
 
 CU::eInputReturn CXboxController::TakeInput(const CU::SInputMessage& aInputMessage)
 {
+	if (myControllerComponent.GetIsControlledByAI())
+		return CU::eInputReturn::ePassOn;
+
 	if (aInputMessage.myGamepadIndex == myControllerIndex)
 	{
 		switch (aInputMessage.myType)
@@ -163,7 +170,7 @@ void CXboxController::GamePadReleasedKey(const CU::SInputMessage& aInputMessage)
 		}
 		break;
 	case CU::GAMEPAD::RIGHT_SHOULDER:
-		myControllerComponent.StopDrifting();
+		myControllerComponent.StopDrifting(true);
 		break;
 		break;
 	}
@@ -182,15 +189,6 @@ void CXboxController::MovedJoystick(const CU::SInputMessage& aInputMessage)
 	{
 		myControllerComponent.Turn(aInputMessage.myJoyStickPosition.x);
 	}
-
-	//if (aInputMessage.myJoyStickPosition.x > 0)
-	//{
-	//	myControllerComponent.TurnRight();
-	//}
-	//else if (aInputMessage.myJoyStickPosition.x < 0)
-	//{
-	//	myControllerComponent.TurnLeft();
-	//}
 }
 
 void CXboxController::GamePadLeftTrigger(const CU::SInputMessage& aInputMessage)
@@ -215,7 +213,7 @@ void CXboxController::GamePadRightTriggerReleased(const CU::SInputMessage& aInpu
 {
 	if (myIsDrifting == true)
 	{
-		myControllerComponent.StopDrifting();
+		myControllerComponent.StopDrifting(true);
 		myIsDrifting = false;
 	}
 }
