@@ -2,8 +2,6 @@
 #include "Controller.h"
 #include "..\CommonUtilities\InputListener.h"
 
-class CAIController;
-
 class CXboxController : public CController, public CU::IInputListener
 {
 public:
@@ -25,7 +23,6 @@ private:
 
 private:
 	short myControllerIndex;
-	CAIController* myAIController;
 	
 	bool myIsMovingFoward;
 	bool myIsMovingBackwards;

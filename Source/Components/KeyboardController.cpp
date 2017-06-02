@@ -30,10 +30,7 @@ CKeyboardController::~CKeyboardController()
 CU::eInputReturn CKeyboardController::TakeInput(const CU::SInputMessage & aInputMessage)
 {
 	if (myControllerComponent.GetIsControlledByAI())
-	{
-		myAIController->Update(ENGINE->GetDeltaTime().GetSeconds());
 		return CU::eInputReturn::ePassOn;
-	}
 
 	if (aInputMessage.myType == CU::eInputType::eKeyboardReleased)
 	{
