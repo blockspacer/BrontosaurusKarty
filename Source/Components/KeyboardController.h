@@ -2,6 +2,8 @@
 #include "Controller.h"
 #include "../CommonUtilities/InputListener.h"
 
+class CAIController;
+
 class CKeyboardController : public CController, public CU::IInputListener
 {
 public:
@@ -13,6 +15,8 @@ public:
 private:
 	void ReleasedKey(const CU::SInputMessage& aInputMessage);
 	void PressedKey(const CU::SInputMessage& aInputMessage);
+
+	CAIController* myAIController;
 
 	bool myIsMovingFoward;
 	bool myIsMovingBackwards;
