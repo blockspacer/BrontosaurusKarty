@@ -7,6 +7,10 @@
 #include "KartControllerComponent.h"
 #include "SpeedHandlerManager.h"
 
+#include "AIController.h"
+#include "..\ThreadedPostmaster\Postmaster.h"
+#include "..\BrontosaurusEngine\Engine.h"
+
 //Temp includes
 #include "BoostData.h"
 
@@ -16,6 +20,7 @@ CKeyboardController::CKeyboardController(CKartControllerComponent& aKartComponen
 	myIsMovingFoward = false;
 	myIsTurningLeft = false;
 	myIsTurningRight = false;
+	myAIController = new CAIController(aKartComponent);
 }
 
 CKeyboardController::~CKeyboardController()
@@ -24,6 +29,9 @@ CKeyboardController::~CKeyboardController()
 
 CU::eInputReturn CKeyboardController::TakeInput(const CU::SInputMessage & aInputMessage)
 {
+	if (myControllerComponent.GetIsControlledByAI())
+		return CU::eInputReturn::ePassOn;
+
 	if (aInputMessage.myType == CU::eInputType::eKeyboardReleased)
 	{
 		ReleasedKey(aInputMessage);

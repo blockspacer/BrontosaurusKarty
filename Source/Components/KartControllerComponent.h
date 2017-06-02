@@ -59,6 +59,8 @@ public:
 	inline float GetMaxSpeed2() const;
 	inline float GetMaxAcceleration() const;
 	inline float GetAcceleratiot();
+	inline bool GetIsControlledByAI() const;
+
 private:
 	
 	void UpdateMovement(const float aDeltaTime);
@@ -148,8 +150,8 @@ private:
 	bool myIsInvurnable;
 	bool myHasGottenHit;
 	bool myIsOnGroundLast;
+	bool myIsAIControlled;
 	CComponent* myLastGroundComponent;
-
 };
 
 
@@ -187,6 +189,11 @@ float CKartControllerComponent::GetMaxSpeed2() const
 float CKartControllerComponent::GetMaxAcceleration() const
 {
 	return myMaxAcceleration;
+}
+
+bool CKartControllerComponent::GetIsControlledByAI() const
+{
+	return myIsAIControlled;
 }
 
 float CKartControllerComponent::GetAcceleratiot()

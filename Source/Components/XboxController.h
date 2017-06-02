@@ -21,6 +21,7 @@ private:
 	void GamePadRightTriggerReleased(const CU::SInputMessage& aInputMessage);
 	void JoystickDeadzone();
 
+private:
 	short myControllerIndex;
 	
 	bool myIsMovingFoward;

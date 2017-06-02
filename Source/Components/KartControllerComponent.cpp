@@ -23,7 +23,7 @@
 
 #include "../Audio/AudioInterface.h"
 
-#include "../CommonUtilities/CommonUtilities.h"
+
 CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent, const short aControllerIndex)
 	: myPhysicsScene(nullptr)
 	, myIsOnGround(true)
@@ -71,6 +71,8 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myHasJumped = false;
 
 	myHasGottenHit = false;
+	myIsAIControlled = false;
+
 	myTimeToBeStunned = 1.5f;
 	myElapsedStunTime = 0.f;
 	myModifierCopy = 0.0f;
@@ -532,7 +534,7 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 		break;
 	}
 	case eComponentMessageType::eSetBoost:
-
+	{
 		if (aMessageData.myBoostData->maxSpeedBoost > 0)
 		{
 			myIsBoosting = true;
@@ -548,6 +550,11 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 		myAccelerationModifier = 1.0f + aMessageData.myBoostData->accerationBoost;
 		myBoostSpeedDecay = GetMaxAcceleration() * myAccelerationModifier * 1.25f;
 		break;
+	}
+	case eComponentMessageType::eAITakeOver:
+	{
+		myIsAIControlled = true;
+	}
 	}
 }
 

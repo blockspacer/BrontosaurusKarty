@@ -90,6 +90,7 @@ enum class eComponentMessageType
 	eReInitRedShell,
 	eReInitBlueShell,
 	ePassedASpline,
+	eAITakeOver,
 	eLength,
 };
 

@@ -302,6 +302,15 @@ void CItemFactory::CreatePlacementDrops()
 	SItemDrop item;
 	CU::GrowingArray<SItemDrop> drops; drops.Init(8);
 
+	
+	CU::CJsonValue itemDropList;
+	std::string filePath = "Json/Items.json";
+	const std::string& errorString = itemDropList.Parse(filePath);
+	CU::CJsonValue levelsArray = itemDropList.at("Items");
+	CU::CJsonValue Item = levelsArray.at("Star");
+
+
+
 	//firstplace
 	item.myType = eItemTypes::eGreenShell;
 	item.myChance = 10;
@@ -341,6 +350,10 @@ void CItemFactory::CreatePlacementDrops()
 	item.myChance = 10;
 	drops.Add(item);
 
+	item.myType = eItemTypes::eBlueShell;
+	item.myChance = 20;
+	drops.Add(item);
+
 	item.myType = eItemTypes::eRedShell;
 	item.myChance = 30;
 	drops.Add(item);
@@ -367,6 +380,10 @@ void CItemFactory::CreatePlacementDrops()
 	drops.Add(item);
 
 	item.myType = eItemTypes::eGreenShell;
+	item.myChance = 40;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eBlueShell;
 	item.myChance = 50;
 	drops.Add(item);
 
@@ -389,6 +406,10 @@ void CItemFactory::CreatePlacementDrops()
 
 	item.myType = eItemTypes::eGreenShell;
 	item.myChance = 50;
+	drops.Add(item);
+
+	item.myType = eItemTypes::eBlueShell;
+	item.myChance = 60;
 	drops.Add(item);
 
 	item.myType = eItemTypes::eBanana;
