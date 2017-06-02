@@ -2,6 +2,8 @@
 #include "Controller.h"
 #include "..\CommonUtilities\InputListener.h"
 
+class CAIController;
+
 class CXboxController : public CController, public CU::IInputListener
 {
 public:
@@ -21,7 +23,9 @@ private:
 	void GamePadRightTriggerReleased(const CU::SInputMessage& aInputMessage);
 	void JoystickDeadzone();
 
+private:
 	short myControllerIndex;
+	CAIController* myAIController;
 	
 	bool myIsMovingFoward;
 	bool myIsMovingBackwards;

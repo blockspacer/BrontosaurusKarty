@@ -13,6 +13,9 @@
 #include "..\ThreadedPostmaster\SetVibrationOnController.h"
 #include "..\ThreadedPostmaster\Postmaster.h"
 
+#include "AIController.h"
+#include "..\BrontosaurusEngine\Engine.h"
+
 CXboxController::CXboxController(CKartControllerComponent& aKartComponent)
 	: CController(aKartComponent)
 	, myControllerIndex(-1)
@@ -20,6 +23,7 @@ CXboxController::CXboxController(CKartControllerComponent& aKartComponent)
 	, myIsMovingBackwards(false)
 	, myIsDrifting(false)
 {
+	myAIController = new CAIController(aKartComponent);
 }
 
 CXboxController::~CXboxController()
@@ -33,6 +37,13 @@ void CXboxController::SetIndex(const int aIndex)
 
 CU::eInputReturn CXboxController::TakeInput(const CU::SInputMessage& aInputMessage)
 {
+	if (myControllerComponent.GetIsControlledByAI())
+	{
+		myAIController->Update(ENGINE->GetDeltaTime().GetSeconds());
+		return CU::eInputReturn::ePassOn;
+
+	}
+
 	if (aInputMessage.myGamepadIndex == myControllerIndex)
 	{
 		switch (aInputMessage.myType)
