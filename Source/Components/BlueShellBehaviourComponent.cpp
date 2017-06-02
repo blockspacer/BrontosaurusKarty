@@ -31,7 +31,7 @@ void CBlueShellBehaviourComponent::Update(const float aDeltaTime)
 	if (myElapsedTime < myTeleportDelay)
 	{
 		myElapsedTime += aDeltaTime;
-		CU::Vector3f flyUp(0, 20, 0);
+		CU::Vector3f flyUp(0, 10, 0);
 		GetParent()->Move(flyUp*aDeltaTime);
 
 		if (myElapsedTime >= myTeleportDelay)

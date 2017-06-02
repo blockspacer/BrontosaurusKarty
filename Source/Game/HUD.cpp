@@ -73,11 +73,46 @@ void CHUD::LoadHUD()
 {
 	CU::CJsonValue jsonDoc;
 
-	jsonDoc.Parse("Json/HUD.json");
-	LoadLapCounter(jsonDoc.at("lapCounter"));
-	LoadPlacement(jsonDoc.at("placement"));
-	LoadFinishText(jsonDoc.at("finishText"));
-	LoadItemGui(jsonDoc.at("itemGui"));
+	if(myAmountOfPlayers == 1)
+	{
+		jsonDoc.Parse("Json/HUD/HUD1Player.json");
+	}
+	else if (myAmountOfPlayers == 2)
+	{
+		jsonDoc.Parse("Json/HUD/HUD2Player.json");
+	}
+	else if (myAmountOfPlayers == 3)
+	{
+		jsonDoc.Parse("Json/HUD/HUD3Player.json");
+	}
+	else if (myAmountOfPlayers == 4)
+	{
+		jsonDoc.Parse("Json/HUD/HUD4Player.json");		
+	}
+
+	CU::CJsonValue jsonPlayerObject;
+
+	if(myPlayerID == 0)
+	{
+		jsonPlayerObject = jsonDoc.at("1stPlayer");
+	}
+	else if (myPlayerID == 1)
+	{
+		jsonPlayerObject = jsonDoc.at("2ndPlayer");
+	}
+	else if (myPlayerID == 2)
+	{
+		jsonPlayerObject = jsonDoc.at("3rdPlayer");
+	}
+	else if (myPlayerID == 3)
+	{
+		jsonPlayerObject = jsonDoc.at("4thPlayer");
+	}
+
+	LoadLapCounter(jsonPlayerObject.at("lapCounter"));
+	LoadPlacement(jsonPlayerObject.at("placement"));
+	LoadFinishText(jsonPlayerObject.at("finishText"));
+	LoadItemGui(jsonPlayerObject.at("itemGui"));
 }
 
 void CHUD::Update()
@@ -211,54 +246,9 @@ SHUDElement CHUD::LoadHUDElement(const CU::CJsonValue& aJsonValue, eGuiType aGui
 	hudElement.myGUIElement.myAnchor[(char)eAnchors::eTop] = true;
 	hudElement.myGUIElement.myAnchor[(char)eAnchors::eLeft] = true;
 
-	if(myAmountOfPlayers == 1 && aGuiType == eGuiType::ePlacement)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.0f, 0.40f), CU::Vector2f(0.09f, 0.08f));
-	}
-	else if (myAmountOfPlayers == 1 && aGuiType == eGuiType::eLapCounter)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.0f, 0.48f), CU::Vector2f());
-	}
-	else if (myAmountOfPlayers == 1 && aGuiType == eGuiType::eFinish)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.25f, 0.25f), CU::Vector2f());
-	}
-	else if (myAmountOfPlayers == 2 && aGuiType == eGuiType::ePlacement)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.0f, 0.0f), CU::Vector2f(0.09f, 0.08f));
-	}
-	else if (myAmountOfPlayers == 2 && aGuiType == eGuiType::eLapCounter && myPlayerID == 0)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.9f, -0.38f), CU::Vector2f());
-	}
-	else if (myAmountOfPlayers == 2 && aGuiType == eGuiType::eLapCounter && myPlayerID == 1)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.9f, 0.02f), CU::Vector2f());
-	}
-	else if (myAmountOfPlayers == 2 && aGuiType == eGuiType::eFinish)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.25f, 0.0f), CU::Vector2f());
-	}
-	else if (myAmountOfPlayers >= 3 && aGuiType == eGuiType::eLapCounter && myPlayerID % 2 == 1)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.4f, 0.04f), CU::Vector2f());
-	}
-	else if (myAmountOfPlayers >= 3 && aGuiType == eGuiType::ePlacement && myPlayerID % 2 == 1)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.375f, 0.01f), CU::Vector2f(0.0f, 0.03f));
-	}
-	else if (myAmountOfPlayers >= 3 && aGuiType == eGuiType::eLapCounter && myPlayerID % 2 == 0)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.0f, 0.04f), CU::Vector2f());
-	}
-	else if (myAmountOfPlayers >= 3 && aGuiType == eGuiType::ePlacement && myPlayerID % 2 == 0)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.0f, 0.01f), CU::Vector2f(0.0f, 0.03f));
-	}
-	else
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(), CU::Vector2f());
-	}
+	
+	LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(), CU::Vector2f());
+	
 	
 
 	return hudElement;

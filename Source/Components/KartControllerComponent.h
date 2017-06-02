@@ -134,6 +134,9 @@ private:
 
 	int myBoostEmmiterhandle;
 	int myGotHitEmmiterhandle;
+	int myStarEmmiterhandle1;
+	int myStarEmmiterhandle2;
+	int mySlowMovment;
 
 	short myControllerHandle;
 
