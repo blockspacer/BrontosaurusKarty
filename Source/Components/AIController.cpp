@@ -168,7 +168,7 @@ void CAIController::Update(const float aDeltaTime)
 	}
 	else if (myIsDrifting != 0)
 	{
-		myControllerComponent.StopDrifting();
+		myControllerComponent.StopDrifting(true);
 		myIsDrifting = 0;
 	}
 }

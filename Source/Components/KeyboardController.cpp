@@ -93,7 +93,7 @@ void CKeyboardController::ReleasedKey(const CU::SInputMessage & aInputMessage)
 		}
 		break;
 	case CU::eKeys::LCONTROL:
-		myControllerComponent.StopDrifting();
+		myControllerComponent.StopDrifting(true);
 		break;
 	}
 }
