@@ -304,191 +304,62 @@ void CItemFactory::CreatePlacementDrops()
 
 	
 	CU::CJsonValue itemDropList;
-	std::string filePath = "Json/Items.json";
+	std::string filePath = "Json/ItemDrops.json";
 	const std::string& errorString = itemDropList.Parse(filePath);
-	CU::CJsonValue levelsArray = itemDropList.at("Items");
-	CU::CJsonValue Item = levelsArray.at("Star");
+
+	for (int i = 1; i < itemDropList.Size()+1; i++)
+	{
+		std::stringstream temp1;
+		temp1 << i;
+		std::string temp2 = temp1.str();
+		CU::CJsonValue levelsArray = itemDropList.at(temp2);
+		for (int i = 0; i < levelsArray.Size(); i++)
+		{
+			CU::CJsonValue jsonItem = levelsArray[i];
+			item.myChance = jsonItem.at("DropRate").GetUchar();
+			item.myType = CheckItem(jsonItem.at("ItemType").GetString());
+			drops.Add(item);
+		}
+		myPlacementDrops.Add(drops);
+		drops.RemoveAll();
+	}
 
 
+}
 
-	//firstplace
-	item.myType = eItemTypes::eGreenShell;
-	item.myChance = 10;
-	drops.Add(item);
+eItemTypes CItemFactory::CheckItem(std::string aItem)
+{
+	eItemTypes item = eItemTypes::eBanana;
+	if (aItem == "Banana")
+	{
+		item = eItemTypes::eBanana;
+	}
+	if (aItem == "GreenShell")
+	{
+		item = eItemTypes::eGreenShell;
+	}
+	if (aItem == "RedShell")
+	{
+		item = eItemTypes::eRedShell;
+	}
+	if (aItem == "BlueShell")
+	{
+		item = eItemTypes::eBlueShell;
+	}
+	if (aItem == "Mushroom")
+	{
+		item = eItemTypes::eMushroom;
+	}
+	if (aItem == "Star")
+	{
+		item = eItemTypes::eStar;
+	}
+	if (aItem == "Lightning")
+	{
+		item = eItemTypes::eLightning;
+	}
 
-	item.myType = eItemTypes::eBanana;
-	item.myChance = 100;
-	drops.Add(item);
-
-	myPlacementDrops.Add(drops);
-
-	drops.RemoveAll();
-
-	//secondplace
-	item.myType = eItemTypes::eMushroom;
-	item.myChance = 10;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eRedShell;
-	item.myChance = 30;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eGreenShell;
-	item.myChance = 50;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eBanana;
-	item.myChance = 100;
-	drops.Add(item);
-
-	myPlacementDrops.Add(drops);
-
-	drops.RemoveAll();
-
-	//thirdplace
-	item.myType = eItemTypes::eMushroom;
-	item.myChance = 10;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eBlueShell;
-	item.myChance = 20;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eRedShell;
-	item.myChance = 30;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eGreenShell;
-	item.myChance = 50;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eBanana;
-	item.myChance = 100;
-	drops.Add(item);
-
-	myPlacementDrops.Add(drops);
-
-	drops.RemoveAll();
-
-	//forthplace
-	item.myType = eItemTypes::eMushroom;
-	item.myChance = 20;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eRedShell;
-	item.myChance = 30;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eGreenShell;
-	item.myChance = 40;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eBlueShell;
-	item.myChance = 50;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eBanana;
-	item.myChance = 100;
-	drops.Add(item);
-
-	myPlacementDrops.Add(drops);
-
-	drops.RemoveAll();
-
-	//fifthplace
-	item.myType = eItemTypes::eMushroom;
-	item.myChance = 30;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eRedShell;
-	item.myChance = 40;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eGreenShell;
-	item.myChance = 50;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eBlueShell;
-	item.myChance = 60;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eBanana;
-	item.myChance = 100;
-	drops.Add(item);
-
-	myPlacementDrops.Add(drops);
-
-	drops.RemoveAll();
-
-	//sixthplace
-	item.myType = eItemTypes::eStar;
-	item.myChance = 20;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eLightning;
-	item.myChance = 30;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eMushroom;
-	item.myChance = 40;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eRedShell;
-	item.myChance = 60;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eGreenShell;
-	item.myChance = 100;
-	drops.Add(item);
-
-	drops.Add(item);
-
-	myPlacementDrops.Add(drops);
-
-	drops.RemoveAll();
-
-	//seventhplace
-	item.myType = eItemTypes::eMushroom;
-	item.myChance = 10;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eRedShell;
-	item.myChance = 40;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eLightning;
-	item.myChance = 60;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eStar;
-	item.myChance = 100;
-	drops.Add(item);
-
-	myPlacementDrops.Add(drops);
-
-	drops.RemoveAll();
-
-	//eigthplace
-	item.myType = eItemTypes::eMushroom;
-	item.myChance = 10;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eRedShell;
-	item.myChance = 30;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eLightning;
-	item.myChance = 70;
-	drops.Add(item);
-
-	item.myType = eItemTypes::eStar;
-	item.myChance = 100;
-	drops.Add(item);
-
-	myPlacementDrops.Add(drops);
-
-	drops.RemoveAll();
-
+	return item;
 }
 
 eItemTypes CItemFactory::RandomizeItem(CComponent* aPlayerCollider)
@@ -498,12 +369,6 @@ eItemTypes CItemFactory::RandomizeItem(CComponent* aPlayerCollider)
 
 	char result = 0;
 	eItemTypes item = eItemTypes::eBanana;
-
-	char banana = 0;
-	char greenshell = 0;
-	char mushroom = 0;
-	char redshell = 0;
-	char star = 0;
 
 	result = (rand() % 100)+1;
 
@@ -599,9 +464,6 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 		//userComponent->GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost,)
 		break;
 	}
-	case eItemTypes::eGoldenMushroom:
-		//boost and have some form of cooldown before 
-		break;
 	case eItemTypes::eStar:
 	{
 		SComponentMessageData boostData;
@@ -610,14 +472,11 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 		userComponent->GetParent()->NotifyComponents(eComponentMessageType::eMakeInvurnable,boostData);
 		break;
 	}
-	case eItemTypes::eBulletBill:
-		//activate AI controller on player and make invincible and boost
-		break;
 	case eItemTypes::eLightning:
 	{
 		for (int i = 0; i < myRedShellManager->GetKarts().Size(); i++)
 		{
-			if (myRedShellManager->GetKarts()[i] != userComponent->GetParent())
+		//	if (myRedShellManager->GetKarts()[i] != userComponent->GetParent())
 			{
 				myRedShellManager->GetKarts()[i]->NotifyOnlyComponents(eComponentMessageType::eGotHit, SComponentMessageData());
 

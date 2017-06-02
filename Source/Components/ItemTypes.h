@@ -9,7 +9,5 @@ enum class eItemTypes
 	eStar,
 	eLightning,
 	eBlueShell,
-	eGoldenMushroom,
-	eBulletBill,
 	eNone,
 };
