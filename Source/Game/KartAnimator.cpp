@@ -6,6 +6,8 @@
 #include "AnimationEventFactory.h"
 
 #include "AnimationState.h"
+DECLARE_ANIMATION_ENUM_AND_STRINGS;
+
 #include "LoadManager\LoadManager.h"
 #include "ModelComponentManager.h"
 
@@ -16,13 +18,11 @@
 
 #undef CreateEvent
 
-DECLARE_ANIMATION_ENUM_AND_STRINGS;
-
 CKartAnimator::CKartAnimator(CModelComponent& aModelComponent)
 	: myModelComponent(aModelComponent)
-	, myTargetSteering(0.f)
-	, myCurrentSteering(0.f)
-	, mySteeringTimer(0.f)
+	//, myTargetSteering(0.f)
+	//, myCurrentSteering(0.f)
+	//, mySteeringTimer(0.f)
 	, myTurnState(eTurnState::eNone)
 	, myIsBreaking(false)
 	, myIsGoingBackwards(false)
@@ -30,15 +30,22 @@ CKartAnimator::CKartAnimator(CModelComponent& aModelComponent)
 	myDefaultAnimation = std::make_unique<CAnimationEvent>();
 	myModelComponent.SetAnimationManualUpdate(true);
 	myModelComponent.SetAnimationCounter(0.f);
+	myModelComponent.SetAnimation(eAnimationState::idle01);
 	myModelComponent.SetNextAnimation(eAnimationState::none);
 	myModelComponent.SetAnimationLerpValue(0.f);
+
+	CModelComponent* wheelModels[4];
+	wheelModels[0] = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_kart_01_wheel_left.fbx");
+	wheelModels[1] = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_kart_01_wheel_right.fbx");
+	wheelModels[2] = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_kart_01_wheel_right.fbx");
+	wheelModels[3] = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_kart_01_wheel_left.fbx");
 
 	for (int i = 0; i < myWheels.Size(); ++i)
 	{
 		myWheels[i] = LoadManager::GetInstance()->GetCurrentPLaystate().GetGameObjectManager()->CreateGameObject();
 
 		CGameObject* turnParent = LoadManager::GetInstance()->GetCurrentPLaystate().GetGameObjectManager()->CreateGameObject();
-		CModelComponent* wheelModel = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_Kart_01_wheel.fbx");
+		CModelComponent* wheelModel = wheelModels[i];
 		myWheels[i]->AddComponent(wheelModel);
 
 		turnParent->AddComponent(myWheels[i]);
@@ -50,6 +57,11 @@ CKartAnimator::CKartAnimator(CModelComponent& aModelComponent)
 	myWheels[1]->GetParent()->GetLocalTransform() = MODELMGR->GetModel(myModelComponent.GetModelInstance().GetModelID())->GetBoneTransform(0.f, eAnimationState::idle01, "P_wheelFront_SOCKET_right");
 	myWheels[2]->GetParent()->GetLocalTransform() = MODELMGR->GetModel(myModelComponent.GetModelInstance().GetModelID())->GetBoneTransform(0.f, eAnimationState::idle01, "P_wheelBack_SOCKET_left");
 	myWheels[3]->GetParent()->GetLocalTransform() = MODELMGR->GetModel(myModelComponent.GetModelInstance().GetModelID())->GetBoneTransform(0.f, eAnimationState::idle01, "P_wheelBack_SOCKET_right");
+
+	for (CGameObject* wheel : myWheels)
+	{
+		wheel->GetParent()->NotifyComponents(eComponentMessageType::eMoving, SComponentMessageData());
+	}
 }
 
 CKartAnimator::~CKartAnimator()
@@ -60,10 +72,6 @@ void CKartAnimator::AddAnimation(const eEventType aType)
 {
 	CAnimationEventFactory* animationEventFactory = CAnimationEventFactory::GetInstance();
 	myEventQueue.insert(myEventQueue.begin(), animationEventFactory->CreateEvent(aType, *this));
-}
-
-void CKartAnimator::Init()
-{
 }
 
 void CKartAnimator::Update(const float aDeltaTime, const float aForwardVelocity, const float aSteering)
@@ -87,31 +95,31 @@ void CKartAnimator::Update(const float aDeltaTime, const float aForwardVelocity,
 		myIsBreaking = false;
 	}
 
-	myTargetSteering = aSteering;
+	//myTargetSteering = aSteering;
 
-	auto fLerp = [](float aStart, float aEnd, float aTime) -> float
-	{
-		return aEnd + aTime * (aStart - aEnd);
-	};
+	//auto fLerp = [](float aStart, float aEnd, float aTime) -> float
+	//{
+	//	return aEnd + aTime * (aStart - aEnd);
+	//};
 
-	mySteeringTimer += aDeltaTime;
-	if (mySteeringTimer > 1.f)
-	{
-		//mySteeringTimer -= 1.f;
-		mySteeringTimer = 1.f;
-	}
-	myCurrentSteering = fLerp(0.f, myTargetSteering, mySteeringTimer);
+	//mySteeringTimer += aDeltaTime;
+	//if (mySteeringTimer > 1.f)
+	//{
+	//	//mySteeringTimer -= 1.f;
+	//	mySteeringTimer = 1.f;
+	//}
+	//myCurrentSteering = fLerp(0.f, myTargetSteering, mySteeringTimer);
 
 	CU::Vector3f eulerRotation;
-	eulerRotation.y = myCurrentSteering;
+	//eulerRotation.y = myCurrentSteering;
 	eulerRotation.y = aSteering;
 
 	myWheels[0]->GetParent()->GetLocalTransform().SetEulerRotation(eulerRotation);
 	myWheels[1]->GetParent()->GetLocalTransform().SetEulerRotation(eulerRotation);
 
-	for (CGameObject* wheelObject : myWheels)
+	for (int i = 0; i < 4; ++i)// CGameObject* wheelObject : myWheels)
 	{
-		wheelObject->GetLocalTransform().RotateAroundAxis(aForwardVelocity * aDeltaTime, CU::Axees::X);
+		myWheels[i]->GetLocalTransform().RotateAroundAxis(i < 2 ? aForwardVelocity * aDeltaTime : -aForwardVelocity * aDeltaTime, CU::Axees::X);
 	}
 }
 
@@ -130,7 +138,7 @@ void CKartAnimator::OnTurnRight(const float aNormalizedModifier)
 		AddAnimation(eEventType::eBeginRight);
 		AddAnimation(eEventType::eContinueRight);
 		AddAnimation(eEventType::eFinishRight);
-		mySteeringTimer = 0.f;
+		//mySteeringTimer = 0.f;
 	}
 }
 
@@ -149,7 +157,7 @@ void CKartAnimator::OnTurnLeft(const float aNormalizedModifier)
 		AddAnimation(eEventType::eBeginLeft);
 		AddAnimation(eEventType::eContinueLeft);
 		AddAnimation(eEventType::eFinishLeft);
-		mySteeringTimer = 0.f;
+		//mySteeringTimer = 0.f;
 	}
 }
 
@@ -189,7 +197,7 @@ void CKartAnimator::OnStopTurningLeft()
 	{
 		myTurnState = eTurnState::eNone;
 	}
-	mySteeringTimer = 0.f;
+	//mySteeringTimer = 0.f;
 }
 
 void CKartAnimator::OnStopTurningRight()
@@ -198,7 +206,7 @@ void CKartAnimator::OnStopTurningRight()
 	{
 		myTurnState = eTurnState::eNone;
 	}
-	mySteeringTimer = 0.f;
+	//mySteeringTimer = 0.f;
 }
 
 void CKartAnimator::OnDrift()

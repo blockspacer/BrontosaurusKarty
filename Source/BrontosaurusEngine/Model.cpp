@@ -579,7 +579,6 @@ CU::Matrix44f CModel::GetBoneTransform(const float aTime, const eAnimationState 
 			sceneAnimator = &it->second;
 		}
 
-		return sceneAnimator->GetBoneGlobalTransform(aBoneName);
 		int bindex = myBindposeSceneAnimator->GetBoneIndex(aBoneName);
 		if (bindex == -1)
 		{
@@ -587,7 +586,10 @@ CU::Matrix44f CModel::GetBoneTransform(const float aTime, const eAnimationState 
 		}
 
 		CU::Matrix44f boneTransform = myBindposeSceneAnimator->GetBoneGlobalTransform(bindex);
-		boneTransform *= sceneAnimator->GetBoneTransform(aTime, bindex);
+		if (sceneAnimator->Animations[0].GetTransforms(aTime).size() > bindex)
+		{
+			boneTransform *= sceneAnimator->GetBoneTransform(aTime, bindex);
+		}
 
 		return boneTransform;
 	}

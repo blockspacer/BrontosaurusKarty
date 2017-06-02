@@ -12,7 +12,6 @@ public:
 	CKartAnimator(CModelComponent& aModelComponent);
 	~CKartAnimator();
 
-	void Init();
 	void Update(const float aDeltaTime, const float aForwardVelocity, const float aSteering);
 
 	void OnTurnRight(const float aNormalizedModifier);
@@ -37,9 +36,9 @@ private:
 	std::unique_ptr<CAnimationEvent> myDefaultAnimation;
 	CModelComponent& myModelComponent;
 
-	float myTargetSteering;
-	float myCurrentSteering;
-	float mySteeringTimer;
+	//float myTargetSteering;
+	//float myCurrentSteering;
+	//float mySteeringTimer;
 
 	enum class eTurnState
 	{
