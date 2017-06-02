@@ -123,7 +123,7 @@ void CKartControllerComponent::Turn(float aDirectionX)
 	}
 }
 
-const float rate = 4.f;
+const float rate = 5.f;
 void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 {
 	if (myHasGottenHit == true)
@@ -246,7 +246,7 @@ bool CKartControllerComponent::Drift()
 	{
 		return false;
 	}
-	if (myVelocity.Length2() < GetMaxSpeed2() * 0.33f)
+	if (myVelocity.Length() < myMaxSpeed * 0.5f)
 	{
 		return false;
 	}
@@ -275,7 +275,7 @@ bool CKartControllerComponent::Drift()
 	return true;
 }
 
-void CKartControllerComponent::StopDrifting()
+void CKartControllerComponent::StopDrifting(const bool aShouldGetBoost)
 {
 	myDriftSetupTimer = myDriftSetupTime + 1.0f;
 	GetParent()->NotifyComponents(eComponentMessageType::eCancelDriftBobbing, SComponentMessageData());
@@ -286,29 +286,32 @@ void CKartControllerComponent::StopDrifting()
 		StopVibrationOnController* stopionMessageLeft = new StopVibrationOnController(myControllerHandle);
 		Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(stopionMessageLeft);
 	}
-	SComponentMessageData boostMessageData;
-	switch (boost)
+	if (aShouldGetBoost == true)
 	{
-	case CDrifter::eDriftBoost::eLarge:
-		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("DriftBoost"));
-		GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
-		if (myControllerHandle != -1 && myControllerHandle < 4)
+		SComponentMessageData boostMessageData;
+		switch (boost)
 		{
-			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 40, 60, 0.8f, false);
-			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+		case CDrifter::eDriftBoost::eLarge:
+			boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("DriftBoost"));
+			GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+			if (myControllerHandle != -1 && myControllerHandle < 4)
+			{
+				SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 40, 60, 0.8f, false);
+				Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+			}
+			break;
+		case  CDrifter::eDriftBoost::eSmall:
+			boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("MiniDriftBoost"));
+			GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
+			if (myControllerHandle != -1 && myControllerHandle < 4)
+			{
+				SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 25, 50, 0.5f, false);
+				Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
+			}
+			break;
+		case CDrifter::eDriftBoost::eNone:
+			break;
 		}
-		break;
-	case  CDrifter::eDriftBoost::eSmall:
-		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("MiniDriftBoost"));
-		GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);
-		if (myControllerHandle != -1 && myControllerHandle < 4)
-		{
-			SetVibrationOnController* vibrationMessage = new SetVibrationOnController(myControllerHandle, 25, 50, 0.5f, false);
-			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
-		}
-		break;
-	case CDrifter::eDriftBoost::eNone:
-		break;
 	}
 
 
@@ -338,7 +341,7 @@ void CKartControllerComponent::GetHit()
 			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(vibrationMessage);
 		}
 		myHasGottenHit = true;
-		StopDrifting();
+		StopDrifting(false);
 		GetParent()->NotifyComponents(eComponentMessageType::eSpinKart, SComponentMessageData());
 		CParticleEmitterManager::GetInstance().Activate(myGotHitEmmiterhandle);
 		SComponentMessageData sound; sound.myString = "PlayGetHit";
@@ -443,6 +446,23 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	}
 	else
 	{
+		CParticleEmitterManager::GetInstance().Deactivate(mySlowMovment);
+	}
+
+	if (myTerrainModifier < 1.0f)
+	{
+		//start grass particles
+		CParticleEmitterManager::GetInstance().Activate(mySlowMovment);
+
+		CU::Matrix44f transform = GetParent()->GetToWorldTransform();
+
+		transform.Move(CU::Vector3f(0, 0.5f, 0));
+
+		CParticleEmitterManager::GetInstance().SetPosition(mySlowMovment, transform.GetPosition());
+	}
+	else
+	{
+		//stop grass partickles
 		CParticleEmitterManager::GetInstance().Deactivate(mySlowMovment);
 	}
 
@@ -640,8 +660,15 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 
 	if (myDrifter->IsDrifting() == true)
 	{
-		myDrifter->UpdateDriftParticles(GetParent()->GetLocalTransform());
-		myDrifter->GetSteering(steerAngle,myTurnRate,myAngularAcceleration,way,myAirControl,myIsOnGround,myCurrentAction,aDeltaTime);
+		if (myVelocity.Length() < myMaxSpeed * 0.5f)
+		{
+			StopDrifting(false);
+		}
+		else
+		{
+			myDrifter->UpdateDriftParticles(GetParent()->GetLocalTransform());
+			myDrifter->GetSteering(steerAngle, myTurnRate, myAngularAcceleration, way, myAirControl, myIsOnGround, myCurrentAction, aDeltaTime);
+		}
 	}
 	else
 	{

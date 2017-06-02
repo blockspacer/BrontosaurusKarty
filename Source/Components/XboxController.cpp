@@ -176,7 +176,7 @@ void CXboxController::GamePadReleasedKey(const CU::SInputMessage& aInputMessage)
 		}
 		break;
 	case CU::GAMEPAD::RIGHT_SHOULDER:
-		myControllerComponent.StopDrifting();
+		myControllerComponent.StopDrifting(true);
 		break;
 		break;
 	}
@@ -195,15 +195,6 @@ void CXboxController::MovedJoystick(const CU::SInputMessage& aInputMessage)
 	{
 		myControllerComponent.Turn(aInputMessage.myJoyStickPosition.x);
 	}
-
-	//if (aInputMessage.myJoyStickPosition.x > 0)
-	//{
-	//	myControllerComponent.TurnRight();
-	//}
-	//else if (aInputMessage.myJoyStickPosition.x < 0)
-	//{
-	//	myControllerComponent.TurnLeft();
-	//}
 }
 
 void CXboxController::GamePadLeftTrigger(const CU::SInputMessage& aInputMessage)
@@ -228,7 +219,7 @@ void CXboxController::GamePadRightTriggerReleased(const CU::SInputMessage& aInpu
 {
 	if (myIsDrifting == true)
 	{
-		myControllerComponent.StopDrifting();
+		myControllerComponent.StopDrifting(true);
 		myIsDrifting = false;
 	}
 }

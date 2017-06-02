@@ -29,7 +29,7 @@ public:
 	void MoveFoward();
 	void MoveBackWards();
 	void StopTurning();
-	void StopDrifting();
+	void StopDrifting(const bool aShouldGetBoost);
 	void GetHit();
 	void ApplyStartBoost();
 
@@ -178,7 +178,7 @@ bool CKartControllerComponent::GetHitGround()
 
 float CKartControllerComponent::GetMaxSpeed() const
 {
-	return myMaxSpeed * myTerrainModifier;
+	return myMaxSpeed * (myIsBoosting == false ? myTerrainModifier : 1.f);
 }
 
 float CKartControllerComponent::GetMaxSpeed2() const
@@ -198,5 +198,5 @@ bool CKartControllerComponent::GetIsControlledByAI() const
 
 float CKartControllerComponent::GetAcceleratiot()
 {
-	return myAcceleration * myTerrainModifier;
+	return myAcceleration * (myIsBoosting == false ? myTerrainModifier : 1.f);
 }
