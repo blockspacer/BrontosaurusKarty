@@ -38,6 +38,7 @@ private:
 	void CreateRedShellBuffer();
 	void CreateBlueShellBuffer();
 	void CreatePlacementDrops();
+	eItemTypes CheckItem(std::string  aItem);
 
 private:
 	Physics::CPhysicsScene* myPhysicsScene;
