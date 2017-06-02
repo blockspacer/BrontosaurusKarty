@@ -446,6 +446,23 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 		CParticleEmitterManager::GetInstance().Deactivate(mySlowMovment);
 	}
 
+	if (myTerrainModifier < 1.0f)
+	{
+		//start grass particles
+		CParticleEmitterManager::GetInstance().Activate(mySlowMovment);
+
+		CU::Matrix44f transform = GetParent()->GetToWorldTransform();
+
+		transform.Move(CU::Vector3f(0, 0.5f, 0));
+
+		CParticleEmitterManager::GetInstance().SetPosition(mySlowMovment, transform.GetPosition());
+	}
+	else
+	{
+		//stop grass partickles
+		CParticleEmitterManager::GetInstance().Deactivate(mySlowMovment);
+	}
+
 	if (myHasGottenHit == true)
 	{
 		myElapsedStunTime += aDeltaTime;
