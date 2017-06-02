@@ -1,5 +1,5 @@
 #pragma once
-#include "NavigationSpline.h"
+#include "../Game/NavigationSpline.h"
 
 namespace Physics {
 	class CPhysicsScene;
@@ -7,6 +7,7 @@ namespace Physics {
 
 class CKartControllerComponent;
 class CModelComponent;
+class CGoalComponent;
 
 class CKartControllerComponentManager
 {
@@ -27,10 +28,17 @@ public:
 	const CU::Vector3f GetClosestSpinesDirection(const CU::Vector3f& aKartPosition);
 	const int GetClosestSpinesIndex(const CU::Vector3f& aKartPosition);
 	const SNavigationPoint* GetNavigationPoint(const int aIndex);
+	inline void SetGoalComponent(CGoalComponent* aGoalComponent);
 private:
 	CU::GrowingArray<CKartControllerComponent*> myComponents;
+	CGoalComponent* myGoalComponentPointer;
 	Physics::CPhysicsScene* myPhysicsScene;
 	bool myShouldUpdate;
 
 	CNavigationSpline myNavigationSpline;
 };
+
+inline void CKartControllerComponentManager::SetGoalComponent(CGoalComponent* aGoalComponent)
+{
+	myGoalComponentPointer = aGoalComponent;
+}
