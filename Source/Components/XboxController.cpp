@@ -33,6 +33,11 @@ void CXboxController::SetIndex(const int aIndex)
 
 CU::eInputReturn CXboxController::TakeInput(const CU::SInputMessage& aInputMessage)
 {
+	if (!myControllerComponent.GetParent())
+	{
+		return CU::eInputReturn::ePassOn;
+	}
+
 	if (aInputMessage.myGamepadIndex == myControllerIndex)
 	{
 		switch (aInputMessage.myType)
