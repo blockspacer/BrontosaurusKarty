@@ -42,7 +42,9 @@ CU::eInputReturn CXboxController::TakeInput(const CU::SInputMessage& aInputMessa
 		return CU::eInputReturn::ePassOn;
 	}
 	if (myControllerComponent.GetIsControlledByAI())
+	{
 		return CU::eInputReturn::ePassOn;
+	}
 
 	if (aInputMessage.myGamepadIndex == myControllerIndex)
 	{

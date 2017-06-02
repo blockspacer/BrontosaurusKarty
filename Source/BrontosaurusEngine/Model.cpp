@@ -568,29 +568,30 @@ void CModel::InitConstBuffers()
 	
 }
 
-CU::Matrix44f CModel::GetBoneTransform(const float aTime, const eAnimationState aAnimationState, const char* aBoneName)
+CU::Matrix44f CModel::GetBoneTransform(const float aTime, const eAnimationState aAnimationState, const std::string& aBoneName)
 {
-	if (mySceneAnimator != nullptr)
+	CSceneAnimator* sceneAnimator = mySceneAnimator;
+	if (sceneAnimator)
 	{
-		if (mySceneAnimator != nullptr)
+		auto it = mySceneAnimators.find(aAnimationState);
+		if (it != mySceneAnimators.end())
 		{
-			auto it = mySceneAnimators.find(aAnimationState);
-			if (it != mySceneAnimators.end())
-			{
-				mySceneAnimator = &it->second;
-			}
+			sceneAnimator = &it->second;
 		}
 
+		return sceneAnimator->GetBoneGlobalTransform(aBoneName);
 		int bindex = myBindposeSceneAnimator->GetBoneIndex(aBoneName);
 		if (bindex == -1)
-			return mat4();
+		{
+			return CU::Matrix44f::Identity;
+		}
 
-		CU::Matrix44f retVal = myBindposeSceneAnimator->GetBoneGlobalTransform(bindex);
-		retVal *= mySceneAnimator->GetBoneTransform(aTime, bindex);
+		CU::Matrix44f boneTransform = myBindposeSceneAnimator->GetBoneGlobalTransform(bindex);
+		boneTransform *= sceneAnimator->GetBoneTransform(aTime, bindex);
 
-
-		return retVal;
+		return boneTransform;
 	}
+
 	return CU::Matrix44f::Identity;
 }
 
