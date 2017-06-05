@@ -13,7 +13,13 @@ enum class eEventType
 	eFinishLeft,
 	eBeginBreak,
 	eContinueBreak,
-	eFinishBreak
+	eFinishBreak,
+	eBeginAccelerate,
+	eContinueAccelerate,
+	eFinishAccelerate,
+	eBeginBoost,
+	eContinueBoost,
+	eFinishBoost
 };
 
 
@@ -27,7 +33,7 @@ public:
 
 	bool LoadAnimationEvents();
 
-	CAnimationEvent CreateEvent(const eEventType aType, CKartAnimator& aKartAnimator) const;
+	CAnimationEvent CreateEvent(const eEventType aType, const CKartAnimator& aKartAnimator) const;
 
 private:
 	struct SAnimationData;

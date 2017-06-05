@@ -24,10 +24,13 @@ public:
 	void OnDrift();
 	void OnStopDrifting();
 	void OnGetHit();
+	void OnStartBoosting();
 
 	bool IsTurningRight() const;
 	bool IsTurningLeft() const;
 	bool IsBreaking() const;
+	bool IsAccelerating() const;
+	bool IsBoosting() const;
 
 private:
 	void AddAnimation(const eEventType aType);
@@ -35,10 +38,6 @@ private:
 	std::vector<CAnimationEvent> myEventQueue;
 	std::unique_ptr<CAnimationEvent> myDefaultAnimation;
 	CModelComponent& myModelComponent;
-
-	//float myTargetSteering;
-	//float myCurrentSteering;
-	//float mySteeringTimer;
 
 	enum class eTurnState
 	{
@@ -57,5 +56,7 @@ private:
 
 	CU::StaticArray<CGameObject*, 4> myWheels;
 	bool myIsBreaking;
+	bool myIsAccelerating;
 	bool myIsGoingBackwards;
+	bool myIsBoosting;
 };

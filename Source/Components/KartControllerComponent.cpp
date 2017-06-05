@@ -358,6 +358,7 @@ void CKartControllerComponent::ApplyStartBoost()
 	float bigboost = myPreRaceBoostTarget * 0.85f;
 	if (myPreRaceBoostValue > myPreRaceBoostTarget * 0.6f)
 	{
+		myAnimator->OnStartBoosting();
 		if (myPreRaceBoostValue > myPreRaceBoostTarget * 0.8f)
 		{
 			if (myPreRaceBoostValue > myPreRaceBoostTarget)
