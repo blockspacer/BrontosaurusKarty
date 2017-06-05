@@ -316,6 +316,7 @@ void CPlayState::Init()
 	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::eRaceStarted);
 
 	myGameObjectManager->SendObjectsDoneMessage();
+	myKartControllerComponentManager->Init();
 	CLapTrackerComponentManager::GetInstance()->Init();
 }
 
@@ -460,7 +461,7 @@ void CPlayState::CreateManagersAndFactories()
 	CSpeedHandlerManager::CreateInstance();
 	CSpeedHandlerManager::GetInstance()->Init();
 	myKartControllerComponentManager = new CKartControllerComponentManager;
-	myKartControllerComponentManager->Init(myPhysicsScene);
+	myKartControllerComponentManager->SetPhysiscsScene(myPhysicsScene);
 	myPlayerControllerManager = new CPlayerControllerManager;
 	myBoostPadComponentManager = new CBoostPadComponentManager();
 	myItemBehaviourManager = new CItemWeaponBehaviourComponentManager();

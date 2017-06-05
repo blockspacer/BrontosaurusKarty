@@ -67,10 +67,14 @@ const CNavigationSpline& CKartControllerComponentManager::GetNavigationSpline() 
 	return myNavigationSpline;
 }
 
-void CKartControllerComponentManager::Init(Physics::CPhysicsScene* aPhysicsScene)
+void CKartControllerComponentManager::Init()
+{
+	myNavigationSpline.SetDistancesToGoal(myGoalComponentPointer);
+}
+
+void CKartControllerComponentManager::SetPhysiscsScene(Physics::CPhysicsScene* aPhysicsScene)
 {
 	myPhysicsScene = aPhysicsScene;
-
 }
 
 const CU::Vector3f CKartControllerComponentManager::GetClosestSpinesDirection(const CU::Vector3f& aKartPosition)
