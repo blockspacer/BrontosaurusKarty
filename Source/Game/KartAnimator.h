@@ -12,8 +12,7 @@ public:
 	CKartAnimator(CModelComponent& aModelComponent);
 	~CKartAnimator();
 
-	void AddAnimation(const eEventType aType);
-	void Update(const float aDeltaTime, const float aForwardVelocity);
+	void Update(const float aDeltaTime, const float aForwardVelocity, const float aSteering);
 
 	void OnTurnRight(const float aNormalizedModifier);
 	void OnTurnLeft(const float aNormalizedModifier);
@@ -31,9 +30,15 @@ public:
 	bool IsBreaking() const;
 
 private:
+	void AddAnimation(const eEventType aType);
+
 	std::vector<CAnimationEvent> myEventQueue;
 	std::unique_ptr<CAnimationEvent> myDefaultAnimation;
 	CModelComponent& myModelComponent;
+
+	//float myTargetSteering;
+	//float myCurrentSteering;
+	//float mySteeringTimer;
 
 	enum class eTurnState
 	{
@@ -42,6 +47,15 @@ private:
 		eNone
 	} myTurnState;
 
+	enum class eWheels
+	{
+		eFrontLeft,
+		eFrontRight,
+		eRearLeft,
+		eRearRight
+	};
+
+	CU::StaticArray<CGameObject*, 4> myWheels;
 	bool myIsBreaking;
 	bool myIsGoingBackwards;
 };
