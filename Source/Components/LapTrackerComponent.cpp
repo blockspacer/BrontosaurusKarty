@@ -12,6 +12,8 @@ CLapTrackerComponent::CLapTrackerComponent()
 	myLapIndex = 1;
 	myPlacementValue = 0.0f;
 	myIsReadyToEnterGoal = false;
+	myTravelledDistance = 0.0f;
+	myLapsTotalDistance = 0.0f;
 }
 
 CLapTrackerComponent::~CLapTrackerComponent()
@@ -47,6 +49,7 @@ void CLapTrackerComponent::Update()
 					GetParent()->NotifyOnlyComponents(eComponentMessageType::ePassedASpline, SComponentMessageData());
 				}
 
+				myTravelledDistance = myLapsTotalDistance - splineQuestionData.myNavigationPoint->myDistanceToGoal2;
 			}
 			else
 			{
@@ -154,5 +157,18 @@ void CLapTrackerComponent::Receive(const eComponentMessageType aMessageType, con
 	}
 	default:
 		break;
+	}
+}
+
+void CLapTrackerComponent::Init()
+{
+	SComponentQuestionData splineQuestionData;
+	splineQuestionData.myInt = 0;
+	if (GetParent()->AskComponents(eComponentQuestionType::eGetSplineWithIndex, splineQuestionData) == true)
+	{
+		if (splineQuestionData.myNavigationPoint != nullptr)
+		{
+			myLapsTotalDistance = splineQuestionData.myNavigationPoint->myDistanceToGoal2;
+		}
 	}
 }

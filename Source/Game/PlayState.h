@@ -68,6 +68,7 @@ public:
 	inline CColliderComponentManager* GetColliderComponentManager();
 	inline CScriptComponentManager* GetScriptComponentManager();
 	inline CItemFactory* GetItemFactory();
+	inline CKartControllerComponentManager* GetKartControllerComponentManager();
 
 	inline bool IsLoaded() const;
 
@@ -148,4 +149,9 @@ inline CBoostPadComponentManager* CPlayState::GetBoostPadComponentManager()
 inline CItemFactory* CPlayState::GetItemFactory()
 {
 	return myItemFactory;
+}
+
+inline CKartControllerComponentManager* CPlayState::GetKartControllerComponentManager()
+{
+	return myKartControllerComponentManager;
 }
