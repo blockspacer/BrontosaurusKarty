@@ -112,10 +112,15 @@ void CLapTrackerComponent::Receive(const eComponentMessageType aMessageType, con
 	{
 		if(myIsReadyToEnterGoal == true)
 		{		
+
+
+
+
 			mySplineIndex = 0;
 			myLapIndex++;
 			myPlacementValue++;
 			myIsReadyToEnterGoal = false;
+
 			if (myLapIndex > 3)
 			{
 				if (GetParent()->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
@@ -126,7 +131,24 @@ void CLapTrackerComponent::Receive(const eComponentMessageType aMessageType, con
 				{
 					Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CAIFinishedMessage(GetParent()));
 				}
+
+				SComponentMessageData data;
+				data.myString = "PlayFinish";
+				GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
 			}
+			else if (myLapIndex == 3)
+			{
+				SComponentMessageData data;
+				data.myString = "PlayFinalLap";
+				GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
+			}
+			else
+			{
+				SComponentMessageData data;
+				data.myString = "PlayLapDone";
+				GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
+			}
+		
 		}
 		break;
 	}

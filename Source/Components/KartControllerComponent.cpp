@@ -72,6 +72,7 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 
 	myHasGottenHit = false;
 	myIsAIControlled = false;
+	myIsplayingEngineLoop = false;
 
 	myTimeToBeStunned = 1.5f;
 	myElapsedStunTime = 0.f;
@@ -449,6 +450,22 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	else
 	{
 		CParticleEmitterManager::GetInstance().Deactivate(mySlowMovment);
+	}
+
+	if (myVelocity.Length() > 1.0f)
+	{
+		if (myIsplayingEngineLoop == false)
+		{
+			SComponentMessageData data; data.myString = "PlayEngineLoop";
+			GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
+			myIsplayingEngineLoop = true;
+		}
+	}
+	else
+	{
+		SComponentMessageData data; data.myString = "StopEngineLoop";
+		GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
+		myIsplayingEngineLoop = false;
 	}
 
 	if (myTerrainModifier < 1.0f && myVelocity.Length() > 1.0f)

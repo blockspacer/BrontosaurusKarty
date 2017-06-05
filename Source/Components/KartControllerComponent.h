@@ -154,6 +154,7 @@ private:
 	bool myIsOnGroundLast;
 	bool myIsAIControlled;
 	CComponent* myLastGroundComponent;
+	bool myIsplayingEngineLoop;
 };
 
 
