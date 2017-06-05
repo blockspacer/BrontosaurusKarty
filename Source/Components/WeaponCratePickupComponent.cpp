@@ -8,6 +8,7 @@ CItemPickupComponent::CItemPickupComponent(CItemFactory& aItemFactory) : myItemF
 {
 	myScale = 1.0f;
 	myTimer = 0.0f;
+	myFlippedVisibility = false;
 }
 
 
@@ -29,9 +30,13 @@ void CItemPickupComponent::Update(const float aDeltaTime)
 		}
 		else
 		{
-			SComponentMessageData data;
-			data.myBool = true;
-			GetParent()->NotifyComponents(eComponentMessageType::eSetVisibility, data);
+			if (myFlippedVisibility == false)
+			{
+				myFlippedVisibility = true;
+				SComponentMessageData data;
+				data.myBool = true;
+				GetParent()->NotifyComponents(eComponentMessageType::eSetVisibility, data);
+			}
 		}
 		if (myScale < 1.0f)
 		{
@@ -56,6 +61,6 @@ void CItemPickupComponent::DoMyEffect(CComponent* theCollider)
 	theCollider->GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
 	myScale = 0.001f;
 	myTimer = 0.0f;
-
+	myFlippedVisibility = false;
 	GetParent()->GetLocalTransform().SetScale(CU::Vector3f(myScale, myScale, myScale));
 }
