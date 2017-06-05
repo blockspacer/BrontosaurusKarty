@@ -133,7 +133,8 @@ CAnimationEvent CAnimationEventFactory::CreateEvent(const eEventType aType, cons
 	case eEventType::eContinueAccelerate:
 		return CAnimationEvent([/*&aKartAnimator*/start, end](float aTimer) -> bool
 		{
-			DL_PRINT("continue acc, timer: %f < %f", aTimer, end - start); return aTimer + start < end;/*aKartAnimator.IsAccelerating();*/
+			//DL_PRINT("continue acc, timer: %f < %f", aTimer, end - start); 
+			return aTimer + start < end;/*aKartAnimator.IsAccelerating();*/
 		}, data.state, start, end);
 	case eEventType::eContinueBoost:
 		return CAnimationEvent([&aKartAnimator](float) -> bool { return aKartAnimator.IsBoosting(); }, data.state, start, end);
