@@ -1,6 +1,8 @@
 #pragma once
 #include "../Game/NavigationSpline.h"
 
+#define RENDER_SPLINE 0
+
 namespace Physics {
 	class CPhysicsScene;
 }
@@ -29,6 +31,10 @@ public:
 	const int GetClosestSpinesIndex(const CU::Vector3f& aKartPosition);
 	const SNavigationPoint* GetNavigationPoint(const int aIndex);
 	inline void SetGoalComponent(CGoalComponent* aGoalComponent);
+
+#if RENDER_SPLINE == 1
+	void Render();
+#endif
 private:
 	CU::GrowingArray<CKartControllerComponent*> myComponents;
 	CGoalComponent* myGoalComponentPointer;

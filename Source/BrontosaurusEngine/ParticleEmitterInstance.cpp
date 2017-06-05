@@ -188,9 +188,12 @@ void CParticleEmitterInstance::EmitParticle()
 
 void CParticleEmitterInstance::Activate()
 {
-	ResetLifetime();
-	ResetSpawnTimer();
-	myIsActive = true;
+	if(myIsActive == false)
+	{
+		ResetLifetime();
+		ResetSpawnTimer();
+		myIsActive = true;
+	}
 }
 
 void CParticleEmitterInstance::Deactivate()

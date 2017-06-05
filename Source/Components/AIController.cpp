@@ -95,10 +95,10 @@ void CAIController::Update(const float aDeltaTime)
 		myControllerComponent.GetParent()->NotifyOnlyComponents(eComponentMessageType::eUseItem, SComponentMessageData());
 	}
 
-	CU::Vector3f piss = myControllerComponent.GetParent()->GetToWorldTransform().GetPosition();
+	const CU::Vector3f piss = myControllerComponent.GetParent()->GetToWorldTransform().GetPosition();
 	CU::Vector2f pos(piss.x, piss.z);
 
-	CU::Vector3f forward = myControllerComponent.GetParent()->GetToWorldTransform().myForwardVector;
+	const CU::Vector3f forward = myControllerComponent.GetParent()->GetToWorldTransform().myForwardVector;
 	CU::Vector2f kartForward(forward.x, forward.z);
 	kartForward.Normalize();
 	pos += kartForward * 5.f;
@@ -110,7 +110,8 @@ void CAIController::Update(const float aDeltaTime)
 		&& myControllerComponent.GetIsGrounded())
 	{
 		myCurrentSplineIndex++;
-		myCurrentSplineIndex %= GetNavigationSpline().GetNumberOfPoints();
+		const short numPoints = GetNavigationSpline().GetNumberOfPoints();
+		myCurrentSplineIndex %= numPoints;
 		currentSpline = &GetNavigationSpline().GetPoint(myCurrentSplineIndex);
 	}
 
