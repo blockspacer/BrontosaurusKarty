@@ -62,6 +62,7 @@ private:
 
 	SBoostData myStartBoostData;
 	SBoostData myLightningBoostData;
+	float	myLightningTimeModifier;
 
 	CU::GrowingArray<SBoostData> myLightningBoostBuffer;
 	CU::GrowingArray<CU::GrowingArray<SItemDrop>> myPlacementDrops;

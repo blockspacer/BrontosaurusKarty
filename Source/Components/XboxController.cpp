@@ -37,8 +37,14 @@ void CXboxController::SetIndex(const int aIndex)
 
 CU::eInputReturn CXboxController::TakeInput(const CU::SInputMessage& aInputMessage)
 {
-	if (myControllerComponent.GetIsControlledByAI())
+	if (!myControllerComponent.GetParent())
+	{
 		return CU::eInputReturn::ePassOn;
+	}
+	if (myControllerComponent.GetIsControlledByAI())
+	{
+		return CU::eInputReturn::ePassOn;
+	}
 
 	if (aInputMessage.myGamepadIndex == myControllerIndex)
 	{

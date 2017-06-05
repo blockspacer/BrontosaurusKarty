@@ -55,6 +55,7 @@ CItemFactory::CItemFactory()
 
 	myLightningBoostData.accerationBoost = Item.at("AccelerationPercentModifier").GetFloat() / 100.0f;
 	myLightningBoostData.maxSpeedBoost = Item.at("MaxSpeedPercentModifier").GetFloat() / 100.0f;
+	myLightningTimeModifier = Item.at("DurationModifier").GetFloat();
 }
 
 
@@ -476,13 +477,14 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 	{
 		for (int i = 0; i < myRedShellManager->GetKarts().Size(); i++)
 		{
-		//	if (myRedShellManager->GetKarts()[i] != userComponent->GetParent())
+			unsigned char placement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myRedShellManager->GetKarts()[i]);
+			unsigned char userplacement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(userComponent->GetParent());
+			if (myRedShellManager->GetKarts()[i] != userComponent->GetParent() && userplacement > placement)
 			{
 				myRedShellManager->GetKarts()[i]->NotifyOnlyComponents(eComponentMessageType::eGotHit, SComponentMessageData());
 
-				unsigned char placement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myRedShellManager->GetKarts()[i]);
 
-				myLightningBoostData.duration = myRedShellManager->GetKarts().Size() - placement;
+				myLightningBoostData.duration = (myRedShellManager->GetKarts().Size() - placement)*myLightningTimeModifier;
 				myLightningBoostBuffer.Add(myLightningBoostData);
 
 				SComponentMessageData slowdata; 

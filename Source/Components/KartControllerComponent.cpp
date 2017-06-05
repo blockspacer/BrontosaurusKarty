@@ -92,6 +92,8 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myStarEmmiterhandle1 = CParticleEmitterManager::GetInstance().GetEmitterInstance("StarBoost");
 	myStarEmmiterhandle2 = CParticleEmitterManager::GetInstance().GetEmitterInstance("StarBoost");
 	mySlowMovment = CParticleEmitterManager::GetInstance().GetEmitterInstance("SlowSmoke");
+	myGrassEmmiter1 = CParticleEmitterManager::GetInstance().GetEmitterInstance("Grass");
+	myGrassEmmiter2 = CParticleEmitterManager::GetInstance().GetEmitterInstance("Grass");
 
 	myPreRaceBoostRate = 0.0f;
 	myPreRaceBoostValue = 0.0f;
@@ -449,21 +451,29 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 		CParticleEmitterManager::GetInstance().Deactivate(mySlowMovment);
 	}
 
-	if (myTerrainModifier < 1.0f)
+	if (myTerrainModifier < 1.0f && myVelocity.Length() > 1.0f)
 	{
 		//start grass particles
-		CParticleEmitterManager::GetInstance().Activate(mySlowMovment);
+		CParticleEmitterManager::GetInstance().Activate(myGrassEmmiter1);
+		CParticleEmitterManager::GetInstance().Activate(myGrassEmmiter2);
 
 		CU::Matrix44f transform = GetParent()->GetToWorldTransform();
 
-		transform.Move(CU::Vector3f(0, 0.5f, 0));
+		transform.Move(CU::Vector3f(-0.45f, 0, 0));
 
-		CParticleEmitterManager::GetInstance().SetPosition(mySlowMovment, transform.GetPosition());
+		CParticleEmitterManager::GetInstance().SetPosition(myGrassEmmiter1, transform.GetPosition());
+
+		transform = GetParent()->GetToWorldTransform();
+
+		transform.Move(CU::Vector3f(0.5f, 0, 0));
+
+		CParticleEmitterManager::GetInstance().SetPosition(myGrassEmmiter2, transform.GetPosition());
 	}
 	else
 	{
 		//stop grass partickles
-		CParticleEmitterManager::GetInstance().Deactivate(mySlowMovment);
+		CParticleEmitterManager::GetInstance().Deactivate(myGrassEmmiter1);
+		CParticleEmitterManager::GetInstance().Deactivate(myGrassEmmiter2);
 	}
 
 	if (myHasGottenHit == true)
@@ -509,7 +519,7 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	}
 
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
-	myAnimator->Update(aDeltaTime, myVelocity.z);
+	myAnimator->Update(aDeltaTime, myVelocity.z, mySteering);
 }
 
 void CKartControllerComponent::CountDownUpdate(const float aDeltaTime)

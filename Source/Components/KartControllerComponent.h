@@ -139,6 +139,8 @@ private:
 	int myStarEmmiterhandle1;
 	int myStarEmmiterhandle2;
 	int mySlowMovment;
+	int myGrassEmmiter1;
+	int myGrassEmmiter2;
 
 	short myControllerHandle;
 
