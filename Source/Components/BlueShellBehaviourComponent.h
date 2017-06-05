@@ -14,6 +14,8 @@ private:
 	CU::GrowingArray<CGameObject*>* myKartObjects;
 
 	CU::Vector3f myVelocity;
+	CU::Vector3f myDropSpeed;
+	float myAboveHeight;
 	float myTeleportDelay;
 	float myElapsedTime;
 	float mySpeed;
