@@ -125,8 +125,6 @@ private:
 	
 	float myTerrainModifier;
 
-	
-	bool increaseCountdownValue;
 	float myPreRaceBoostRate;
 	float myPreRaceRate;
 	float myPreRaceBoostValue;
@@ -151,6 +149,7 @@ private:
 	bool myHasGottenHit;
 	bool myIsOnGroundLast;
 	bool myIsAIControlled;
+	bool increaseCountdownValue;
 	CComponent* myLastGroundComponent;
 };
 
