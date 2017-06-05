@@ -596,6 +596,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 
 void CPlayState::CreateAI()
 {
+
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Animations/M_Kart_01.fbx");
 
@@ -685,6 +686,11 @@ void CPlayState::InitiateRace()
 		myIsCountingDown = true;
 
 		Audio::CAudioInterface::GetInstance()->PostEvent("PlayStartCountDown");
+		for (int i = 0; i < myKartObjects.Size(); i++)
+		{
+			SComponentMessageData data; data.myString = "PlayEngineStart";
+			myKartObjects[i]->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
+		}
 
 		while (floatTime <= 3.5)
 		{

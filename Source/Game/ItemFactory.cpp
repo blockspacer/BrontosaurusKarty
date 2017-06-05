@@ -145,7 +145,7 @@ void CItemFactory::CreateShellBuffer()
 		model->FlipVisibility();
 		shell->AddComponent(model);
 
-		CParticleEmitterComponent* particle = CParticleEmitterComponentManager::GetInstance().CreateComponent("DriftDebris");
+		CParticleEmitterComponent* particle = CParticleEmitterComponentManager::GetInstance().CreateComponent("ShellTrail");
 		particle->Deactivate();
 		shell->AddComponent(particle);
 

@@ -154,6 +154,7 @@ private:
 	bool increaseCountdownValue;
 	bool myIsHoldingForward;
 	CComponent* myLastGroundComponent;
+	bool myIsplayingEngineLoop;
 };
 
 

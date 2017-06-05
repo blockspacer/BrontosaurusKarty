@@ -149,6 +149,8 @@ void CScene::Render()
 	}
 	PlayerOneCamera.AddRenderMessage(new SRenderModelBatches());
 
+	
+
 	statemsg.myRasterizerState = eRasterizerState::eDefault;
 	statemsg.myDepthStencilState = eDepthStencilState::eDefault;
 	statemsg.myBlendState = eBlendState::eNoBlend;

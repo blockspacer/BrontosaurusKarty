@@ -1309,15 +1309,16 @@ void CRenderer::RenderCameraQueue(SRenderCameraQueueMessage* msg, int & aDrawCal
 		ID3D11ShaderResourceView* SRV[3] =
 		{
 			myDeferredRenderer.myIntermediatePackage.GetResource(),
-			myDeferredRenderer.myGbuffer.GetRenderPackage(CGeometryBuffer::eDiffuse).GetDepthResource(),
-			myDeferredRenderer.myGbuffer.GetRenderPackage(CGeometryBuffer::eEmissive).GetDepthResource()
+			myDeferredRenderer.myGbuffer->GetRenderPackage(CGeometryBuffer::eDiffuse).GetDepthResource(),
+			myDeferredRenderer.myGbuffer->GetRenderPackage(CGeometryBuffer::eEmissive).GetDepthResource()
 		};
-
 		DEVICE_CONTEXT->PSSetShaderResources(1, 3, SRV);
 		myFullScreenHelper.DoEffect(CFullScreenHelper::eEffectType::eFog);
 
-		myParticleRenderer.SetDepthStuff(myDeferredRenderer.GetFirstPackage().GetDepthStencilView(), myDeferredRenderer.GetSecondPackage().GetDepthResource());
-		myParticleRenderer.DoRenderQueue(myDeferredRenderer.GetFirstPackage().GetDepthResource(), &msg->myRenderCamera.GetRenderPackage());
+		myParticleRenderer.SetDepthStuff(myDeferredRenderer.myGbuffer->GetRenderPackage(CGeometryBuffer::eDiffuse).GetDepthStencilView(),
+			myDeferredRenderer.myGbuffer->GetRenderPackage(CGeometryBuffer::eEmissive).GetDepthResource());
+		myParticleRenderer.DoRenderQueue(myDeferredRenderer.myGbuffer->GetRenderPackage(CGeometryBuffer::eDiffuse).GetDepthResource(), 
+			&msg->myRenderCamera.GetRenderPackage());
 
 
 		//myFullScreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopy, &myParticleRenderer.GetIntermediatePackage());

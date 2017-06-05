@@ -20,12 +20,12 @@ DECLARE_ANIMATION_ENUM_AND_STRINGS;
 
 CKartAnimator::CKartAnimator(CModelComponent& aModelComponent)
 	: myModelComponent(aModelComponent)
-	//, myTargetSteering(0.f)
-	//, myCurrentSteering(0.f)
-	//, mySteeringTimer(0.f)
 	, myTurnState(eTurnState::eNone)
 	, myIsBreaking(false)
+	, myIsAccelerating(false)
 	, myIsGoingBackwards(false)
+	, myIsBoosting(false)
+	, myIsDrifting(false)
 {
 	myDefaultAnimation = std::make_unique<CAnimationEvent>();
 	myModelComponent.SetAnimationManualUpdate(true);
@@ -95,23 +95,7 @@ void CKartAnimator::Update(const float aDeltaTime, const float aForwardVelocity,
 		myIsBreaking = false;
 	}
 
-	//myTargetSteering = aSteering;
-
-	//auto fLerp = [](float aStart, float aEnd, float aTime) -> float
-	//{
-	//	return aEnd + aTime * (aStart - aEnd);
-	//};
-
-	//mySteeringTimer += aDeltaTime;
-	//if (mySteeringTimer > 1.f)
-	//{
-	//	//mySteeringTimer -= 1.f;
-	//	mySteeringTimer = 1.f;
-	//}
-	//myCurrentSteering = fLerp(0.f, myTargetSteering, mySteeringTimer);
-
 	CU::Vector3f eulerRotation;
-	//eulerRotation.y = myCurrentSteering;
 	eulerRotation.y = aSteering;
 
 	myWheels[0]->GetParent()->GetLocalTransform().SetEulerRotation(eulerRotation);
@@ -158,18 +142,29 @@ void CKartAnimator::OnTurnLeft(const float aNormalizedModifier)
 		AddAnimation(eEventType::eBeginLeft);
 		AddAnimation(eEventType::eContinueLeft);
 		AddAnimation(eEventType::eFinishLeft);
-		//mySteeringTimer = 0.f;
 	}
 }
 
 void CKartAnimator::OnStopMoving()
 {
 	myIsBreaking = false;
+	myIsAccelerating;
 	myIsGoingBackwards = false;
 }
 
 void CKartAnimator::OnMoveFoward()
 {
+	if (!myIsAccelerating)
+	{
+		myEventQueue.clear();
+		AddAnimation(eEventType::eBeginAccelerate);
+		AddAnimation(eEventType::eContinueAccelerate);
+		AddAnimation(eEventType::eFinishAccelerate);
+		DL_PRINT("accelerating");
+	}
+
+	myIsAccelerating = true;
+
 	myIsBreaking = false;
 	myIsGoingBackwards = false;
 }
@@ -190,6 +185,8 @@ void CKartAnimator::OnMoveBackWards(const float aCurrentSpeed2)
 		myIsBreaking = false;
 		myIsGoingBackwards = true;
 	}
+
+	myIsAccelerating = false;
 }
 
 void CKartAnimator::OnStopTurningLeft()
@@ -198,7 +195,6 @@ void CKartAnimator::OnStopTurningLeft()
 	{
 		myTurnState = eTurnState::eNone;
 	}
-	//mySteeringTimer = 0.f;
 }
 
 void CKartAnimator::OnStopTurningRight()
@@ -207,19 +203,34 @@ void CKartAnimator::OnStopTurningRight()
 	{
 		myTurnState = eTurnState::eNone;
 	}
-	//mySteeringTimer = 0.f;
 }
 
 void CKartAnimator::OnDrift()
 {
+	myIsDrifting = true;
 }
 
 void CKartAnimator::OnStopDrifting()
 {
+	myIsDrifting = false;
 }
 
 void CKartAnimator::OnGetHit()
 {
+}
+
+void CKartAnimator::OnStartBoosting()
+{
+	if (!myIsBoosting)
+	{
+		myEventQueue.clear();
+
+		AddAnimation(eEventType::eBeginBoost);
+		AddAnimation(eEventType::eContinueBoost);
+		AddAnimation(eEventType::eFinishBoost);
+	}
+
+	myIsBoosting = true;
 }
 
 bool CKartAnimator::IsTurningRight() const
@@ -235,4 +246,14 @@ bool CKartAnimator::IsTurningLeft() const
 bool CKartAnimator::IsBreaking() const
 {
 	return myIsBreaking;
+}
+
+bool CKartAnimator::IsAccelerating() const
+{
+	return myIsAccelerating;
+}
+
+bool CKartAnimator::IsBoosting() const
+{
+	return myIsBoosting;
 }
