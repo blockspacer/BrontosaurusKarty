@@ -14,5 +14,6 @@ public:
 private:
 	CItemFactory& myItemFactory;
 	float myScale;
+	float myTimer;
 };
 
