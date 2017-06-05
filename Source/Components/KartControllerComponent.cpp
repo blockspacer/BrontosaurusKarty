@@ -248,6 +248,10 @@ bool CKartControllerComponent::Drift()
 	{
 		return false;
 	}
+	if (myDrifter->IsDrifting() == true)
+	{
+		return false;
+	}
 	if (myVelocity.Length() < myMaxSpeed * 0.5f)
 	{
 		return false;
