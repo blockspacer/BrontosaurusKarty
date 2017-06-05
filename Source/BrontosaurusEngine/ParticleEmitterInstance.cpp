@@ -190,7 +190,6 @@ void CParticleEmitterInstance::Activate()
 {
 	if(myIsActive == false)
 	{
-
 		ResetLifetime();
 		ResetSpawnTimer();
 		myIsActive = true;
