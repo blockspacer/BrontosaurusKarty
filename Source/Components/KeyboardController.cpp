@@ -51,6 +51,7 @@ void CKeyboardController::ReleasedKey(const CU::SInputMessage & aInputMessage)
 	case CU::eKeys::UP:
 	case CU::eKeys::W:
 		myControllerComponent.StopMoving();
+		myControllerComponent.DecreasePreGameBoostValue();
 		myIsMovingFoward = false;
 		if (myIsMovingBackwards == true)
 		{
@@ -105,6 +106,7 @@ void CKeyboardController::PressedKey(const CU::SInputMessage & aInputMessage)
 	case CU::eKeys::UP:
 	case CU::eKeys::W:
 		myControllerComponent.MoveFoward();
+		myControllerComponent.IncreasePreGameBoostValue();
 		myIsMovingFoward = true;
 		break;
 	case CU::eKeys::DOWN:

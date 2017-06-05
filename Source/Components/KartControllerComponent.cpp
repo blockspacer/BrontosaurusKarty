@@ -194,6 +194,7 @@ void CKartControllerComponent::StopMoving()
 {
 	myAcceleration = 0;
 	myAnimator->OnStopMoving();
+	myIsHoldingForward = false;
 }
 
 void CKartControllerComponent::MoveFoward()
@@ -204,6 +205,10 @@ void CKartControllerComponent::MoveFoward()
 	}
 	myAcceleration = GetMaxAcceleration();
 	myAnimator->OnMoveFoward();
+	if (myIsBoosting == false)
+	{
+		myIsHoldingForward = true;
+	}
 }
 
 void CKartControllerComponent::MoveBackWards()
@@ -214,6 +219,7 @@ void CKartControllerComponent::MoveBackWards()
 	}
 	myAcceleration = myMinAcceleration;
 	myAnimator->OnMoveBackWards(myVelocity.z);
+	myIsHoldingForward = false;
 }
 
 void CKartControllerComponent::StopTurning()
@@ -573,6 +579,10 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 		else
 		{
 			myIsBoosting = false;
+			if (myIsHoldingForward == false)
+			{
+				StopMoving();
+			}
 			CParticleEmitterManager::GetInstance().Deactivate(myBoostEmmiterhandle);
 		}
 
@@ -647,6 +657,12 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 	{
 		myVelocity += forwardVector * aDeltaTime * GetAcceleratiot() * myGrip * myAccelerationModifier * onGroundModifier;
 	}
+	if (myIsBoosting == true)
+	{
+		MoveFoward();
+	}
+	
+
 	const float maxSpeed2 = GetMaxSpeed2() * myMaxSpeedModifier * myMaxSpeedModifier;
 	const float minSpeed2 = myMinSpeed * myMinSpeed;
 	const float speed2 = myVelocity.Length2() * (dir > 0.f ? 1.f : -1.f);
