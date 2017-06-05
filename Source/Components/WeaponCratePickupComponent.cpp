@@ -22,7 +22,7 @@ void CItemPickupComponent::Update(const float aDeltaTime)
 	{
 		if (myScale < 1.0f)
 		{
-			myScale += (aDeltaTime * 0.75f);
+			myScale += (aDeltaTime * 0.5f);
 			GetParent()->GetLocalTransform().SetScale(CU::Vector3f(myScale, myScale, myScale));
 		}
 		else if (myScale > 1.0f)
