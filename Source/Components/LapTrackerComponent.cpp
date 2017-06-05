@@ -43,6 +43,11 @@ void CLapTrackerComponent::Update()
 				float splineForwardDistance = CU::Vector3f(splineForwardPosition - kartPosition).Length2();
 
 				CU::Vector2f kartPosition2D(kartPosition.x, kartPosition.z);
+				CU::Vector3f forward3D = GetParent()->GetToWorldTransform().myForwardVector;
+				CU::Vector2f forward2D(forward3D.x, forward3D.z);
+				forward2D.Normalize();
+				forward2D *= 5.0f;
+				kartPosition2D += forward2D;
 
 				if (splineQuestionData.myNavigationPoint->myForwardDirection.Dot(splineQuestionData.myNavigationPoint->myPosition - kartPosition2D) < 0.0f)
 				{
