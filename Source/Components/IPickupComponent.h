@@ -23,7 +23,7 @@ public:
 
 	virtual void DoMyEffect(CComponent* theCollider) = 0;
 
-	void Update(const float aDeltaTime);
+	virtual void Update(const float aDeltaTime);
 protected:
 	float myRespawnTime;
 	float myRespawnTimer;
