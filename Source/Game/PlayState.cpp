@@ -262,6 +262,15 @@ void CPlayState::Load()
 		DL_MESSAGE_BOX("Loading Failed");
 	}
 	
+	//***************************************************************
+	//*						BAKE SHADOWMAP							*
+	//***************************************************************
+
+	myScene->BakeShadowMap();
+
+	//--------------------------------------------------------------
+
+
 	//myScene->AddCamera(CScene::eCameraType::ePlayerOneCamera);
 	//CRenderCamera& playerCamera = myScene->GetRenderCamera(CScene::eCameraType::ePlayerOneCamera);
 	//playerCamera.InitPerspective(90, WINDOW_SIZE_F.x, WINDOW_SIZE_F.y, 0.1f, 500.f);
