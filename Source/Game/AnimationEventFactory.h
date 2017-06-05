@@ -19,7 +19,10 @@ enum class eEventType
 	eFinishAccelerate,
 	eBeginBoost,
 	eContinueBoost,
-	eFinishBoost
+	eFinishBoost,
+	eBeginDrift,
+	eContinueDrift,
+	eFinishDrift
 };
 
 

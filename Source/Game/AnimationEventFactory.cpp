@@ -12,7 +12,8 @@ eBeginRight, eContinueRight, eFinishRight,					\
 eBeginLeft, eContinueLeft, eFinishLeft,						\
 eBeginBreak, eContinueBreak, eFinishBreak,					\
 eBeginAccelerate, eContinueAccelerate, eFinishAccelerate,	\
-eBeginBoost, eContinueBoost, eFinishBoost)
+eBeginBoost, eContinueBoost, eFinishBoost,					\
+eBeginDrift, eContinueDrift, eFinishDrift)
 
 #include "../CommonUtilities/WindowsHelper.h"
 #include "CommonUtilities/JsonValue.h"
@@ -120,6 +121,8 @@ CAnimationEvent CAnimationEventFactory::CreateEvent(const eEventType aType, cons
 	case eEventType::eFinishBreak:
 	case eEventType::eBeginAccelerate:
 	case eEventType::eFinishAccelerate:
+	case eEventType::eBeginDrift:
+	case eEventType::eFinishDrift:
 		return CAnimationEvent([start, end](float aTimer) -> bool { return aTimer + start < end; }, data.state, start, end);
 	case eEventType::eContinueRight:
 		return CAnimationEvent([&aKartAnimator](float) -> bool { return aKartAnimator.IsTurningRight(); }, data.state, start, end);
@@ -128,10 +131,13 @@ CAnimationEvent CAnimationEventFactory::CreateEvent(const eEventType aType, cons
 	case eEventType::eContinueBreak:
 		return CAnimationEvent([&aKartAnimator](float) -> bool { return aKartAnimator.IsBreaking(); }, data.state, start, end);
 	case eEventType::eContinueAccelerate:
-		return CAnimationEvent([/*&aKartAnimator*/start, end](float aTimer) -> bool {
+		return CAnimationEvent([/*&aKartAnimator*/start, end](float aTimer) -> bool
+		{
 			DL_PRINT("continue acc, timer: %f < %f", aTimer, end - start); return aTimer + start < end;/*aKartAnimator.IsAccelerating();*/
 		}, data.state, start, end);
 	case eEventType::eContinueBoost:
+		return CAnimationEvent([&aKartAnimator](float) -> bool { return aKartAnimator.IsBoosting(); }, data.state, start, end);
+	case eEventType::eContinueDrift:
 		return CAnimationEvent([&aKartAnimator](float) -> bool { return aKartAnimator.IsBoosting(); }, data.state, start, end);
 	}
 

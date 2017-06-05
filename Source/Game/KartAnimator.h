@@ -59,4 +59,5 @@ private:
 	bool myIsAccelerating;
 	bool myIsGoingBackwards;
 	bool myIsBoosting;
+	bool myIsDrifting;
 };

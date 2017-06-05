@@ -25,6 +25,7 @@ CKartAnimator::CKartAnimator(CModelComponent& aModelComponent)
 	, myIsAccelerating(false)
 	, myIsGoingBackwards(false)
 	, myIsBoosting(false)
+	, myIsDrifting(false)
 {
 	myDefaultAnimation = std::make_unique<CAnimationEvent>();
 	myModelComponent.SetAnimationManualUpdate(true);
@@ -206,10 +207,12 @@ void CKartAnimator::OnStopTurningRight()
 
 void CKartAnimator::OnDrift()
 {
+	myIsDrifting = true;
 }
 
 void CKartAnimator::OnStopDrifting()
 {
+	myIsDrifting = false;
 }
 
 void CKartAnimator::OnGetHit()

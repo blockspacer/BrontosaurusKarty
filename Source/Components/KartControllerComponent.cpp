@@ -153,7 +153,7 @@ void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 		myDrifter->TurnRight();
 	}
 
-	if (mySteering <= 0.f)
+	//if (mySteering <= 0.f)
 	{
 		myAnimator->OnTurnRight(aNormalizedModifier);
 	}
@@ -184,7 +184,7 @@ void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 		myDrifter->TurnLeft();
 	}
 
-	if (mySteering >= 0.f)
+	//if (mySteering >= 0.f)
 	{
 		myAnimator->OnTurnLeft(aNormalizedModifier);
 	}
@@ -258,7 +258,10 @@ bool CKartControllerComponent::Drift()
 	{
 		return false;
 	}
+
 	myDrifter->StartDrifting(myCurrentAction);
+	myAnimator->OnDrift();
+	
 	SComponentMessageData messageData;
 	messageData.myFloat = myDriftAngle;
 	if (myCurrentAction == eCurrentAction::eDefault)
@@ -288,6 +291,8 @@ void CKartControllerComponent::StopDrifting(const bool aShouldGetBoost)
 	myDriftSetupTimer = myDriftSetupTime + 1.0f;
 	GetParent()->NotifyComponents(eComponentMessageType::eCancelDriftBobbing, SComponentMessageData());
 	CDrifter::eDriftBoost boost = myDrifter->StopDrifting();
+
+	myAnimator->OnStopDrifting();
 
 	if (myControllerHandle != -1 && myControllerHandle < 4)
 	{
