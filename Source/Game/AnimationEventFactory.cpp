@@ -6,8 +6,14 @@
 #include "KartAnimator.h"
 DECLARE_ANIMATION_ENUM_AND_STRINGS;
 
-#define DECLARE_ANIMATION_ENUM_AND_STRINGS_TWO \
-ENUM_STRING_MACRO(JsonStrings, eBeginRight, eContinueRight, eFinishRight, eBeginLeft, eContinueLeft, eFinishLeft, eBeginBreak, eContinueBreak, eFinishBreak)
+#define DECLARE_ANIMATION_ENUM_AND_STRINGS_TWO				\
+ENUM_STRING_MACRO(JsonStrings,								\
+eBeginRight, eContinueRight, eFinishRight,					\
+eBeginLeft, eContinueLeft, eFinishLeft,						\
+eBeginBreak, eContinueBreak, eFinishBreak,					\
+eBeginAccelerate, eContinueAccelerate, eFinishAccelerate,	\
+eBeginBoost, eContinueBoost, eFinishBoost,					\
+eBeginDrift, eContinueDrift, eFinishDrift)
 
 #include "../CommonUtilities/WindowsHelper.h"
 #include "CommonUtilities/JsonValue.h"
@@ -97,7 +103,7 @@ bool CAnimationEventFactory::LoadAnimationEvents()
 	return false;
 }
 
-CAnimationEvent CAnimationEventFactory::CreateEvent(const eEventType aType, CKartAnimator& aKartAnimator) const
+CAnimationEvent CAnimationEventFactory::CreateEvent(const eEventType aType, const CKartAnimator& aKartAnimator) const
 {
 	const SAnimationData& data = myAnimationEvents.at(aType);
 	float end = data.end;
@@ -107,10 +113,16 @@ CAnimationEvent CAnimationEventFactory::CreateEvent(const eEventType aType, CKar
 	{
 	case eEventType::eBeginRight:
 	case eEventType::eFinishRight:
+	case eEventType::eBeginBoost:
+	case eEventType::eFinishBoost:
 	case eEventType::eBeginLeft:
 	case eEventType::eFinishLeft:
 	case eEventType::eBeginBreak:
 	case eEventType::eFinishBreak:
+	case eEventType::eBeginAccelerate:
+	case eEventType::eFinishAccelerate:
+	case eEventType::eBeginDrift:
+	case eEventType::eFinishDrift:
 		return CAnimationEvent([start, end](float aTimer) -> bool { return aTimer + start < end; }, data.state, start, end);
 	case eEventType::eContinueRight:
 		return CAnimationEvent([&aKartAnimator](float) -> bool { return aKartAnimator.IsTurningRight(); }, data.state, start, end);
@@ -118,6 +130,15 @@ CAnimationEvent CAnimationEventFactory::CreateEvent(const eEventType aType, CKar
 		return CAnimationEvent([&aKartAnimator](float) -> bool { return aKartAnimator.IsTurningLeft(); }, data.state, start, end);
 	case eEventType::eContinueBreak:
 		return CAnimationEvent([&aKartAnimator](float) -> bool { return aKartAnimator.IsBreaking(); }, data.state, start, end);
+	case eEventType::eContinueAccelerate:
+		return CAnimationEvent([/*&aKartAnimator*/start, end](float aTimer) -> bool
+		{
+			DL_PRINT("continue acc, timer: %f < %f", aTimer, end - start); return aTimer + start < end;/*aKartAnimator.IsAccelerating();*/
+		}, data.state, start, end);
+	case eEventType::eContinueBoost:
+		return CAnimationEvent([&aKartAnimator](float) -> bool { return aKartAnimator.IsBoosting(); }, data.state, start, end);
+	case eEventType::eContinueDrift:
+		return CAnimationEvent([&aKartAnimator](float) -> bool { return aKartAnimator.IsBoosting(); }, data.state, start, end);
 	}
 
 	return CAnimationEvent();
