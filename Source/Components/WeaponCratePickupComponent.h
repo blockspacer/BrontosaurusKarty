@@ -15,5 +15,9 @@ private:
 	CItemFactory& myItemFactory;
 	float myScale;
 	float myTimer;
+
+	int myParticleHandle;
+
+	bool myFlippedVisibility;
 };
 

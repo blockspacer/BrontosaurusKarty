@@ -24,7 +24,7 @@
 #include "../Audio/AudioInterface.h"
 
 
-CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent, const short aControllerIndex)
+CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent, const short aControllerIndex, const short aCharacterIndex)
 	: myPhysicsScene(nullptr)
 	, myIsOnGround(true)
 	, myCanAccelerate(false)
@@ -37,11 +37,7 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	CU::CJsonValue levelsFile;
 	std::string errorString = levelsFile.Parse("Json/KartStats.json");
 	if (!errorString.empty()) DL_MESSAGE_BOX(errorString.c_str());
-
-	CU::CJsonValue levelsArray = levelsFile.at("Karts");
-
-	CU::CJsonValue Karts = levelsArray.at("BaseKart");
-
+	CU::CJsonValue Karts = levelsFile.at("Karts")[aCharacterIndex];
 
 	//myFowrardSpeed = 0.0f;
 	myMaxSpeed = Karts.at("MaxSpeed").GetFloat();
@@ -73,6 +69,7 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 
 	myHasGottenHit = false;
 	myIsAIControlled = false;
+	myIsplayingEngineLoop = false;
 
 	myTimeToBeStunned = 1.5f;
 	myElapsedStunTime = 0.f;
@@ -462,6 +459,22 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	else
 	{
 		CParticleEmitterManager::GetInstance().Deactivate(mySlowMovment);
+	}
+
+	if (myVelocity.Length() > 1.0f)
+	{
+		if (myIsplayingEngineLoop == false)
+		{
+			SComponentMessageData data; data.myString = "PlayEngineLoop";
+			GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
+			myIsplayingEngineLoop = true;
+		}
+	}
+	else
+	{
+		SComponentMessageData data; data.myString = "StopEngineLoop";
+		GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
+		myIsplayingEngineLoop = false;
 	}
 
 	if (myTerrainModifier < 1.0f && myVelocity.Length() > 1.0f)

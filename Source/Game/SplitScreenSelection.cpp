@@ -204,6 +204,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 				{
 					SParticipant participant;
 					participant.myInputDevice = static_cast<SParticipant::eInputDevice>(aInputMessage.myGamepadIndex);
+					participant.mySelectedCharacter = SParticipant::eCharacter::eVanBrat;
 					myPlayers.Add(participant);
 					myPlayerInputDevices[myPlayers.Size() - 1] = static_cast<SParticipant::eInputDevice>(aInputMessage.myGamepadIndex);
 				}
@@ -214,11 +215,59 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 			myStateStack.Pop();
 			break;
 		case CU::GAMEPAD::START:
-			if (myPlayers.Size() >= 2)
+			if (myPlayers.Size() >= 1)
 			{
 				myStateStack.SwapState(new CLoadState(myStateStack,0, myPlayers));
 			}
 			break;
+		case CU::GAMEPAD::DPAD_UP:
+		{
+			bool found = false;
+			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+			{
+				if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
+				{
+					myPlayers[i].mySelectedCharacter = SParticipant::eCharacter::eVanBrat;
+				}
+			}
+		}
+		break;
+		case CU::GAMEPAD::DPAD_RIGHT:
+		{
+			bool found = false;
+			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+			{
+				if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
+				{
+					myPlayers[i].mySelectedCharacter = SParticipant::eCharacter::eVanBrat2;
+				}
+			}
+		}
+		break;
+		case CU::GAMEPAD::DPAD_DOWN:
+		{
+			bool found = false;
+			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+			{
+				if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
+				{
+					myPlayers[i].mySelectedCharacter = SParticipant::eCharacter::eGrandMa;
+				}
+			}
+		}
+		break;
+		case CU::GAMEPAD::DPAD_LEFT:
+		{
+			bool found = false;
+			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+			{
+				if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
+				{
+					myPlayers[i].mySelectedCharacter = SParticipant::eCharacter::eGrandMa2;
+				}
+			}
+		}
+		break;
 		}
 	}
 	else if (aInputMessage.myType == CU::eInputType::eKeyboardPressed)
@@ -232,6 +281,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 				{
 					myHasKeyboardResponded = true;
 					SParticipant participant;
+					participant.mySelectedCharacter = SParticipant::eCharacter::eVanBrat;
 					participant.myInputDevice = SParticipant::eInputDevice::eKeyboard;
 					myPlayers.Add(participant);
 					myPlayerInputDevices[myPlayers.Size() - 1] = static_cast<SParticipant::eInputDevice>(aInputMessage.myGamepadIndex);

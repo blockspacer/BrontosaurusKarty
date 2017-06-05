@@ -82,9 +82,8 @@ void CLapTrackerComponentManager::CalculateRacerPlacement()
 	{
 		SLapCalculateData lapCalculateData;
 		lapCalculateData.lapTrackerComponent = myComponents[i];
-		lapCalculateData.placementValue = lapCalculateData.lapTrackerComponent->GetPlacementValue();
+		lapCalculateData.distanceTravelled = lapCalculateData.lapTrackerComponent->GetTotalTravelledDistance();
 		lapCalculateData.reversePlacement = 0;
-		lapCalculateData.nextSplineDistance = lapCalculateData.lapTrackerComponent->GetDistanceToNextSpline();
 		racers.Add(lapCalculateData);
 	}
 
@@ -107,16 +106,10 @@ void CLapTrackerComponentManager::CalculateReversePlacement(CU::GrowingArray<SLa
 				continue;
 			}
 
-			if (aLapCalculateDataList[i].placementValue > aLapCalculateDataList[j].placementValue)
+			if (aLapCalculateDataList[i].distanceTravelled > aLapCalculateDataList[j].distanceTravelled)
 			{
 				aLapCalculateDataList[i].reversePlacement++;
 			}
-
-			if(aLapCalculateDataList[i].placementValue == aLapCalculateDataList[j].placementValue && aLapCalculateDataList[i].nextSplineDistance < aLapCalculateDataList[j].nextSplineDistance)
-			{
-				aLapCalculateDataList[i].reversePlacement++;
-			}
-			
 		}
 	}
 }
@@ -219,6 +212,11 @@ void CLapTrackerComponentManager::Init()
 	if(myComponents.Size() == 1)
 	{
 		myStartedWithOnlyOnePlayer = true;
+	}
+
+	for (unsigned int i = 0; i < myComponents.Size(); i++)
+	{
+		myComponents[i]->Init();
 	}
 }
 

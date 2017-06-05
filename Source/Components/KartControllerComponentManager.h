@@ -11,6 +11,8 @@ class CKartControllerComponent;
 class CModelComponent;
 class CGoalComponent;
 
+struct SParticipant;
+
 class CKartControllerComponentManager
 {
 public:
@@ -18,9 +20,11 @@ public:
 	~CKartControllerComponentManager();
 
 	CKartControllerComponent* CreateAndRegisterComponent(CModelComponent& aModelComponent, const short aControllerIndex = -1);
+	CKartControllerComponent* CreateAndRegisterComponent(CModelComponent& aModelComponent, const SParticipant& aParticipant);
 
 	void Update(const float aDeltaTime);
-	void Init(Physics::CPhysicsScene* aPhysicsScene);
+	void Init();
+
 
 	void ShouldUpdate(const bool aShouldUpdate);
 
@@ -35,6 +39,7 @@ public:
 #if RENDER_SPLINE == 1
 	void Render();
 #endif
+	void SetPhysiscsScene(Physics::CPhysicsScene* aPhysicsScene);
 private:
 	CU::GrowingArray<CKartControllerComponent*> myComponents;
 	CGoalComponent* myGoalComponentPointer;

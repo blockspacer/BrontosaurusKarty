@@ -8,6 +8,7 @@
 #include "RedShellManager.h"
 #include "BlueShellComponentManager.h"
 #include "ColliderComponentManager.h"
+#include "../Audio/AudioInterface.h"
 
 #include "ItemWeaponBehaviourComponent.h"
 #include "RedShellBehaviourComponent.h"
@@ -493,6 +494,7 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 			}
 		}
 		myLightningBoostBuffer.RemoveAll();
+		Audio::CAudioInterface::GetInstance()->PostEvent("PlayLightning");
 		break;
 	}
 	case eItemTypes::eBanana:
