@@ -24,7 +24,7 @@
 #include "../Audio/AudioInterface.h"
 
 
-CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent, const short aControllerIndex)
+CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent, const short aControllerIndex, const short aCharacterIndex)
 	: myPhysicsScene(nullptr)
 	, myIsOnGround(true)
 	, myCanAccelerate(false)
@@ -36,11 +36,7 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	CU::CJsonValue levelsFile;
 	std::string errorString = levelsFile.Parse("Json/KartStats.json");
 	if (!errorString.empty()) DL_MESSAGE_BOX(errorString.c_str());
-
-	CU::CJsonValue levelsArray = levelsFile.at("Karts");
-
-	CU::CJsonValue Karts = levelsArray.at("BaseKart");
-
+	CU::CJsonValue Karts = levelsFile.at("Karts")[aCharacterIndex];
 
 	//myFowrardSpeed = 0.0f;
 	myMaxSpeed = Karts.at("MaxSpeed").GetFloat();

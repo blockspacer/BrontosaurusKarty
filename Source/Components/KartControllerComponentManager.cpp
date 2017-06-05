@@ -3,7 +3,7 @@
 #include "KartControllerComponent.h"
 #include "PollingStation.h"
 #include "../Game/NavigationSpline.h"
-
+#include "SParticipant.h"
 CKartControllerComponentManager::CKartControllerComponentManager(): myPhysicsScene(nullptr)
 {
 	myComponents.Init(4);
@@ -18,6 +18,15 @@ CKartControllerComponentManager::~CKartControllerComponentManager()
 CKartControllerComponent * CKartControllerComponentManager::CreateAndRegisterComponent(CModelComponent& aModelComponent, const short aControllerIndex)
 {
 	CKartControllerComponent* kartController = new CKartControllerComponent(this, aModelComponent, aControllerIndex);
+	kartController->Init(myPhysicsScene);
+	CComponentManager::GetInstance().RegisterComponent(kartController);
+	myComponents.Add(kartController);
+	return kartController;
+}
+
+CKartControllerComponent * CKartControllerComponentManager::CreateAndRegisterComponent(CModelComponent & aModelComponent, const SParticipant & aParticipant)
+{
+	CKartControllerComponent* kartController = new CKartControllerComponent(this, aModelComponent, static_cast<short>(aParticipant.myInputDevice), static_cast<short>(aParticipant.mySelectedCharacter));
 	kartController->Init(myPhysicsScene);
 	CComponentManager::GetInstance().RegisterComponent(kartController);
 	myComponents.Add(kartController);

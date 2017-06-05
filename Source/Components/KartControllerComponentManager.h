@@ -9,6 +9,8 @@ class CKartControllerComponent;
 class CModelComponent;
 class CGoalComponent;
 
+struct SParticipant;
+
 class CKartControllerComponentManager
 {
 public:
@@ -16,6 +18,7 @@ public:
 	~CKartControllerComponentManager();
 
 	CKartControllerComponent* CreateAndRegisterComponent(CModelComponent& aModelComponent, const short aControllerIndex = -1);
+	CKartControllerComponent* CreateAndRegisterComponent(CModelComponent& aModelComponent, const SParticipant& aParticipant);
 
 	void Update(const float aDeltaTime);
 	void Init(Physics::CPhysicsScene* aPhysicsScene);

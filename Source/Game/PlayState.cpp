@@ -90,6 +90,7 @@
 #include "DriftTurner.h"
 #include "HazardComponent.h"
 #include "AnimationEventFactory.h"
+#include "..\CommonUtilities\JsonValue.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -268,7 +269,7 @@ void CPlayState::Load()
 	myScene->InitPlayerCameras(myPlayerCount);
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
-		CreatePlayer(myScene->GetPlayerCamera(i).GetCamera(), myPlayers[i].myInputDevice, myPlayerCount);
+		CreatePlayer(myScene->GetPlayerCamera(i).GetCamera(), myPlayers[i], myPlayerCount);
 	}
 
 	for (int i = 0; i < 8 - myPlayerCount; ++i)
@@ -481,11 +482,15 @@ void CPlayState::LoadNavigationSpline(const CU::CJsonValue& splineData)
 	myKartControllerComponentManager->LoadNavigationSpline(splineData);
 }
 
-void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDevice aIntputDevice, unsigned int aPlayerCount)
+void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticipant, unsigned int aPlayerCount)
 {
 	//Create sub sub player object
+	CU::CJsonValue playerJson;
+	std::string errorString = playerJson.Parse("Json/KartStats.json");
+	playerJson = playerJson.at("Karts")[static_cast<short>(aParticipant.mySelectedCharacter)];
+
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
-	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Animations/M_Kart_01.fbx");
+	CModelComponent* playerModel = myModelComponentManager->CreateComponent(playerJson.at("Model").GetString());
 
 	secondPlayerObject->AddComponent(playerModel);
 	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
@@ -515,7 +520,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 		playerObject->AddComponent(lapTrackerComponent);
 	}
 
-	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent(*playerModel, static_cast<short>(aIntputDevice));
+	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent(*playerModel, aParticipant);
 	if (myPlayerCount < 2)
 	{
 		AddXboxController();
@@ -524,13 +529,13 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	}
 	else
 	{
-		if (aIntputDevice == SParticipant::eInputDevice::eKeyboard)
+		if (aParticipant.myInputDevice == SParticipant::eInputDevice::eKeyboard)
 		{
 			CKeyboardController* controls = myPlayerControllerManager->CreateKeyboardController(*kartComponent);
 		}
 		else
 		{
-			CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent, static_cast<short>(aIntputDevice));
+			CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent, static_cast<short>(aParticipant.myInputDevice));
 		}
 	}
 	if(CSpeedHandlerManager::GetInstance() != nullptr)
