@@ -281,6 +281,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 				{
 					myHasKeyboardResponded = true;
 					SParticipant participant;
+					participant.mySelectedCharacter = SParticipant::eCharacter::eVanBrat;
 					participant.myInputDevice = SParticipant::eInputDevice::eKeyboard;
 					myPlayers.Add(participant);
 					myPlayerInputDevices[myPlayers.Size() - 1] = static_cast<SParticipant::eInputDevice>(aInputMessage.myGamepadIndex);
