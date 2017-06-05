@@ -83,7 +83,7 @@ void CLapTrackerComponentManager::CalculateRacerPlacement()
 		SLapCalculateData lapCalculateData;
 		lapCalculateData.lapTrackerComponent = myComponents[i];
 		lapCalculateData.placementValue = lapCalculateData.lapTrackerComponent->GetPlacementValue();
-		lapCalculateData.reversePlacement = lapCalculateData.placementValue;
+		lapCalculateData.reversePlacement = 0;
 		lapCalculateData.nextSplineDistance = lapCalculateData.lapTrackerComponent->GetDistanceToNextSpline();
 		racers.Add(lapCalculateData);
 	}
@@ -93,7 +93,7 @@ void CLapTrackerComponentManager::CalculateRacerPlacement()
 
 	SortPlacement(racers);
 
-	AddToRacerPlacements(racers);
+	//AddToRacerPlacements(racers);
 }
 
 void CLapTrackerComponentManager::CalculateReversePlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList)
@@ -122,39 +122,21 @@ void CLapTrackerComponentManager::CalculateReversePlacement(CU::GrowingArray<SLa
 }
 void CLapTrackerComponentManager::SortPlacement(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList)
 {
-	for (unsigned int i = 0; i < aLapCalculateDataList.Size(); i++)
+	while (aLapCalculateDataList.Size() > 0)
 	{
-		for (unsigned int j = 0; j < aLapCalculateDataList.Size(); j++)
+		unsigned short largestValuesIndex = 0;
+		unsigned short largestValue = 0;
+		for (unsigned int i = 0; i < aLapCalculateDataList.Size(); i++)
 		{
-			if(i == j)
+			if (aLapCalculateDataList[i].reversePlacement > largestValue)
 			{
-				continue;
-			}
-
-			
-
-			if (aLapCalculateDataList[i].reversePlacement < aLapCalculateDataList[j].reversePlacement && j > i)
-			{
-				SLapCalculateData tempLapCalculateData = aLapCalculateDataList[j];
-				unsigned int startIndex = aLapCalculateDataList.Size() - 2;
-				if(j == aLapCalculateDataList.Size() - 1)
-				{
-					startIndex = aLapCalculateDataList.Size() - 1;
-				}
-				for (unsigned int index = startIndex; index > i; index--)
-				{
-					if(index - 1 == j)
-					{
-						continue;
-					}
-					aLapCalculateDataList[index] = aLapCalculateDataList[index - 1];
-				}
-				aLapCalculateDataList[i] = tempLapCalculateData;
-
-				SortPlacement(aLapCalculateDataList);
-				return;
+				largestValue = aLapCalculateDataList[i].reversePlacement;
+				largestValuesIndex = i;
 			}
 		}
+
+		myRacerPlacements.Add(aLapCalculateDataList[largestValuesIndex].lapTrackerComponent->GetParent());
+		aLapCalculateDataList.RemoveCyclicAtIndex(largestValuesIndex);
 	}
 }
 void CLapTrackerComponentManager::AddToRacerPlacements(CU::GrowingArray<SLapCalculateData>& aLapCalculateDataList)
@@ -177,7 +159,6 @@ eMessageReturn CLapTrackerComponentManager::DoEvent(const CPlayerFinishedMessage
 		if(myComponents[i]->GetParent() == aPlayerFinishedMessage.GetGameObject())
 		{
 			myWinnerPlacements.Add((myComponents[i]->GetParent()));
-			myComponents.RemoveCyclicAtIndex(i);
 		}
 	}
 
@@ -217,6 +198,10 @@ bool CLapTrackerComponentManager::HaveAllPlayersFinished()
 	
 	for (unsigned int i = 0; i < myComponents.Size(); i++)
 	{
+		if (myWinnerPlacements.Find(myRacerPlacements[i]) != myWinnerPlacements.FoundNone)
+		{
+			continue;
+		}
 		if(myComponents[i]->GetParent()->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
 		{
 			havePlayersFinished = false;
@@ -239,6 +224,8 @@ void CLapTrackerComponentManager::Init()
 
 void CLapTrackerComponentManager::SendRaceOverMessage()
 {
+	AddEveryoneToVictoryList();
+	myWinnerPlacements;
 	Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CRaceOverMessage(myWinnerPlacements));
 }
 
@@ -257,4 +244,15 @@ unsigned char CLapTrackerComponentManager::GetSpecificRacerLapIndex(CGameObject*
 	aRacer->AskComponents(eComponentQuestionType::eGetLapIndex, whatLap);
 
 	return whatLap.myChar;
+}
+
+void CLapTrackerComponentManager::AddEveryoneToVictoryList()
+{
+	for(unsigned int i = 0; i < myRacerPlacements.Size(); i++)
+	{
+		if(myWinnerPlacements.Find(myRacerPlacements[i]) == myWinnerPlacements.FoundNone)
+		{
+			myWinnerPlacements.Add(myRacerPlacements[i]);
+		}
+	}
 }

@@ -15,11 +15,12 @@
 #include <ThreadPool.h>
 
 #include "..\ThreadedPostmaster\Postmaster.h"
-#include "..\ThreadedPostmaster\PostOffice.h"
-
-#include "..\ThreadedPostmaster\MessageType.h"
 #include "..\ThreadedPostmaster\RaceOverMessage.h"
+
+//Debug
 #include "..\ThreadedPostmaster\KeyCharPressed.h"
+#include "..\ThreadedPostmaster\PlayerFinishedMessage.h"
+#include "..\ThreadedPostmaster\RaceStartedMessage.h"
 
 
 CHUD::CHUD(unsigned char aPlayerID, unsigned short aAmountOfPlayers)
@@ -72,11 +73,46 @@ void CHUD::LoadHUD()
 {
 	CU::CJsonValue jsonDoc;
 
-	jsonDoc.Parse("Json/HUD.json");
-	LoadLapCounter(jsonDoc.at("lapCounter"));
-	LoadPlacement(jsonDoc.at("placement"));
-	LoadFinishText(jsonDoc.at("finishText"));
-	LoadItemGui(jsonDoc.at("itemGui"));
+	if(myAmountOfPlayers == 1)
+	{
+		jsonDoc.Parse("Json/HUD/HUD1Player.json");
+	}
+	else if (myAmountOfPlayers == 2)
+	{
+		jsonDoc.Parse("Json/HUD/HUD2Player.json");
+	}
+	else if (myAmountOfPlayers == 3)
+	{
+		jsonDoc.Parse("Json/HUD/HUD3Player.json");
+	}
+	else if (myAmountOfPlayers == 4)
+	{
+		jsonDoc.Parse("Json/HUD/HUD4Player.json");		
+	}
+
+	CU::CJsonValue jsonPlayerObject;
+
+	if(myPlayerID == 0)
+	{
+		jsonPlayerObject = jsonDoc.at("1stPlayer");
+	}
+	else if (myPlayerID == 1)
+	{
+		jsonPlayerObject = jsonDoc.at("2ndPlayer");
+	}
+	else if (myPlayerID == 2)
+	{
+		jsonPlayerObject = jsonDoc.at("3rdPlayer");
+	}
+	else if (myPlayerID == 3)
+	{
+		jsonPlayerObject = jsonDoc.at("4thPlayer");
+	}
+
+	LoadLapCounter(jsonPlayerObject.at("lapCounter"));
+	LoadPlacement(jsonPlayerObject.at("placement"));
+	LoadFinishText(jsonPlayerObject.at("finishText"));
+	LoadItemGui(jsonPlayerObject.at("itemGui"));
 }
 
 void CHUD::Update()
@@ -128,6 +164,11 @@ void CHUD::Render()
 	{
 		if (currentLap > 3)
 		{
+			myItemGuiElement.mySprite = myNullSprite;
+			myItemGuiElement.myShouldRender = false;
+			myLapCounterElement.mySprite = myNullSprite;
+			myPlacementElement.mySprite = myNullSprite;
+
 			SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"finishText" + myPlayerID, myFinishTextElement.myGUIElement, myFinishTextElement.myPixelSize);
 
 			RENDERER.AddRenderMessage(guiElement);
@@ -137,45 +178,59 @@ void CHUD::Render()
 		}
 	}
 
-	SComponentQuestionData itemQuestionData;
-	if(myPlayer->AskComponents(eComponentQuestionType::eGetHoldItemType, itemQuestionData) == true)
+	if(myItemGuiElement.myShouldRender == true)
 	{
-		switch (static_cast<eItemTypes>(itemQuestionData.myInt))
+		SComponentQuestionData itemQuestionData;
+		if (myPlayer->AskComponents(eComponentQuestionType::eGetHoldItemType, itemQuestionData) == true)
 		{
-		case eItemTypes::eBanana:
-		{
-			myItemGuiElement.mySprite = myBananaSprite;
-			break;
+			switch (static_cast<eItemTypes>(itemQuestionData.myInt))
+			{
+			case eItemTypes::eBanana:
+			{
+				myItemGuiElement.mySprite = myBananaSprite;
+				break;
+			}
+			case eItemTypes::eMushroom:
+			{
+				myItemGuiElement.mySprite = myMushroomSprite;
+				break;
+			}
+			case eItemTypes::eStar:
+			{
+				myItemGuiElement.mySprite = myStarSprite;
+				break;
+			}
+			case eItemTypes::eGreenShell:
+			{
+				myItemGuiElement.mySprite = myGreenShellSprite;
+				break;
+			}
+			case eItemTypes::eRedShell:
+			{
+				myItemGuiElement.mySprite = myRedShellSprite;
+				break;
+			}
+			case eItemTypes::eLightning:
+			{
+				myItemGuiElement.mySprite = myLightningSprite;
+				break;
+			}
+			case eItemTypes::eBlueShell:
+			{
+				myItemGuiElement.mySprite = myBlueShellSprite;
+				break;
+			}
+			default:
+				break;
+			}
 		}
-		case eItemTypes::eMushroom:
+		else
 		{
-			myItemGuiElement.mySprite = myMushroomSprite;
-			break;
-		}
-		case eItemTypes::eStar:
-		{
-			myItemGuiElement.mySprite = myStarSprite;
-			break;
-		}
-		case eItemTypes::eGreenShell:
-		{
-			myItemGuiElement.mySprite = myGreenShellSprite;
-			break;
-		}
-		case eItemTypes::eRedShell:
-		{
-			myItemGuiElement.mySprite = myRedShellSprite;
-			break;
-		}
-		default:
-			break;
+			myItemGuiElement.mySprite = myNullSprite;
 		}
 	}
-	else
-	{
-		myItemGuiElement.mySprite = myNullSprite;
-	}
-		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"itemGui" + myPlayerID, myItemGuiElement.myGUIElement, myItemGuiElement.myPixelSize);
+	
+	SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"itemGui" + myPlayerID, myItemGuiElement.myGUIElement, myItemGuiElement.myPixelSize);
 
 	RENDERER.AddRenderMessage(guiElement);
 	SetGUIToEmilBlend(L"itemGui" + myPlayerID);
@@ -191,54 +246,9 @@ SHUDElement CHUD::LoadHUDElement(const CU::CJsonValue& aJsonValue, eGuiType aGui
 	hudElement.myGUIElement.myAnchor[(char)eAnchors::eTop] = true;
 	hudElement.myGUIElement.myAnchor[(char)eAnchors::eLeft] = true;
 
-	if(myAmountOfPlayers == 1 && aGuiType == eGuiType::ePlacement)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.0f, 0.40f), CU::Vector2f(0.09f, 0.08f));
-	}
-	else if (myAmountOfPlayers == 1 && aGuiType == eGuiType::eLapCounter)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.0f, 0.48f), CU::Vector2f());
-	}
-	else if (myAmountOfPlayers == 1 && aGuiType == eGuiType::eFinish)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.25f, 0.25f), CU::Vector2f());
-	}
-	else if (myAmountOfPlayers == 2 && aGuiType == eGuiType::ePlacement)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.0f, 0.0f), CU::Vector2f(0.09f, 0.08f));
-	}
-	else if (myAmountOfPlayers == 2 && aGuiType == eGuiType::eLapCounter && myPlayerID == 0)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.9f, -0.38f), CU::Vector2f());
-	}
-	else if (myAmountOfPlayers == 2 && aGuiType == eGuiType::eLapCounter && myPlayerID == 1)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.9f, 0.02f), CU::Vector2f());
-	}
-	else if (myAmountOfPlayers == 2 && aGuiType == eGuiType::eFinish)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.25f, 0.0f), CU::Vector2f());
-	}
-	else if (myAmountOfPlayers >= 3 && aGuiType == eGuiType::eLapCounter && myPlayerID % 2 == 1)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.4f, 0.04f), CU::Vector2f());
-	}
-	else if (myAmountOfPlayers >= 3 && aGuiType == eGuiType::ePlacement && myPlayerID % 2 == 1)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.375f, 0.01f), CU::Vector2f(0.0f, 0.03f));
-	}
-	else if (myAmountOfPlayers >= 3 && aGuiType == eGuiType::eLapCounter && myPlayerID % 2 == 0)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.0f, 0.04f), CU::Vector2f());
-	}
-	else if (myAmountOfPlayers >= 3 && aGuiType == eGuiType::ePlacement && myPlayerID % 2 == 0)
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(0.0f, 0.01f), CU::Vector2f(0.0f, 0.03f));
-	}
-	else
-	{
-		LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(), CU::Vector2f());
-	}
+	
+	LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(), CU::Vector2f());
+	
 	
 
 	return hudElement;
@@ -308,12 +318,14 @@ void CHUD::LoadItemGui(const CU::CJsonValue& aJsonValue)
 	myItemGuiElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
 	float itemGuiWidth = 1.0f;
-	float itemGuiHeight = 1.1f;
+	float itemGuiHeight = 1.0f;
 	myMushroomSprite = new CSpriteInstance("Sprites/GUI/mushroom.dds", { itemGuiWidth,itemGuiHeight });
 	myBananaSprite = new CSpriteInstance("Sprites/GUI/banana.dds", { itemGuiWidth,itemGuiHeight });
 	myStarSprite = new CSpriteInstance("Sprites/GUI/star.dds", { itemGuiWidth,itemGuiHeight });
 	myGreenShellSprite = new CSpriteInstance("Sprites/GUI/greenShell.dds", { itemGuiWidth,itemGuiHeight });
 	myRedShellSprite = new CSpriteInstance("Sprites/GUI/redShell.dds", { itemGuiWidth,itemGuiHeight });
+	myLightningSprite = new CSpriteInstance("Sprites/GUI/lightning.dds", { itemGuiWidth,itemGuiHeight });
+	myBlueShellSprite = new CSpriteInstance("Sprites/GUI/blueShell.dds", { itemGuiWidth,itemGuiHeight });
 	myNullSprite = new CSpriteInstance("Sprites/GUI/redShell.dds", { 0.0f,0.0f });
 	myItemGuiElement.mySprite = myNullSprite;
 	/*myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));*/
@@ -366,6 +378,7 @@ void CHUD::DisableRedundantGUI()
 
 		while (timerManager.GetTimer(timer).GetLifeTime().GetSeconds() < .05f)
 		{
+			timerManager.UpdateTimers();
 			myLapCounterElement.mySprite->SetAlpha(0);
 			myPlacementElement.mySprite->SetAlpha(0);
 			myItemGuiElement.mySprite->SetAlpha(0);
@@ -395,6 +408,10 @@ eMessageReturn CHUD::DoEvent(const KeyCharPressed& aMessage)
 {
 	if (aMessage.GetKey() == 'p')
 		myLapAdjusterCheat += 1;
+
+	if (aMessage.GetKey() == 'l')
+		POSTMASTER.Broadcast(new CPlayerFinishedMessage(myPlayer));
+
 
 	unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer) + myLapAdjusterCheat;
 	if (currentLap > 3)

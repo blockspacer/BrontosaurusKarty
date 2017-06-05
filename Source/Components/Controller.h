@@ -1,6 +1,7 @@
 #pragma once
 
 class CKartControllerComponent;
+class CAIController;
 
 class CController
 {
@@ -12,5 +13,6 @@ public:
 
 protected:
 	CKartControllerComponent& myControllerComponent;
+	CAIController* myAIController;
 };
 

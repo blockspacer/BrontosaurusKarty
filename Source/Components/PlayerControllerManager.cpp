@@ -1,14 +1,22 @@
 #include "stdafx.h"
 #include "PlayerControllerManager.h"
+
 #include "KeyboardController.h"
 #include "XboxController.h"
+#include "AIController.h"
 
 #include "../CommonUtilities/InputMessenger.h"
-#include "AIController.h"
+
+#include "..\ThreadedPostmaster\Postmaster.h"
+#include "..\ThreadedPostmaster\PlayerFinishedMessage.h"
+#include "..\ThreadedPostmaster\MessageType.h"
+
+#include <PollingStation.h>
 
 CPlayerControllerManager::CPlayerControllerManager()
 {
 	myPlayerControllers.Init(4);
+	//POSTMASTER.Subscribe(this, eMessageType::ePlayerFinished);
 }
 
 
@@ -67,4 +75,26 @@ void CPlayerControllerManager::Update(const float aDeltaTime)
 	{
 		controller->Update(aDeltaTime);
 	}
+}
+
+eMessageReturn CPlayerControllerManager::DoEvent(const CPlayerFinishedMessage& aMessage)
+{
+	unsigned char idOfPlayer = CPollingStation::GetInstance()->GetIDFromPlayer((CGameObject*)aMessage.GetGameObject());
+	// Antagandes att spelarens ID ligger i fas med spelarens position i myPlayerControllers.
+
+	//delete myPlayerControllers[idOfPlayer];
+	//myPlayerControllers[idOfPlayer] = new CAIController(*(CAIController*)myPlayerControllers[7]); // mebbeeee ?
+
+
+	SComponentMessageData pointlessData;
+	((CGameObject*)aMessage.GetGameObject())->NotifyComponents(eComponentMessageType::eAITakeOver, pointlessData);
+	
+	return eMessageReturn::eContinue;
+}
+
+eMessageReturn CPlayerControllerManager::DoEvent(const CRaceStartedMessage& aMessage)
+{
+
+	// Copy controllers.
+	return eMessageReturn::eContinue;
 }

@@ -89,7 +89,7 @@ public:
 
 	float GetRadius() const;
 
-	CU::Matrix44f GetBoneTransform(const float aTime, const eAnimationState aAnimationState, const char* aBoneName);
+	CU::Matrix44f GetBoneTransform(const float aTime, const eAnimationState aAnimationState, const std::string& aBoneName);
 	std::vector<mat4>& GetBones(float aTime, const eAnimationState aAnimationState, const bool aAnimationLooping);
 	inline bool HasBones() const;
 	inline bool HasAnimations() const;

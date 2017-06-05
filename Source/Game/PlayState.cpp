@@ -34,6 +34,7 @@
 #include "../Components/PickupComponentManager.h"
 #include "ItemWeaponBehaviourComponentManager.h"
 #include "RedShellManager.h"
+#include "BlueShellComponentManager.h"
 #include "RespawnComponentManager.h"
 #include "LapTrackerComponentManager.h"
 
@@ -65,6 +66,7 @@
 #include "LightComponentManager.h"
 #include "BrontosaurusEngine/SpriteInstance.h"
 #include "ThreadedPostmaster/GameEventMessage.h"
+#include "..\ThreadedPostmaster\RaceStartedMessage.h"
 #include <LuaWrapper/SSlua/SSlua.h>
 #include <GUIElement.h>
 #include "HUD.h"
@@ -105,7 +107,7 @@ CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
 	, myCountdownShouldRender(false)
-	,myIsCountingDown(true)
+	, myIsCountingDown(true)
 {
 	myPlayers.Init(1);
 	myPlayerCount = 1;
@@ -200,10 +202,7 @@ void CPlayState::Load()
 	myCountdownElement->myScreenRect = CU::Vector4f( myCountdownSprite->GetPosition() );
 	myCountdownElement->myScreenRect.z = myCountdownSprite->GetPosition().x - (0.26f / 2);
 	myCountdownElement->myScreenRect.w = myCountdownSprite->GetPosition().y - (0.27f / 2);
-
-
 	// Render in Renderfunc.
-
 
 
 	srand(static_cast<unsigned int>(time(nullptr)));
@@ -281,7 +280,7 @@ void CPlayState::Load()
 		CreatePlayer(myScene->GetPlayerCamera(i).GetCamera(), myPlayers[i].myInputDevice, myPlayerCount);
 	}
 
-	for (int i = myPlayerCount; i < 8 - myPlayerCount; ++i)
+	for (int i = 0; i < 8 - myPlayerCount; ++i)
 	{
 		CreateAI();
 	}
@@ -312,7 +311,6 @@ void CPlayState::Load()
 	float time = loadPlaystateTimer.GetDeltaTime().GetMilliseconds();
 	GAMEPLAY_LOG("Game Inited in %f ms", time);
 	Postmaster::Threaded::CPostmaster::GetInstance().GetThreadOffice().HandleMessages();
-
 }
 
 void CPlayState::Init()
@@ -323,6 +321,8 @@ void CPlayState::Init()
 		POSTMASTER.Subscribe(myHUDs[i], eMessageType::eRaceOver);
 	}
 
+	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::ePlayerFinished);
+	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::eRaceStarted);
 
 	myGameObjectManager->SendObjectsDoneMessage();
 	CLapTrackerComponentManager::GetInstance()->Init();
@@ -370,6 +370,7 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	}
 
 	myRedShellManager->Update(aDeltaTime.GetSeconds());
+	myBlueShellManager->Update(aDeltaTime.GetSeconds());
 
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
@@ -475,8 +476,9 @@ void CPlayState::CreateManagersAndFactories()
 	myItemBehaviourManager->Init(myPhysicsScene);
 	myRedShellManager = new CRedShellManager();
 	myRedShellManager->Init(myPhysicsScene, myKartControllerComponentManager,myKartObjects);
+	myBlueShellManager = new CBlueShellComponentManager(myKartObjects);
 	myItemFactory = new CItemFactory();
-	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager,*myRedShellManager);
+	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager,*myRedShellManager,*myBlueShellManager);
 	myRespawnComponentManager = new CRespawnComponentManager();
 	CLapTrackerComponentManager::CreateInstance();
 	CKartSpawnPointManager::GetInstance()->Create();
@@ -509,7 +511,6 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 
 	CU::Matrix44f kartTransformation = CKartSpawnPointManager::GetInstance()->PopSpawnPoint().mySpawnTransformaion;
 	playerObject->SetWorldTransformation(kartTransformation);
-	playerObject->Move(CU::Vector3f::UnitY);
 	CCameraComponent* cameraComponent = new CCameraComponent(aPlayerCount);
 	CComponentManager::GetInstance().RegisterComponent(cameraComponent);
 	cameraComponent->SetCamera(aCamera);
@@ -532,7 +533,14 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	}
 	else
 	{
-		CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent, static_cast<short>(aIntputDevice));
+		if (aIntputDevice == SParticipant::eInputDevice::eKeyboard)
+		{
+			CKeyboardController* controls = myPlayerControllerManager->CreateKeyboardController(*kartComponent);
+		}
+		else
+		{
+			CXboxController* xboxInput = myPlayerControllerManager->CreateXboxController(*kartComponent, static_cast<short>(aIntputDevice));
+		}
 	}
 	if(CSpeedHandlerManager::GetInstance() != nullptr)
 	{
@@ -611,7 +619,6 @@ void CPlayState::CreateAI()
 
 	CU::Matrix44f kartTransformation = CKartSpawnPointManager::GetInstance()->PopSpawnPoint().mySpawnTransformaion;
 	playerObject->SetWorldTransformation(kartTransformation);
-	playerObject->Move(CU::Vector3f::UnitY);
 
 	CRespawnerComponent* respawnComponent = myRespawnComponentManager->CreateAndRegisterComponent();
 	playerObject->AddComponent(respawnComponent);
@@ -658,7 +665,6 @@ void CPlayState::CreateAI()
 	CColliderComponent* playerColliderComponent = myColliderComponentManager->CreateComponent(&box, playerObject->GetId());
 	CColliderComponent* playerTriggerColliderComponent = myColliderComponentManager->CreateComponent(&triggerbox, playerObject->GetId());
 
-
 	SRigidBodyData rigidbodah;
 	rigidbodah.isKinematic = true;
 	rigidbodah.useGravity = false;
@@ -704,6 +710,8 @@ void CPlayState::InitiateRace()
 				{
 					myCountdownSprite->SetRect({ 0.f,0.00f,1.f,0.25f });
 					myKartControllerComponentManager->ShouldUpdate(true);
+					POSTMASTER.Broadcast(new CRaceStartedMessage());
+					POSTMASTER.GetThreadOffice().HandleMessages();
 				}
 			}
 		}

@@ -37,6 +37,7 @@ class CBoostPadComponentManager;
 class CItemFactory;
 class CItemWeaponBehaviourComponentManager;
 class CRedShellManager;
+class CBlueShellComponentManager;
 class CRespawnComponentManager;
 class CLapTrackerComponentManager;
 class CHUD;
@@ -67,6 +68,7 @@ public:
 	inline CColliderComponentManager* GetColliderComponentManager();
 	inline CScriptComponentManager* GetScriptComponentManager();
 	inline CItemFactory* GetItemFactory();
+	inline CKartControllerComponentManager* GetKartControllerComponentManager();
 
 	inline bool IsLoaded() const;
 
@@ -81,6 +83,7 @@ private:
 
 	void InitiateRace();
 	void RenderCountdown();
+	void BroadcastRaceStart();
 
 private:
 	Physics::CPhysicsScene* myPhysicsScene;
@@ -100,6 +103,7 @@ private:
 	CItemFactory* myItemFactory;
 	CItemWeaponBehaviourComponentManager* myItemBehaviourManager;
 	CRedShellManager* myRedShellManager;
+	CBlueShellComponentManager* myBlueShellManager;
 	CRespawnComponentManager* myRespawnComponentManager;
 
 	CU::GrowingArray<CCameraComponent*> myCameraComponents;
@@ -114,7 +118,6 @@ private:
 	CSpriteInstance* myCountdownSprite;
 	SGUIElement* myCountdownElement;
 	bool myCountdownShouldRender;
-
 	bool myIsCountingDown;
 
 	int myPlayerCount;
@@ -146,4 +149,9 @@ inline CBoostPadComponentManager* CPlayState::GetBoostPadComponentManager()
 inline CItemFactory* CPlayState::GetItemFactory()
 {
 	return myItemFactory;
+}
+
+inline CKartControllerComponentManager* CPlayState::GetKartControllerComponentManager()
+{
+	return myKartControllerComponentManager;
 }

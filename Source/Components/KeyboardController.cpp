@@ -7,6 +7,10 @@
 #include "KartControllerComponent.h"
 #include "SpeedHandlerManager.h"
 
+#include "AIController.h"
+#include "..\ThreadedPostmaster\Postmaster.h"
+#include "..\BrontosaurusEngine\Engine.h"
+
 //Temp includes
 #include "BoostData.h"
 
@@ -16,6 +20,7 @@ CKeyboardController::CKeyboardController(CKartControllerComponent& aKartComponen
 	myIsMovingFoward = false;
 	myIsTurningLeft = false;
 	myIsTurningRight = false;
+	myAIController = new CAIController(aKartComponent);
 }
 
 CKeyboardController::~CKeyboardController()
@@ -24,6 +29,9 @@ CKeyboardController::~CKeyboardController()
 
 CU::eInputReturn CKeyboardController::TakeInput(const CU::SInputMessage & aInputMessage)
 {
+	if (myControllerComponent.GetIsControlledByAI())
+		return CU::eInputReturn::ePassOn;
+
 	if (aInputMessage.myType == CU::eInputType::eKeyboardReleased)
 	{
 		ReleasedKey(aInputMessage);
@@ -43,6 +51,7 @@ void CKeyboardController::ReleasedKey(const CU::SInputMessage & aInputMessage)
 	case CU::eKeys::UP:
 	case CU::eKeys::W:
 		myControllerComponent.StopMoving();
+		myControllerComponent.DecreasePreGameBoostValue();
 		myIsMovingFoward = false;
 		if (myIsMovingBackwards == true)
 		{
@@ -85,7 +94,7 @@ void CKeyboardController::ReleasedKey(const CU::SInputMessage & aInputMessage)
 		}
 		break;
 	case CU::eKeys::LCONTROL:
-		myControllerComponent.StopDrifting();
+		myControllerComponent.StopDrifting(true);
 		break;
 	}
 }
@@ -97,6 +106,7 @@ void CKeyboardController::PressedKey(const CU::SInputMessage & aInputMessage)
 	case CU::eKeys::UP:
 	case CU::eKeys::W:
 		myControllerComponent.MoveFoward();
+		myControllerComponent.IncreasePreGameBoostValue();
 		myIsMovingFoward = true;
 		break;
 	case CU::eKeys::DOWN:

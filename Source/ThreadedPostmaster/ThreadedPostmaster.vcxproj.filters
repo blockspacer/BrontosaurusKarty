@@ -148,6 +148,7 @@
     <ClCompile Include="AIFinishedMessage.cpp">
       <Filter>AIFinished</Filter>
     </ClCompile>
+    <ClCompile Include="RaceStartedMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Postmaster.h">
@@ -232,5 +233,6 @@
     <ClInclude Include="AIFinishedMessage.h">
       <Filter>AIFinished</Filter>
     </ClInclude>
+    <ClInclude Include="RaceStartedMessage.h" />
   </ItemGroup>
 </Project>

@@ -29,7 +29,7 @@ public:
 	void MoveFoward();
 	void MoveBackWards();
 	void StopTurning();
-	void StopDrifting();
+	void StopDrifting(const bool aShouldGetBoost);
 	void GetHit();
 	void ApplyStartBoost();
 
@@ -59,6 +59,8 @@ public:
 	inline float GetMaxSpeed2() const;
 	inline float GetMaxAcceleration() const;
 	inline float GetAcceleratiot();
+	inline bool GetIsControlledByAI() const;
+
 private:
 	
 	void UpdateMovement(const float aDeltaTime);
@@ -85,6 +87,7 @@ private:
 	} myAxisDescription;
 
 	CU::Vector3f myVelocity;
+	CU::Vector3f myGroundNormal;
 
 	CKartControllerComponentManager* myManager;
 	Physics::CPhysicsScene* myPhysicsScene;
@@ -122,8 +125,6 @@ private:
 	
 	float myTerrainModifier;
 
-	
-	bool increaseCountdownValue;
 	float myPreRaceBoostRate;
 	float myPreRaceRate;
 	float myPreRaceBoostValue;
@@ -133,6 +134,11 @@ private:
 
 	int myBoostEmmiterhandle;
 	int myGotHitEmmiterhandle;
+	int myStarEmmiterhandle1;
+	int myStarEmmiterhandle2;
+	int mySlowMovment;
+	int myGrassEmmiter1;
+	int myGrassEmmiter2;
 
 	short myControllerHandle;
 
@@ -144,6 +150,9 @@ private:
 	bool myIsInvurnable;
 	bool myHasGottenHit;
 	bool myIsOnGroundLast;
+	bool myIsAIControlled;
+	bool increaseCountdownValue;
+	bool myIsHoldingForward;
 	CComponent* myLastGroundComponent;
 };
 
@@ -171,7 +180,7 @@ bool CKartControllerComponent::GetHitGround()
 
 float CKartControllerComponent::GetMaxSpeed() const
 {
-	return myMaxSpeed * myTerrainModifier;
+	return myMaxSpeed * (myIsBoosting == false ? myTerrainModifier : 1.f);
 }
 
 float CKartControllerComponent::GetMaxSpeed2() const
@@ -184,7 +193,12 @@ float CKartControllerComponent::GetMaxAcceleration() const
 	return myMaxAcceleration;
 }
 
+bool CKartControllerComponent::GetIsControlledByAI() const
+{
+	return myIsAIControlled;
+}
+
 float CKartControllerComponent::GetAcceleratiot()
 {
-	return myAcceleration * myTerrainModifier;
+	return myAcceleration * (myIsBoosting == false ? myTerrainModifier : 1.f);
 }

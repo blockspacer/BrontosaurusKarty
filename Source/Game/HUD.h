@@ -75,6 +75,8 @@ private:
 	CSpriteInstance* myRedShellSprite;
 	CSpriteInstance* myBananaSprite;
 	CSpriteInstance* myStarSprite;
+	CSpriteInstance* myLightningSprite;
+	CSpriteInstance* myBlueShellSprite;
 	CSpriteInstance* myNullSprite;
 
 	CU::Vector2f myCameraOffset; //best solution 10/10

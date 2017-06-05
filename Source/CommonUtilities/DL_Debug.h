@@ -1,5 +1,4 @@
 #pragma once
-//#include "DL_Assert.h"
 
 extern "C" { _CRTIMP void __cdecl _wassert(_In_z_ const wchar_t * _Message, _In_z_ const wchar_t *_File, _In_ unsigned _Line); }
 
