@@ -378,6 +378,7 @@ void CHUD::DisableRedundantGUI()
 
 		while (timerManager.GetTimer(timer).GetLifeTime().GetSeconds() < .05f)
 		{
+			timerManager.UpdateTimers();
 			myLapCounterElement.mySprite->SetAlpha(0);
 			myPlacementElement.mySprite->SetAlpha(0);
 			myItemGuiElement.mySprite->SetAlpha(0);

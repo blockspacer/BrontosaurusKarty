@@ -2,6 +2,7 @@
 #include "KartControllerComponentManager.h"
 #include "KartControllerComponent.h"
 #include "PollingStation.h"
+#include "../Game/NavigationSpline.h"
 
 CKartControllerComponentManager::CKartControllerComponentManager(): myPhysicsScene(nullptr)
 {
@@ -69,6 +70,7 @@ const CNavigationSpline& CKartControllerComponentManager::GetNavigationSpline() 
 void CKartControllerComponentManager::Init(Physics::CPhysicsScene* aPhysicsScene)
 {
 	myPhysicsScene = aPhysicsScene;
+
 }
 
 const CU::Vector3f CKartControllerComponentManager::GetClosestSpinesDirection(const CU::Vector3f& aKartPosition)

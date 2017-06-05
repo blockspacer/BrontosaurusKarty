@@ -525,7 +525,7 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	}
 
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
-	myAnimator->Update(aDeltaTime, myVelocity.z);
+	myAnimator->Update(aDeltaTime, myVelocity.z, mySteering);
 }
 
 void CKartControllerComponent::CountDownUpdate(const float aDeltaTime)
