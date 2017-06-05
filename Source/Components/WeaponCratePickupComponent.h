@@ -10,8 +10,9 @@ public:
 	CItemPickupComponent(CItemFactory& aItemFactory);
 	~CItemPickupComponent();
 	void DoMyEffect(CComponent* theCollider) override;
+	void Update(const float aDeltaTime) override;
 private:
 	CItemFactory& myItemFactory;
-
+	float myScale;
 };
 
