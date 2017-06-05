@@ -2,6 +2,8 @@
 #include "WeaponCratePickupComponent.h"
 #include "ItemFactory.h"
 #include "../Audio/AudioInterface.h"
+#include "ParticleEmitterInstance.h"
+#include "ParticleEmitterManager.h"
 
 
 CItemPickupComponent::CItemPickupComponent(CItemFactory& aItemFactory) : myItemFactory(aItemFactory)
@@ -9,11 +11,15 @@ CItemPickupComponent::CItemPickupComponent(CItemFactory& aItemFactory) : myItemF
 	myScale = 1.0f;
 	myTimer = 0.0f;
 	myFlippedVisibility = false;
+	myParticleHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("BoxDebris");
+	int br = 0;
+	++br;
 }
 
 
 CItemPickupComponent::~CItemPickupComponent()
 {
+	CParticleEmitterManager::GetInstance().Release(myParticleHandle);
 }
 
 void CItemPickupComponent::Update(const float aDeltaTime)
@@ -63,4 +69,15 @@ void CItemPickupComponent::DoMyEffect(CComponent* theCollider)
 	myTimer = 0.0f;
 	myFlippedVisibility = false;
 	GetParent()->GetLocalTransform().SetScale(CU::Vector3f(myScale, myScale, myScale));
+	//static bool isInited = false;
+	//if (isInited == false)
+	//{
+		//isInited = true;
+		CU::Matrix44f matrix = GetParent()->GetToWorldTransform();
+		matrix.RotateAroundAxes(3.141592 / 2, 0, 0);
+		CParticleEmitterManager::GetInstance().SetTransformation(myParticleHandle, matrix);
+		CParticleEmitterManager::GetInstance().SetPosition(myParticleHandle,GetParent()->GetToWorldTransform().GetPosition());
+		
+	//}
+	CParticleEmitterManager::GetInstance().Activate(myParticleHandle);
 }
