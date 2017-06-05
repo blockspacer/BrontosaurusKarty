@@ -152,6 +152,7 @@ private:
 	bool myIsOnGroundLast;
 	bool myIsAIControlled;
 	bool increaseCountdownValue;
+	bool myIsHoldingForward;
 	CComponent* myLastGroundComponent;
 };
 
