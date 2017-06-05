@@ -317,6 +317,7 @@ void CPlayState::Init()
 	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::eRaceStarted);
 
 	myGameObjectManager->SendObjectsDoneMessage();
+	myKartControllerComponentManager->Init();
 	CLapTrackerComponentManager::GetInstance()->Init();
 }
 
@@ -461,7 +462,7 @@ void CPlayState::CreateManagersAndFactories()
 	CSpeedHandlerManager::CreateInstance();
 	CSpeedHandlerManager::GetInstance()->Init();
 	myKartControllerComponentManager = new CKartControllerComponentManager;
-	myKartControllerComponentManager->Init(myPhysicsScene);
+	myKartControllerComponentManager->SetPhysiscsScene(myPhysicsScene);
 	myPlayerControllerManager = new CPlayerControllerManager;
 	myBoostPadComponentManager = new CBoostPadComponentManager();
 	myItemBehaviourManager = new CItemWeaponBehaviourComponentManager();
@@ -600,6 +601,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 
 void CPlayState::CreateAI()
 {
+
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Animations/M_Kart_01.fbx");
 
@@ -689,6 +691,11 @@ void CPlayState::InitiateRace()
 		myIsCountingDown = true;
 
 		Audio::CAudioInterface::GetInstance()->PostEvent("PlayStartCountDown");
+		for (int i = 0; i < myKartObjects.Size(); i++)
+		{
+			SComponentMessageData data; data.myString = "PlayEngineStart";
+			myKartObjects[i]->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
+		}
 
 		while (floatTime <= 3.5)
 		{

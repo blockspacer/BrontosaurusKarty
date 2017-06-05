@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "KartControllerComponentManager.h"
 #include "KartControllerComponent.h"
-#include "PollingStation.h"
 #include "../Game/NavigationSpline.h"
 #include "SParticipant.h"
 CKartControllerComponentManager::CKartControllerComponentManager(): myPhysicsScene(nullptr)
@@ -9,7 +8,6 @@ CKartControllerComponentManager::CKartControllerComponentManager(): myPhysicsSce
 	myComponents.Init(4);
 	myShouldUpdate = false;
 }
-
 
 CKartControllerComponentManager::~CKartControllerComponentManager()
 {
@@ -59,6 +57,9 @@ void CKartControllerComponentManager::Update(const float aDeltaTime)
 	{
 		myComponents[i]->Update(aDeltaTime);
 	}
+#if RENDER_SPLINE == 1
+	Render();
+#endif
 }
 
 void CKartControllerComponentManager::ShouldUpdate(const bool aShouldUpdate)
@@ -76,10 +77,14 @@ const CNavigationSpline& CKartControllerComponentManager::GetNavigationSpline() 
 	return myNavigationSpline;
 }
 
-void CKartControllerComponentManager::Init(Physics::CPhysicsScene* aPhysicsScene)
+void CKartControllerComponentManager::Init()
+{
+	myNavigationSpline.SetDistancesToGoal(myGoalComponentPointer);
+}
+
+void CKartControllerComponentManager::SetPhysiscsScene(Physics::CPhysicsScene* aPhysicsScene)
 {
 	myPhysicsScene = aPhysicsScene;
-
 }
 
 const CU::Vector3f CKartControllerComponentManager::GetClosestSpinesDirection(const CU::Vector3f& aKartPosition)
@@ -139,3 +144,62 @@ const SNavigationPoint* CKartControllerComponentManager::GetNavigationPoint(cons
 	}
 	return nullptr;
 }
+
+#if RENDER_SPLINE == 1
+#include "Engine.h"
+#include "ModelManager.h"
+
+#include "RenderMessages.h"
+#include "Renderer.h"
+
+#include "../Physics/CollisionLayers.h"
+#include "../Physics/PhysicsScene.h"
+void CKartControllerComponentManager::Render()
+{
+	
+
+	CModelManager* modelManager = MODELMGR;
+	CModelManager::ModelId model = MODELMGR->LoadModel("Models/Meshes/M_ColorCube.fbx");
+
+	for(int i = 0; i < myNavigationSpline.GetNumberOfPoints(); ++i)
+	{
+		const SNavigationPoint& point = myNavigationSpline.GetPoint(i);
+
+		SDeferredRenderModelParams params;
+
+		CU::Vector3f pos(point.myPosition.x, 0.f, point.myPosition.y);
+
+		Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(pos, -CU::Vector3f::UnitY, 50, Physics::eGround);
+
+		if(raycastHitData.hit == false)
+		{
+			raycastHitData = myPhysicsScene->Raycast(pos, CU::Vector3f::UnitY, 50, Physics::eGround);
+
+			if (raycastHitData.hit == true)
+			{
+
+				pos.y += raycastHitData.distance;
+			}
+		}
+		else
+		{
+			pos.y -= raycastHitData.distance;
+		}
+
+		params.myTransform.SetPosition(pos);
+		params.myTransformLastFrame = params.myTransform;
+		params.myRenderToDepth = false;
+		
+		SRenderMessage* msg = nullptr;
+
+		SRenderModelInstancedMessage* instancedMsg = new SRenderModelInstancedMessage();
+		instancedMsg->myModelID = model;
+		instancedMsg->myRenderParams = params;
+		msg = instancedMsg;
+
+
+		RENDERER.AddRenderMessage(msg);
+	}
+	
+}
+#endif

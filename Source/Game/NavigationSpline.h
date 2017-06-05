@@ -28,7 +28,7 @@ struct SNavigationPoint
 	CU::Vector2f myPosition;
 	CU::Vector2f myForwardDirection;
 	float myWidth;
-	float myDistanceToGoal2;
+	float myDistanceToGoal;
 };
 
 class CNavigationSpline
