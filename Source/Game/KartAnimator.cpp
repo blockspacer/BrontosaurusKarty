@@ -117,9 +117,10 @@ void CKartAnimator::Update(const float aDeltaTime, const float aForwardVelocity,
 	myWheels[0]->GetParent()->GetLocalTransform().SetEulerRotation(eulerRotation);
 	myWheels[1]->GetParent()->GetLocalTransform().SetEulerRotation(eulerRotation);
 
-	for (int i = 0; i < 4; ++i)// CGameObject* wheelObject : myWheels)
+	float movement = aForwardVelocity * aDeltaTime;
+	for (int i = 0; i < 4; ++i)
 	{
-		myWheels[i]->GetLocalTransform().RotateAroundAxis(i < 2 ? aForwardVelocity * aDeltaTime : -aForwardVelocity * aDeltaTime, CU::Axees::X);
+		myWheels[i]->GetLocalTransform().RotateAroundAxis(i < 2 ? movement : -movement, CU::Axees::X);
 	}
 }
 
