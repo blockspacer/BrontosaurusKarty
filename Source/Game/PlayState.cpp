@@ -493,8 +493,16 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	CGameObject* intermediary = myGameObjectManager->CreateGameObject();
 	intermediary->AddComponent(new Component::CDriftTurner);
 	intermediary->AddComponent(secondPlayerObject);
+	//Create camera object
+	CGameObject* cameraObject = myGameObjectManager->CreateGameObject();
+	CCameraComponent* cameraComponent = new CCameraComponent(aPlayerCount);
+	CComponentManager::GetInstance().RegisterComponent(cameraComponent);
+	cameraComponent->SetCamera(aCamera);
+	cameraObject->AddComponent(cameraComponent);
+	myCameraComponents.Add(cameraComponent);
 	//Create top player object
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
+	playerObject->AddComponent(cameraObject);
 	playerObject->AddComponent(intermediary);
 
 	CAudioSourceComponent* audio = CAudioSourceComponentManager::GetInstance().CreateComponent();
@@ -502,9 +510,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 
 	CU::Matrix44f kartTransformation = CKartSpawnPointManager::GetInstance()->PopSpawnPoint().mySpawnTransformaion;
 	playerObject->SetWorldTransformation(kartTransformation);
-	CCameraComponent* cameraComponent = new CCameraComponent(aPlayerCount);
-	CComponentManager::GetInstance().RegisterComponent(cameraComponent);
-	cameraComponent->SetCamera(aCamera);
+	
 
 	CRespawnerComponent* respawnComponent = myRespawnComponentManager->CreateAndRegisterComponent();
 	playerObject->AddComponent(respawnComponent);
@@ -582,8 +588,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant::eInputDev
 	playerObject->AddComponent(rigidComponent);
 
 
-	playerObject->AddComponent(cameraComponent);
-	myCameraComponents.Add(cameraComponent);
+	
 
 
 	CPollingStation::GetInstance()->AddPlayer(playerObject);

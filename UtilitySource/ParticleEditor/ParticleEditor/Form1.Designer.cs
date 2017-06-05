@@ -36,13 +36,12 @@
             this.File_OpenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.File_OpenQuitToolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.File_QuitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.MainPanel = new System.Windows.Forms.Panel();
             this.StatusStrip = new System.Windows.Forms.StatusStrip();
-            this.SplitContainer = new System.Windows.Forms.SplitContainer();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.SystemComboBox = new System.Windows.Forms.ComboBox();
+            this.CreateSystemButton = new System.Windows.Forms.Button();
             this.MenuStrip.SuspendLayout();
-            this.MainPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.SplitContainer)).BeginInit();
-            this.SplitContainer.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // MenuStrip
@@ -59,9 +58,9 @@
             // 
             this.FileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.File_NewToolStripMenuItem,
+            this.File_OpenToolStripMenuItem,
             this.File_SaveToolStripMenuItem,
             this.File_SaveAsToolStripMenuItem,
-            this.File_OpenToolStripMenuItem,
             this.File_OpenQuitToolStripSeparator,
             this.File_QuitToolStripMenuItem});
             this.FileToolStripMenuItem.Name = "FileToolStripMenuItem";
@@ -91,6 +90,7 @@
             this.File_OpenToolStripMenuItem.Name = "File_OpenToolStripMenuItem";
             this.File_OpenToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.File_OpenToolStripMenuItem.Text = "Open";
+            this.File_OpenToolStripMenuItem.Click += new System.EventHandler(this.File_OpenToolStripMenuItem_Click);
             // 
             // File_OpenQuitToolStripSeparator
             // 
@@ -103,18 +103,6 @@
             this.File_QuitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.File_QuitToolStripMenuItem.Text = "Quit";
             // 
-            // MainPanel
-            // 
-            this.MainPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.MainPanel.Controls.Add(this.SplitContainer);
-            this.MainPanel.Location = new System.Drawing.Point(0, 24);
-            this.MainPanel.Margin = new System.Windows.Forms.Padding(0);
-            this.MainPanel.Name = "MainPanel";
-            this.MainPanel.Size = new System.Drawing.Size(1004, 526);
-            this.MainPanel.TabIndex = 1;
-            // 
             // StatusStrip
             // 
             this.StatusStrip.Location = new System.Drawing.Point(0, 550);
@@ -123,32 +111,39 @@
             this.StatusStrip.TabIndex = 2;
             this.StatusStrip.Text = "statusStrip1";
             // 
-            // SplitContainer
+            // panel1
             // 
-            this.SplitContainer.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.SplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SplitContainer.Location = new System.Drawing.Point(0, 0);
-            this.SplitContainer.Name = "SplitContainer";
+            this.panel1.Controls.Add(this.CreateSystemButton);
+            this.panel1.Controls.Add(this.SystemComboBox);
+            this.panel1.Location = new System.Drawing.Point(12, 27);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(980, 520);
+            this.panel1.TabIndex = 3;
             // 
-            // SplitContainer.Panel1
+            // SystemComboBox
             // 
-            this.SplitContainer.Panel1.AutoScroll = true;
-            this.SplitContainer.Panel1.AutoScrollMinSize = new System.Drawing.Size(50, 0);
+            this.SystemComboBox.FormattingEnabled = true;
+            this.SystemComboBox.Location = new System.Drawing.Point(3, 3);
+            this.SystemComboBox.Name = "SystemComboBox";
+            this.SystemComboBox.Size = new System.Drawing.Size(202, 21);
+            this.SystemComboBox.TabIndex = 0;
             // 
-            // SplitContainer.Panel2
+            // CreateSystemButton
             // 
-            this.SplitContainer.Panel2.AutoScrollMinSize = new System.Drawing.Size(50, 0);
-            this.SplitContainer.Size = new System.Drawing.Size(1004, 526);
-            this.SplitContainer.SplitterDistance = 720;
-            this.SplitContainer.TabIndex = 0;
+            this.CreateSystemButton.Location = new System.Drawing.Point(211, 1);
+            this.CreateSystemButton.Name = "CreateSystemButton";
+            this.CreateSystemButton.Size = new System.Drawing.Size(75, 23);
+            this.CreateSystemButton.TabIndex = 1;
+            this.CreateSystemButton.Text = "Create";
+            this.CreateSystemButton.UseVisualStyleBackColor = true;
             // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1004, 572);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.StatusStrip);
-            this.Controls.Add(this.MainPanel);
             this.Controls.Add(this.MenuStrip);
             this.MainMenuStrip = this.MenuStrip;
             this.MinimumSize = new System.Drawing.Size(100, 100);
@@ -156,9 +151,7 @@
             this.Text = "Particle Editor";
             this.MenuStrip.ResumeLayout(false);
             this.MenuStrip.PerformLayout();
-            this.MainPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.SplitContainer)).EndInit();
-            this.SplitContainer.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -174,9 +167,10 @@
         private System.Windows.Forms.ToolStripMenuItem File_OpenToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator File_OpenQuitToolStripSeparator;
         private System.Windows.Forms.ToolStripMenuItem File_QuitToolStripMenuItem;
-        private System.Windows.Forms.Panel MainPanel;
         private System.Windows.Forms.StatusStrip StatusStrip;
-        private System.Windows.Forms.SplitContainer SplitContainer;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Button CreateSystemButton;
+        private System.Windows.Forms.ComboBox SystemComboBox;
     }
 }
 
