@@ -242,16 +242,19 @@ void CHUD::Render()
 
 	if (myScoreboardElement.myShouldRender == true)
 	{
-		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"scoreBoard", myScoreboardElement.myGUIElement, myScoreboardElement.myPixelSize);
+		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"scoreboard", myScoreboardElement.myGUIElement, myScoreboardElement.myPixelSize);
 		RENDERER.AddRenderMessage(guiElement);
 
-		SetGUIToEmilBlend(L"scoreBoard");
+		SetGUIToEmilBlend(L"scoreboard");
 		{
-			float offset = 0.12f;
+			float yOffset = 0.12f;
 
 			CU::Vector2f initialBoardPos = myScoreboardElement.mySprite->GetPosition();
 			CU::Vector2f initialPortraitPos = myPortraitSpriteYoshi->GetPosition();
+			CU::Vector2f initialPlacementPos = myPlacementSprites[0]->GetPosition();
+
 			CSpriteInstance* characterPortrait = nullptr;
+			CSpriteInstance* placementSprite = nullptr;
 
 			for (int i = 0; i < 8; ++i)
 			{
@@ -268,23 +271,39 @@ void CHUD::Render()
 					break;
 				}
 
+				placementSprite = myPlacementSprites[i];
+				
 
 				CU::Vector2f lastBoardPos = myScoreboardElement.mySprite->GetPosition();
-				CU::Vector2f newBoardPos = { lastBoardPos.x, lastBoardPos.y + offset };
+				CU::Vector2f newBoardPos = { lastBoardPos.x, lastBoardPos.y + yOffset };
 
 				CU::Vector2f lastPortPos = myPortraitSpriteYoshi->GetPosition();
-				CU::Vector2f newPortPos = { lastPortPos.x, lastPortPos.y + offset };
+				CU::Vector2f newPortPos = { lastPortPos.x, lastPortPos.y + yOffset };
 
-				myScoreboardElement.mySprite->RenderToGUI(L"scoreBoard");
+				CU::Vector2f lastPlacePos = { 0.015f, lastPortPos.y };
+				CU::Vector2f newPlacePos = { lastPlacePos.x, lastPlacePos.y + yOffset };
+
+				myScoreboardElement.mySprite->RenderToGUI(L"scoreboard");
 				myScoreboardElement.mySprite->SetPosition(newBoardPos);
 
-				characterPortrait->RenderToGUI(L"scoreBoard");
+				characterPortrait->RenderToGUI(L"scoreboard");
 				characterPortrait->SetPosition(newPortPos);
+
+				placementSprite->SetPosition(lastPlacePos);
+				placementSprite->RenderToGUI(L"scoreboard");
+
 			}
 			myScoreboardElement.mySprite->SetPosition(initialBoardPos);
 			characterPortrait->SetPosition(initialPortraitPos);
+
+			for (int i = 0; i < 8; ++i)
+			{
+				myPlacementSprites[i]->SetPosition(initialPlacementPos);
+			}
+			placementSprite = myPlacementSprites[0];
+
 		}
-		SetGUIToEndBlend(L"scoreBoard");
+		SetGUIToEndBlend(L"scoreboard");
 	}
 }
 
@@ -398,6 +417,21 @@ void CHUD::LoadScoreboard()
 	myPortraitSpriteMario = new CSpriteInstance(portraitMarioSpritePath.c_str(), { 0.075f, 0.075f }, { 0.1f, 0.012f });
 	
 	myScoreboardElement.mySprite = myScoreBracketBGSprite;
+
+	const std::string placement1SpritePath = jsonSprites.at("placement1").GetString();
+	const std::string placement2SpritePath = jsonSprites.at("placement2").GetString();
+	const std::string placement3SpritePath = jsonSprites.at("placement3").GetString();
+	const std::string placement4SpritePath = jsonSprites.at("placement4").GetString();
+
+	myPlacementSprites[0] = new CSpriteInstance(placement1SpritePath.c_str(), { 0.075f,0.075f }, { 0.015f, 0.012f });
+	myPlacementSprites[1] = new CSpriteInstance(placement2SpritePath.c_str(), { 0.075f,0.075f }, { 0.015f, 0.012f });
+	myPlacementSprites[2] = new CSpriteInstance(placement3SpritePath.c_str(), { 0.075f,0.075f }, { 0.015f, 0.012f });
+	myPlacementSprites[3] = new CSpriteInstance(placement4SpritePath.c_str(), { 0.075f,0.075f }, { 0.015f, 0.012f });
+	myPlacementSprites[4] = myPlacementSprites[3];
+	myPlacementSprites[5] = myPlacementSprites[3];
+	myPlacementSprites[6] = myPlacementSprites[3];
+	myPlacementSprites[7] = myPlacementSprites[3];
+
 
 	myScoreboardElement.myShouldRender = false;
 
