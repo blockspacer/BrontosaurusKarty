@@ -113,6 +113,8 @@ void CHUD::LoadHUD()
 	LoadPlacement(jsonPlayerObject.at("placement"));
 	LoadFinishText(jsonPlayerObject.at("finishText"));
 	LoadItemGui(jsonPlayerObject.at("itemGui"));
+
+	LoadScoreboard();
 }
 
 void CHUD::Update()
@@ -228,28 +230,74 @@ void CHUD::Render()
 		{
 			myItemGuiElement.mySprite = myNullSprite;
 		}
-	}
-	
-	SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"itemGui" + myPlayerID, myItemGuiElement.myGUIElement, myItemGuiElement.myPixelSize);
 
-	RENDERER.AddRenderMessage(guiElement);
-	SetGUIToEmilBlend(L"itemGui" + myPlayerID);
-	myItemGuiElement.mySprite->RenderToGUI(L"itemGui" + myPlayerID);
-	SetGUIToEndBlend(L"itemGui" + myPlayerID);
+		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"itemGui" + myPlayerID, myItemGuiElement.myGUIElement, myItemGuiElement.myPixelSize);
+
+		RENDERER.AddRenderMessage(guiElement);
+		SetGUIToEmilBlend(L"itemGui" + myPlayerID);
+		myItemGuiElement.mySprite->RenderToGUI(L"itemGui" + myPlayerID);
+		SetGUIToEndBlend(L"itemGui" + myPlayerID);
+	}
+
+
+	if (myScoreboardElement.myShouldRender == true)
+	{
+		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"scoreBoard", myScoreboardElement.myGUIElement, myScoreboardElement.myPixelSize);
+		RENDERER.AddRenderMessage(guiElement);
+
+		SetGUIToEmilBlend(L"scoreBoard");
+		{
+			float offset = 0.12f;
+
+			CU::Vector2f initialBoardPos = myScoreboardElement.mySprite->GetPosition();
+			CU::Vector2f initialPortraitPos = myPortraitSpriteYoshi->GetPosition();
+			CSpriteInstance* characterPortrait = nullptr;
+
+			for (int i = 0; i < 8; ++i)
+			{
+				switch (myWinners[i].character)
+				{
+				case eCharacter::eYoshi:
+					characterPortrait = myPortraitSpriteYoshi;
+					break;
+				case eCharacter::eMario:
+					characterPortrait = myPortraitSpriteMario;
+					break;
+				default:
+					characterPortrait = myPortraitSpriteYoshi;
+					break;
+				}
+
+
+				CU::Vector2f lastBoardPos = myScoreboardElement.mySprite->GetPosition();
+				CU::Vector2f newBoardPos = { lastBoardPos.x, lastBoardPos.y + offset };
+
+				CU::Vector2f lastPortPos = myPortraitSpriteYoshi->GetPosition();
+				CU::Vector2f newPortPos = { lastPortPos.x, lastPortPos.y + offset };
+
+				myScoreboardElement.mySprite->RenderToGUI(L"scoreBoard");
+				myScoreboardElement.mySprite->SetPosition(newBoardPos);
+
+				characterPortrait->RenderToGUI(L"scoreBoard");
+				characterPortrait->SetPosition(newPortPos);
+			}
+			myScoreboardElement.mySprite->SetPosition(initialBoardPos);
+			characterPortrait->SetPosition(initialPortraitPos);
+		}
+		SetGUIToEndBlend(L"scoreBoard");
+	}
 }
 
-SHUDElement CHUD::LoadHUDElement(const CU::CJsonValue& aJsonValue, eGuiType aGuiType)
+SHUDElement CHUD::LoadHUDElement(const CU::CJsonValue& aJsonValue)
 {
 	SHUDElement hudElement;
 
-	hudElement.myGUIElement.myOrigin = { 0.5f,0.5f }; // { 0.5f, 0.5f };
+	hudElement.myGUIElement.myOrigin = { 0.f,0.f }; // { 0.5f, 0.5f };
 	hudElement.myGUIElement.myAnchor[(char)eAnchors::eTop] = true;
 	hudElement.myGUIElement.myAnchor[(char)eAnchors::eLeft] = true;
 
 	
 	LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(), CU::Vector2f());
-	
-	
 
 	return hudElement;
 }
@@ -278,7 +326,7 @@ void CHUD::LoadLapCounter(const CU::CJsonValue& aJsonValue)
 {
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
-	myLapCounterElement = LoadHUDElement(aJsonValue, eGuiType::eLapCounter);
+	myLapCounterElement = LoadHUDElement(aJsonValue);
 	myLapCounterElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
 	myLapCounterElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 0.8f, 0.35f });
@@ -289,8 +337,8 @@ void CHUD::LoadPlacement(const CU::CJsonValue& aJsonValue)
 {
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
-	myPlacementElement = LoadHUDElement(aJsonValue, eGuiType::ePlacement);
-	myPlacementElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
+	myPlacementElement = LoadHUDElement(aJsonValue);
+//	myPlacementElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
 	CU::Vector2f spriteSize(1.0f, 1.0f);
 	myPlacementElement.mySprite = new CSpriteInstance(spritePath.c_str(), spriteSize);
@@ -302,20 +350,19 @@ void CHUD::LoadFinishText(const CU::CJsonValue& aJsonValue)
 {
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
-	myFinishTextElement = LoadHUDElement(aJsonValue, eGuiType::eFinish);
-	myFinishTextElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
+	myFinishTextElement = LoadHUDElement(aJsonValue);
+//	myFinishTextElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
 	myFinishTextElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 1.f,1.f });
 	/*myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));*/
-
 }
 
 void CHUD::LoadItemGui(const CU::CJsonValue& aJsonValue)
 {
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
-	myItemGuiElement = LoadHUDElement(aJsonValue, eGuiType::eItem);
-	myItemGuiElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
+	myItemGuiElement = LoadHUDElement(aJsonValue);
+	//myItemGuiElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
 	float itemGuiWidth = 1.0f;
 	float itemGuiHeight = 1.0f;
@@ -330,6 +377,32 @@ void CHUD::LoadItemGui(const CU::CJsonValue& aJsonValue)
 	myItemGuiElement.mySprite = myNullSprite;
 	/*myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));*/
 
+}
+
+void CHUD::LoadScoreboard()
+{
+	CU::CJsonValue scoreboard;
+	scoreboard.Parse("Json/HUD/HUDScoreboard.json");
+
+	CU::CJsonValue jsonElementData = scoreboard.at("elementData");
+	CU::CJsonValue jsonSprites = scoreboard.at("sprites");
+
+	myScoreboardElement = LoadHUDElement(jsonElementData);
+
+	const std::string bracketSpritePath = jsonSprites.at("bracket").GetString();
+	const std::string portraitYoshiSpritePath = jsonSprites.at("portraitYoshi").GetString();
+	const std::string portraitMarioSpritePath = jsonSprites.at("portraitMario").GetString();
+
+	myScoreBracketBGSprite = new CSpriteInstance(bracketSpritePath.c_str(), { 1.f,0.1f });
+	myPortraitSpriteYoshi = new CSpriteInstance(portraitYoshiSpritePath.c_str(), { 0.075f, 0.075f }, { 0.1f, 0.012f });
+	myPortraitSpriteMario = new CSpriteInstance(portraitMarioSpritePath.c_str(), { 0.075f, 0.075f }, { 0.1f, 0.012f });
+	
+	myScoreboardElement.mySprite = myScoreBracketBGSprite;
+
+	myScoreboardElement.myShouldRender = false;
+
+
+	// Rendera ut yoshi's på varje bracket.
 }
 
 void CHUD::SetGUIToEmilBlend(std::wstring aStr)
@@ -365,7 +438,6 @@ void CHUD::AdjustPosBasedOnNrOfPlayers(CU::Vector2f aTopLeft, CU::Vector2f aBotR
 void CHUD::PresentScoreboard()
 {
 	DisableRedundantGUI();
-
 	myScoreboardElement.myShouldRender = true;
 }
 
@@ -397,7 +469,7 @@ void CHUD::DisableRedundantGUI()
 // When the race is finished for all players.
 eMessageReturn CHUD::DoEvent(const CRaceOverMessage& aMessage)
 {
-	aMessage.GetWinnerPlacements();
+	myWinners = aMessage.GetWinners();
 	// Present scoreboard. (over the entire screen.)
 	PresentScoreboard();
 	return eMessageReturn::eContinue;
