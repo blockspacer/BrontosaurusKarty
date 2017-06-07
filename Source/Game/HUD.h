@@ -44,7 +44,7 @@ private:
 	void LoadItemGui(const CU::CJsonValue& aJsonValue);
 	void LoadScoreboard();
 
-	void SetGUIToEmilBlend(std::wstring aStr);
+	void SetGUIToAlphaBlend(std::wstring aStr);
 	void SetGUIToEndBlend(std::wstring aStr);
 
 	void AdjustPosBasedOnNrOfPlayers(CU::Vector2f aTopLeft, CU::Vector2f aBotRight);

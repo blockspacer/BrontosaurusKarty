@@ -43,6 +43,7 @@ class CLapTrackerComponentManager;
 class CHUD;
 
 struct SGUIElement;
+struct  SHUDElement;
 
 class CPlayState : public State , public Postmaster::ISubscriber
 {
@@ -84,6 +85,8 @@ private:
 	void InitiateRace();
 	void RenderCountdown();
 	void BroadcastRaceStart();
+	void LoadPlacementLineGUI();
+	void RenderPlacementLine();
 
 private:
 	Physics::CPhysicsScene* myPhysicsScene;
@@ -111,12 +114,14 @@ private:
 	CU::GrowingArray<CGameObject*> myKartObjects;
 
 	CU::GrowingArray<CHUD*> myHUDs;
+	CU::GrowingArray<SHUDElement*> myPlacementLinesGUIElement;
 
 	//CU::TimerManager* myTimerManager;
 	TimerHandle myCountdownTimerHandle;
 
 	CSpriteInstance* myCountdownSprite;
 	SGUIElement* myCountdownElement;
+	float myPlacementLineScreenSpaceWidth;
 	bool myCountdownShouldRender;
 	bool myIsCountingDown;
 

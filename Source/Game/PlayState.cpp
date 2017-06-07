@@ -91,6 +91,7 @@
 #include "HazardComponent.h"
 #include "AnimationEventFactory.h"
 #include "..\CommonUtilities\JsonValue.h"
+#include "CharacterInfoComponent.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -114,6 +115,8 @@ CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	myPlayerCount = 1;
 	myPlayers.Add(SParticipant());
 	myPlayers[0].myInputDevice = SParticipant::eInputDevice::eKeyboard;
+	myPlacementLinesGUIElement.Init(8);
+	myPlacementLineScreenSpaceWidth = 0.0f;
 }
 
 CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU::GrowingArray<SParticipant> aPlayers)
@@ -152,6 +155,9 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 		myPlayers.Add(SParticipant());
 		myPlayers[0].myInputDevice = SParticipant::eInputDevice::eController1;
 	}
+
+	myPlacementLinesGUIElement.Init(8);
+	myPlacementLineScreenSpaceWidth = 0.0f;
 
 	if (CAnimationEventFactory::GetInstance() == nullptr)
 	{
@@ -294,6 +300,8 @@ void CPlayState::Load()
 		myHUDs[i]->LoadHUD();
 	}
 
+	LoadPlacementLineGUI();
+
 	myCountdownSprite->Render();
 
 	///////////
@@ -386,6 +394,8 @@ void CPlayState::Render()
 	{
 		myHUDs[i]->Render();
 	}
+
+	RenderPlacementLine();
 }
 
 void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
@@ -593,7 +603,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	//playerObject->AddComponent(playerColliderComponent);
 	playerObject->AddComponent(playerTriggerColliderComponent);
 	playerObject->AddComponent(rigidComponent);
-
+	playerObject->AddComponent(new CCharacterInfoComponent(aParticipant.mySelectedCharacter, false));
 
 	
 
@@ -679,7 +689,7 @@ void CPlayState::CreateAI()
 	playerObject->AddComponent(playerColliderComponent);
 	playerObject->AddComponent(playerTriggerColliderComponent);
 	playerObject->AddComponent(rigidComponent);
-
+	playerObject->AddComponent(new CCharacterInfoComponent(SParticipant::eCharacter::eVanBrat, true));
 
 	myKartObjects.Add(playerObject);
 }
@@ -776,4 +786,81 @@ void CPlayState::RenderCountdown()
 	RENDERER.AddRenderMessage(guiChangeState);
 
 	myCountdownSprite->RenderToGUI(L"countdown");
+}
+
+void CPlayState::LoadPlacementLineGUI()
+{
+	CU::CJsonValue jsonDoc;
+	if (myPlayers.Size() == 1)
+	{
+		jsonDoc.Parse("Json/HUD/HUD1Player.json");
+	}
+	else if (myPlayers.Size() == 2)
+	{
+		jsonDoc.Parse("Json/HUD/HUD2Player.json");
+	}
+	else if (myPlayers.Size() == 3)
+	{
+		jsonDoc.Parse("Json/HUD/HUD3Player.json");
+	}
+	else if (myPlayers.Size() == 4)
+	{
+		jsonDoc.Parse("Json/HUD/HUD4Player.json");
+	}
+
+	CU::CJsonValue jsonPlacementLine = jsonDoc.at("placementLine");
+	for(unsigned int i = 0; i < myKartObjects.Size(); i++)
+	{
+		SHUDElement* hudElement = new SHUDElement();
+
+		hudElement->myGUIElement.myOrigin = { 0.f,0.f }; // { 0.5f, 0.5f };
+		hudElement->myGUIElement.myAnchor[(char)eAnchors::eTop] = true;
+		hudElement->myGUIElement.myAnchor[(char)eAnchors::eLeft] = true;
+
+		hudElement->myGUIElement.myScreenRect = CU::Vector4f(jsonPlacementLine.at("position").GetVector2f());
+
+		const CU::CJsonValue sizeObject = jsonPlacementLine.at("size");
+		hudElement->myPixelSize.x = sizeObject.at("pixelWidth").GetUInt();
+		hudElement->myPixelSize.y = sizeObject.at("pixelHeight").GetUInt();
+
+		float rectWidth = sizeObject.at("screenSpaceWidth").GetFloat();
+		float rectHeight = sizeObject.at("screenSpaceHeight").GetFloat();
+		myPlacementLineScreenSpaceWidth = rectWidth;
+
+		float topLeftX = hudElement->myGUIElement.myScreenRect.x;
+		float topLeftY = hudElement->myGUIElement.myScreenRect.y;
+
+		hudElement->myGUIElement.myScreenRect.z = rectWidth + topLeftX;
+		hudElement->myGUIElement.myScreenRect.w = rectHeight + topLeftY;
+		hudElement->mySprite = new CSpriteInstance("Sprites/GUI/Scoreboard/characterPortraitYoshi.dds", { 1.0f, 1.0f });
+		myPlacementLinesGUIElement.Add(hudElement);
+	}
+}
+
+void CPlayState::RenderPlacementLine()
+{
+	for(unsigned int i = 0; i < myPlacementLinesGUIElement.Size(); i++)
+	{
+		SComponentQuestionData lapTraversedPercentageQuestionData;
+		if (myKartObjects[i]->AskComponents(eComponentQuestionType::eGetLapTraversedPercentage, lapTraversedPercentageQuestionData) == true)
+		{
+			float lapTraversedPlacement = lapTraversedPercentageQuestionData.myFloat;
+			myPlacementLinesGUIElement[i]->myGUIElement.myScreenRect.x = lapTraversedPlacement;
+			myPlacementLinesGUIElement[i]->myGUIElement.myScreenRect.z = myPlacementLineScreenSpaceWidth + lapTraversedPlacement;
+		}
+
+		SCreateOrClearGuiElement* createOrClear = new SCreateOrClearGuiElement(L"placementLine" + i, myPlacementLinesGUIElement[i]->myGUIElement, CU::Vector2ui(WINDOW_SIZE.x, WINDOW_SIZE.y));
+		RENDERER.AddRenderMessage(createOrClear);
+
+		SChangeStatesMessage* const changeStatesMessage = new SChangeStatesMessage();
+		changeStatesMessage->myBlendState = eBlendState::eAddBlend;
+		changeStatesMessage->myDepthStencilState = eDepthStencilState::eDisableDepth;
+		changeStatesMessage->myRasterizerState = eRasterizerState::eNoCulling;
+		changeStatesMessage->mySamplerState = eSamplerState::eClamp;
+
+		SRenderToGUI* const guiChangeState = new SRenderToGUI(L"placementLine" + i, changeStatesMessage);
+		RENDERER.AddRenderMessage(guiChangeState);
+
+		myPlacementLinesGUIElement[i]->mySprite->RenderToGUI(L"placementLine" + i);
+	}
 }

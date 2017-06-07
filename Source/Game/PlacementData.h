@@ -1,15 +1,10 @@
 #pragma once
-
-enum class eCharacter
-{
-	eYoshi,
-	eMario
-};
+#include "SParticipant.h"
 
 struct SPlacementData
 {
 	unsigned char placement;
-	eCharacter character;
+	SParticipant::eCharacter character;
 	float time;
 	bool isPlayer;
 };

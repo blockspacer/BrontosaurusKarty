@@ -309,8 +309,58 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 				participant.myInputDevice = SParticipant::eInputDevice::eKeyboard;
 			}
 			break;
+		case CU::eKeys::UP:
+		{
+			bool found = false;
+			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+			{
+				if (myPlayers[i].myInputDevice == SParticipant::eInputDevice::eKeyboard)
+				{
+					myPlayers[i].mySelectedCharacter = SParticipant::eCharacter::eVanBrat;
+				}
+			}
+		}
+		break;
+		case CU::eKeys::RIGHT:
+		{
+			bool found = false;
+			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+			{
+				if (myPlayers[i].myInputDevice == SParticipant::eInputDevice::eKeyboard)
+				{
+					myPlayers[i].mySelectedCharacter = SParticipant::eCharacter::eVanBrat2;
+				}
+			}
+		}
+		break;
+		case CU::eKeys::DOWN:
+		{
+			bool found = false;
+			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+			{
+				if (myPlayers[i].myInputDevice == SParticipant::eInputDevice::eKeyboard)
+				{
+					myPlayers[i].mySelectedCharacter = SParticipant::eCharacter::eGrandMa;
+				}
+			}
+		}
+		break;
+		case CU::eKeys::LEFT:
+		{
+			bool found = false;
+			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+			{
+				if (myPlayers[i].myInputDevice == SParticipant::eInputDevice::eKeyboard)
+				{
+					myPlayers[i].mySelectedCharacter = SParticipant::eCharacter::eGrandMa2;
+				}
+			}
+		}
 		case CU::eKeys::RETURN:
-			//Continue to map selection or game
+			if (myPlayers.Size() >= 1)
+			{
+				myStateStack.SwapState(new CLoadState(myStateStack, 0, myPlayers));
+			}
 				break;
 		default:
 			break;

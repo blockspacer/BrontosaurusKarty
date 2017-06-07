@@ -19,5 +19,6 @@ private:
 	int myParticleHandle;
 
 	bool myFlippedVisibility;
+	bool myIsInited;
 };
 
