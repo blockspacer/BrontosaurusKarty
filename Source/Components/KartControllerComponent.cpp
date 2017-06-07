@@ -32,6 +32,7 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	, myTerrainModifier(1.f)
 	, myIsOnGroundLast(false)
 	, myLastGroundComponent(nullptr)
+	, myLookingBack(false)
 {
 	CU::CJsonValue levelsFile;
 	std::string errorString = levelsFile.Parse("Json/KartStats.json");
@@ -276,6 +277,10 @@ bool CKartControllerComponent::Drift()
 		GetParent()->NotifyComponents(eComponentMessageType::eDoDriftBobbing, messageData);
 	}
 
+	SComponentMessageData data;
+	data.myString = "PlayDrift";
+	GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
+
 	return true;
 }
 
@@ -284,6 +289,10 @@ void CKartControllerComponent::StopDrifting(const bool aShouldGetBoost)
 	myDriftSetupTimer = myDriftSetupTime + 1.0f;
 	GetParent()->NotifyComponents(eComponentMessageType::eCancelDriftBobbing, SComponentMessageData());
 	CDrifter::eDriftBoost boost = myDrifter->StopDrifting();
+
+	SComponentMessageData data;
+	data.myString = "StopDrift";
+	GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
 
 	myAnimator->OnStopDrifting();
 
@@ -555,6 +564,24 @@ void CKartControllerComponent::CountDownUpdate(const float aDeltaTime)
 const CNavigationSpline & CKartControllerComponent::GetNavigationSpline()
 {
 	return myManager->GetNavigationSpline();
+}
+
+void CKartControllerComponent::LookBack(bool aLookBack)
+{
+	if(myLookingBack != aLookBack)
+	{
+		myLookingBack = aLookBack;;
+
+		SComponentMessageData data;
+
+		CU::Matrix33f rotation;
+		data.myVoidPointer = &rotation;
+		if(myLookingBack == true)
+		{
+			rotation *= CU::Matrix33f::CreateRotateAroundY(TAU / 2.f);
+		}
+		GetParent()->NotifyComponents(eComponentMessageType::eSetCameraRotation, data);
+	}
 }
 
 void CKartControllerComponent::Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData)

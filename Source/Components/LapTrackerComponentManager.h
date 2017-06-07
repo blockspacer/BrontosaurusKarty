@@ -68,5 +68,6 @@ private:
 	float myUpdatePlacementCountdown;
 
 	bool myStartedWithOnlyOnePlayer;
+	bool myIsRaceOver;
 };
 

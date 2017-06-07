@@ -138,6 +138,7 @@ void CXboxController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 	case CU::GAMEPAD::RIGHT_SHOULDER:
 		myControllerComponent.Drift();
 		break;
+		
 	case CU::GAMEPAD::LEFT_THUMB:
 	{
 		/*SComponentMessageData boostMessageData;
@@ -149,7 +150,8 @@ void CXboxController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("BoostPad"));
 		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);*/
 
-		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eUseItem, SComponentMessageData());
+		//myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eUseItem, SComponentMessageData());
+		myControllerComponent.LookBack(true);
 		break;
 	}
 }
@@ -178,6 +180,8 @@ void CXboxController::GamePadReleasedKey(const CU::SInputMessage& aInputMessage)
 	case CU::GAMEPAD::RIGHT_SHOULDER:
 		myControllerComponent.StopDrifting(true);
 		break;
+	case CU::GAMEPAD::LEFT_SHOULDER:
+		myControllerComponent.LookBack(false);
 		break;
 	}
 }

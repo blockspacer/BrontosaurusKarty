@@ -91,6 +91,7 @@ enum class eComponentMessageType
 	eReInitBlueShell,
 	ePassedASpline,
 	eAITakeOver,
+	eSetCameraRotation,
 	eLength,
 };
 
