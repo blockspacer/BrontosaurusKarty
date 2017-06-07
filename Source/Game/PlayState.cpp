@@ -91,6 +91,7 @@
 #include "HazardComponent.h"
 #include "AnimationEventFactory.h"
 #include "..\CommonUtilities\JsonValue.h"
+#include "CharacterInfoComponent.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -586,7 +587,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	//playerObject->AddComponent(playerColliderComponent);
 	playerObject->AddComponent(playerTriggerColliderComponent);
 	playerObject->AddComponent(rigidComponent);
-
+	playerObject->AddComponent(new CCharacterInfoComponent(aParticipant.mySelectedCharacter, false));
 
 	playerObject->AddComponent(cameraComponent);
 	myCameraComponents.Add(cameraComponent);
@@ -673,7 +674,7 @@ void CPlayState::CreateAI()
 	playerObject->AddComponent(playerColliderComponent);
 	playerObject->AddComponent(playerTriggerColliderComponent);
 	playerObject->AddComponent(rigidComponent);
-
+	playerObject->AddComponent(new CCharacterInfoComponent(SParticipant::eCharacter::eVanBrat, true));
 
 	myKartObjects.Add(playerObject);
 }
