@@ -357,7 +357,9 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 			}
 		}
 		case CU::eKeys::RETURN:
-			//Continue to map selection or game
+			if (myPlayers.Size() >= 1)
+			{
+				myStateStack.SwapState(new CLoadState(myStateStack, 0, myPlayers));
 				break;
 		default:
 			break;
