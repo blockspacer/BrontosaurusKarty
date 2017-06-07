@@ -17,7 +17,8 @@ bool CCharacterInfoComponent::Answer(const eComponentQuestionType aQuestionType,
 	if (aQuestionType == eComponentQuestionType::eGetCharacterInfo)
 	{
 		aQuestionData.myCharacterInfo = &myCharacterInfo;
+		return true;
 	}
 
-	return true;
+	return false;
 }
