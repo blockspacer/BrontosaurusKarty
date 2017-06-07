@@ -17,6 +17,7 @@ CLapTrackerComponentManager::CLapTrackerComponentManager()
 	myWinnerPlacements.Init(16);
 	myUpdatePlacementCountdown = 0.0f;
 	myStartedWithOnlyOnePlayer = false;
+	myIsRaceOver = false;
 }
 
 
@@ -146,23 +147,26 @@ CU::GrowingArray<CGameObject*>& CLapTrackerComponentManager::GetRacerPlacements(
 
 eMessageReturn CLapTrackerComponentManager::DoEvent(const CPlayerFinishedMessage& aPlayerFinishedMessage)
 {
-	for (unsigned int i = 0; i < myComponents.Size(); i++)
+	if(myIsRaceOver == false)
 	{
-		if(myComponents[i]->GetParent() == aPlayerFinishedMessage.GetGameObject())
+		for (unsigned int i = 0; i < myComponents.Size(); i++)
 		{
-			myWinnerPlacements.Add((myComponents[i]->GetParent()));
+			if (myComponents[i]->GetParent() == aPlayerFinishedMessage.GetGameObject())
+			{
+				myWinnerPlacements.Add((myComponents[i]->GetParent()));
+			}
 		}
-	}
 
-	if(HaveAllPlayersFinished() == true)
-	{
-		SendRaceOverMessage();
+		if (HaveAllPlayersFinished() == true)
+		{
+			SendRaceOverMessage();
+		}
+		else if (myComponents.Size() <= 1 && myStartedWithOnlyOnePlayer == false)
+		{
+			SendRaceOverMessage();
+		}
+		
 	}
-	else if(myComponents.Size() <= 1 && myStartedWithOnlyOnePlayer == false)
-	{
-		SendRaceOverMessage();
-	}
-
 	return eMessageReturn::eContinue;
 }
 
@@ -223,6 +227,7 @@ void CLapTrackerComponentManager::SendRaceOverMessage()
 {
 	AddEveryoneToVictoryList();
 	Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CRaceOverMessage(myPlacementData));
+	myIsRaceOver = true;
 }
 
 unsigned char CLapTrackerComponentManager::GetSpecificRacerPlacement(CGameObject* aRacer)
