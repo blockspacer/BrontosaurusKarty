@@ -132,6 +132,7 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
 	, myCountdownShouldRender(false)
+	,myIsCountingDown(true)
 {
 	if (aPlayers.Size() > 0)
 	{
