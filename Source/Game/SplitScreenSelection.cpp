@@ -360,6 +360,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 			if (myPlayers.Size() >= 1)
 			{
 				myStateStack.SwapState(new CLoadState(myStateStack, 0, myPlayers));
+			}
 				break;
 		default:
 			break;
