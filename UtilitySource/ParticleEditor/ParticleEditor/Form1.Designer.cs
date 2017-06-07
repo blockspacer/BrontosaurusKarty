@@ -40,8 +40,10 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.SystemComboBox = new System.Windows.Forms.ComboBox();
             this.CreateSystemButton = new System.Windows.Forms.Button();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.MenuStrip.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // MenuStrip
@@ -113,8 +115,7 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.CreateSystemButton);
-            this.panel1.Controls.Add(this.SystemComboBox);
+            this.panel1.Controls.Add(this.panel2);
             this.panel1.Location = new System.Drawing.Point(12, 27);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(980, 520);
@@ -122,6 +123,7 @@
             // 
             // SystemComboBox
             // 
+            this.SystemComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.SystemComboBox.FormattingEnabled = true;
             this.SystemComboBox.Location = new System.Drawing.Point(3, 3);
             this.SystemComboBox.Name = "SystemComboBox";
@@ -130,12 +132,23 @@
             // 
             // CreateSystemButton
             // 
-            this.CreateSystemButton.Location = new System.Drawing.Point(211, 1);
+            this.CreateSystemButton.Location = new System.Drawing.Point(211, 3);
             this.CreateSystemButton.Name = "CreateSystemButton";
             this.CreateSystemButton.Size = new System.Drawing.Size(75, 23);
             this.CreateSystemButton.TabIndex = 1;
             this.CreateSystemButton.Text = "Create";
             this.CreateSystemButton.UseVisualStyleBackColor = true;
+            // 
+            // panel2
+            // 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.panel2.Controls.Add(this.SystemComboBox);
+            this.panel2.Controls.Add(this.CreateSystemButton);
+            this.panel2.Location = new System.Drawing.Point(3, 3);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(290, 514);
+            this.panel2.TabIndex = 2;
             // 
             // MainWindow
             // 
@@ -152,6 +165,7 @@
             this.MenuStrip.ResumeLayout(false);
             this.MenuStrip.PerformLayout();
             this.panel1.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -171,6 +185,7 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button CreateSystemButton;
         private System.Windows.Forms.ComboBox SystemComboBox;
+        private System.Windows.Forms.Panel panel2;
     }
 }
 
