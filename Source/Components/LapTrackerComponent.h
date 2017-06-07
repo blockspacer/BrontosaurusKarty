@@ -14,6 +14,7 @@ public:
 	inline const unsigned short GetPlacementValue() const;
 	void Init();
 	const float GetTotalTravelledDistance();
+	const float GetLapDistanceTravelledPercentage();
 private:
 	const float GetDistanceToNextSpline();
 private:
