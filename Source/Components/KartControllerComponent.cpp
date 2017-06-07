@@ -278,6 +278,10 @@ bool CKartControllerComponent::Drift()
 		GetParent()->NotifyComponents(eComponentMessageType::eDoDriftBobbing, messageData);
 	}
 
+	SComponentMessageData data;
+	data.myString = "PlayDrift";
+	GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
+
 	return true;
 }
 
@@ -286,6 +290,10 @@ void CKartControllerComponent::StopDrifting(const bool aShouldGetBoost)
 	myDriftSetupTimer = myDriftSetupTime + 1.0f;
 	GetParent()->NotifyComponents(eComponentMessageType::eCancelDriftBobbing, SComponentMessageData());
 	CDrifter::eDriftBoost boost = myDrifter->StopDrifting();
+
+	SComponentMessageData data;
+	data.myString = "StopDrift";
+	GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
 
 	myAnimator->OnStopDrifting();
 
