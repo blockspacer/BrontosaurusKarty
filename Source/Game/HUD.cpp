@@ -22,6 +22,8 @@
 #include "..\ThreadedPostmaster\PlayerFinishedMessage.h"
 #include "..\ThreadedPostmaster\RaceStartedMessage.h"
 
+#include "TextInstance.h"
+
 
 CHUD::CHUD(unsigned char aPlayerID, unsigned short aAmountOfPlayers)
 {
@@ -141,7 +143,7 @@ void CHUD::Render()
 		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"lapCounter" + myPlayerID, myLapCounterElement.myGUIElement, myLapCounterElement.myPixelSize);
 
 		RENDERER.AddRenderMessage(guiElement);
-		SetGUIToEmilBlend(L"lapCounter" + myPlayerID);
+		SetGUIToAlphaBlend(L"lapCounter" + myPlayerID);
 		myLapCounterElement.mySprite->RenderToGUI(L"lapCounter" + myPlayerID);
 		SetGUIToEndBlend(L"lapCounter" + myPlayerID);
 	}
@@ -157,7 +159,7 @@ void CHUD::Render()
 		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"placement" + myPlayerID, myPlacementElement.myGUIElement, myPlacementElement.myPixelSize);
 
 		RENDERER.AddRenderMessage(guiElement);
-		SetGUIToEmilBlend(L"placement" + myPlayerID);
+		SetGUIToAlphaBlend(L"placement" + myPlayerID);
 		myPlacementElement.mySprite->RenderToGUI(L"placement" + myPlayerID);
 		SetGUIToEndBlend(L"placement" + myPlayerID);
 	}
@@ -174,7 +176,7 @@ void CHUD::Render()
 			SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"finishText" + myPlayerID, myFinishTextElement.myGUIElement, myFinishTextElement.myPixelSize);
 
 			RENDERER.AddRenderMessage(guiElement);
-			SetGUIToEmilBlend(L"finishText" + myPlayerID);
+			SetGUIToAlphaBlend(L"finishText" + myPlayerID);
 			myFinishTextElement.mySprite->RenderToGUI(L"finishText" + myPlayerID);
 			SetGUIToEndBlend(L"finishText" + myPlayerID);
 		}
@@ -234,7 +236,7 @@ void CHUD::Render()
 		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"itemGui" + myPlayerID, myItemGuiElement.myGUIElement, myItemGuiElement.myPixelSize);
 
 		RENDERER.AddRenderMessage(guiElement);
-		SetGUIToEmilBlend(L"itemGui" + myPlayerID);
+		SetGUIToAlphaBlend(L"itemGui" + myPlayerID);
 		myItemGuiElement.mySprite->RenderToGUI(L"itemGui" + myPlayerID);
 		SetGUIToEndBlend(L"itemGui" + myPlayerID);
 	}
@@ -245,7 +247,7 @@ void CHUD::Render()
 		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"scoreboard", myScoreboardElement.myGUIElement, myScoreboardElement.myPixelSize);
 		RENDERER.AddRenderMessage(guiElement);
 
-		SetGUIToEmilBlend(L"scoreboard");
+		SetGUIToAlphaBlend(L"scoreboard");
 		{
 			float yOffset = 0.12f;
 
@@ -258,16 +260,21 @@ void CHUD::Render()
 
 			for (int i = 0; i < 8; ++i)
 			{
+				CTextInstance charNameTxt;
+
 				switch (myWinners[i].character)
 				{
-				case eCharacter::eYoshi:
+				case SParticipant::eCharacter::eVanBrat:
 					characterPortrait = myPortraitSpriteYoshi;
+					charNameTxt.SetText(L"Yoshi");
 					break;
-				case eCharacter::eMario:
+				case SParticipant::eCharacter::eGrandMa:
 					characterPortrait = myPortraitSpriteMario;
+					charNameTxt.SetText(L"Mario");
 					break;
 				default:
 					characterPortrait = myPortraitSpriteYoshi;
+					charNameTxt.SetText(L"Error");
 					break;
 				}
 
@@ -291,6 +298,10 @@ void CHUD::Render()
 
 				placementSprite->SetPosition(lastPlacePos);
 				placementSprite->RenderToGUI(L"scoreboard");
+
+				//charNameTxt.SetPosition({ newPortPos.x + 0.08f, newPortPos.y });
+				charNameTxt.SetPosition({ 0.5f,0.5f });
+				charNameTxt.RenderToGUI(L"scoreboard");
 
 			}
 			myScoreboardElement.mySprite->SetPosition(initialBoardPos);
@@ -439,10 +450,10 @@ void CHUD::LoadScoreboard()
 	// Rendera ut yoshi's på varje bracket.
 }
 
-void CHUD::SetGUIToEmilBlend(std::wstring aStr)
+void CHUD::SetGUIToAlphaBlend(std::wstring aStr)
 {
 	SChangeStatesMessage* changeStatesMessage = new SChangeStatesMessage();
-	changeStatesMessage->myBlendState = eBlendState::eEmilBlend;
+	changeStatesMessage->myBlendState = eBlendState::eAlphaBlend;
 	changeStatesMessage->myDepthStencilState = eDepthStencilState::eDisableDepth;
 	changeStatesMessage->myRasterizerState = eRasterizerState::eNoCulling;
 	changeStatesMessage->mySamplerState = eSamplerState::eClamp;
