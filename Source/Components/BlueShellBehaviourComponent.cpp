@@ -11,6 +11,7 @@ CBlueShellBehaviourComponent::CBlueShellBehaviourComponent(CU::GrowingArray<CGam
 	myTeleportDelay = 1.0f;
 	myElapsedTime = 0;
 	mySpeed = 90;
+	myDecendSpeed = 5;
 	myVelocity = CU::Vector3f::UnitZ * mySpeed;
 	myAboveHeight = 10;
 	myDropSpeed = CU::Vector3f::UnitY * myAboveHeight;
@@ -68,7 +69,7 @@ void CBlueShellBehaviourComponent::Update(const float aDeltaTime)
 		}
 	}
 
-	myAboveHeight-=(2*aDeltaTime);
+	myAboveHeight-=(myDecendSpeed*aDeltaTime);
 	myDropSpeed = CU::Vector3f::UnitY * myAboveHeight;
 
 	CU::Matrix44f transform = target;

@@ -19,6 +19,7 @@ private:
 	float myTeleportDelay;
 	float myElapsedTime;
 	float mySpeed;
+	float myDecendSpeed;
 
 	bool myIsActive;
 };
