@@ -132,6 +132,7 @@
     <ClInclude Include="AnimationEventFactory.h">
       <Filter>Animation</Filter>
     </ClInclude>
+    <ClInclude Include="PlacementData.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="States">

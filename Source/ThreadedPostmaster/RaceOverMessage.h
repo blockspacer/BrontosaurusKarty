@@ -1,21 +1,23 @@
 #pragma once
 #include "../ThreadedPostmaster/Message.h"
 
+struct SPlacementData;
+
 class CGameObject;
 class CRaceOverMessage : public Postmaster::Message::IMessage
 {
 public:
-	CRaceOverMessage(CU::GrowingArray<CGameObject*>& aWinnerPlacementList);
+	CRaceOverMessage(CU::StaticArray<SPlacementData,8>& aPlacementDataList);
 	~CRaceOverMessage();
 
 	IMessage *Copy() override;
 	eMessageReturn DoEvent(Postmaster::ISubscriber & aSubscriber) const override;
-	inline const CU::GrowingArray<CGameObject*>& GetWinnerPlacements() const;
+	inline const CU::StaticArray<SPlacementData, 8>& GetWinners() const;
 private:
-	CU::GrowingArray<CGameObject*>& myWinnerPlacements;
+	CU::StaticArray<SPlacementData, 8>& myWinners;
 };
 
-inline const CU::GrowingArray<CGameObject*>& CRaceOverMessage::GetWinnerPlacements() const
+inline const CU::StaticArray<SPlacementData, 8>& CRaceOverMessage::GetWinners() const
 {
-	return myWinnerPlacements;
+	return myWinners;
 }
