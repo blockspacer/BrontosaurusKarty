@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "RaceOverMessage.h"
+#include "..\game\PlacementData.h"
 
 
-CRaceOverMessage::CRaceOverMessage(CU::GrowingArray<CGameObject*>& aWinnerPlacementList)
+CRaceOverMessage::CRaceOverMessage(CU::StaticArray<SPlacementData, 8>& aWinnerPlacementList)
 	: IMessage(eMessageType::eRaceOver)
-	, myWinnerPlacements(aWinnerPlacementList)
+	, myWinners(aWinnerPlacementList)
 {
 }
 

@@ -7,7 +7,6 @@
 #include "../ThreadedPostmaster/Postmaster.h"
 #include "../ThreadedPostmaster/RaceOverMessage.h"
 
-
 CLapTrackerComponentManager* CLapTrackerComponentManager::ourInstance = nullptr;
 const float updatePlacementCooldown = 0.1f;
 
@@ -223,8 +222,7 @@ void CLapTrackerComponentManager::Init()
 void CLapTrackerComponentManager::SendRaceOverMessage()
 {
 	AddEveryoneToVictoryList();
-	myWinnerPlacements;
-	Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CRaceOverMessage(myWinnerPlacements));
+	Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CRaceOverMessage(myPlacementData));
 }
 
 unsigned char CLapTrackerComponentManager::GetSpecificRacerPlacement(CGameObject* aRacer)
@@ -252,5 +250,16 @@ void CLapTrackerComponentManager::AddEveryoneToVictoryList()
 		{
 			myWinnerPlacements.Add(myRacerPlacements[i]);
 		}
+	}
+
+	for (unsigned i = 0; i < myWinnerPlacements.Size(); ++i)
+	{
+		SPlacementData data;
+		data.character = eCharacter::eMario; // sync with character select later.
+		data.isPlayer = true; // ask, is player controlled
+		data.placement = i+1;
+		data.time = 1337; //broadcast shiz to get data, mebe.
+
+		myPlacementData[i] = data;
 	}
 }

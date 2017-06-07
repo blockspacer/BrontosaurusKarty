@@ -817,6 +817,10 @@ void CKartControllerComponent::DoCornerTest(unsigned aCornerIndex, const CU::Mat
 			}
 			else if(raycastHitData.collisionLayer == Physics::eKart && reinterpret_cast<CComponent*>(raycastHitData.actor->GetCallbackData()->GetUserData())->GetParent() != GetParent())
 			{
+				if (myIsInvurnable == true)
+				{
+					reinterpret_cast<CComponent*>(raycastHitData.actor->GetCallbackData()->GetUserData())->GetParent()->NotifyOnlyComponents(eComponentMessageType::eGotHit, SComponentMessageData());
+				}
 				GetParent()->Move(dir * (raycastHitData.distance - testDist) * -2.f);
 				myVelocity *= 0.75f;
 				const float repulsion = CLAMP(bounceEffect, 0.f, GetMaxSpeed() * 2.f);

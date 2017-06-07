@@ -1,5 +1,7 @@
 #pragma once
 #include "../ThreadedPostmaster/Subscriber.h"
+#include "PlacementData.h"
+
 class CLapTrackerComponent;
 
 struct SLapCalculateData
@@ -61,6 +63,7 @@ private:
 	CU::GrowingArray<CLapTrackerComponent*> myComponents;
 	CU::GrowingArray<CGameObject*> myRacerPlacements;
 	CU::GrowingArray<CGameObject*> myWinnerPlacements;
+	CU::StaticArray<SPlacementData, 8> myPlacementData;
 	static CLapTrackerComponentManager* ourInstance;
 	float myUpdatePlacementCountdown;
 
