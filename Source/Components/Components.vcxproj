@@ -372,6 +372,7 @@
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="CapsuleColliderComponent.h" />
     <ClInclude Include="CharacterControllerComponent.h" />
+    <ClInclude Include="CharacterInfoComponent.h" />
     <ClInclude Include="ColliderComponent.h" />
     <ClInclude Include="ColliderComponentManager.h" />
     <ClInclude Include="ComponentAnswer.h" />
@@ -448,6 +449,7 @@
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="CapsuleColliderComponent.cpp" />
     <ClCompile Include="CharacterControllerComponent.cpp" />
+    <ClCompile Include="CharacterInfoComponent.cpp" />
     <ClCompile Include="ColliderComponent.cpp" />
     <ClCompile Include="ColliderComponentManager.cpp" />
     <ClCompile Include="ComponentMessageTypeToLua.cpp" />
