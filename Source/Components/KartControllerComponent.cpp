@@ -64,8 +64,6 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myInvurnableTime = 0;
 	myElapsedInvurnableTime = 0;
 
-	myHasJumped = false;
-
 	myHasGottenHit = false;
 	myIsAIControlled = false;
 	myIsplayingEngineLoop = false;
@@ -876,11 +874,6 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 		if(raycastHitData.distance < controlDist)
 		{
 			myIsOnGround = true;
-			if (myHasJumped == true)
-			{
-				Drift();
-				myHasJumped = false;
-			}
 		}
 		if (raycastHitData.distance < onGroundDist)
 		{

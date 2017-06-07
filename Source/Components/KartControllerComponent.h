@@ -145,7 +145,6 @@ private:
 	bool myIsOnGround;
 	bool myCanAccelerate;
 	bool myIsBoosting;
-	bool myHasJumped;
 
 	bool myPreviousGotHit;
 	bool myIsInvurnable;

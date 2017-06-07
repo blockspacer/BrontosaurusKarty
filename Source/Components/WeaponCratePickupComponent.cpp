@@ -12,8 +12,7 @@ CItemPickupComponent::CItemPickupComponent(CItemFactory& aItemFactory) : myItemF
 	myTimer = 0.0f;
 	myFlippedVisibility = false;
 	myParticleHandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("BoxDebris");
-	int br = 0;
-	++br;
+	myIsInited = false;
 }
 
 
@@ -69,15 +68,12 @@ void CItemPickupComponent::DoMyEffect(CComponent* theCollider)
 	myTimer = 0.0f;
 	myFlippedVisibility = false;
 	GetParent()->GetLocalTransform().SetScale(CU::Vector3f(myScale, myScale, myScale));
-	//static bool isInited = false;
-	//if (isInited == false)
-	//{
-		//isInited = true;
+	if (myIsInited == false)
+	{
 		CU::Matrix44f matrix = GetParent()->GetToWorldTransform();
-		matrix.RotateAroundAxes(3.141592 / 2, 0, 0);
+		matrix.RotateAroundAxes(3.141592f / 2.0f, 0, 0);
 		CParticleEmitterManager::GetInstance().SetTransformation(myParticleHandle, matrix);
-		CParticleEmitterManager::GetInstance().SetPosition(myParticleHandle,GetParent()->GetToWorldTransform().GetPosition());
-		
-	//}
+		CParticleEmitterManager::GetInstance().SetPosition(myParticleHandle, GetParent()->GetToWorldTransform().GetPosition());
+	}
 	CParticleEmitterManager::GetInstance().Activate(myParticleHandle);
 }
