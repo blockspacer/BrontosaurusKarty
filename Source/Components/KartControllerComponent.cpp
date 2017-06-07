@@ -69,6 +69,7 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myHasGottenHit = false;
 	myIsAIControlled = false;
 	myIsplayingEngineLoop = false;
+	myPreviousGotHit = false;
 
 	myTimeToBeStunned = 1.5f;
 	myElapsedStunTime = 0.f;
@@ -125,12 +126,12 @@ void CKartControllerComponent::Turn(float aDirectionX)
 const float rate = 5.f;
 void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 {
+	myCurrentAction = eCurrentAction::eTurningRight;
 	if (myHasGottenHit == true)
 	{
 		return;
 	}
 	assert(aNormalizedModifier <= 1.f && aNormalizedModifier >= -1.f && "normalized modifier not normalized mvh carl");
-	myCurrentAction = eCurrentAction::eTurningRight;
 	if (myDriftSetupTimer < myDriftSetupTime)
 	{
 		if (myDrifter->IsDrifting() == false)
@@ -158,11 +159,11 @@ void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 
 void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 {
+	myCurrentAction = eCurrentAction::eTurningLeft;
 	if (myHasGottenHit == true)
 	{
 		return;
 	}
-	myCurrentAction = eCurrentAction::eTurningLeft;
 	if (myDriftSetupTimer < myDriftSetupTime)
 	{
 		if (myDrifter->IsDrifting() == false)
@@ -180,11 +181,7 @@ void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 	{
 		myDrifter->TurnLeft();
 	}
-
-	//if (mySteering >= 0.f)
-	{
-		myAnimator->OnTurnLeft(aNormalizedModifier);
-	}
+	myAnimator->OnTurnLeft(aNormalizedModifier);
 }
 
 void CKartControllerComponent::StopMoving()
@@ -196,16 +193,13 @@ void CKartControllerComponent::StopMoving()
 
 void CKartControllerComponent::MoveFoward()
 {
+	myIsHoldingForward = true;
 	if (myHasGottenHit == true)
 	{
 		return;
 	}
 	myAcceleration = GetMaxAcceleration();
 	myAnimator->OnMoveFoward();
-	if (myIsBoosting == false)
-	{
-		myIsHoldingForward = true;
-	}
 }
 
 void CKartControllerComponent::MoveBackWards()
@@ -221,11 +215,11 @@ void CKartControllerComponent::MoveBackWards()
 
 void CKartControllerComponent::StopTurning()
 {
-	if (myCurrentAction == eCurrentAction::eTurningLeft/*mySteering < 0.f*/)
+	if (myCurrentAction == eCurrentAction::eTurningLeft)
 	{
 		myAnimator->OnStopTurningLeft();
 	}
-	else if (myCurrentAction == eCurrentAction::eTurningRight /*mySteering > 0.f*/)
+	else if (myCurrentAction == eCurrentAction::eTurningRight)
 	{
 		myAnimator->OnStopTurningRight();
 	}
@@ -248,6 +242,10 @@ bool CKartControllerComponent::Drift()
 		return false;
 	}
 	if (myHasGottenHit == true)
+	{
+		return false;
+	}
+	if (myDrifter->IsDrifting() == true)
 	{
 		return false;
 	}
@@ -602,6 +600,10 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 			{
 				StopMoving();
 			}
+			else
+			{
+				MoveFoward();
+			}
 			CParticleEmitterManager::GetInstance().Deactivate(myBoostEmmiterhandle);
 		}
 
@@ -649,6 +651,30 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 		}
 	}
 	//Position
+	if (myHasGottenHit == false)
+	{
+		if (myHasGottenHit != myPreviousGotHit)
+		{
+			myHasGottenHit = myPreviousGotHit;
+			switch (myCurrentAction)
+			{
+			case eCurrentAction::eTurningRight:
+				TurnRight();
+				break;
+			case eCurrentAction::eTurningLeft:
+				TurnLeft();
+				break;
+			case eCurrentAction::eDefault:
+				break;
+			default:
+				break;
+			}
+			if (myIsHoldingForward == true)
+			{
+				MoveBackWards();
+			}
+		}
+	}
 
 	CU::Vector3f forwardVector(CU::Vector3f::UnitZ);
 
