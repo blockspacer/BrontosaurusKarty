@@ -108,6 +108,11 @@ bool CLapTrackerComponent::Answer(const eComponentQuestionType aQuestionType, SC
 		}
 		break;
 	}
+	case eComponentQuestionType::eGetLapTraversedPercentage:
+	{
+		aQuestionData.myFloat = GetLapDistanceTravelledPercentage();
+		return true;
+	}
 	default:
 		break;
 	}

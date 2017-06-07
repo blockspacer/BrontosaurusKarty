@@ -48,6 +48,7 @@ enum class eComponentQuestionType
 	eGetCurrentSpline,
 	eGetRespawnSplineWithIndex,
 	eGetTerrainModifier,
+	eGetLapTraversedPercentage,
 	eLength,
 };
 struct SComponentQuestionData
