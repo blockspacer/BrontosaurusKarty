@@ -132,6 +132,7 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
 	, myCountdownShouldRender(false)
+	,myIsCountingDown(true)
 {
 	if (aPlayers.Size() > 0)
 	{
@@ -696,6 +697,7 @@ void CPlayState::InitiateRace()
 		myIsCountingDown = true;
 
 		Audio::CAudioInterface::GetInstance()->PostEvent("PlayStartCountDown");
+		Audio::CAudioInterface::GetInstance()->PostEvent("PlayEngineIdle");
 		for (int i = 0; i < myKartObjects.Size(); i++)
 		{
 			SComponentMessageData data; data.myString = "PlayEngineStart";

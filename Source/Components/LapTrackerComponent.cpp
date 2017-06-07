@@ -123,13 +123,19 @@ void CLapTrackerComponent::Receive(const eComponentMessageType aMessageType, con
 		if(myIsReadyToEnterGoal == true)
 		{		
 
-			if (myLapIndex > 2)
+			mySplineIndex = 0;
+			myLapIndex++;
+			myPlacementValue++;
+			myIsReadyToEnterGoal = false;
+
+
+			if (myLapIndex > 3)
 			{
 				SComponentMessageData data;
 				data.myString = "PlayFinish";
 				GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
 			}
-			else if (myLapIndex == 2)
+			else if (myLapIndex == 3)
 			{
 				SComponentMessageData data;
 				data.myString = "PlayFinalLap";
@@ -141,11 +147,6 @@ void CLapTrackerComponent::Receive(const eComponentMessageType aMessageType, con
 				data.myString = "PlayLapDone";
 				GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
 			}
-
-			mySplineIndex = 0;
-			myLapIndex++;
-			myPlacementValue++;
-			myIsReadyToEnterGoal = false;
 
 			if (myLapIndex > 3)
 			{
@@ -187,4 +188,9 @@ const float CLapTrackerComponent::GetTotalTravelledDistance()
 	float totalTravelledDistance = myTravelledDistance + (myLapIndex - 1) * myLapsTotalDistance;
 	totalTravelledDistance -= GetDistanceToNextSpline();
 	return totalTravelledDistance;
+}
+
+const float CLapTrackerComponent::GetLapDistanceTravelledPercentage()
+{
+	return (myTravelledDistance - GetDistanceToNextSpline()) / myLapsTotalDistance;
 }

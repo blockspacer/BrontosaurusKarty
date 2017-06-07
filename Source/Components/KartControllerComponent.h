@@ -148,6 +148,7 @@ private:
 	bool myIsBoosting;
 	bool myHasJumped;
 
+	bool myPreviousGotHit;
 	bool myIsInvurnable;
 	bool myHasGottenHit;
 	bool myIsOnGroundLast;
