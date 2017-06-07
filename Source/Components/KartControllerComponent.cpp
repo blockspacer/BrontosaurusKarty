@@ -193,10 +193,7 @@ void CKartControllerComponent::StopMoving()
 
 void CKartControllerComponent::MoveFoward()
 {
-	//if (myIsBoosting == false)
-	{
-		myIsHoldingForward = true;
-	}
+	myIsHoldingForward = true;
 	if (myHasGottenHit == true)
 	{
 		return;
@@ -602,6 +599,10 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 			if (myIsHoldingForward == false)
 			{
 				StopMoving();
+			}
+			else
+			{
+				MoveFoward();
 			}
 			CParticleEmitterManager::GetInstance().Deactivate(myBoostEmmiterhandle);
 		}
