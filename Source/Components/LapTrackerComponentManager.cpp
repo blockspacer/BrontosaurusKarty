@@ -6,6 +6,7 @@
 #include "../ThreadedPostmaster/MessageType.h"
 #include "../ThreadedPostmaster/Postmaster.h"
 #include "../ThreadedPostmaster/RaceOverMessage.h"
+#include "..\Components\CharacterInfoComponent.h"
 
 CLapTrackerComponentManager* CLapTrackerComponentManager::ourInstance = nullptr;
 const float updatePlacementCooldown = 0.1f;
@@ -260,10 +261,15 @@ void CLapTrackerComponentManager::AddEveryoneToVictoryList()
 	for (unsigned i = 0; i < myWinnerPlacements.Size(); ++i)
 	{
 		SPlacementData data;
-		data.character = eCharacter::eMario; // sync with character select later.
-		data.isPlayer = true; // ask, is player controlled
+		SComponentQuestionData qData;
+
+		myWinnerPlacements[i]->AskComponents(eComponentQuestionType::eGetCharacterInfo, qData);
+
+		data.character = qData.myCharacterInfo->characterType;
+		data.isPlayer = !qData.myCharacterInfo->isAI;
 		data.placement = i+1;
-		data.time = 1337; //broadcast shiz to get data, mebe.
+
+		data.time = 1337; //how to fix time?
 
 		myPlacementData[i] = data;
 	}

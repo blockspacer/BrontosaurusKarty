@@ -60,6 +60,7 @@ public:
 	inline float GetMaxAcceleration() const;
 	inline float GetAcceleratiot();
 	inline bool GetIsControlledByAI() const;
+	void LookBack(bool aLookBack);
 
 private:
 	
@@ -155,6 +156,7 @@ private:
 	bool increaseCountdownValue;
 	bool myIsHoldingForward;
 	CComponent* myLastGroundComponent;
+	bool myLookingBack;
 	bool myIsplayingEngineLoop;
 };
 

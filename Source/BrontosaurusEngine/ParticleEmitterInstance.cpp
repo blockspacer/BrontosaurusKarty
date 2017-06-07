@@ -101,6 +101,7 @@ void CParticleEmitterInstance::Render(CRenderCamera& aRenderCamera)
 		msg.toWorld = myToWorldSpace;
 		msg.particleList = myParticles;
 		msg.myType = SRenderMessage::eRenderMessageType::eRenderParticles;
+		
 		DistanceSort(msg.particleList, aRenderCamera.GetCamera());
 		aRenderCamera.AddRenderMessage(new SRenderParticlesMessage(msg));
 	}

@@ -1273,6 +1273,8 @@ void CRenderer::RenderCameraQueue(SRenderCameraQueueMessage* msg, int & aDrawCal
 		HandleRenderMessage(msg->myRenderCamera.myRenderQueue[i], aDrawCallCount);
 	}
 
+
+
 	myDeferredRenderer.SetGeometryBuffer(*msg->myRenderCamera.myGbuffer);
 	SChangeStatesMessage changeStateMessage = {};
 	changeStateMessage.myRasterizerState = eRasterizerState::eDefault;
@@ -1315,9 +1317,11 @@ void CRenderer::RenderCameraQueue(SRenderCameraQueueMessage* msg, int & aDrawCal
 		DEVICE_CONTEXT->PSSetShaderResources(1, 3, SRV);
 		myFullScreenHelper.DoEffect(CFullScreenHelper::eEffectType::eFog);
 
-		myParticleRenderer.SetDepthStuff(myDeferredRenderer.myGbuffer->GetRenderPackage(CGeometryBuffer::eDiffuse).GetDepthStencilView(),
+		myParticleRenderer.SetDepthStuff(
+			myDeferredRenderer.myGbuffer->GetRenderPackage(CGeometryBuffer::eDiffuse).GetDepthStencilView(),
 			myDeferredRenderer.myGbuffer->GetRenderPackage(CGeometryBuffer::eEmissive).GetDepthResource());
-		myParticleRenderer.DoRenderQueue(myDeferredRenderer.myGbuffer->GetRenderPackage(CGeometryBuffer::eDiffuse).GetDepthResource(), 
+		myParticleRenderer.DoRenderQueue(
+			myDeferredRenderer.myGbuffer->GetRenderPackage(CGeometryBuffer::eDiffuse).GetDepthResource(), 
 			&msg->myRenderCamera.GetRenderPackage());
 
 

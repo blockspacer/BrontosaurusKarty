@@ -3,6 +3,7 @@
 
 class CColliderComponent;
 struct SNavigationPoint;
+struct SCharacterInfo;
 
 namespace CU
 {
@@ -48,6 +49,7 @@ enum class eComponentQuestionType
 	eGetCurrentSpline,
 	eGetRespawnSplineWithIndex,
 	eGetTerrainModifier,
+	eGetCharacterInfo,
 	eGetLapTraversedPercentage,
 	eLength,
 };
@@ -70,6 +72,7 @@ struct SComponentQuestionData
 		const char* myString;
 		CGameObject* myGameObject;
 		const SNavigationPoint* myNavigationPoint;
+		SCharacterInfo* myCharacterInfo;
 	};
 
 };
