@@ -11,7 +11,13 @@ namespace ParticleEditor
     class ParticleSystem
     {
         public string Name { get; set; }
-        private Guid id = Guid.NewGuid();
+        private Guid id;
+
+        public ParticleSystem()
+        {
+            Name = "Unnamed";
+            id = Guid.NewGuid();
+        }
 
         public int Id
         {
@@ -44,7 +50,7 @@ namespace ParticleEditor
 
             Lifetime = (float) Convert.ToDecimal(jToken["lifetime"]);
 
-            Persistant = Convert.ToBoolean(jToken["persistant"]);
+            Persistant = Convert.ToBoolean(jToken["pertistant"]);
             MaxEmitters = Convert.ToInt32(jToken["maxEmitters"]);
         }
     }

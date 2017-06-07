@@ -20,6 +20,7 @@ namespace ParticleEditor
         public MainWindow()
         {
             InitializeComponent();
+            FillFields();
         }
 
         private void File_OpenToolStripMenuItem_Click(object sender, EventArgs e)
@@ -49,9 +50,64 @@ namespace ParticleEditor
                 }
                 catch (Exception exception)
                 {
-                    Console.WriteLine(exception);
-                    throw;
+                    MessageBox.Show("Attempted to open invalid file.", "Error",MessageBoxButtons.OK);
+                    systems = new List<ParticleSystem>();
+                    SetSystemComboBox();
+                    FillFields();
                 }
+            }
+        }
+
+        private void FillFields()
+        {
+            int selectedSystem = SystemComboBox.SelectedIndex;
+
+            if (selectedSystem >= 0 && selectedSystem < systems.Count)
+            {
+                FillFields(systems[selectedSystem]);
+            }
+            else
+            {
+                ClearFields();
+            }
+        }
+
+        private void FillFields(ParticleSystem system)
+        {
+            SystemNameField.Text = system.Name;
+            SystemIdLabel.Text = "ID: " + system.Id.ToString();
+            EmitRateField.Value = system.EmissionRate;
+            MaxParticleField.Value = system.MaxNumberOfParticles;
+            LoopCheckbox.Checked = system.Loop;
+            PersistantCheckbox.Checked = system.Persistant;
+            LifetimeField.Value = (decimal)system.Lifetime;
+            MaxEmittersField.Value = system.MaxEmitters;
+
+            SetFieldsActiveRecursive(CommonDataPanel, true);
+        }
+
+        
+
+        private void ClearFields()
+        {
+            SystemNameField.Text = "";
+            SystemIdLabel.Text = "ID: ";
+            EmitRateField.Value = 0;
+            MaxParticleField.Value = 0;
+            LoopCheckbox.Checked = true;
+            PersistantCheckbox.Checked = true;
+            LifetimeField.Value = 0;
+            MaxEmittersField.Value = 0;
+            SetFieldsActiveRecursive(CommonDataPanel, false);
+        }
+
+        private void SetFieldsActiveRecursive(Control control, bool enabled)
+        {
+            control.Enabled = enabled;
+
+            foreach (var c in control.Controls.OfType<Control>())
+            {
+                SetFieldsActiveRecursive(c, enabled);
             }
         }
 
@@ -93,6 +149,78 @@ namespace ParticleEditor
             }
 
             return sys;
+        }
+
+        private void SystemComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            FillFields();
+        }
+
+        private void File_NewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            systems = new List<ParticleSystem>();
+            SetSystemComboBox();
+            FillFields();
+        }
+
+        private void CreateSystemButton_Click(object sender, EventArgs e)
+        {
+            systems.Add(new ParticleSystem());
+            SetSystemComboBox();
+            SystemComboBox.SelectedIndex = systems.Count - 1;
+            FillFields();
+        }
+
+        private void SystemNameField_TextChanged(object sender, EventArgs e)
+        {
+            GetSelectedSystem().Name = (sender as TextBox).Text;
+            SetSystemComboBox();
+        }
+
+        private ParticleSystem GetSelectedSystem()
+        {
+            ParticleSystem system;
+
+            if(SystemComboBox.SelectedIndex >= 0 && SystemComboBox.SelectedIndex < systems.Count)
+            {
+                system = systems[SystemComboBox.SelectedIndex];
+            }
+            else
+            {
+                system = new ParticleSystem();
+            }
+
+            return system;
+        }
+
+        private void EmitRateField_ValueChanged(object sender, EventArgs e)
+        {
+            GetSelectedSystem().EmissionRate = (int)(sender as NumericUpDown).Value;
+        }
+
+        private void MaxParticleField_ValueChanged(object sender, EventArgs e)
+        {
+            GetSelectedSystem().MaxNumberOfParticles = (int) (sender as NumericUpDown).Value;
+        }
+
+        private void LifetimeField_ValueChanged(object sender, EventArgs e)
+        {
+            GetSelectedSystem().Lifetime = (float) (sender as NumericUpDown).Value;
+        }
+
+        private void MaxEmittersField_ValueChanged(object sender, EventArgs e)
+        {
+            GetSelectedSystem().MaxEmitters = (int) (sender as NumericUpDown).Value;
+        }
+
+        private void LoopCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            GetSelectedSystem().Loop = (sender as CheckBox).Checked;
+        }
+
+        private void PersistantCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            GetSelectedSystem().Persistant = (sender as CheckBox).Checked;
         }
     }
 }
