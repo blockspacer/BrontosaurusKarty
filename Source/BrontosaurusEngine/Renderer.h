@@ -75,7 +75,7 @@ private:
 	void CreateOncePerFrameBuffer();
 	void CreateShadowBuffer();
 	void UpdateBuffer();
-	void UpdateShadowBuffer(SSetShadowBuffer* msg);
+	void UpdateShadowBuffer();
 
 	void CreateRasterizerStates();
 	void CreateBlendStates();
@@ -154,6 +154,9 @@ private:
 	} myOPFBData;
 
 	ID3D11Buffer* myShadowBuffer;
+	SBakedShadowBuffer myShadowBufferData;
+	CRenderPackage myShadowBufferTexture;
+
 	CU::TimerHandle myOncePerFrameBufferTimer;
 	CU::TimerHandle myFireTimer;
 	bool myIsRunning;

@@ -417,7 +417,9 @@ void CRenderer::CreateOncePerFrameBuffer()
 
 void CRenderer::CreateShadowBuffer()
 {
-	SCascadeBuffer buffer;
+	//SCascadeBuffer buffer;
+	SBakedShadowBuffer buffer;
+
 	myShadowBuffer = BSR::CreateCBuffer<>(&buffer);
 }
 
@@ -452,12 +454,10 @@ void CRenderer::UpdateBuffer()
 
 }
 
-void CRenderer::UpdateShadowBuffer(SSetShadowBuffer* msg)
+void CRenderer::UpdateShadowBuffer()
 {
-	BSR::UpdateCBuffer<SCascadeBuffer>(myShadowBuffer, &msg->cascadeBuffer);
-
-	DEVICE_CONTEXT->PSSetShaderResources(8, 1, &msg->myShadowBuffer.GetResource());
-	DEVICE_CONTEXT->PSSetConstantBuffers(4, 1, &myShadowBuffer);
+	DEVICE_CONTEXT->PSSetShaderResources(10, 1, &myShadowBufferTexture.GetResource());
+	DEVICE_CONTEXT->PSSetConstantBuffers(5, 1, &myShadowBuffer);
 }
 
 void CRenderer::CreateRasterizerStates()
@@ -1023,7 +1023,10 @@ bool CRenderer::HandleRenderMessage(SRenderMessage * aRenderMesage, int & aDrawC
 	case SRenderMessage::eRenderMessageType::eSetShadowBuffer:
 	{
 		SSetShadowBuffer* msg = static_cast<SSetShadowBuffer*>(aRenderMesage);
-		UpdateShadowBuffer(msg);
+		myShadowBufferData = msg->myShadowBufferData;
+		myShadowBufferTexture = msg->myShadowBuffer;
+		BSR::UpdateCBuffer<SBakedShadowBuffer>(myShadowBuffer, &myShadowBufferData);
+		UpdateShadowBuffer();
 		break;
 	}
 	case SRenderMessage::eRenderMessageType::eRenderModel:
@@ -1253,6 +1256,12 @@ bool CRenderer::HandleRenderMessage(SRenderMessage * aRenderMesage, int & aDrawC
 		myGUIRenderer.Clear();
 		break; 
 	}
+	case SRenderMessage::eRenderMessageType::eRenderCallback:
+	{
+		SRenderCallback* msg = static_cast<SRenderCallback*>(aRenderMesage);
+		msg->myFunction();
+		break;
+	}
 	default: break;
 	}
 
@@ -1292,6 +1301,7 @@ void CRenderer::RenderCameraQueue(SRenderCameraQueueMessage* msg, int & aDrawCal
 		SetStates(&changeStateMessage);
 		myDeferredRenderer.UpdateCameraBuffer(myCamera.GetTransformation(), myCamera.GetProjectionInverse());
 		//myParticleRenderer.CombineDepthStencils(myDeferredRenderer.GetFirstPackage(), myDeferredRenderer.GetSecondPackage());
+		UpdateShadowBuffer();
 		myDeferredRenderer.DoLightingPass(myFullScreenHelper, *this);
 		
 	}
@@ -1330,9 +1340,5 @@ void CRenderer::RenderCameraQueue(SRenderCameraQueueMessage* msg, int & aDrawCal
 
 void CRenderer::DoColorGrading()
 {
-	//myColorGradingPackage.Clear();
-	//myColorGradingPackage.Activate();
-	//DEVICE_CONTEXT->PSSetShaderResources(2, 1, myLut->GetShaderResourceViewPointer());
-	//myFullScreenHelper.DoEffect(CFullScreenHelper::eEffectType::eColorGrading, &myIntermediatePackage);
 	myColorGrader.DoColorGrading(myIntermediatePackage, myFullScreenHelper, myTimers.GetTimer(myOncePerFrameBufferTimer).GetDeltaTime().GetSeconds());
 }
