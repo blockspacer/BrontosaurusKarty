@@ -17,9 +17,13 @@ public:
 	~CAIController();
 
 	void Update(const float aDeltaTime) override;
+	void UpdateWithoutItems(const float aDeltaTime);
 
 private:
+	void UpdateItemUsage(const float aDeltaTime);
+	void UpdateMovement(const float aDeltaTime);
 	const CNavigationSpline& GetNavigationSpline();
+
 	int myCurrentSplineIndex;
 	float myUseItemTimer;
 

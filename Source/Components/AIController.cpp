@@ -23,6 +23,17 @@ CAIController::~CAIController()
 
 void CAIController::Update(const float aDeltaTime)
 {
+	UpdateItemUsage(aDeltaTime);
+	UpdateMovement(aDeltaTime);	
+}
+
+void CAIController::UpdateWithoutItems(const float aDeltaTime)
+{
+	UpdateMovement(aDeltaTime);
+}
+
+void CAIController::UpdateItemUsage(const float aDeltaTime)
+{
 	if (myHasItem == false)
 	{
 		if (myControllerComponent.GetParent()->AskComponents(eComponentQuestionType::eGetHoldItemType, SComponentQuestionData()) == true)
@@ -31,8 +42,7 @@ void CAIController::Update(const float aDeltaTime)
 			myUseItemTimer = 2.f;
 		}
 	}
-
-	if (myHasItem == true)
+	else
 	{
 		myUseItemTimer -= aDeltaTime;
 		if (myUseItemTimer <= 0.f)
@@ -40,7 +50,10 @@ void CAIController::Update(const float aDeltaTime)
 			myControllerComponent.GetParent()->NotifyOnlyComponents(eComponentMessageType::eUseItem, SComponentMessageData());
 		}
 	}
+}
 
+void CAIController::UpdateMovement(const float aDeltaTime)
+{
 	const CU::Vector3f pos3D = myControllerComponent.GetParent()->GetToWorldTransform().GetPosition();
 	CU::Vector2f pos(pos3D.xz());
 
@@ -75,8 +88,7 @@ void CAIController::Update(const float aDeltaTime)
 	float turnAmount = -rotationDifference.GetEulerRotation().y;
 
 	float turnAmountAbs = std::fabs(turnAmount);
-	if ((turnAmountAbs < 0.2f) ||
-		(myControllerComponent.GetVelocity().Length2() < 500.f))
+	if (turnAmountAbs < 0.2f * 30.f)
 	{
 		myState = eStates::eForward;
 	}

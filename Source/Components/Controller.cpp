@@ -2,7 +2,6 @@
 #include "Controller.h"
 
 #include "AIController.h"
-#include "..\BrontosaurusEngine\Engine.h"
 
 CController::CController(CKartControllerComponent& aKartComponent)
 	: myControllerComponent(aKartComponent)
@@ -15,11 +14,13 @@ CController::~CController()
 {
 }
 
-void CController::Update(const float /*aDeltaTime*/)
+void CController::Update(const float aDeltaTime)
 {
 	if (myControllerComponent.GetIsControlledByAI())
 	{
-		if(myAIController != nullptr)
-			myAIController->Update(ENGINE->GetDeltaTime().GetSeconds());
+		if (myAIController != nullptr)
+		{
+			myAIController->UpdateWithoutItems(aDeltaTime);
+		}
 	}
 }
