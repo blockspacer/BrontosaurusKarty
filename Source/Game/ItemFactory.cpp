@@ -8,6 +8,7 @@
 #include "RedShellManager.h"
 #include "BlueShellComponentManager.h"
 #include "ColliderComponentManager.h"
+#include "../Audio/AudioInterface.h"
 
 #include "ItemWeaponBehaviourComponent.h"
 #include "RedShellBehaviourComponent.h"
@@ -145,7 +146,7 @@ void CItemFactory::CreateShellBuffer()
 		model->FlipVisibility();
 		shell->AddComponent(model);
 
-		CParticleEmitterComponent* particle = CParticleEmitterComponentManager::GetInstance().CreateComponent("DriftDebris");
+		CParticleEmitterComponent* particle = CParticleEmitterComponentManager::GetInstance().CreateComponent("ShellTrail");
 		particle->Deactivate();
 		shell->AddComponent(particle);
 
@@ -493,6 +494,7 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 			}
 		}
 		myLightningBoostBuffer.RemoveAll();
+		Audio::CAudioInterface::GetInstance()->PostEvent("PlayLightning");
 		break;
 	}
 	case eItemTypes::eBanana:

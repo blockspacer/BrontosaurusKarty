@@ -346,6 +346,7 @@
     <ClInclude Include="MenuState.h" />
     <ClInclude Include="NavigationSpline.h" />
     <ClInclude Include="ParticleEffectManager.h" />
+    <ClInclude Include="PlacementData.h" />
     <ClInclude Include="PlayState.h" />
     <ClInclude Include="PollingStation.h" />
     <ClInclude Include="ScriptHelperFunctions.h" />

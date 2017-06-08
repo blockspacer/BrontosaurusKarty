@@ -63,6 +63,7 @@ CParticleEmitter::~CParticleEmitter()
 
 void CParticleEmitter::Render(const CU::Matrix44f & aToWorldSpace, const CU::GrowingArray<SParticle, unsigned int, false>& aParticleList, RenderMode aRenderMode)
 {
+	
 #ifndef _RETAIL_BUILD
 	std::lock_guard<std::mutex> lock(myRenderMutex);
 #endif
@@ -440,6 +441,9 @@ bool CParticleEmitter::CanInstansiate() const
 
 void CParticleEmitter::ParseRender(const CU::CJsonValue& aJsonValue)
 {
+#ifndef _RETAIL_BUILD
+	std::lock_guard<std::mutex> lock(myRenderMutex);
+#endif
 	myEmitterData.render.renderMode = GetRenderMode(aJsonValue["type"].GetString());
 
 	myEmitterData.render.color = aJsonValue["color"].GetVector4f("rgba");

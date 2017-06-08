@@ -6,7 +6,7 @@
 #include "../ThreadedPostmaster/MessageType.h"
 #include "../ThreadedPostmaster/Postmaster.h"
 #include "../ThreadedPostmaster/RaceOverMessage.h"
-
+#include "..\Components\CharacterInfoComponent.h"
 
 CLapTrackerComponentManager* CLapTrackerComponentManager::ourInstance = nullptr;
 const float updatePlacementCooldown = 0.1f;
@@ -18,6 +18,7 @@ CLapTrackerComponentManager::CLapTrackerComponentManager()
 	myWinnerPlacements.Init(16);
 	myUpdatePlacementCountdown = 0.0f;
 	myStartedWithOnlyOnePlayer = false;
+	myIsRaceOver = false;
 }
 
 
@@ -82,9 +83,8 @@ void CLapTrackerComponentManager::CalculateRacerPlacement()
 	{
 		SLapCalculateData lapCalculateData;
 		lapCalculateData.lapTrackerComponent = myComponents[i];
-		lapCalculateData.placementValue = lapCalculateData.lapTrackerComponent->GetPlacementValue();
+		lapCalculateData.distanceTravelled = lapCalculateData.lapTrackerComponent->GetTotalTravelledDistance();
 		lapCalculateData.reversePlacement = 0;
-		lapCalculateData.nextSplineDistance = lapCalculateData.lapTrackerComponent->GetDistanceToNextSpline();
 		racers.Add(lapCalculateData);
 	}
 
@@ -107,16 +107,10 @@ void CLapTrackerComponentManager::CalculateReversePlacement(CU::GrowingArray<SLa
 				continue;
 			}
 
-			if (aLapCalculateDataList[i].placementValue > aLapCalculateDataList[j].placementValue)
+			if (aLapCalculateDataList[i].distanceTravelled > aLapCalculateDataList[j].distanceTravelled)
 			{
 				aLapCalculateDataList[i].reversePlacement++;
 			}
-
-			if(aLapCalculateDataList[i].placementValue == aLapCalculateDataList[j].placementValue && aLapCalculateDataList[i].nextSplineDistance < aLapCalculateDataList[j].nextSplineDistance)
-			{
-				aLapCalculateDataList[i].reversePlacement++;
-			}
-			
 		}
 	}
 }
@@ -154,23 +148,26 @@ CU::GrowingArray<CGameObject*>& CLapTrackerComponentManager::GetRacerPlacements(
 
 eMessageReturn CLapTrackerComponentManager::DoEvent(const CPlayerFinishedMessage& aPlayerFinishedMessage)
 {
-	for (unsigned int i = 0; i < myComponents.Size(); i++)
+	if(myIsRaceOver == false)
 	{
-		if(myComponents[i]->GetParent() == aPlayerFinishedMessage.GetGameObject())
+		for (unsigned int i = 0; i < myComponents.Size(); i++)
 		{
-			myWinnerPlacements.Add((myComponents[i]->GetParent()));
+			if (myComponents[i]->GetParent() == aPlayerFinishedMessage.GetGameObject())
+			{
+				myWinnerPlacements.Add((myComponents[i]->GetParent()));
+			}
 		}
-	}
 
-	if(HaveAllPlayersFinished() == true)
-	{
-		SendRaceOverMessage();
+		if (HaveAllPlayersFinished() == true)
+		{
+			SendRaceOverMessage();
+		}
+		else if (myComponents.Size() <= 1 && myStartedWithOnlyOnePlayer == false)
+		{
+			SendRaceOverMessage();
+		}
+		
 	}
-	else if(myComponents.Size() <= 1 && myStartedWithOnlyOnePlayer == false)
-	{
-		SendRaceOverMessage();
-	}
-
 	return eMessageReturn::eContinue;
 }
 
@@ -220,13 +217,18 @@ void CLapTrackerComponentManager::Init()
 	{
 		myStartedWithOnlyOnePlayer = true;
 	}
+
+	for (unsigned int i = 0; i < myComponents.Size(); i++)
+	{
+		myComponents[i]->Init();
+	}
 }
 
 void CLapTrackerComponentManager::SendRaceOverMessage()
 {
 	AddEveryoneToVictoryList();
-	myWinnerPlacements;
-	Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CRaceOverMessage(myWinnerPlacements));
+	Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CRaceOverMessage(myPlacementData));
+	myIsRaceOver = true;
 }
 
 unsigned char CLapTrackerComponentManager::GetSpecificRacerPlacement(CGameObject* aRacer)
@@ -254,5 +256,21 @@ void CLapTrackerComponentManager::AddEveryoneToVictoryList()
 		{
 			myWinnerPlacements.Add(myRacerPlacements[i]);
 		}
+	}
+
+	for (unsigned i = 0; i < myWinnerPlacements.Size(); ++i)
+	{
+		SPlacementData data;
+		SComponentQuestionData qData;
+
+		myWinnerPlacements[i]->AskComponents(eComponentQuestionType::eGetCharacterInfo, qData);
+
+		data.character = qData.myCharacterInfo->characterType;
+		data.isPlayer = !qData.myCharacterInfo->isAI;
+		data.placement = i+1;
+
+		data.time = 1337; //how to fix time?
+
+		myPlacementData[i] = data;
 	}
 }

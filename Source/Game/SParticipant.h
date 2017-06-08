@@ -5,11 +5,19 @@ struct SParticipant
 	{
 		//den som ändrar här dör. Best regards Johan
 		eController1 = 0,
-		eController2 = 1,
-		eController3 = 2,
-		eController4 = 3,
+		eController2,
+		eController3,
+		eController4,
 		eKeyboard,
-		eNone,
+		eNone
+	};
+	enum class eCharacter
+	{
+		eVanBrat,
+		eVanBrat2,
+		eGrandMa,
+		eGrandMa2,
 	};
 	eInputDevice myInputDevice;
+	eCharacter mySelectedCharacter;
 };

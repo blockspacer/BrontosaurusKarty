@@ -75,7 +75,7 @@ private:
 	ID3D11Buffer* myPointLightBuffer;
 	ID3D11Buffer* mySpotLightBuffer;
 
-	CGeometryBuffer myGbuffer;
+	CGeometryBuffer* myGbuffer;
 	
 	CRenderPackage myIntermediatePackage;
 	

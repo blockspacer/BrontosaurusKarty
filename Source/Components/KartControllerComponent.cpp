@@ -24,7 +24,7 @@
 #include "../Audio/AudioInterface.h"
 
 
-CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent, const short aControllerIndex)
+CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent, const short aControllerIndex, const short aCharacterIndex)
 	: myPhysicsScene(nullptr)
 	, myIsOnGround(true)
 	, myCanAccelerate(false)
@@ -32,15 +32,12 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	, myTerrainModifier(1.f)
 	, myIsOnGroundLast(false)
 	, myLastGroundComponent(nullptr)
+	, myLookingBack(false)
 {
 	CU::CJsonValue levelsFile;
 	std::string errorString = levelsFile.Parse("Json/KartStats.json");
 	if (!errorString.empty()) DL_MESSAGE_BOX(errorString.c_str());
-
-	CU::CJsonValue levelsArray = levelsFile.at("Karts");
-
-	CU::CJsonValue Karts = levelsArray.at("BaseKart");
-
+	CU::CJsonValue Karts = levelsFile.at("Karts")[aCharacterIndex];
 
 	//myFowrardSpeed = 0.0f;
 	myMaxSpeed = Karts.at("MaxSpeed").GetFloat();
@@ -68,10 +65,10 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myInvurnableTime = 0;
 	myElapsedInvurnableTime = 0;
 
-	myHasJumped = false;
-
 	myHasGottenHit = false;
 	myIsAIControlled = false;
+	myIsplayingEngineLoop = false;
+	myPreviousGotHit = false;
 
 	myTimeToBeStunned = 1.5f;
 	myElapsedStunTime = 0.f;
@@ -128,12 +125,12 @@ void CKartControllerComponent::Turn(float aDirectionX)
 const float rate = 5.f;
 void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 {
+	myCurrentAction = eCurrentAction::eTurningRight;
 	if (myHasGottenHit == true)
 	{
 		return;
 	}
 	assert(aNormalizedModifier <= 1.f && aNormalizedModifier >= -1.f && "normalized modifier not normalized mvh carl");
-	myCurrentAction = eCurrentAction::eTurningRight;
 	if (myDriftSetupTimer < myDriftSetupTime)
 	{
 		if (myDrifter->IsDrifting() == false)
@@ -153,7 +150,7 @@ void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 		myDrifter->TurnRight();
 	}
 
-	if (mySteering <= 0.f)
+	//if (mySteering <= 0.f)
 	{
 		myAnimator->OnTurnRight(aNormalizedModifier);
 	}
@@ -161,11 +158,11 @@ void CKartControllerComponent::TurnRight(const float aNormalizedModifier)
 
 void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 {
+	myCurrentAction = eCurrentAction::eTurningLeft;
 	if (myHasGottenHit == true)
 	{
 		return;
 	}
-	myCurrentAction = eCurrentAction::eTurningLeft;
 	if (myDriftSetupTimer < myDriftSetupTime)
 	{
 		if (myDrifter->IsDrifting() == false)
@@ -183,11 +180,7 @@ void CKartControllerComponent::TurnLeft(const float aNormalizedModifier)
 	{
 		myDrifter->TurnLeft();
 	}
-
-	if (mySteering >= 0.f)
-	{
-		myAnimator->OnTurnLeft(aNormalizedModifier);
-	}
+	myAnimator->OnTurnLeft(aNormalizedModifier);
 }
 
 void CKartControllerComponent::StopMoving()
@@ -199,16 +192,13 @@ void CKartControllerComponent::StopMoving()
 
 void CKartControllerComponent::MoveFoward()
 {
+	myIsHoldingForward = true;
 	if (myHasGottenHit == true)
 	{
 		return;
 	}
 	myAcceleration = GetMaxAcceleration();
 	myAnimator->OnMoveFoward();
-	if (myIsBoosting == false)
-	{
-		myIsHoldingForward = true;
-	}
 }
 
 void CKartControllerComponent::MoveBackWards()
@@ -224,11 +214,11 @@ void CKartControllerComponent::MoveBackWards()
 
 void CKartControllerComponent::StopTurning()
 {
-	if (myCurrentAction == eCurrentAction::eTurningLeft/*mySteering < 0.f*/)
+	if (myCurrentAction == eCurrentAction::eTurningLeft)
 	{
 		myAnimator->OnStopTurningLeft();
 	}
-	else if (myCurrentAction == eCurrentAction::eTurningRight /*mySteering > 0.f*/)
+	else if (myCurrentAction == eCurrentAction::eTurningRight)
 	{
 		myAnimator->OnStopTurningRight();
 	}
@@ -254,11 +244,18 @@ bool CKartControllerComponent::Drift()
 	{
 		return false;
 	}
+	if (myDrifter->IsDrifting() == true)
+	{
+		return false;
+	}
 	if (myVelocity.Length() < myMaxSpeed * 0.5f)
 	{
 		return false;
 	}
+
 	myDrifter->StartDrifting(myCurrentAction);
+	myAnimator->OnDrift();
+	
 	SComponentMessageData messageData;
 	messageData.myFloat = myDriftAngle;
 	if (myCurrentAction == eCurrentAction::eDefault)
@@ -280,6 +277,10 @@ bool CKartControllerComponent::Drift()
 		GetParent()->NotifyComponents(eComponentMessageType::eDoDriftBobbing, messageData);
 	}
 
+	SComponentMessageData data;
+	data.myString = "PlayDrift";
+	GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
+
 	return true;
 }
 
@@ -288,6 +289,12 @@ void CKartControllerComponent::StopDrifting(const bool aShouldGetBoost)
 	myDriftSetupTimer = myDriftSetupTime + 1.0f;
 	GetParent()->NotifyComponents(eComponentMessageType::eCancelDriftBobbing, SComponentMessageData());
 	CDrifter::eDriftBoost boost = myDrifter->StopDrifting();
+
+	SComponentMessageData data;
+	data.myString = "StopDrift";
+	GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
+
+	myAnimator->OnStopDrifting();
 
 	if (myControllerHandle != -1 && myControllerHandle < 4)
 	{
@@ -364,6 +371,7 @@ void CKartControllerComponent::ApplyStartBoost()
 	float bigboost = myPreRaceBoostTarget * 0.85f;
 	if (myPreRaceBoostValue > myPreRaceBoostTarget * 0.6f)
 	{
+		myAnimator->OnStartBoosting();
 		if (myPreRaceBoostValue > myPreRaceBoostTarget * 0.8f)
 		{
 			if (myPreRaceBoostValue > myPreRaceBoostTarget)
@@ -457,6 +465,22 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 		CParticleEmitterManager::GetInstance().Deactivate(mySlowMovment);
 	}
 
+	if (myVelocity.Length() > 1.0f)
+	{
+		if (myIsplayingEngineLoop == false)
+		{
+			SComponentMessageData data; data.myString = "PlayEngineLoop";
+			GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
+			myIsplayingEngineLoop = true;
+		}
+	}
+	else
+	{
+		SComponentMessageData data; data.myString = "StopEngineLoop";
+		GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
+		myIsplayingEngineLoop = false;
+	}
+
 	if (myTerrainModifier < 1.0f && myVelocity.Length() > 1.0f)
 	{
 		//start grass particles
@@ -542,6 +566,24 @@ const CNavigationSpline & CKartControllerComponent::GetNavigationSpline()
 	return myManager->GetNavigationSpline();
 }
 
+void CKartControllerComponent::LookBack(bool aLookBack)
+{
+	if(myLookingBack != aLookBack)
+	{
+		myLookingBack = aLookBack;;
+
+		SComponentMessageData data;
+
+		CU::Matrix33f rotation;
+		data.myVoidPointer = &rotation;
+		if(myLookingBack == true)
+		{
+			rotation *= CU::Matrix33f::CreateRotateAroundY(TAU / 2.f);
+		}
+		GetParent()->NotifyComponents(eComponentMessageType::eSetCameraRotation, data);
+	}
+}
+
 void CKartControllerComponent::Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData)
 {
 	switch (aMessageType)
@@ -582,6 +624,10 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 			if (myIsHoldingForward == false)
 			{
 				StopMoving();
+			}
+			else
+			{
+				MoveFoward();
 			}
 			CParticleEmitterManager::GetInstance().Deactivate(myBoostEmmiterhandle);
 		}
@@ -630,6 +676,30 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 		}
 	}
 	//Position
+	if (myHasGottenHit == false)
+	{
+		if (myHasGottenHit != myPreviousGotHit)
+		{
+			myHasGottenHit = myPreviousGotHit;
+			switch (myCurrentAction)
+			{
+			case eCurrentAction::eTurningRight:
+				TurnRight();
+				break;
+			case eCurrentAction::eTurningLeft:
+				TurnLeft();
+				break;
+			case eCurrentAction::eDefault:
+				break;
+			default:
+				break;
+			}
+			if (myIsHoldingForward == true)
+			{
+				MoveBackWards();
+			}
+		}
+	}
 
 	CU::Vector3f forwardVector(CU::Vector3f::UnitZ);
 
@@ -773,6 +843,10 @@ void CKartControllerComponent::DoCornerTest(unsigned aCornerIndex, const CU::Mat
 			}
 			else if(raycastHitData.collisionLayer == Physics::eKart && reinterpret_cast<CComponent*>(raycastHitData.actor->GetCallbackData()->GetUserData())->GetParent() != GetParent())
 			{
+				if (myIsInvurnable == true)
+				{
+					reinterpret_cast<CComponent*>(raycastHitData.actor->GetCallbackData()->GetUserData())->GetParent()->NotifyOnlyComponents(eComponentMessageType::eGotHit, SComponentMessageData());
+				}
 				GetParent()->Move(dir * (raycastHitData.distance - testDist) * -2.f);
 				myVelocity *= 0.75f;
 				const float repulsion = CLAMP(bounceEffect, 0.f, GetMaxSpeed() * 2.f);
@@ -827,11 +901,6 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 		if(raycastHitData.distance < controlDist)
 		{
 			myIsOnGround = true;
-			if (myHasJumped == true)
-			{
-				Drift();
-				myHasJumped = false;
-			}
 		}
 		if (raycastHitData.distance < onGroundDist)
 		{

@@ -67,6 +67,7 @@
     <ClCompile Include="TerrainComponent.cpp" />
     <ClCompile Include="BlueShellBehaviourComponent.cpp" />
     <ClCompile Include="BlueShellComponentManager.cpp" />
+    <ClCompile Include="CharacterInfoComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -143,5 +144,6 @@
     <ClInclude Include="TerrainComponent.h" />
     <ClInclude Include="BlueShellBehaviourComponent.h" />
     <ClInclude Include="BlueShellComponentManager.h" />
+    <ClInclude Include="CharacterInfoComponent.h" />
   </ItemGroup>
 </Project>

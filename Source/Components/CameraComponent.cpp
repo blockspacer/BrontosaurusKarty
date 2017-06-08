@@ -95,6 +95,13 @@ void CCameraComponent::Receive(const eComponentMessageType aMessageType, const S
 			//Audio::CAudioInterface::GetInstance()->SetListenerPosition(transformation); hasta la xp vista bebe
 		}
 		break;
+	case eComponentMessageType::eSetCameraRotation:
+		{
+			GetParent()->GetLocalTransform().SetRotation(*reinterpret_cast<CU::Matrix33f*>(aMessageData.myVoidPointer));
+			myCameraInterpolateTowardsMatrix = myKartOffset * GetParent()->GetToWorldTransform();
+			myCamera->SetTransformation(myCameraInterpolateTowardsMatrix);
+		}
+		break;
 	}
 }
 

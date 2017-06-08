@@ -19,7 +19,7 @@ class CModelComponent;
 class CKartControllerComponent : public CComponent
 {
 public:
-	CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent, const short aControllerIndex = -1);
+	CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent, const short aControllerIndex = -1, const short aCharacterIndex = 0);
 	~CKartControllerComponent();
 
 	void Turn(float aDirectionX);
@@ -60,6 +60,7 @@ public:
 	inline float GetMaxAcceleration() const;
 	inline float GetAcceleratiot();
 	inline bool GetIsControlledByAI() const;
+	void LookBack(bool aLookBack);
 
 private:
 	
@@ -145,8 +146,8 @@ private:
 	bool myIsOnGround;
 	bool myCanAccelerate;
 	bool myIsBoosting;
-	bool myHasJumped;
 
+	bool myPreviousGotHit;
 	bool myIsInvurnable;
 	bool myHasGottenHit;
 	bool myIsOnGroundLast;
@@ -154,6 +155,8 @@ private:
 	bool increaseCountdownValue;
 	bool myIsHoldingForward;
 	CComponent* myLastGroundComponent;
+	bool myLookingBack;
+	bool myIsplayingEngineLoop;
 };
 
 

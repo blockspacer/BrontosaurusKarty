@@ -1,5 +1,7 @@
 #pragma once
 #include "../ThreadedPostmaster/Subscriber.h"
+#include "PlacementData.h"
+
 class CLapTrackerComponent;
 
 struct SLapCalculateData
@@ -8,28 +10,24 @@ struct SLapCalculateData
 	{
 		lapTrackerComponent = nullptr;
 		reversePlacement = 0;
-		placementValue = 0;
-		nextSplineDistance = 0;
+		distanceTravelled = 0.0f;
 	}
 	SLapCalculateData(const SLapCalculateData& aLapCalcData) 
 	{
 		lapTrackerComponent = aLapCalcData.lapTrackerComponent;
 		reversePlacement = aLapCalcData.reversePlacement;
-		placementValue = aLapCalcData.placementValue;
-		nextSplineDistance = aLapCalcData.nextSplineDistance;
+		distanceTravelled = aLapCalcData.distanceTravelled;
 	}
 	SLapCalculateData & operator=(const SLapCalculateData &aLapCalcData)
 	{
 		lapTrackerComponent = aLapCalcData.lapTrackerComponent;
 		reversePlacement = aLapCalcData.reversePlacement;
-		placementValue = aLapCalcData.placementValue;
-		nextSplineDistance = aLapCalcData.nextSplineDistance;
+		distanceTravelled = aLapCalcData.distanceTravelled;
 		return *this;
 	}
 	CLapTrackerComponent* lapTrackerComponent;
 	unsigned short reversePlacement;
-	unsigned short placementValue;
-	float nextSplineDistance;
+	float distanceTravelled;
 };
 
 class CLapTrackerComponentManager : public Postmaster::ISubscriber
@@ -65,9 +63,11 @@ private:
 	CU::GrowingArray<CLapTrackerComponent*> myComponents;
 	CU::GrowingArray<CGameObject*> myRacerPlacements;
 	CU::GrowingArray<CGameObject*> myWinnerPlacements;
+	CU::StaticArray<SPlacementData, 8> myPlacementData;
 	static CLapTrackerComponentManager* ourInstance;
 	float myUpdatePlacementCountdown;
 
 	bool myStartedWithOnlyOnePlayer;
+	bool myIsRaceOver;
 };
 
