@@ -21,9 +21,10 @@ public:
 private:
 	const CNavigationSpline& GetNavigationSpline();
 	int myCurrentSplineIndex;
-	float myTimer;
+	float myUseItemTimer;
 
 	eStates myState;
 	char myIsDrifting;
+	bool myHasItem;
 };
 

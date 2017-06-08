@@ -11,9 +11,10 @@ CAIController::CAIController(CKartControllerComponent& aKartComponent)
 	: CController(aKartComponent)
 {
 	myCurrentSplineIndex = 0;
-	myTimer = 0.f;
+	myUseItemTimer = 0.f;
 	myState = eStates::eStop;
 	myIsDrifting = 0;
+	myHasItem = false;
 }
 
 CAIController::~CAIController()
@@ -22,18 +23,26 @@ CAIController::~CAIController()
 
 void CAIController::Update(const float aDeltaTime)
 {
-	/*if (GetNavigationSpline().GetNumberOfPoints() == 0)
+	if (myHasItem == false)
 	{
-		return;
-	}*/
-
-	if(myControllerComponent.GetParent()->AskComponents(eComponentQuestionType::eGetHoldItemType, SComponentQuestionData()) == true)
-	{
-		myControllerComponent.GetParent()->NotifyOnlyComponents(eComponentMessageType::eUseItem, SComponentMessageData());
+		if (myControllerComponent.GetParent()->AskComponents(eComponentQuestionType::eGetHoldItemType, SComponentQuestionData()) == true)
+		{
+			myHasItem = true;
+			myUseItemTimer = 2.f;
+		}
 	}
 
-	const CU::Vector3f piss = myControllerComponent.GetParent()->GetToWorldTransform().GetPosition();
-	CU::Vector2f pos(piss.x, piss.z);
+	if (myHasItem == true)
+	{
+		myUseItemTimer -= aDeltaTime;
+		if (myUseItemTimer <= 0.f)
+		{
+			myControllerComponent.GetParent()->NotifyOnlyComponents(eComponentMessageType::eUseItem, SComponentMessageData());
+		}
+	}
+
+	const CU::Vector3f pos3D = myControllerComponent.GetParent()->GetToWorldTransform().GetPosition();
+	CU::Vector2f pos(pos3D.xz());
 
 	const CU::Vector3f forward = myControllerComponent.GetParent()->GetToWorldTransform().myForwardVector;
 	CU::Vector2f kartForward(forward.x, forward.z);
