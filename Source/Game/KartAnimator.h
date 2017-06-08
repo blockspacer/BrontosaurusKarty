@@ -36,7 +36,10 @@ private:
 	void AddAnimation(const eEventType aType);
 
 	std::vector<CAnimationEvent> myEventQueue;
+	CU::StaticArray<CGameObject*, 4> myWheels;
+
 	std::unique_ptr<CAnimationEvent> myDefaultAnimation;
+
 	CModelComponent& myModelComponent;
 
 	enum class eTurnState
@@ -54,7 +57,6 @@ private:
 		eRearRight
 	};
 
-	CU::StaticArray<CGameObject*, 4> myWheels;
 	bool myIsBreaking;
 	bool myIsAccelerating;
 	bool myIsGoingBackwards;

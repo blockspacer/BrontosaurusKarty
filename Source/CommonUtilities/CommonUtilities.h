@@ -3,8 +3,14 @@
 #define MIN(A,B) ((A) < (B)) ? (A) : (B)
 #define MAX(A,B) ((A) > (B)) ? (A) : (B)
 #define SWAP(A,B) A^=B^=A^=B
+
+#ifndef RANGE
 #define RANGE(A,B,C) ((A) < (B)) ? B : ((A) > (C)) ? C : A
+#endif // !RANGE
+
+#ifndef CLAMP
 #define CLAMP(V,A_MIN,A_MAX) RANGE(V,A_MIN,A_MAX)
+#endif
 
 #define FLOAT_IS_ZERO(a) abs((a)) <= 1e-10
 #define PI 3.14159265f
