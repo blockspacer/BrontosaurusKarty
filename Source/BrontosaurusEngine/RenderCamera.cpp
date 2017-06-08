@@ -69,9 +69,9 @@ void CRenderCamera::Render()
 	myRenderQueue.RemoveAll();
 }
 
-ID3D11PixelShader* CRenderCamera::GetShadowShader()
+ID3D11PixelShader* CRenderCamera::GetShadowShader(const bool aInstanced)
 {
-	return myShadowPS;
+	return aInstanced == true ? myShadowPSInstanced : myShadowPS;
 }
 
 void CRenderCamera::InitRenderPackages(const CU::Vector2ui& aTextureSize, ID3D11Texture2D* aTexture, DXGI_FORMAT aFormat)
