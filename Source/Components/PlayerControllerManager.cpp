@@ -79,7 +79,7 @@ void CPlayerControllerManager::Update(const float aDeltaTime)
 
 eMessageReturn CPlayerControllerManager::DoEvent(const CPlayerFinishedMessage& aMessage)
 {
-	unsigned char idOfPlayer = CPollingStation::GetInstance()->GetIDFromPlayer((CGameObject*)aMessage.GetGameObject());
+	unsigned char idOfPlayer = CPollingStation::GetInstance()->GetIDFromPlayer(aMessage.GetGameObject());
 	// Antagandes att spelarens ID ligger i fas med spelarens position i myPlayerControllers.
 
 	//delete myPlayerControllers[idOfPlayer];
@@ -87,7 +87,8 @@ eMessageReturn CPlayerControllerManager::DoEvent(const CPlayerFinishedMessage& a
 
 
 	SComponentMessageData pointlessData;
-	((CGameObject*)aMessage.GetGameObject())->NotifyComponents(eComponentMessageType::eAITakeOver, pointlessData);
+	aMessage.GetGameObject()->NotifyComponents(eComponentMessageType::eAITakeOver, pointlessData);
+
 	
 	return eMessageReturn::eContinue;
 }

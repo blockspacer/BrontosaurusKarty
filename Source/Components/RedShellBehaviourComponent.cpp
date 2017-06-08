@@ -6,10 +6,7 @@
 #include "..\CommonUtilities\line.h"
 #include "KartControllerComponentManager.h"
 
-
-
-CU::Vector2f pDistance(const float x, const float y, const float x1, const float y1, const float x2, const float y2);
-
+#include "AIMath.h"
 
 CRedShellBehaviourComponent::CRedShellBehaviourComponent()
 {
@@ -80,7 +77,7 @@ void CRedShellBehaviourComponent::Update(const float aDeltaTime)
 
 
 
-	CU::Vector2f closestPoint = /*lineVector * shadowLength*/pDistance(pos.x, pos.y, leftPoint.x, leftPoint.y, rightPoint.x, rightPoint.y);
+	CU::Vector2f closestPoint = /*lineVector * shadowLength*/AIMath::pDistance(pos.x, pos.y, leftPoint.x, leftPoint.y, rightPoint.x, rightPoint.y);
 
 
 	//CU::Vector2f toClosestPointDirection = closestPoint - pos;

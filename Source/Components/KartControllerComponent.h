@@ -188,7 +188,8 @@ float CKartControllerComponent::GetMaxSpeed() const
 
 float CKartControllerComponent::GetMaxSpeed2() const
 {
-	return GetMaxSpeed() * GetMaxSpeed();
+	float maxSpeed = GetMaxSpeed();
+	return maxSpeed * maxSpeed;
 }
 
 float CKartControllerComponent::GetMaxAcceleration() const
