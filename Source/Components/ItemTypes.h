@@ -9,5 +9,6 @@ enum class eItemTypes
 	eStar,
 	eLightning,
 	eBlueShell,
+	eFakeItemBox,
 	eNone,
 };
