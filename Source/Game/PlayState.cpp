@@ -853,7 +853,7 @@ void CPlayState::RenderPlacementLine()
 		RENDERER.AddRenderMessage(createOrClear);
 
 		SChangeStatesMessage* const changeStatesMessage = new SChangeStatesMessage();
-		changeStatesMessage->myBlendState = eBlendState::eAddBlend;
+		changeStatesMessage->myBlendState = eBlendState::eAlphaBlend;
 		changeStatesMessage->myDepthStencilState = eDepthStencilState::eDisableDepth;
 		changeStatesMessage->myRasterizerState = eRasterizerState::eNoCulling;
 		changeStatesMessage->mySamplerState = eSamplerState::eClamp;
