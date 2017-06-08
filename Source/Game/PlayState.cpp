@@ -261,19 +261,6 @@ void CPlayState::Load()
 		DL_MESSAGE_BOX("Loading Failed");
 	}
 	
-	//***************************************************************
-	//*						BAKE SHADOWMAP							*
-	//***************************************************************
-
-	myScene->BakeShadowMap();
-
-	//--------------------------------------------------------------
-
-
-	//myScene->AddCamera(CScene::eCameraType::ePlayerOneCamera);
-	//CRenderCamera& playerCamera = myScene->GetRenderCamera(CScene::eCameraType::ePlayerOneCamera);
-	//playerCamera.InitPerspective(90, WINDOW_SIZE_F.x, WINDOW_SIZE_F.y, 0.1f, 500.f);
-
 	myScene->InitPlayerCameras(myPlayerCount);
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
@@ -301,9 +288,29 @@ void CPlayState::Load()
 		myHUDs[i]->LoadHUD();
 	}
 
+
+
+
 	myCountdownSprite->Render();
 
 	///////////
+
+	//***************************************************************
+	//*						BAKE SHADOWMAP							*
+	//***************************************************************
+
+	myScene->BakeShadowMap();
+	while (myScene->HasBakedShadowMap())
+	{
+		std::this_thread::yield();
+	}
+
+	//--------------------------------------------------------------
+
+
+
+
+
 	myIsLoaded = true;
 
 	// Get time to load the level:
