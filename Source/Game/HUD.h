@@ -72,7 +72,7 @@ private:
 	CSpriteInstance* myBlueShellSprite;
 	CSpriteInstance* myNullSprite;
 
-	CSpriteInstance* myScoreBracketBGSprite;
+	CSpriteInstance* myScoreboardBGSprite;
 	CSpriteInstance* myPortraitSpriteYoshi;
 	CSpriteInstance* myPortraitSpriteMario;
 
