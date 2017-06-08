@@ -980,6 +980,18 @@ bool CKartControllerComponent::Answer(const eComponentQuestionType aQuestionType
 		}
 		return true;
 		break;
+	case eComponentQuestionType::eCheckIfGroundAbove:
+	{
+		const CU::Vector3f upMove = CU::Vector3f::UnitY;
+		const CU::Vector3f position = GetParent()->GetToWorldTransform().GetPosition();
+		Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(position + upMove, upMove, 100.0f, Physics::eGround);
+		if (raycastHitData.hit == true)
+		{
+			aQuestionData.myVector3f = raycastHitData.position;
+			return true;
+		}
+		break;
+	}
 	default:
 		break;
 	}
