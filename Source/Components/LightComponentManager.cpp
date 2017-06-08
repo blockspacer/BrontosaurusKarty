@@ -58,6 +58,11 @@ void CLightComponentManager::AddDirectionalLightToScene(const Lights::SDirection
 }
 
 
+void CLightComponentManager::SetShadowMapAABB(const CU::Vector3f& aCenterPosition, const CU::Vector3f& aExtents)
+{
+	myScene.SetShadowMapAABB(aCenterPosition, aExtents);
+}
+
 CLightComponentManager::CLightComponentManager(CScene& aScene)
 	: myScene(aScene)
 	, myPointLightComponents(10)
