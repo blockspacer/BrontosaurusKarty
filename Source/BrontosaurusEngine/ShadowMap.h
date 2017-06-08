@@ -9,18 +9,21 @@ using InstanceID = unsigned int;
 class CShadowMap
 {
 public:
-	CShadowMap();
+	CShadowMap(unsigned int aShadowMapSize);
 	~CShadowMap();
-	
-	void Init(unsigned int aShadowMapSize);
+
 	void Render(const CU::GrowingArray<CModelInstance*, InstanceID>& aModelList);
 	void SetBoundingBox(const CU::Vector3f& aCenterPosition, const CU::Vector3f& aExtents);
 	void SetDirection(const CU::Vector3f& aLightDirection);
 	void SendToRenderer();
 	CRenderPackage & GetShadowBuffer();
 
-	inline bool GetIfFinishedBake();
 
+	inline void SetPCFPassCount(const int aPCFPassCount);
+	inline int GetPCFPassCount() const;
+
+
+	inline bool GetIfFinishedBake();
 
 private:
 	inline void FinishedBake();
@@ -34,6 +37,16 @@ private:
 	SBakedShadowBuffer myData;
 	bool myHasBaked;
 };
+
+inline void CShadowMap::SetPCFPassCount(const int aPCFPassCount)
+{
+	myData.pcfPasses = aPCFPassCount;
+}
+
+inline int CShadowMap::GetPCFPassCount() const
+{
+	return myData.pcfPasses;
+}
 
 inline bool CShadowMap::GetIfFinishedBake()
 {

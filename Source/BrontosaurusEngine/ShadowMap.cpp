@@ -6,28 +6,24 @@
 #include "Engine.h"
 #include "Renderer.h"
 
-#define PCF_PASSES 3
 
-CShadowMap::CShadowMap()
+CShadowMap::CShadowMap(unsigned int aShadowMapSize)
 {
 	myHasBaked = false;
+	myData.shadowMapSize = aShadowMapSize;
+	myData.pcfPasses = 4;
+	myRenderCamera.InitOrthographic(10.f, 10.f, 10.0f, 1.f, aShadowMapSize, aShadowMapSize, nullptr, DXGI_FORMAT_R32_FLOAT);
+	myRenderCamera.ShadowInit();
 }
-
 
 CShadowMap::~CShadowMap()
 {
 }
 
-void CShadowMap::Init(unsigned int aShadowMapSize)
-{
-	myData.shadowMapSize = aShadowMapSize;
-
-	CalculateFrustum();
-	myRenderCamera.ShadowInit();
-}
-
 void CShadowMap::Render(const CU::GrowingArray<CModelInstance*, InstanceID>& aModelList)
 {
+	CalculateFrustum();
+
 	SChangeStatesMessage statemsg;
 
 	statemsg.myRasterizerState = eRasterizerState::eCullFront;
@@ -154,10 +150,9 @@ void CShadowMap::CalculateFrustum()
 	lightSpace.SetPosition(myBoundingBox.myCenterPos);
 	lightSpace.Move({ -xl / 2.0f, -yt / 2.0f, 0.f});
 
-	myRenderCamera.InitOrthographic(xr - xl, yb - yt, zf - zn, 10.0f, myData.shadowMapSize, myData.shadowMapSize, nullptr, DXGI_FORMAT_R32_FLOAT);
+	myRenderCamera.GetCamera().ReInit(xr - xl, yb - yt, 10.f, zf - zn);
 	myRenderCamera.GetCamera().SetTransformation(lightSpace);
 
 	myData.lightProjection = myRenderCamera.GetCamera().GetProjection();
 	myData.lightSpace = lightSpace.GetInverted();
-	myData.pcfPasses = PCF_PASSES;
 }
