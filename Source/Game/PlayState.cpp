@@ -841,7 +841,7 @@ void CPlayState::RenderPlacementLine()
 {
 	for(unsigned int i = 0; i < myPlacementLinesGUIElement.Size(); i++)
 	{
-		SComponentQuestionData lapTraversedPercentageQuestionData;
+		/*SComponentQuestionData lapTraversedPercentageQuestionData;
 		if (myKartObjects[i]->AskComponents(eComponentQuestionType::eGetLapTraversedPercentage, lapTraversedPercentageQuestionData) == true)
 		{
 			float lapTraversedPlacement = lapTraversedPercentageQuestionData.myFloat;
@@ -861,6 +861,6 @@ void CPlayState::RenderPlacementLine()
 		SRenderToGUI* const guiChangeState = new SRenderToGUI(L"placementLine" + i, changeStatesMessage);
 		RENDERER.AddRenderMessage(guiChangeState);
 
-		myPlacementLinesGUIElement[i]->mySprite->RenderToGUI(L"placementLine" + i);
+		myPlacementLinesGUIElement[i]->mySprite->RenderToGUI(L"placementLine" + i);*/
 	}
 }
