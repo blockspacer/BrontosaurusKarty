@@ -286,7 +286,7 @@ void CDeferredRenderer::DoLightingPass(CFullScreenHelper& aFullscreenHelper, CRe
 		changeStateMessage.myBlendState = eBlendState::eAddBlend;
 		changeStateMessage.mySamplerState = eSamplerState::eClamp;
 		aRenderer.SetStates(&changeStateMessage);
-		DoDirectLighting(aFullscreenHelper);
+		DoDirectLighting(aFullscreenHelper, aRenderer);
 #endif
 }
 
