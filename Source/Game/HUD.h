@@ -73,10 +73,8 @@ private:
 	CSpriteInstance* myNullSprite;
 
 	CSpriteInstance* myScoreboardBGSprite;
-	CSpriteInstance* myPortraitSpriteYoshi;
-	CSpriteInstance* myPortraitSpriteMario;
+	CSpriteInstance* myPortraitSprite;
 
-	CU::StaticArray<CSpriteInstance*, 8> myPlacementSprites;
 	CU::StaticArray<SPlacementData, 8> myWinners;
 
 	CU::Vector2f myCameraOffset; //best solution 10/10

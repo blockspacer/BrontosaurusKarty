@@ -251,9 +251,8 @@ void CHUD::Render()
 		{
 			float yOffset = 0.11333f; //shh..
 
-			CU::Vector2f initialPortraitPos = myPortraitSpriteYoshi->GetPosition();
+			CU::Vector2f initialPortraitPos = myPortraitSprite->GetPosition();
 
-			CSpriteInstance* characterPortrait = nullptr;
 			myScoreboardElement.mySprite->RenderToGUI(L"scoreboard");
 
 			for (int i = 0; i < 8; ++i)
@@ -263,27 +262,28 @@ void CHUD::Render()
 				switch (myWinners[i].character)
 				{
 				case SParticipant::eCharacter::eVanBrat:
-					characterPortrait = myPortraitSpriteYoshi;
+					myPortraitSprite->SetRect({ 0.f, 0.875f, 1.f, 1.f });
 					charNameTxt.SetText(L"Yoshi");
 					break;
 				case SParticipant::eCharacter::eGrandMa:
-					characterPortrait = myPortraitSpriteMario;
+					myPortraitSprite->SetRect({ 0.f, 0.750f, 1.f, 0.875f });
 					charNameTxt.SetText(L"Mario");
 					break;
 				default:
-					characterPortrait = myPortraitSpriteYoshi;
+					myPortraitSprite->SetRect({ 0.f, 0.875f, 1.f, 1.f });
+					//myPortraitSprite->SetRect({ 0.f, 0.750f, 1.f, 0.875f });
 					charNameTxt.SetText(L"Error");
 					break;
 				}
 
-				CU::Vector2f lastPortraitPos = myPortraitSpriteYoshi->GetPosition();
+				CU::Vector2f lastPortraitPos = myPortraitSprite->GetPosition();
 				CU::Vector2f newPortraitPos = { lastPortraitPos.x, lastPortraitPos.y + yOffset };
 
-				characterPortrait->RenderToGUI(L"scoreboard");
-				characterPortrait->SetPosition(newPortraitPos);
+				myPortraitSprite->RenderToGUI(L"scoreboard");
+				myPortraitSprite->SetPosition(newPortraitPos);
 			}
 
-			characterPortrait->SetPosition(initialPortraitPos);
+			myPortraitSprite->SetPosition(initialPortraitPos);
 
 		}
 		SetGUIToEndBlend(L"scoreboard");
@@ -392,12 +392,10 @@ void CHUD::LoadScoreboard()
 	myScoreboardElement = LoadHUDElement(jsonElementData);
 
 	const std::string scoreboardBGSpritePath = jsonSprites.at("background").GetString();
-	const std::string portraitYoshiSpritePath = jsonSprites.at("portraitYoshi").GetString();
-	const std::string portraitMarioSpritePath = jsonSprites.at("portraitMario").GetString();
+	const std::string portraitSpritePath = jsonSprites.at("characterPortrait").GetString();
 
 	myScoreboardBGSprite = new CSpriteInstance(scoreboardBGSpritePath.c_str(), { 1.f,1.0f});
-	myPortraitSpriteYoshi = new CSpriteInstance(portraitYoshiSpritePath.c_str(), { 0.075f, 0.075f }, { 0.188f, 0.014f });
-	myPortraitSpriteMario = new CSpriteInstance(portraitMarioSpritePath.c_str(), { 0.075f, 0.075f }, { 0.188f, 0.014f });
+	myPortraitSprite = new CSpriteInstance(portraitSpritePath.c_str(), { 0.5f, 0.125f}, { 0.196f, -0.004f });
 	
 	myScoreboardElement.mySprite = myScoreboardBGSprite;
 
