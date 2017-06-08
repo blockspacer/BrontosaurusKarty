@@ -51,6 +51,7 @@ enum class eComponentQuestionType
 	eGetTerrainModifier,
 	eGetCharacterInfo,
 	eGetLapTraversedPercentage,
+	eCheckIfGroundAbove,
 	eLength,
 };
 struct SComponentQuestionData
