@@ -13,12 +13,15 @@
 #include "FireEmitterInstance.h"
 #include "..\CommonUtilities\Sphere.h"
 #include "../Components/ParticleEmitterComponentManager.h"
-#include "CascadeShadowMap.h"
 #include "ParticleEmitterManager.h"
+#include "ShadowMap.h"
 
 #define Intify(A_ENUM_CLASS) static_cast<int>(A_ENUM_CLASS)
 #define PlayerOneCamera myRenderCameras[Intify(eCameraType::ePlayerOneCamera)]
-//#define USE_SHADOWS
+
+// set quality 0 is lame 4 is neat
+#define SHADOW_QUALITY 3
+constexpr unsigned int gShadowMapSize = 1024u << SHADOW_QUALITY;
 
 CScene::CScene()
 {
@@ -30,7 +33,7 @@ CScene::CScene()
 	mySkybox = nullptr;
 	myCubemap = nullptr;
 
-	myShadowMap = new CCascadeShadowMap(0, 0.1f, 150.f);
+	myShadowMap = new CShadowMap();
 	CParticleEmitterComponentManager::GetInstance().SetScene(this);
 }
 
@@ -84,6 +87,7 @@ void CScene::Render()
 	myShadowMap->ComputeShadowProjection(PlayerOneCamera.GetCamera());
 	myShadowMap->Render(myModels);
 #endif
+
 
 	statemsg.myRasterizerState = eRasterizerState::eDefault;
 	statemsg.myDepthStencilState = eDepthStencilState::eDefault;
@@ -139,32 +143,11 @@ void CScene::Render()
 			continue;
 		}
 	
-		if (myModels[i]->GetIgnoreDepth() == false)
-		{
-			if (PlayerOneCamera.GetCamera().IsInside(myModels[i]->GetModelBoundingSphere()) == false)
-				continue;
-	
-			myModels[i]->RenderDeferred(PlayerOneCamera);
-		}
-	}
-	PlayerOneCamera.AddRenderMessage(new SRenderModelBatches());
-
-	statemsg.myRasterizerState = eRasterizerState::eDefault;
-	statemsg.myDepthStencilState = eDepthStencilState::eDefault;
-	statemsg.myBlendState = eBlendState::eNoBlend;
-	statemsg.mySamplerState = eSamplerState::eDeferred;
-	PlayerOneCamera.AddRenderMessage(new SChangeStatesMessage(statemsg));
-
-	for (CModelInstance* model : myModels)
-	{
-		if (model == nullptr)
-		{
+		
+		if (PlayerOneCamera.GetCamera().IsInside(myModels[i]->GetModelBoundingSphere()) == false)
 			continue;
-		}
-		if (model->GetIgnoreDepth() == true)
-		{
-			model->RenderDeferred(PlayerOneCamera);
-		}
+	
+		myModels[i]->RenderDeferred(PlayerOneCamera);
 	}
 	PlayerOneCamera.AddRenderMessage(new SRenderModelBatches());
 
@@ -203,14 +186,6 @@ void CScene::Render()
 	interMSG->useDepthResource = false;
 	interMSG->myRenderPackage = PlayerOneCamera.GetRenderPackage();
 	RENDERER.AddRenderMessage(interMSG);
-
-	//DRAW SHADOWBUFFER
-	//SRenderToIntermediate * interMSG2 = new SRenderToIntermediate();
-	//interMSG2->myRect = { 0.0f, 0.0f, 0.5f, 0.5f };
-	//interMSG2->useDepthResource = false;
-	//interMSG2->myRenderPackage = myShadowMap->GetShadowMap();
-	//RENDERER.AddRenderMessage(interMSG2);
-	//RENDERER.AddRenderMessage(new SActivateRenderToMessage());
 }
 
 void CScene::RenderSplitScreen(const int aRectCount)
@@ -220,6 +195,8 @@ void CScene::RenderSplitScreen(const int aRectCount)
 		DL_ASSERT("messing up rendering to split screen");
 		return;
 	}
+
+	myShadowMap->SendToRenderer();
 
 	const CU::Vector4f oneSplit[2] = { CU::Vector4f(0.f, 0.f, 1.f, 0.5f), CU::Vector4f(0.f, 0.5f, 1.f, 1.f) };
 	const CU::Vector4f twoSplit[4] = { CU::Vector4f(0.f, 0.f, 0.5f, 0.5f), CU::Vector4f(0.5f, 0.f, 1.f, 0.5f), CU::Vector4f(0.f, 0.5f, 0.5f, 1.f), CU::Vector4f(0.5f, 0.5f, 1.f, 1.f) };
@@ -316,11 +293,6 @@ void CScene::RenderToRect(const CU::Vector4f& aRect, CRenderCamera& aCamera)
 			continue;
 		}
 
-		if (model->GetIgnoreDepth())
-		{
-			continue;
-		}
-
 		if (aCamera.GetCamera().IsInside(model->GetModelBoundingSphere()) == false)
 		{
 			continue;
@@ -329,25 +301,6 @@ void CScene::RenderToRect(const CU::Vector4f& aRect, CRenderCamera& aCamera)
 		model->RenderDeferred(aCamera);
 	}
 
-	aCamera.AddRenderMessage(new SRenderModelBatches());
-
-	statemsg.myRasterizerState = eRasterizerState::eDefault;
-	statemsg.myDepthStencilState = eDepthStencilState::eDefault;
-	statemsg.myBlendState = eBlendState::eNoBlend;
-	statemsg.mySamplerState = eSamplerState::eDeferred;
-	aCamera.AddRenderMessage(new SChangeStatesMessage(statemsg));
-
-	for (CModelInstance* model : myModels)
-	{
-		if (model == nullptr)
-		{
-			continue;
-		}
-		if (model->GetIgnoreDepth() == true)
-		{
-			model->RenderDeferred(aCamera);
-		}
-	}
 	aCamera.AddRenderMessage(new SRenderModelBatches());
 
 	SRenderDirectionalLight* light = new SRenderDirectionalLight();
@@ -373,7 +326,16 @@ void CScene::RenderToRect(const CU::Vector4f& aRect, CRenderCamera& aCamera)
 	interMSG->myRect = aRect;//{ 0.0f, 0.0f, 1.0f, 1.0f };
 	interMSG->useDepthResource = false;
 	interMSG->myRenderPackage = aCamera.GetRenderPackage();
+	//interMSG->myRenderPackage = myShadowMap->GetShadowBuffer();
+
+
 	RENDERER.AddRenderMessage(interMSG);
+}
+
+void CScene::BakeShadowMap()
+{
+	myShadowMap->Init(gShadowMapSize);
+	myShadowMap->Render(myModels);
 }
 
 InstanceID CScene::AddModelInstance(CModelInstance* aModelInstance)
@@ -682,6 +644,16 @@ void CScene::GenerateCubemap()
 CRenderCamera& CScene::GetPlayerCamera(const int aPlayerIndex)
 {
 	return myPlayerCameras[aPlayerIndex];
+}
+
+void CScene::SetShadowMapAABB(const CU::Vector3f& aCenterPosition, const CU::Vector3f& aExtents)
+{
+	myShadowMap->SetBoundingBox(aCenterPosition, aExtents);
+}
+
+bool CScene::HasBakedShadowMap()
+{
+	return myShadowMap->GetIfFinishedBake();
 }
 
 CSpotLightInstance* CScene::GetSpotLightInstance(const InstanceID aID)
