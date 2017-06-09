@@ -23,9 +23,9 @@
 // Level of detail on Anti Aliasing on shadowmap.
 // higher the value, smoother the shadows
 // using Stratified Poisson Sampling
-#define PCF_PASSES 8
+#define PCF_PASSES 4
 // set quality 0 is lame 4 is neat
-#define SHADOW_QUALITY 4
+#define SHADOW_QUALITY 3
 
 //#define RENDER_SHADOWMAP
 constexpr unsigned int gShadowMapSize = 1024u << SHADOW_QUALITY;
