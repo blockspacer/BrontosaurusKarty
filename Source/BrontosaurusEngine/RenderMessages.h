@@ -7,7 +7,7 @@
 #include "BufferStructs.h"
 #include "Lights.h"
 #include "ParticleEmitter.h"
-#include "CascadeBuffer.h"
+#include "ShadowBuffers.h"
 #include "Colour.h"
 #include "RenderCamera.h"
 #include "GUIElement.h"
@@ -80,6 +80,7 @@ struct SRenderMessage
 		eSetRTV,
 		eSetCubemapResource,
 		eClear,
+		eRenderCallback,
 		eRenderDirectionalLight,
 		eRenderPointLight,
 		eRenderSpotLight,
@@ -199,7 +200,7 @@ struct SRenderToIntermediate : SRenderMessage
 {
 	SRenderToIntermediate();
 	CRenderPackage myRenderPackage;
-	CU::Vector4f myRect;
+	CU::Vector4f myRect = CU::Vector4f(0.0f, 0.0f, 1.0f, 1.0f);
 	bool useDepthResource;
 };
 
@@ -256,11 +257,9 @@ struct SRenderModelDepthMessage : SRenderModelMessage
 struct SSetShadowBuffer : SRenderMessage
 {
 	SSetShadowBuffer();
-
 	SCascadeBuffer cascadeBuffer;
+	SBakedShadowBuffer myShadowBufferData;
 	CRenderPackage myShadowBuffer;
-	//CU::Matrix44f myCameraTransformation;
-	//CU::Matrix44f myCameraProjection;
 };
 
 struct SRenderParticlesMessage : SRenderMessage
@@ -373,4 +372,10 @@ struct SRenderToGUI : SRenderMessage
 struct SClearGui: SRenderMessage
 {
 	SClearGui() : SRenderMessage(eRenderMessageType::eClearGui){}
+};
+
+struct SRenderCallback : SRenderMessage
+{
+	SRenderCallback() : SRenderMessage(SRenderMessage::eRenderMessageType::eRenderCallback) {};
+	std::function<void()> myFunction;
 };

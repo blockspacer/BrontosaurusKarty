@@ -46,6 +46,7 @@ CKartAnimator::CKartAnimator(CModelComponent& aModelComponent)
 
 		CGameObject* turnParent = LoadManager::GetInstance()->GetCurrentPLaystate().GetGameObjectManager()->CreateGameObject();
 		CModelComponent* wheelModel = wheelModels[i];
+		wheelModel->SetIsShadowCasting(false);
 		myWheels[i]->AddComponent(wheelModel);
 
 		turnParent->AddComponent(myWheels[i]);
