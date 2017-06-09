@@ -9,7 +9,7 @@ namespace CU
 	{
 	public:
 		IInputListener();
-		~IInputListener();
+		virtual ~IInputListener();
 
 		virtual eInputReturn TakeInput(const SInputMessage& aInputMessage) = 0;
 

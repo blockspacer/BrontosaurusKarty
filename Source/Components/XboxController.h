@@ -1,6 +1,7 @@
 #pragma once
 #include "Controller.h"
 #include "..\CommonUtilities\InputListener.h"
+#include "../ThreadedPostmaster/ControllerInputMessage.h"
 
 class CXboxController : public CController, public CU::IInputListener
 {
@@ -14,6 +15,7 @@ public:
 private:
 	void GamePadPressedKey(const CU::SInputMessage& aInputMessage);
 	void GamePadReleasedKey(const CU::SInputMessage& aInputMessage);
+	
 	void MovedJoystick(const CU::SInputMessage& aInputMessage);
 	void GamePadLeftTrigger(const CU::SInputMessage& aInputMessage);
 	void GamePadRightTrigger(const CU::SInputMessage& aInputMessage);
