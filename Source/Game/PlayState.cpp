@@ -171,7 +171,7 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 CPlayState::~CPlayState()
 {
 	CParticleEmitterComponentManager::Destroy();
-
+	CAudioSourceComponentManager::Destroy();
 
 	SAFE_DELETE(myScene);
 
@@ -192,6 +192,9 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myRespawnComponentManager);
 	SAFE_DELETE(myItemBehaviourManager);
 	CLapTrackerComponentManager::DestoyInstance();
+
+	CKartSpawnPointManager::GetInstance()->Destroy();
+	CPickupComponentManager::Destroy();
 }
 
 // Runs on its own thread.
@@ -348,6 +351,7 @@ void CPlayState::Init()
 
 	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::eCharPressed);
 	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::eRaceOver);
+	//POSTMASTER.Subscribe()
 
 	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::ePlayerFinished);
 	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::eRaceStarted);
