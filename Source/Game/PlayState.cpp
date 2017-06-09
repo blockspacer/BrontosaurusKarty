@@ -206,10 +206,9 @@ void CPlayState::Load()
 	myCountdownSprite->SetPosition({ 0.5f,0.5f });
 
 	myCountdownElement = new SGUIElement();
-	myCountdownElement->myAnchor = (char)eAnchors::eTop | (char)eAnchors::eLeft;
-	myCountdownElement->myScreenRect = CU::Vector4f( myCountdownSprite->GetPosition() );
-	myCountdownElement->myScreenRect.z = myCountdownSprite->GetPosition().x - (0.26f / 2);
-	myCountdownElement->myScreenRect.w = myCountdownSprite->GetPosition().y - (0.27f / 2);
+	myCountdownElement->myAnchor.Set((unsigned int)eAnchors::eTop);
+	myCountdownElement->myAnchor.Set((unsigned int)eAnchors::eLeft);
+	myCountdownElement->myScreenRect.Set(0.f, 0.f, 1.f, 1.f);
 	// Render in Renderfunc.
 
 
@@ -774,7 +773,7 @@ void CPlayState::InitiateRace()
 
 void CPlayState::RenderCountdown()
 {
-	SCreateOrClearGuiElement* createOrClear = new SCreateOrClearGuiElement(L"countdown", *myCountdownElement, CU::Vector2ui(WINDOW_SIZE.x, WINDOW_SIZE.y));
+	SCreateOrClearGuiElement* createOrClear = new SCreateOrClearGuiElement(L"countdown", *myCountdownElement, WINDOW_SIZE);
 	RENDERER.AddRenderMessage(createOrClear);
 
 	SChangeStatesMessage* const changeStatesMessage = new SChangeStatesMessage();

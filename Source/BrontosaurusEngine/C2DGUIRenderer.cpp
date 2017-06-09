@@ -173,12 +173,20 @@ void C2DGUIRenderer::RenderWholeGuiToPackage(CRenderPackage& aTargetPackage, CFu
 		aTargetPackage.Activate();
 		const SGUIElement& currentGuiElement = myElements[i].first;
 
-		const float elementHeight = currentGuiElement.myScreenRect.w - currentGuiElement.myScreenRect.y;
-		const float elementWidth = currentGuiElement.myScreenRect.z - currentGuiElement.myScreenRect.x;
+		const float elementHeight = /*std::fabs*/(currentGuiElement.myScreenRect.w - currentGuiElement.myScreenRect.y);
+		const float elementWidth = /*std::fabs*/(currentGuiElement.myScreenRect.z - currentGuiElement.myScreenRect.x);
 
 
-		if(elementHeight == 0.0f|| elementWidth == 0.0f)
+		if (elementHeight == 0.0f || elementWidth == 0.0f)
+		{
 			continue;
+		}
+
+		if (elementHeight < 0.0f || elementWidth < 0.0f)
+		{
+			DL_MESSAGE_BOX("GUI element with negative (invalid) viewport tried to be rendered");
+			continue;
+		}
 
 		const float newPixelWidth = elementHeight * targetSize.y / (elementHeight * 9 / (elementWidth * 16));
 		const float fullScreenWidth = newPixelWidth / targetSize.x;
