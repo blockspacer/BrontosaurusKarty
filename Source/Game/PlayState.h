@@ -118,13 +118,14 @@ private:
 
 	CU::GrowingArray<CLocalHUD*> myLocalHUDs;
 	CGlobalHUD* myGlobalHUD;
-	CU::GrowingArray<SHUDElement*> myPlacementLinesGUIElement;
+	//CU::GrowingArray<SHUDElement*> myPlacementLinesGUIElement;
 
 	//CU::TimerManager* myTimerManager;
 	TimerHandle myCountdownTimerHandle;
 
 	CSpriteInstance* myCountdownSprite;
 	SGUIElement* myCountdownElement;
+
 	float myPlacementLineScreenSpaceWidth;
 	bool myCountdownShouldRender;
 	bool myIsCountingDown;
