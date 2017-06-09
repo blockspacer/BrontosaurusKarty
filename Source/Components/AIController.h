@@ -21,7 +21,7 @@ public:
 
 private:
 	void UpdateItemUsage(const float aDeltaTime);
-	void UpdateMovement(const float aDeltaTime);
+	void UpdateMovement(const float aDeltaTime, const float aMaxSpeedModifier);
 	const CNavigationSpline& GetNavigationSpline();
 
 	int myCurrentSplineIndex;

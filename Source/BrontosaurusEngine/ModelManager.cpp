@@ -130,6 +130,8 @@ void CModelManager::LoadAnimations(const std::string& aPath, const ModelId aMode
 		mdl->myBindposeSceneAnimator = new CSceneAnimator();
 		mdl->myBindposeSceneAnimator->Init(scene);
 
+		size_t bindposeBoneCount = mdl->myBindposeSceneAnimator->GetBoneCount();
+
 		mdl->mySceneAnimators.clear();
 		CFBXLoader loader;
 		for (int i = 0; i < locAnimationState.AnimationStates.Size(); ++i)
@@ -150,6 +152,11 @@ void CModelManager::LoadAnimations(const std::string& aPath, const ModelId aMode
 
 			mdl->mySceneAnimators[static_cast<eAnimationState>(i)] = CSceneAnimator();
 			mdl->mySceneAnimators[static_cast<eAnimationState>(i)].Init(animationScene);
+
+			if (mdl->mySceneAnimators[static_cast<eAnimationState>(i)].GetBoneCount() != bindposeBoneCount)
+			{
+				//DL_MESSAGE_BOX("Bone count in animation %s different from bindpose\nFile: %s", animationName.c_str(), aPath.c_str());
+			}
 
 			//mdl->mySceneAnimators[animationName].CarlSave(modelName + animationName + ".animation");
 			//mdl->mySceneAnimators[animationName].CarlLoad(modelName + animationName + ".animation");

@@ -108,6 +108,8 @@ public:
 	mat4 GetBoneGlobalTransform(const std::string& bname);
 	mat4 GetBoneGlobalTransform(unsigned int bindex);
 
+	size_t GetBoneCount() const { return Bones.size(); }
+
 protected:
 
 	CBone* Skeleton;/** Root node of the internal scene structure */

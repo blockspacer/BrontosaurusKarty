@@ -29,7 +29,7 @@ void CSpotLightComponent::Receive(const eComponentMessageType aMessageType, cons
 	}
 }
 
-void CSpotLightComponent::SetColor(const CU::Vector3f & aColor)
+void CSpotLightComponent::SetColor(const CU::Vector3f& aColor)
 {
 	CSpotLightInstance* spotLight = myScene.GetSpotLightInstance(myLightID);
 	if (!spotLight) return;

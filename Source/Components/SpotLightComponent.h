@@ -11,7 +11,7 @@ public:
 	~CSpotLightComponent();
 	void Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData) override;
 
-	void SetColor(const CU::Vector3f & aColor);
+	void SetColor(const CU::Vector3f& aColor);
 	void SetIntensity(const float aIntensity);
 	void SetRange(const float aRange);
 	void SetSpotAngle(const float aSpotAngle);
@@ -20,4 +20,3 @@ private:
 	InstanceID myLightID;
 
 };
-
