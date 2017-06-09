@@ -528,12 +528,22 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent(playerJson.at("Model").GetString());
 	playerModel->SetIsShadowCasting(false);
 
-	CComponent* headLight = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({1.f, 0.f, 0.f}, 10.f, 5.f, 3.141592f * 0.125f);
-	CGameObject* headLightObject = myGameObjectManager->CreateGameObject();
-	headLightObject->GetLocalTransform().myPosition.y += 2.f;
-	headLightObject->AddComponent(headLight);
+	CComponent* headLight1 = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({ 1.f, 1.0f, 0.5f }, 5.f, 5.f, 3.141592f / 16.f);
+	CGameObject* headLightObject1 = myGameObjectManager->CreateGameObject();
+	headLightObject1->GetLocalTransform().myPosition.Set(-0.45f, 1.f, 1.f);
+	headLightObject1->GetLocalTransform().RotateAroundAxis(-3.141592f / 8.f, CU::Axees::X);
+	headLightObject1->AddComponent(headLight1);
 
-	secondPlayerObject->AddComponent(headLightObject);
+	secondPlayerObject->AddComponent(headLightObject1);
+
+	CComponent* headLight2 = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({ 1.f, 1.0f, 0.5f }, 5.f, 5.f, 3.141592f / 16.f);
+	CGameObject* headLightObject2 = myGameObjectManager->CreateGameObject();
+	headLightObject2->GetLocalTransform().myPosition.Set(0.45f, 1.f, 1.f);
+	headLightObject2->GetLocalTransform().RotateAroundAxis(-3.141592f / 8.f, CU::Axees::X);
+	headLightObject2->AddComponent(headLight2);
+
+	secondPlayerObject->AddComponent(headLightObject2);
+
 	secondPlayerObject->AddComponent(playerModel);
 	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
 	//Create sub player object
