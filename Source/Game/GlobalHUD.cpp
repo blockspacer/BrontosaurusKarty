@@ -123,7 +123,6 @@ void CGlobalHUD::LoadScoreboard()
 	myPortraitSprite = new CSpriteInstance(portraitSpritePath.c_str(), { 0.5f, 0.125f }, { 0.196f, -0.004f });
 
 	myScoreboardElement.mySprite = myScoreboardBGSprite;
-
 	myScoreboardElement.myShouldRender = false;
 }
 
