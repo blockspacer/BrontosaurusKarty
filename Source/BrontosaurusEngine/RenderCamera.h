@@ -26,9 +26,9 @@ public:
 
 	void SetViewport(const CU::Vector4f& aRect);
 	void AddRenderMessage(SRenderMessage* aRenderMessage);
-	void Render();
+	void Render(bool aImortant = false);
 
-	ID3D11PixelShader* GetShadowShader();
+	ID3D11PixelShader* GetShadowShader(const bool aInstanced = false);
 private:
 	void InitRenderPackages(const CU::Vector2ui& aTextureSize, ID3D11Texture2D* aTexture, DXGI_FORMAT aFormat);
 

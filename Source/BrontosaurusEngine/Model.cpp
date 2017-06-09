@@ -231,8 +231,15 @@ void CModel::Render(SDeferredRenderModelParams& aParamObj, const Render::SEffect
 	effectData.vertexBlueprint |= EModelBluePrint::EModelBluePrint_Deferred | aEffectData.vertexBlueprint;
 	effectData.pixelBlueprint |= EModelBluePrint::EModelBluePrint_Deferred | aEffectData.pixelBlueprint;;
 	effectData.geometryBlueprint |= EModelBluePrint::EModelBluePrint_Deferred | aEffectData.geometryBlueprint;
-	Render::CEffectsManager::GetInstance().GetEffect(effectData)->Activate(false, aParamObj.myRenderToDepth);
 
+	if (aParamObj.myRenderToDepth)
+	{
+		Render::CEffectsManager::GetInstance().GetEffect(effectData)->ActivateForDepth(aParamObj.aPixelshader, false);
+	}
+	else
+	{
+		Render::CEffectsManager::GetInstance().GetEffect(effectData)->Activate(false, aParamObj.myRenderToDepth);
+	}
 	if (mySurface != nullptr)
 	{
 		mySurface->Activate();

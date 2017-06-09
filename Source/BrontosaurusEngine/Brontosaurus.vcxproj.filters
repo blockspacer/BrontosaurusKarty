@@ -272,7 +272,6 @@
     <ClInclude Include="HighlightComponent.h">
       <Filter>Highlight</Filter>
     </ClInclude>
-    <ClInclude Include="CascadeBuffer.h" />
     <ClInclude Include="CascadeShadowMap.h" />
     <ClInclude Include="ScreenGrab\ScreenGrab.h">
       <Filter>Texture</Filter>
@@ -298,6 +297,8 @@
     <ClInclude Include="SpotLightInstance.h">
       <Filter>Light</Filter>
     </ClInclude>
+    <ClInclude Include="ShadowMap.h" />
+    <ClInclude Include="ShadowBuffers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -462,6 +463,7 @@
     <ClCompile Include="SpotLightInstance.cpp">
       <Filter>Light</Filter>
     </ClCompile>
+    <ClCompile Include="ShadowMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">

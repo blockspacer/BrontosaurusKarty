@@ -7,10 +7,5 @@ namespace CU
 		CU::Vector3f myCenterPos;
 		CU::Vector3f myMinPos;
 		CU::Vector3f myMaxPos;
-
-		//TODO: WTH
-		//Edvub testar fosho
-		float myRadius;
-
 	};
 }
