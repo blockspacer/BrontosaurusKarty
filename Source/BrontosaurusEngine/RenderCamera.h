@@ -26,7 +26,7 @@ public:
 
 	void SetViewport(const CU::Vector4f& aRect);
 	void AddRenderMessage(SRenderMessage* aRenderMessage);
-	void Render();
+	void Render(bool aImortant = false);
 
 	ID3D11PixelShader* GetShadowShader(const bool aInstanced = false);
 private:

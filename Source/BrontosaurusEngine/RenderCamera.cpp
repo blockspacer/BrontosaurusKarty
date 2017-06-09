@@ -61,11 +61,11 @@ void CRenderCamera::AddRenderMessage(SRenderMessage * aRenderMessage)
 	myRenderQueue.Add(aRenderMessage);
 }
 
-void CRenderCamera::Render()
+void CRenderCamera::Render(bool aImortant /*= false*/)
 {
 	SRenderCameraQueueMessage * camqueueMsg = new SRenderCameraQueueMessage();
 	camqueueMsg->myRenderCamera = *this;
-	RENDERER.AddRenderMessage(camqueueMsg);
+	RENDERER.AddRenderMessage(camqueueMsg, aImortant);
 	myRenderQueue.RemoveAll();
 }
 
