@@ -283,6 +283,8 @@ void CPlayState::Load()
 		CreateAI();
 	}
 
+	CPollingStation::GetInstance()->BindKartList(&myKartObjects);
+
 	///////////////////
 	//     HUD 
 
