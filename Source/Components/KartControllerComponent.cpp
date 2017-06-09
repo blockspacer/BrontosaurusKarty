@@ -424,16 +424,12 @@ void CKartControllerComponent::DecreasePreGameBoostValue()
 //TODO: Hard coded, not good, change soon
 const float killHeight = -50;
 
-void CKartControllerComponent::CheckZKill()
+void CKartControllerComponent::ZKill()
 {
-	const float height = GetParent()->GetWorldPosition().y;
-
-	if(height < killHeight)
-	{
-		myVelocity = CU::Vector3f::Zero;
-		GetParent()->NotifyComponents(eComponentMessageType::eKill, SComponentMessageData());
-		GetParent()->NotifyComponents(eComponentMessageType::eRespawn, SComponentMessageData());
-	}
+	myVelocity = CU::Vector3f::Zero;
+	GetParent()->NotifyComponents(eComponentMessageType::eKill, SComponentMessageData());
+	GetParent()->NotifyComponents(eComponentMessageType::eRespawn, SComponentMessageData());
+	
 }
 
 void CKartControllerComponent::Update(const float aDeltaTime)
@@ -444,7 +440,6 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	myCanAccelerate = true;
 	DoPhysics(aDeltaTime);
 	CheckWallKartCollision(aDeltaTime);
-	CheckZKill();
 
 	messageData.myFloat = aDeltaTime;
 	GetParent()->NotifyComponents(eComponentMessageType::eUpdate, messageData);
@@ -905,55 +900,69 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 
 	CU::Vector3f examineVector = pos;
 
-	Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(examineVector + upMove, down, testLength, Physics::eGround);
+	Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(examineVector + upMove, down, testLength, 
+		static_cast<Physics::ECollisionLayer>(Physics::eGround | Physics::eKill));
 
 	CU::Vector3f downAccl = down;
 	float friction = 1.f;
 	if (raycastHitData.hit == true)
 	{
-		const CU::Vector3f& norm = raycastHitData.normal;
-		myGroundNormal = norm;
-		if(raycastHitData.distance < controlDist)
+		if(raycastHitData.collisionLayer == Physics::eGround)
 		{
-			myIsOnGround = true;
-		}
-		if (raycastHitData.distance < onGroundDist)
-		{
-			friction = 0.f;
-			myCanAccelerate = true;
-
-			CComponent* component = reinterpret_cast<CComponent*>(raycastHitData.actor->GetCallbackData()->GetUserData())->GetParent();
-
-			if(component != myLastGroundComponent)
+			const CU::Vector3f& norm = raycastHitData.normal;
+			myGroundNormal = norm;
+			if (raycastHitData.distance < controlDist)
 			{
-				myLastGroundComponent = component;
-				SComponentQuestionData questionData;
-				if(myLastGroundComponent->Answer(eComponentQuestionType::eGetTerrainModifier, questionData))
-				{
-					myTerrainModifier = questionData.myFloat;
-				}
-				else
-				{
-					myTerrainModifier = 1.f;
-				}
+				myIsOnGround = true;
 			}
+			if (raycastHitData.distance < onGroundDist)
+			{
+				friction = 0.f;
+				myCanAccelerate = true;
 
+				CComponent* component = reinterpret_cast<CComponent*>(raycastHitData.actor->GetCallbackData()->GetUserData())->GetParent();
+
+				if (component != myLastGroundComponent)
+				{
+					myLastGroundComponent = component;
+					SComponentQuestionData questionData;
+					if (myLastGroundComponent->Answer(eComponentQuestionType::eGetTerrainModifier, questionData))
+					{
+						myTerrainModifier = questionData.myFloat;
+					}
+					else
+					{
+						myTerrainModifier = 1.f;
+					}
+				}
+
+			}
+			if (raycastHitData.distance < upDist)
+			{
+				const float speed = myVelocity.Length();
+				//myVelocity.y = 0.f; downAccl * speed;
+
+				const float disp = upDist - raycastHitData.distance;
+
+				GetParent()->GetLocalTransform().Move(norm * (disp < 0.f ? 0.f : disp));
+			}
 		}
-		if (raycastHitData.distance < upDist)
+		else if(raycastHitData.collisionLayer == Physics::eKill)
 		{
-			const float speed = myVelocity.Length();
-			//myVelocity.y = 0.f; downAccl * speed;
-			
-			const float disp = upDist - raycastHitData.distance;
-
-			GetParent()->GetLocalTransform().Move(norm * (disp < 0.f ? 0.f : disp));
+			if (raycastHitData.distance < onGroundDist)
+			{
+				ZKill();
+			}
 		}
+		
 	}
 	else
 	{
 		myTerrainModifier = 1.f;
 		myLastGroundComponent = nullptr;
 	}
+
+	
 
 
 	if (myCanAccelerate == false)

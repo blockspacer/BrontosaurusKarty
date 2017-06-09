@@ -24,12 +24,12 @@ CAIController::~CAIController()
 void CAIController::Update(const float aDeltaTime)
 {
 	UpdateItemUsage(aDeltaTime);
-	UpdateMovement(aDeltaTime);	
+	UpdateMovement(aDeltaTime, 1.f);
 }
 
 void CAIController::UpdateWithoutItems(const float aDeltaTime)
 {
-	UpdateMovement(aDeltaTime);
+	UpdateMovement(aDeltaTime, 0.75f);
 }
 
 void CAIController::UpdateItemUsage(const float aDeltaTime)
@@ -52,7 +52,7 @@ void CAIController::UpdateItemUsage(const float aDeltaTime)
 	}
 }
 
-void CAIController::UpdateMovement(const float aDeltaTime)
+void CAIController::UpdateMovement(const float aDeltaTime, const float aMaxSpeedModifier)
 {
 	const CU::Vector3f pos3D = myControllerComponent.GetParent()->GetToWorldTransform().GetPosition();
 	CU::Vector2f pos(pos3D.xz());
@@ -88,7 +88,7 @@ void CAIController::UpdateMovement(const float aDeltaTime)
 	float turnAmount = -rotationDifference.GetEulerRotation().y;
 
 	float turnAmountAbs = std::fabs(turnAmount);
-	if (turnAmountAbs < 0.2f * 30.f)
+	if (turnAmountAbs < 0.2f * 30.f && myControllerComponent.GetVelocity().xz().Length2() < myControllerComponent.GetMaxSpeed2() * aMaxSpeedModifier)
 	{
 		myState = eStates::eForward;
 	}

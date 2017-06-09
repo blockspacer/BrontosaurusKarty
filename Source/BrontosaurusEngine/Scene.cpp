@@ -228,7 +228,7 @@ void CScene::RenderSplitScreen(const int aRectCount)
 
 #ifdef RENDER_SHADOWMAP
 	SRenderToIntermediate * renderShadowMsg = new SRenderToIntermediate();
-	renderShadowMsg->myRect = { 0.8f, 0.0f, 1.0f, 0.2f };
+	renderShadowMsg->myRect = { (1920.f - 256.f) / 1920.f, 0.0f, 1.0f,  (256.f) / 1080.f };
 	renderShadowMsg->useDepthResource = false;
 	renderShadowMsg->myRenderPackage = myShadowMap->GetShadowBuffer();
 	RENDERER.AddRenderMessage(renderShadowMsg);
@@ -396,7 +396,7 @@ InstanceID CScene::AddPointLightInstance(const CPointLightInstance& aPointLight)
 	return id;
 }
 
-InstanceID CScene::AddSpotLightInstance(const CSpotLightInstance & aSpotLight)
+InstanceID CScene::AddSpotLightInstance(const CSpotLightInstance& aSpotLight)
 {
 	InstanceID id = 0;
 

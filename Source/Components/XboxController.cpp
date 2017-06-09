@@ -130,6 +130,7 @@ void CXboxController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 		/*SComponentMessageData boostMessageData;
 		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("BoostPowerUp"));
 		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);*/
+		break;
 	}
 	case CU::GAMEPAD::LEFT_SHOULDER:
 		/*SComponentMessageData boostMessageData;

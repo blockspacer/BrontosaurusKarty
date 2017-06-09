@@ -13,6 +13,7 @@
 #include "..\ThreadedPostmaster\KeyCharPressed.h"
 
 #include <ThreadPool.h>
+#include "ThreadedPostmaster/PopCurrentState.h"
 
 CGlobalHUD::CGlobalHUD()
 {
@@ -206,8 +207,14 @@ void CGlobalHUD::DisableRedundantGUI()
 eMessageReturn CGlobalHUD::DoEvent(const CRaceOverMessage & aMessage)
 {
 	myWinners = aMessage.GetWinners();
+	myRaceOver = true;
 	PresentScoreboard();
 	return eMessageReturn::eContinue;
+}
+
+void CGlobalHUD::ToMainMenu()
+{
+	POSTMASTER.Broadcast(new PopCurrentState());
 }
 
 // debugging
@@ -215,6 +222,8 @@ eMessageReturn CGlobalHUD::DoEvent(const KeyCharPressed & aMessage)
 {
 	if (aMessage.GetKey() == 'p')
 		PresentScoreboard();
+	if (aMessage.GetKey() == 'c')
+		ToMainMenu();
 
 	return eMessageReturn::eContinue;
 }

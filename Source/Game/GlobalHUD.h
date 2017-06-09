@@ -23,6 +23,7 @@ private:
 	void DisableRedundantGUI();
 
 	eMessageReturn DoEvent(const CRaceOverMessage& aMessage) override;
+	void ToMainMenu();
 	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
 
 private:
@@ -34,5 +35,6 @@ private:
 
 	CSpriteInstance* myScoreboardBGSprite;
 	CSpriteInstance* myPortraitSprite;
+	bool myRaceOver;
 };
 

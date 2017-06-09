@@ -40,10 +40,9 @@ CLapTrackerComponentManager* CLapTrackerComponentManager::GetInstance()
 
 void CLapTrackerComponentManager::DestoyInstance()
 {
-	if(ourInstance != nullptr)
-	{
+
 		SAFE_DELETE(ourInstance);
-	}
+	
 }
 
 CLapTrackerComponent* CLapTrackerComponentManager::CreateAndRegisterComponent()

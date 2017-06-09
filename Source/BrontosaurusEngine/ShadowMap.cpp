@@ -151,7 +151,7 @@ void CShadowMap::CalculateFrustum()
 	float width = xMax - xMin;
 	float height = yMax - yMin;
 	float depth = zMax - zMin;
-	//lightSpace.Move({ 0.0f, yMin, zMin});
+	lightSpace.Move({ 0.0f, 0.0f, zMin});
 
 	myRenderCamera.GetCamera().ReInit(width, height, 1.0f, depth);
 	myRenderCamera.GetCamera().SetTransformation(lightSpace);

@@ -433,3 +433,4 @@ Bin/Folder Cleanup/
 Bin/KartMultiplayer.bat
 *.png
 Bin/Json/Animation/types.txt
+*.diagsession

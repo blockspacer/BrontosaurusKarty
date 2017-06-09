@@ -17,6 +17,14 @@ CConcaveMeshColliderComponent::~CConcaveMeshColliderComponent()
 {
 }
 
+void CConcaveMeshColliderComponent::ReInit(const CU::Vector3f& aScale)
+{
+	myScene->RemoveActor(myActor);
+	SAFE_DELETE(myActor);
+	SAFE_DELETE(myShape);
+	Init(aScale);
+}
+
 void CConcaveMeshColliderComponent::Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData)
 {
 	switch (aMessageType)
