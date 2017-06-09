@@ -47,10 +47,9 @@ void CShadowMap::Render(const CU::GrowingArray<CModelInstance*, InstanceID>& aMo
 	batchMessage.myPixelShader = myRenderCamera.GetShadowShader(true);
 	batchMessage.myRenderToDepth = true;
 	myRenderCamera.AddRenderMessage(new SRenderModelBatches(batchMessage));
+	myRenderCamera.Render(true);
 
-	myRenderCamera.Render();
-
-	RENDERER.AddRenderMessage(new SActivateRenderToMessage());
+	RENDERER.AddRenderMessage(new SActivateRenderToMessage(), true);
 
 
 	SRenderCallback * callback = new SRenderCallback;
@@ -60,7 +59,7 @@ void CShadowMap::Render(const CU::GrowingArray<CModelInstance*, InstanceID>& aMo
 	};
 
 	callback->myFunction = func;
-	RENDERER.AddRenderMessage(callback);
+	RENDERER.AddRenderMessage(callback, true);
 }
 
 void CShadowMap::SetBoundingBox(const CU::Vector3f& aCenterPosition, const CU::Vector3f& aExtents)
@@ -93,9 +92,11 @@ CRenderPackage & CShadowMap::GetShadowBuffer()
 void CShadowMap::CalculateFrustum()
 {
 	CU::Matrix44f lightSpace;
-	CU::Vector3f shadowCameraPosition = myBoundingBox.myCenterPos + (-myLightDirection * 10);
-	lightSpace.SetPosition(shadowCameraPosition);
+	CU::Vector3f shadowCameraOffset = myBoundingBox.myCenterPos + (-myLightDirection * 10);
+	lightSpace.SetPosition(shadowCameraOffset);
+
 	lightSpace.LookAt(myBoundingBox.myCenterPos);
+	lightSpace.SetPosition(myBoundingBox.myCenterPos);
 
 	const CU::Vector3f& min = myBoundingBox.myMinPos;
 	const CU::Vector3f& max = myBoundingBox.myMaxPos;
@@ -114,43 +115,45 @@ void CShadowMap::CalculateFrustum()
 
 	float dot = 0.0f;
 
-	float xl = FLT_MAX;
-	float xr = FLT_MIN;
+	float xMax = FLT_MIN;
+	float yMax = FLT_MIN;
+	float zMax = FLT_MIN;
 
-	float yt = FLT_MAX;
-	float yb = FLT_MIN;
-
-	float zn = FLT_MAX;
-	float zf = FLT_MIN;
+	float xMin = FLT_MAX;
+	float yMin = FLT_MAX;
+	float zMin = FLT_MAX;
 
 	for (int i = 0; i < 8; ++i)
 	{
 		// X
 		dot = lightSpace.myRightVector.Dot(aabbCorners[i]);
-		if (dot > xr)
-			xr = dot;
-		else if (dot < xl)
-			xl = dot;
+		if (dot < xMin)
+			xMin = dot;
+		else if (dot > xMax)
+			xMax = dot;
 
 		// Y
 		dot = lightSpace.myUpVector.Dot(aabbCorners[i]);
-		if (dot > yb)
-			yb = dot;
-		else if (dot < yt)
-			yt = dot;
+		if (dot < yMin)
+			yMin = dot;
+		else if (dot > yMax)
+			yMax = dot;
 
 		// Z
 		dot = lightSpace.myForwardVector.Dot(aabbCorners[i]);
-		if (dot > zf)
-			zf = dot;
-		else if (dot < zn)
-			zn = dot;
+		if (dot < zMin)
+			zMin = dot;
+		else if (dot > zMax)
+			zMax = dot;
+
 	}
 
-	lightSpace.SetPosition(myBoundingBox.myCenterPos);
-	lightSpace.Move({ -xl / 2.0f, -yt / 2.0f, 0.f});
+	float width = xMax - xMin;
+	float height = yMax - yMin;
+	float depth = zMax - zMin;
+	//lightSpace.Move({ 0.0f, yMin, zMin});
 
-	myRenderCamera.GetCamera().ReInit(xr - xl, yb - yt, 10.f, zf - zn);
+	myRenderCamera.GetCamera().ReInit(width, height, 1.0f, depth);
 	myRenderCamera.GetCamera().SetTransformation(lightSpace);
 
 	myData.lightProjection = myRenderCamera.GetCamera().GetProjection();

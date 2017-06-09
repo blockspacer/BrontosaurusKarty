@@ -35,7 +35,7 @@ private:
 	CU::AABB myBoundingBox;
 
 	SBakedShadowBuffer myData;
-	bool myHasBaked;
+	volatile bool myHasBaked;
 };
 
 inline void CShadowMap::SetPCFPassCount(const int aPCFPassCount)
