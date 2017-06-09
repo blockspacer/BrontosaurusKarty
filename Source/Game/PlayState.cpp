@@ -320,6 +320,7 @@ void CPlayState::Init()
 	{
 		POSTMASTER.Subscribe(myHUDs[i], eMessageType::eCharPressed);
 		POSTMASTER.Subscribe(myHUDs[i], eMessageType::eRaceOver);
+		POSTMASTER.Subscribe(myHUDs[i], eMessageType::eBlueShellWarning);
 	}
 
 	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::ePlayerFinished);
