@@ -44,6 +44,8 @@ private:
 	void LoadItemGui(const CU::CJsonValue& aJsonValue);
 	void LoadScoreboard();
 
+
+
 	void SetGUIToAlphaBlend(std::wstring aStr);
 	void SetGUIToEndBlend(std::wstring aStr);
 
@@ -54,6 +56,7 @@ private:
 
 	eMessageReturn DoEvent(const CRaceOverMessage& aMessage) override;
 	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
+	eMessageReturn DoEvent(const CBlueShellWarningMessage& aMessage) override;
 
 
 private:

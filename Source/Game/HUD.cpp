@@ -21,6 +21,7 @@
 #include "..\ThreadedPostmaster\KeyCharPressed.h"
 #include "..\ThreadedPostmaster\PlayerFinishedMessage.h"
 #include "..\ThreadedPostmaster\RaceStartedMessage.h"
+#include "../ThreadedPostmaster/BlueShellWarningMessage.h"
 
 #include "TextInstance.h"
 
@@ -36,6 +37,7 @@ CHUD::CHUD(unsigned char aPlayerID, unsigned short aAmountOfPlayers)
 
 	//POSTMASTER.Subscribe(this, eMessageType::eCharPressed);
 	//POSTMASTER.Subscribe(this, eMessageType::eRaceOver); // why is this crapper?
+	//Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eBlueShellWarning);
 
 	myCameraOffset = CU::Vector2f(0.0f, 0.0f);
 
@@ -485,6 +487,17 @@ eMessageReturn CHUD::DoEvent(const KeyCharPressed& aMessage)
 	unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer) + myLapAdjusterCheat;
 	if (currentLap > 3)
 		PresentScoreboard();
+
+	return eMessageReturn::eContinue;
+}
+
+eMessageReturn CHUD::DoEvent(const CBlueShellWarningMessage & aMessage)
+{
+	if (myPlayer == aMessage.GetKartToWarn())
+	{
+		//show warning gui
+
+	}
 
 	return eMessageReturn::eContinue;
 }
