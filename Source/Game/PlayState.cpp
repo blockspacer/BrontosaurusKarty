@@ -304,11 +304,20 @@ void CPlayState::Load()
 	//*						BAKE SHADOWMAP							*
 	//***************************************************************
 
-	/*while (!myScene->HasBakedShadowMap())
+	myScene->BakeShadowMap();
+	RENDERER.SwapWrite();
+	DL_PRINT("Baking Shadow Map");
+	RENDERER.DoImportantQueue();
 	{
-		myScene->BakeShadowMap();
-		std::this_thread::sleep_for(std::chrono::seconds(5));
-	}*/
+		std::string progress = ".";
+		while (!myScene->HasBakedShadowMap())
+		{
+			DL_PRINT(progress.c_str());
+			progress += ".";
+			std::this_thread::sleep_for(std::chrono::microseconds(7500));
+		}
+	}
+	DL_PRINT("Done!");
 
 	//--------------------------------------------------------------
 
@@ -394,15 +403,8 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	return myStatus;
 }
 
-float firstPass = true;
 void CPlayState::Render()
 {
-	if (firstPass)
-	{
-		myScene->BakeShadowMap();
-		firstPass = false;
-	}
-
 	myScene->RenderSplitScreen(myPlayerCount);
 
 	if (myCountdownShouldRender)
@@ -521,7 +523,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent(playerJson.at("Model").GetString());
-
+	playerModel->SetIsShadowCasting(false);
 	secondPlayerObject->AddComponent(playerModel);
 	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
 	//Create sub player object
@@ -638,7 +640,7 @@ void CPlayState::CreateAI()
 
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Animations/M_Kart_01.fbx");
-
+	playerModel->SetIsShadowCasting(false);
 	secondPlayerObject->AddComponent(playerModel);
 	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
 
