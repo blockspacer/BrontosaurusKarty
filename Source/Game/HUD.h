@@ -42,6 +42,7 @@ private:
 	void LoadPlacement(const CU::CJsonValue& aJsonValue);
 	void LoadFinishText(const CU::CJsonValue& aJsonValue);
 	void LoadItemGui(const CU::CJsonValue& aJsonValue);
+	void LoadDangerGui(const CU::CJsonValue& aJsonValue);
 	void LoadScoreboard();
 
 
@@ -65,6 +66,7 @@ private:
 	SHUDElement myFinishTextElement;
 	SHUDElement myScoreboardElement;
 	SHUDElement myItemGuiElement;
+	SHUDElement myDangerGuiElement;
 
 	CSpriteInstance* myMushroomSprite;
 	CSpriteInstance* myGreenShellSprite;
@@ -75,6 +77,8 @@ private:
 	CSpriteInstance* myBlueShellSprite;
 	CSpriteInstance* myFakeItemBoxSprite;
 	CSpriteInstance* myNullSprite;
+
+	CSpriteInstance* myBlueShellDangerSprite;
 
 	CSpriteInstance* myScoreboardBGSprite;
 	CSpriteInstance* myPortraitSprite;
