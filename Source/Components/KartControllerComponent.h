@@ -40,7 +40,7 @@ public:
 
 	void Init(Physics::CPhysicsScene* aPhysicsScene);
 
-	void CheckZKill();
+	void ZKill();
 	void Update(const float aDeltaTime);
 	void CountDownUpdate(const float aDeltaTime);
 	void Receive(const eComponentMessageType, const SComponentMessageData&) override;
