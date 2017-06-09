@@ -419,7 +419,7 @@ InstanceID CScene::AddPointLightInstance(const CPointLightInstance& aPointLight)
 	return id;
 }
 
-InstanceID CScene::AddSpotLightInstance(const CSpotLightInstance & aSpotLight)
+InstanceID CScene::AddSpotLightInstance(const CSpotLightInstance& aSpotLight)
 {
 	InstanceID id = 0;
 

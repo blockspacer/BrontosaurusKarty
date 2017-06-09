@@ -8,6 +8,7 @@ CLightComponentManager* CLightComponentManager::ourInstance = nullptr;
 
 void CLightComponentManager::Destroy()
 {
+	assert(ourInstance != nullptr);
 	SAFE_DELETE(ourInstance);
 }
 
@@ -36,11 +37,23 @@ PointLightComponent* CLightComponentManager::CreateAndRegisterPointLightComponen
 	return pointLight;
 }
 
-CSpotLightComponent * CLightComponentManager::CreateAndRegisterSpotLightComponent()
+CSpotLightComponent* CLightComponentManager::CreateAndRegisterSpotLightComponent()
 {
 	CSpotLightComponent* spotLight = new CSpotLightComponent(myScene);
 	CComponentManager::GetInstance().RegisterComponent(spotLight);
 	mySpotLightComponents.Add(spotLight);
+	return spotLight;
+}
+
+CComponent* CLightComponentManager::CreateAndRegisterSpotLightComponent(const CU::Vector3f& aColor, const float aIntensity, const float aRange, const float aSpotAngle)
+{
+	CSpotLightComponent* spotLight = CreateAndRegisterSpotLightComponent();
+
+	spotLight->SetColor(aColor);
+	spotLight->SetIntensity(aIntensity);
+	spotLight->SetRange(aRange);
+	spotLight->SetSpotAngle(aSpotAngle);
+
 	return spotLight;
 }
 

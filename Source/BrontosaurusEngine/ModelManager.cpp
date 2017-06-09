@@ -155,7 +155,7 @@ void CModelManager::LoadAnimations(const std::string& aPath, const ModelId aMode
 
 			if (mdl->mySceneAnimators[static_cast<eAnimationState>(i)].GetBoneCount() != bindposeBoneCount)
 			{
-				DL_MESSAGE_BOX("Bone count in animation %s different from bindpose\nFile: %s", animationName.c_str(), aPath.c_str());
+				//DL_MESSAGE_BOX("Bone count in animation %s different from bindpose\nFile: %s", animationName.c_str(), aPath.c_str());
 			}
 
 			//mdl->mySceneAnimators[animationName].CarlSave(modelName + animationName + ".animation");

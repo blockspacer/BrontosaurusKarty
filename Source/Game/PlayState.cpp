@@ -504,6 +504,12 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent(playerJson.at("Model").GetString());
 
+	CComponent* headLight = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({1.f, 0.f, 0.f}, 10.f, 5.f, 3.141592f * 0.125f);
+	CGameObject* headLightObject = myGameObjectManager->CreateGameObject();
+	headLightObject->GetLocalTransform().myPosition.y += 2.f;
+	headLightObject->AddComponent(headLight);
+
+	secondPlayerObject->AddComponent(headLightObject);
 	secondPlayerObject->AddComponent(playerModel);
 	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
 	//Create sub player object

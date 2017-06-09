@@ -18,6 +18,7 @@ public:
 
 	PointLightComponent* CreateAndRegisterPointLightComponent();
 	CSpotLightComponent* CreateAndRegisterSpotLightComponent();
+	CComponent* CreateAndRegisterSpotLightComponent(const CU::Vector3f& aColor, const float aIntensity, const float aRange, const float aSpotAngle);
 
 	void SetSkybox(const char* aPath);
 	void SetCubemap(const char* aPath);
