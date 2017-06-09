@@ -33,7 +33,7 @@
 CRenderer::CRenderer() : myParticleRenderer(*this, myFullScreenHelper)
 {
 	myIsRunning = true;
-
+	myCheckImortantQueue = false;
 	mySettings.HDR = false;
 	mySettings.Bloom = false;
 	mySettings.Motionblur = false;
@@ -88,9 +88,12 @@ void CRenderer::Shutdown()
 	myIsRunning = false;
 }
 
-void CRenderer::AddRenderMessage(SRenderMessage* aRenderMessage)
+void CRenderer::AddRenderMessage(SRenderMessage* aRenderMessage, bool aImportant /*= false*/)
 {
-	mySynchronizer << aRenderMessage;
+	if (aImportant)
+		myImportandRenderQueue.Push(aRenderMessage);
+	else
+		mySynchronizer << aRenderMessage;
 }
 
 void CRenderer::Render()
@@ -906,6 +909,25 @@ void CRenderer::DoRenderQueue()
 {
 	mySynchronizer.SwapRead();
 	int drawCalls = 0;
+
+	if (myCheckImortantQueue)
+	{
+		while (!myImportandRenderQueue.IsEmpty())
+		{
+			SRenderMessage* renderMessage = myImportandRenderQueue.Pop();
+			if (renderMessage == nullptr)
+			{
+				break;
+			}
+			if (!HandleRenderMessage(renderMessage, drawCalls))
+			{
+				SAFE_DELETE(renderMessage);
+			}
+		}
+		myCheckImortantQueue = false;
+	}
+
+
 	for (CSynchronizer<SRenderMessage*>::size_type i = 0; i < !mySynchronizer; ++i)
 	{
 		SRenderMessage* renderMessage = mySynchronizer[i];
@@ -1347,3 +1369,5 @@ void CRenderer::DoColorGrading()
 {
 	myColorGrader.DoColorGrading(myIntermediatePackage, myFullScreenHelper, myTimers.GetTimer(myOncePerFrameBufferTimer).GetDeltaTime().GetSeconds());
 }
+
+

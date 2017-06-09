@@ -6,6 +6,7 @@
 #include "DeferredRenderer.h"
 #include "FullScreenHelper.h"
 #include <TimerManager.h>
+#include <LocklessQueue.h>
 
 //temp includes
 #include "../ThreadedPostmaster/Subscriber.h"
@@ -43,7 +44,7 @@ public:
 	~CRenderer();
 
 	void Shutdown();
-	void AddRenderMessage(SRenderMessage* aRenderMessage);
+	void AddRenderMessage(SRenderMessage* aRenderMessage, bool aImportant = false);
 
 	void Render();
 	void SwapWrite();
@@ -58,6 +59,8 @@ public:
 	inline void SetFogStartEnd(const float aStart, const float aEnd);
 	inline void SetFogColor(const CU::Vector4f& aColor);
 	inline void SetAmbientIntensity(const float aIntensity);
+
+	inline void DoImportantQueue();
 private:
 	bool HandleRenderMessage(SRenderMessage* aRenderMesage, int& aDrawCallCount);
 	void RenderCameraQueue(SRenderCameraQueueMessage* msg, int & aDrawCallCount);
@@ -84,7 +87,6 @@ private:
 
 	void DoRenderQueue();
 	void DoColorGrading();
-
 
 private:
 
@@ -119,6 +121,8 @@ private:
 	} myDistortionData;
 
 private:
+	Container::CLocklessQueue<SRenderMessage*> myImportandRenderQueue;
+
 	CColorGrader myColorGrader;
 
 	CDeferredRenderer myDeferredRenderer;
@@ -160,6 +164,7 @@ private:
 	CU::TimerHandle myOncePerFrameBufferTimer;
 	CU::TimerHandle myFireTimer;
 	bool myIsRunning;
+	volatile bool myCheckImortantQueue;
 
 	C2DGUIRenderer myGUIRenderer;
 };
@@ -188,4 +193,10 @@ inline void CRenderer::SetFogColor(const CU::Vector4f& aColor)
 inline void CRenderer::SetAmbientIntensity(const float aIntensity)
 {
 	myOPFBData.ambientIntensity = aIntensity;
+}
+
+
+inline void CRenderer::DoImportantQueue()
+{
+	myCheckImortantQueue = true;
 }
