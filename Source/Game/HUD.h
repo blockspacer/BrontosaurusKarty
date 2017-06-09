@@ -44,6 +44,8 @@ private:
 	void LoadItemGui(const CU::CJsonValue& aJsonValue);
 	void LoadScoreboard();
 
+
+
 	void SetGUIToAlphaBlend(std::wstring aStr);
 	void SetGUIToEndBlend(std::wstring aStr);
 
@@ -54,6 +56,7 @@ private:
 
 	eMessageReturn DoEvent(const CRaceOverMessage& aMessage) override;
 	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
+	eMessageReturn DoEvent(const CBlueShellWarningMessage& aMessage) override;
 
 
 private:
@@ -70,13 +73,12 @@ private:
 	CSpriteInstance* myStarSprite;
 	CSpriteInstance* myLightningSprite;
 	CSpriteInstance* myBlueShellSprite;
+	CSpriteInstance* myFakeItemBoxSprite;
 	CSpriteInstance* myNullSprite;
 
 	CSpriteInstance* myScoreboardBGSprite;
-	CSpriteInstance* myPortraitSpriteYoshi;
-	CSpriteInstance* myPortraitSpriteMario;
+	CSpriteInstance* myPortraitSprite;
 
-	CU::StaticArray<CSpriteInstance*, 8> myPlacementSprites;
 	CU::StaticArray<SPlacementData, 8> myWinners;
 
 	CU::Vector2f myCameraOffset; //best solution 10/10

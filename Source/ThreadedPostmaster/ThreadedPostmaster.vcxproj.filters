@@ -79,6 +79,9 @@
     <Filter Include="AIFinished">
       <UniqueIdentifier>{b6f3c342-a101-44d1-bfaf-229dbbe0800e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Message\BlueShellWarning">
+      <UniqueIdentifier>{95eed5fe-a1b5-49f6-bcf0-8bf8325e32e4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Postmaster.cpp">
@@ -149,6 +152,9 @@
       <Filter>AIFinished</Filter>
     </ClCompile>
     <ClCompile Include="RaceStartedMessage.cpp" />
+    <ClCompile Include="BlueShellWarningMessage.cpp">
+      <Filter>Message\BlueShellWarning</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Postmaster.h">
@@ -234,5 +240,8 @@
       <Filter>AIFinished</Filter>
     </ClInclude>
     <ClInclude Include="RaceStartedMessage.h" />
+    <ClInclude Include="BlueShellWarningMessage.h">
+      <Filter>Message\BlueShellWarning</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

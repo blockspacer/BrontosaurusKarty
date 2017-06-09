@@ -201,6 +201,16 @@ void CKartControllerComponent::MoveFoward()
 	myAnimator->OnMoveFoward();
 }
 
+void CKartControllerComponent::MoveForwardWithoutChangingHoldingForward()
+{
+	if (myHasGottenHit == true)
+	{
+		return;
+	}
+	myAcceleration = GetMaxAcceleration();
+	myAnimator->OnMoveFoward();
+}
+
 void CKartControllerComponent::MoveBackWards()
 {
 	if (myHasGottenHit == true)
@@ -729,7 +739,7 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 	}
 	if (myIsBoosting == true)
 	{
-		MoveFoward();
+		MoveForwardWithoutChangingHoldingForward();
 	}
 	
 

@@ -21,6 +21,7 @@
 #include "..\ThreadedPostmaster\KeyCharPressed.h"
 #include "..\ThreadedPostmaster\PlayerFinishedMessage.h"
 #include "..\ThreadedPostmaster\RaceStartedMessage.h"
+#include "../ThreadedPostmaster/BlueShellWarningMessage.h"
 
 #include "TextInstance.h"
 
@@ -36,6 +37,7 @@ CHUD::CHUD(unsigned char aPlayerID, unsigned short aAmountOfPlayers)
 
 	//POSTMASTER.Subscribe(this, eMessageType::eCharPressed);
 	//POSTMASTER.Subscribe(this, eMessageType::eRaceOver); // why is this crapper?
+	//Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eBlueShellWarning);
 
 	myCameraOffset = CU::Vector2f(0.0f, 0.0f);
 
@@ -222,6 +224,12 @@ void CHUD::Render()
 			case eItemTypes::eBlueShell:
 			{
 				myItemGuiElement.mySprite = myBlueShellSprite;
+				
+				break;
+			}
+			case eItemTypes::eFakeItemBox:
+			{
+				myItemGuiElement.mySprite = myFakeItemBoxSprite;
 				break;
 			}
 			default:
@@ -251,9 +259,8 @@ void CHUD::Render()
 		{
 			float yOffset = 0.11333f; //shh..
 
-			CU::Vector2f initialPortraitPos = myPortraitSpriteYoshi->GetPosition();
+			CU::Vector2f initialPortraitPos = myPortraitSprite->GetPosition();
 
-			CSpriteInstance* characterPortrait = nullptr;
 			myScoreboardElement.mySprite->RenderToGUI(L"scoreboard");
 
 			for (int i = 0; i < 8; ++i)
@@ -263,27 +270,28 @@ void CHUD::Render()
 				switch (myWinners[i].character)
 				{
 				case SParticipant::eCharacter::eVanBrat:
-					characterPortrait = myPortraitSpriteYoshi;
+					myPortraitSprite->SetRect({ 0.f, 0.875f, 1.f, 1.f });
 					charNameTxt.SetText(L"Yoshi");
 					break;
 				case SParticipant::eCharacter::eGrandMa:
-					characterPortrait = myPortraitSpriteMario;
+					myPortraitSprite->SetRect({ 0.f, 0.750f, 1.f, 0.875f });
 					charNameTxt.SetText(L"Mario");
 					break;
 				default:
-					characterPortrait = myPortraitSpriteYoshi;
+					//myPortraitSprite->SetRect({ 0.f, 0.875f, 1.f, 1.f });
+					myPortraitSprite->SetRect({ 0.f, 0.750f, 1.f, 0.875f });
 					charNameTxt.SetText(L"Error");
 					break;
 				}
 
-				CU::Vector2f lastPortraitPos = myPortraitSpriteYoshi->GetPosition();
+				CU::Vector2f lastPortraitPos = myPortraitSprite->GetPosition();
 				CU::Vector2f newPortraitPos = { lastPortraitPos.x, lastPortraitPos.y + yOffset };
 
-				characterPortrait->RenderToGUI(L"scoreboard");
-				characterPortrait->SetPosition(newPortraitPos);
+				myPortraitSprite->RenderToGUI(L"scoreboard");
+				myPortraitSprite->SetPosition(newPortraitPos);
 			}
 
-			characterPortrait->SetPosition(initialPortraitPos);
+			myPortraitSprite->SetPosition(initialPortraitPos);
 
 		}
 		SetGUIToEndBlend(L"scoreboard");
@@ -375,6 +383,7 @@ void CHUD::LoadItemGui(const CU::CJsonValue& aJsonValue)
 	myRedShellSprite = new CSpriteInstance("Sprites/GUI/redShell.dds", { itemGuiWidth,itemGuiHeight });
 	myLightningSprite = new CSpriteInstance("Sprites/GUI/lightning.dds", { itemGuiWidth,itemGuiHeight });
 	myBlueShellSprite = new CSpriteInstance("Sprites/GUI/blueShell.dds", { itemGuiWidth,itemGuiHeight });
+	myFakeItemBoxSprite = new CSpriteInstance("Sprites/GUI/fakeItemBox.dds", { itemGuiWidth,itemGuiHeight });
 	myNullSprite = new CSpriteInstance("Sprites/GUI/redShell.dds", { 0.0f,0.0f });
 	myItemGuiElement.mySprite = myNullSprite;
 	/*myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));*/
@@ -392,12 +401,10 @@ void CHUD::LoadScoreboard()
 	myScoreboardElement = LoadHUDElement(jsonElementData);
 
 	const std::string scoreboardBGSpritePath = jsonSprites.at("background").GetString();
-	const std::string portraitYoshiSpritePath = jsonSprites.at("portraitYoshi").GetString();
-	const std::string portraitMarioSpritePath = jsonSprites.at("portraitMario").GetString();
+	const std::string portraitSpritePath = jsonSprites.at("characterPortrait").GetString();
 
 	myScoreboardBGSprite = new CSpriteInstance(scoreboardBGSpritePath.c_str(), { 1.f,1.0f});
-	myPortraitSpriteYoshi = new CSpriteInstance(portraitYoshiSpritePath.c_str(), { 0.075f, 0.075f }, { 0.188f, 0.014f });
-	myPortraitSpriteMario = new CSpriteInstance(portraitMarioSpritePath.c_str(), { 0.075f, 0.075f }, { 0.188f, 0.014f });
+	myPortraitSprite = new CSpriteInstance(portraitSpritePath.c_str(), { 0.5f, 0.125f}, { 0.196f, -0.004f });
 	
 	myScoreboardElement.mySprite = myScoreboardBGSprite;
 
@@ -487,6 +494,17 @@ eMessageReturn CHUD::DoEvent(const KeyCharPressed& aMessage)
 	unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer) + myLapAdjusterCheat;
 	if (currentLap > 3)
 		PresentScoreboard();
+
+	return eMessageReturn::eContinue;
+}
+
+eMessageReturn CHUD::DoEvent(const CBlueShellWarningMessage & aMessage)
+{
+	if (myPlayer == aMessage.GetKartToWarn())
+	{
+		//show warning gui
+
+	}
 
 	return eMessageReturn::eContinue;
 }

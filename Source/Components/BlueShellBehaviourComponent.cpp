@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "BlueShellBehaviourComponent.h"
 #include "LapTrackerComponentManager.h"
+#include "../ThreadedPostmaster/BlueShellWarningMessage.h"
 
 
 CBlueShellBehaviourComponent::CBlueShellBehaviourComponent(CU::GrowingArray<CGameObject*>& aListOfKartObjects)
@@ -65,6 +66,9 @@ void CBlueShellBehaviourComponent::Update(const float aDeltaTime)
 		if (placement == 1)
 		{
 			target = myKartObjects->At(i)->GetToWorldTransform();
+			CBlueShellWarningMessage* blue = new CBlueShellWarningMessage(myKartObjects->At(i));
+
+			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(blue);
 			break;
 		}
 	}
@@ -84,6 +88,8 @@ void CBlueShellBehaviourComponent::Update(const float aDeltaTime)
 
 	SComponentMessageData data; data.myFloat = aDeltaTime;
 	GetParent()->NotifyOnlyComponents(eComponentMessageType::eMoving, data);
+
+	
 
 }
 
