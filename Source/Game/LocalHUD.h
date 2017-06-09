@@ -4,6 +4,7 @@
 
 class CRaceOverMessage;
 class KeyCharPressed; //temp
+class CBlueShellWarningMessage;
 
 class CLocalHUD : public CHUDBase, public Postmaster::ISubscriber
 {
@@ -19,18 +20,20 @@ private:
 	void LoadPlacement(const CU::CJsonValue& aJsonValue);
 	void LoadFinishText(const CU::CJsonValue& aJsonValue);
 	void LoadItemGui(const CU::CJsonValue& aJsonValue);
+	void LoadDangerGui(const CU::CJsonValue& aJsonValue);
 
 	void DisableRedundantGUI();
 
 	//eMessageReturn DoEvent(const CRaceOverMessage& aMessage) override;
 	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
-
+	eMessageReturn DoEvent(const CBlueShellWarningMessage& aMessage) override;
 
 private:
 	SHUDElement myLapCounterElement;
 	SHUDElement myPlacementElement;
 	SHUDElement myFinishTextElement;
 	SHUDElement myItemGuiElement;
+	SHUDElement myDangerGuiElement;
 
 
 	CSpriteInstance* myMushroomSprite;
@@ -41,6 +44,7 @@ private:
 	CSpriteInstance* myLightningSprite;
 	CSpriteInstance* myBlueShellSprite;
 	CSpriteInstance* myFakeItemBoxSprite;
+	CSpriteInstance* myBlueShellDangerSprite;
 	CSpriteInstance* myNullSprite;
 
 	CGameObject* myPlayer;

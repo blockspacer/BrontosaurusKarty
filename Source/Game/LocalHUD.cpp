@@ -37,7 +37,6 @@ CLocalHUD::CLocalHUD(unsigned char aPlayerID, unsigned short aAmountOfPlayers)
 
 	//POSTMASTER.Subscribe(this, eMessageType::eCharPressed);
 	//POSTMASTER.Subscribe(this, eMessageType::eRaceOver); // why is this crapper?
-	//Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eBlueShellWarning);
 
 	myCameraOffset = CU::Vector2f(0.0f, 0.0f);
 
@@ -117,7 +116,7 @@ void CLocalHUD::LoadHUD()
 	LoadPlacement(jsonPlayerObject.at("placement"));
 	LoadFinishText(jsonPlayerObject.at("finishText"));
 	LoadItemGui(jsonPlayerObject.at("itemGui"));
-
+	LoadDangerGui(jsonPlayerObject.at("dangerGui"));
 	
 }
 
@@ -178,6 +177,20 @@ void CLocalHUD::Render()
 			SetGUIToEndBlend(L"finishText" + myPlayerID);
 		}
 	}
+	if (myDangerGuiElement.myShouldRender == false)
+	{
+		myDangerGuiElement.mySprite = myNullSprite;
+	}
+
+	SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"dangerGui" + myPlayerID, myDangerGuiElement.myGUIElement, myDangerGuiElement.myPixelSize);
+
+	RENDERER.AddRenderMessage(guiElement);
+	SetGUIToAlphaBlend(L"dangerGui" + myPlayerID);
+	myDangerGuiElement.mySprite->RenderToGUI(L"dangerGui" + myPlayerID);
+	SetGUIToEndBlend(L"dangerGui" + myPlayerID);
+
+	myDangerGuiElement.myShouldRender = false;
+
 
 	if(myItemGuiElement.myShouldRender == true)
 	{
@@ -303,6 +316,21 @@ void CLocalHUD::LoadItemGui(const CU::CJsonValue& aJsonValue)
 
 }
 
+void CLocalHUD::LoadDangerGui(const CU::CJsonValue& aJsonValue)
+{
+	const std::string spritePath = aJsonValue.at("spritePath").GetString();
+
+	myDangerGuiElement = LoadHUDElement(aJsonValue);
+	//myItemGuiElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
+
+	float itemGuiWidth = 1.0f;
+	float itemGuiHeight = 1.0f;
+	myBlueShellDangerSprite = new CSpriteInstance("Sprites/GUI/blueShellWarning.dds", { itemGuiWidth,itemGuiHeight });
+	myDangerGuiElement.mySprite = myNullSprite;
+	/*myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));*/
+
+}
+
 void CLocalHUD::DisableRedundantGUI()
 {
 	auto lambda = [this]()
@@ -351,5 +379,12 @@ eMessageReturn CLocalHUD::DoEvent(const KeyCharPressed& aMessage)
 	if (currentLap > 3)
 		//PresentScoreboard();
 
+	return eMessageReturn::eContinue;
+}
+
+eMessageReturn CLocalHUD::DoEvent(const CBlueShellWarningMessage& aMessage)
+{
+	myDangerGuiElement.mySprite = myBlueShellDangerSprite;
+	myDangerGuiElement.myShouldRender = true;
 	return eMessageReturn::eContinue;
 }
