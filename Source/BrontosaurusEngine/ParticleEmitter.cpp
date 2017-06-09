@@ -349,8 +349,23 @@ void CParticleEmitter::ParseUpdateParameters(const CU::CJsonValue& aJsonValue)
 	}
 }
 
+CParticleEmitter::Space CParticleEmitter::GetSpace(const std::string& aSpaceString)
+{
+	if(aSpaceString == "local")
+	{
+		return Space::eLocal;
+	}
+	if(aSpaceString == "world")
+	{
+		return Space::eWorld;
+	}
+
+	return Space::eWorld;
+}
+
 void CParticleEmitter::ParseParticle(const CU::CJsonValue& aJsonValue)
 {
+	myEmitterData.particles.space = GetSpace(aJsonValue["space"].GetString());
 	ParseRender(aJsonValue["render"]);
 	//myEmitterData.particles.spawners.Add(new Particles::CParticleLifetimeSpawner(aJsonValue["lifetime"]));
 	ParseSpawnParameters(aJsonValue["spawn"]);

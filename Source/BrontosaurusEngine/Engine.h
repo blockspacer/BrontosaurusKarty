@@ -99,7 +99,6 @@ public:
 	CU::Time GetTime();
 	CU::Time GetDeltaTime();
 
-
 	void Render();
 	void ThreadedRender();
 	void OnResize(const unsigned int aWidth, const unsigned int aHeight);
