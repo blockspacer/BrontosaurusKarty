@@ -75,7 +75,11 @@ int LoadEnvironmentSettings(KLoader::SLoadedComponentData someData)
 	color /= 255.f;
 	renderer.SetFogColor(color);
 
-	CU::Vector3f shadowAABBposition = someData.myData.at("shadowAABBposition").GetVector3f();
+	int id = KLoader::CKevinLoader::GetInstance().GetCurrentObjectIndex();
+	CGameObject* parent = reinterpret_cast<CGameObject*>(CComponentManager::GetInstance().GetComponent(id));
+
+
+	CU::Vector3f shadowAABBposition = parent->GetToWorldTransform().GetPosition();// someData.myData.at("shadowAABBposition").GetVector3f();
 	CU::Vector3f shadowAABBhalfWidth = someData.myData.at("shadowAABBhalfWidth").GetVector3f();
 	CLightComponentManager::GetInstance().SetShadowMapAABB(shadowAABBposition, shadowAABBhalfWidth);
 
