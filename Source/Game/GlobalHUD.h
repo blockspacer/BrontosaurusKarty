@@ -18,6 +18,7 @@ public:
 
 private:
 	void LoadScoreboard();
+	void LoadMiniMap();
 	void PresentScoreboard();
 	void DisableRedundantGUI();
 
@@ -28,6 +29,7 @@ private:
 private:
 
 	CU::StaticArray<SPlacementData, 8> myWinners;
+	CU::GrowingArray<SHUDElement*> myPlacementLinesGUIElement;
 
 	SHUDElement myScoreboardElement;
 
