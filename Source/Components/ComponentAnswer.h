@@ -52,6 +52,7 @@ enum class eComponentQuestionType
 	eGetCharacterInfo,
 	eGetLapTraversedPercentage,
 	eCheckIfGroundAbove,
+	eCheckIfShouldCheckAbove,
 	eLength,
 };
 struct SComponentQuestionData
