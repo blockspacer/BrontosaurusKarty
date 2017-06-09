@@ -270,10 +270,6 @@ void CPlayState::Load()
 		DL_MESSAGE_BOX("Loading Failed");
 	}
 	
-	//myScene->AddCamera(CScene::eCameraType::ePlayerOneCamera);
-	//CRenderCamera& playerCamera = myScene->GetRenderCamera(CScene::eCameraType::ePlayerOneCamera);
-	//playerCamera.InitPerspective(90, WINDOW_SIZE_F.x, WINDOW_SIZE_F.y, 0.1f, 500.f);
-
 	myScene->InitPlayerCameras(myPlayerCount);
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
@@ -308,7 +304,31 @@ void CPlayState::Load()
 
 	myCountdownSprite->Render();
 
-	///////////
+	//***************************************************************
+	//*						BAKE SHADOWMAP							*
+	//***************************************************************
+
+	myScene->BakeShadowMap();
+	RENDERER.SwapWrite();
+	DL_PRINT("Baking Shadow Map");
+	RENDERER.DoImportantQueue();
+	{
+		std::string progress = ".";
+		while (!myScene->HasBakedShadowMap())
+		{
+			DL_PRINT(progress.c_str());
+			progress += ".";
+			std::this_thread::sleep_for(std::chrono::microseconds(7500));
+		}
+	}
+	DL_PRINT("Done!");
+
+	//--------------------------------------------------------------
+
+
+
+
+
 	myIsLoaded = true;
 
 	// Get time to load the level:
@@ -322,6 +342,7 @@ void CPlayState::Init()
 {
 	for (int i = 0; i < myLocalHUDs.Size(); ++i)
 	{
+		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eBlueShellWarning);
 		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eCharPressed);
 	}
 
@@ -506,7 +527,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent(playerJson.at("Model").GetString());
-
+	playerModel->SetIsShadowCasting(false);
 	secondPlayerObject->AddComponent(playerModel);
 	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
 	//Create sub player object
@@ -623,7 +644,7 @@ void CPlayState::CreateAI()
 
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Animations/M_Kart_01.fbx");
-
+	playerModel->SetIsShadowCasting(false);
 	secondPlayerObject->AddComponent(playerModel);
 	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
 

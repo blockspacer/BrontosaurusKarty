@@ -186,6 +186,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AIFinishedMessage.h" />
+    <ClInclude Include="BlueShellWarningMessage.h" />
     <ClInclude Include="ConectedMessage.h" />
     <ClInclude Include="ConetctMessage.h" />
     <ClInclude Include="ConsoleCalledUpon.h" />
@@ -217,6 +218,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AIFinishedMessage.cpp" />
+    <ClCompile Include="BlueShellWarningMessage.cpp" />
     <ClCompile Include="ConectedMessage.cpp" />
     <ClCompile Include="ConetctMessage.cpp" />
     <ClCompile Include="ConsoleCalledUpon.cpp" />

@@ -3,7 +3,7 @@
 
 #include "RenderCamera.h"
 #include "RenderPackage.h"
-#include "CascadeBuffer.h"
+#include "ShadowBuffers.h"
 
 class CRenderCamera;
 class CRenderPackage;

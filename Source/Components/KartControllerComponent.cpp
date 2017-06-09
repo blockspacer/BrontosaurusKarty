@@ -743,6 +743,7 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 	}
 	
 
+	float y =myVelocity.y;
 	const float maxSpeed2 = GetMaxSpeed2() * myMaxSpeedModifier * myMaxSpeedModifier;
 	const float minSpeed2 = myMinSpeed * myMinSpeed;
 	const float speed2 = myVelocity.Length2() * (dir > 0.f ? 1.f : -1.f);
@@ -759,6 +760,10 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 		myVelocity.Normalize();
 		myVelocity *= -myMinSpeed;
 
+	}
+	if (GetIsGrounded() == false)
+	{
+		myVelocity.y = y;
 	}
 	float steerAngle = 0.f;
 
