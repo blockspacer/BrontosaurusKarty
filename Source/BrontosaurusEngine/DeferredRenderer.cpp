@@ -281,11 +281,6 @@ void CDeferredRenderer::DoLightingPass(CFullScreenHelper& aFullscreenHelper, CRe
 		changeStateMessage.mySamplerState = eSamplerState::eClamp;
 		aRenderer.SetStates(&changeStateMessage);
 		DoAmbientLighting(aFullscreenHelper);
-		changeStateMessage.myRasterizerState = eRasterizerState::eNoCulling;
-		changeStateMessage.myDepthStencilState = eDepthStencilState::eDisableDepth;
-		changeStateMessage.myBlendState = eBlendState::eAddBlend;
-		changeStateMessage.mySamplerState = eSamplerState::eClamp;
-		aRenderer.SetStates(&changeStateMessage);
 		DoDirectLighting(aFullscreenHelper, aRenderer);
 #endif
 }
@@ -359,10 +354,10 @@ void CDeferredRenderer::DoDirectLighting(CFullScreenHelper& aFullscreenHelper, C
 			aRenderer.SetStates(&cullfrontStates);
 			break;
 		case SRenderMessage::eRenderMessageType::eRenderPointLight:
-			RenderPointLight(renderMessage, aFullscreenHelper);
+			RenderPointLight(renderMessage);
 			break;
 		case SRenderMessage::eRenderMessageType::eRenderSpotLight:
-			RenderSpotLight(renderMessage, aFullscreenHelper);
+			RenderSpotLight(renderMessage);
 			break;
 		}
 	}
@@ -377,7 +372,7 @@ void CDeferredRenderer::RenderDirectionalLight(SRenderMessage* aRenderMessage, C
 	aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eDeferredDirectional);
 }
 
-void CDeferredRenderer::RenderPointLight(SRenderMessage* aRenderMessage, CFullScreenHelper& aFullscreenHelper)
+void CDeferredRenderer::RenderPointLight(SRenderMessage* aRenderMessage)
 {
 	SRenderPointLight* msg = static_cast<SRenderPointLight*>(aRenderMessage);
 	BSR::UpdateCBuffer<Lights::SPointLight>(myPointLightBuffer, &msg->pointLight);
@@ -390,7 +385,7 @@ void CDeferredRenderer::RenderPointLight(SRenderMessage* aRenderMessage, CFullSc
 	myPointLightModel->Render(pointLightTransformation);
 }
 
-void CDeferredRenderer::RenderSpotLight(SRenderMessage* aRenderMessage, CFullScreenHelper& aFullscreenHelper)
+void CDeferredRenderer::RenderSpotLight(SRenderMessage* aRenderMessage)
 {
 	SRenderSpotLight* msg = static_cast<SRenderSpotLight*>(aRenderMessage);
 
