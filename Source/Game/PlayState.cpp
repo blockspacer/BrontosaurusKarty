@@ -69,7 +69,8 @@
 #include "..\ThreadedPostmaster\RaceStartedMessage.h"
 #include <LuaWrapper/SSlua/SSlua.h>
 #include <GUIElement.h>
-#include "HUD.h"
+#include "LocalHUD.h"
+#include "GlobalHUD.h"
 #include "PollingStation.h"
 
 // player creationSpeciifcIncludes
@@ -283,7 +284,7 @@ void CPlayState::Load()
 	///////////////////
 	//     HUD 
 
-	myHUDs.Init(myPlayerCount);
+	myLocalHUDs.Init(myPlayerCount);
 
 	bool myIsOneSplit = false;
 	if (myPlayerCount == 2)
@@ -292,9 +293,12 @@ void CPlayState::Load()
 	}
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
-		myHUDs.Add(new CHUD(i, myPlayerCount));
-		myHUDs[i]->LoadHUD();
+		myLocalHUDs.Add(new CLocalHUD(i, myPlayerCount));
+		myLocalHUDs[i]->LoadHUD();
 	}
+
+	myGlobalHUD = new CGlobalHUD();
+	myGlobalHUD->LoadHUD();
 
 	LoadPlacementLineGUI();
 
@@ -336,12 +340,14 @@ void CPlayState::Load()
 
 void CPlayState::Init()
 {
-	for (int i = 0; i < myHUDs.Size(); ++i)
+	for (int i = 0; i < myLocalHUDs.Size(); ++i)
 	{
-		POSTMASTER.Subscribe(myHUDs[i], eMessageType::eCharPressed);
-		POSTMASTER.Subscribe(myHUDs[i], eMessageType::eRaceOver);
-		POSTMASTER.Subscribe(myHUDs[i], eMessageType::eBlueShellWarning);
+		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eBlueShellWarning);
+		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eCharPressed);
 	}
+
+	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::eCharPressed);
+	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::eRaceOver);
 
 	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::ePlayerFinished);
 	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::eRaceStarted);
@@ -395,11 +401,6 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	myRedShellManager->Update(aDeltaTime.GetSeconds());
 	myBlueShellManager->Update(aDeltaTime.GetSeconds());
 
-	for (int i = 0; i < myPlayerCount; ++i)
-	{
-		myHUDs[i]->Update();
-	}
-
 	CPickupComponentManager::GetInstance()->Update(aDeltaTime.GetSeconds());
 	return myStatus;
 }
@@ -413,8 +414,10 @@ void CPlayState::Render()
 
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
-		myHUDs[i]->Render();
+		myLocalHUDs[i]->Render();
 	}
+
+	myGlobalHUD->Render();
 
 	RenderPlacementLine();
 }
