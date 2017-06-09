@@ -26,6 +26,8 @@ private:
 	void ToMainMenu();
 	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
 
+public:
+	eMessageReturn DoEvent(const Postmaster::Message::CControllerInputMessage& aControllerInputMessage) override;
 private:
 
 	CU::StaticArray<SPlacementData, 8> myWinners;

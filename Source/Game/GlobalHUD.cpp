@@ -14,6 +14,7 @@
 
 #include <ThreadPool.h>
 #include "ThreadedPostmaster/PopCurrentState.h"
+#include "ThreadedPostmaster/ControllerInputMessage.h"
 
 CGlobalHUD::CGlobalHUD()
 {
@@ -177,6 +178,7 @@ void CGlobalHUD::LoadMiniMap()
 
 void CGlobalHUD::PresentScoreboard()
 {
+	myRaceOver = true;
 	DisableRedundantGUI();
 	myScoreboardElement.myShouldRender = true;
 }
@@ -206,7 +208,7 @@ void CGlobalHUD::DisableRedundantGUI()
 eMessageReturn CGlobalHUD::DoEvent(const CRaceOverMessage & aMessage)
 {
 	myWinners = aMessage.GetWinners();
-	myRaceOver = true;
+	
 	PresentScoreboard();
 	return eMessageReturn::eContinue;
 }
@@ -221,8 +223,21 @@ eMessageReturn CGlobalHUD::DoEvent(const KeyCharPressed & aMessage)
 {
 	if (aMessage.GetKey() == 'p')
 		PresentScoreboard();
-	if (aMessage.GetKey() == 'c')
+	if (aMessage.GetKey() == 'c' && myRaceOver == true)
 		ToMainMenu();
+
+	return eMessageReturn::eContinue;
+}
+
+eMessageReturn CGlobalHUD::DoEvent(const Postmaster::Message::CControllerInputMessage& aControllerInputMessage)
+{
+	const Postmaster::Message::InputEventData& data = aControllerInputMessage.GetData();
+
+	if(myRaceOver == true && data.eventType == Postmaster::Message::EventType::ButtonChanged &&
+		data.data.boolValue == true && data.buttonIndex == Postmaster::Message::ButtonIndex::A)
+	{
+		ToMainMenu();
+	}
 
 	return eMessageReturn::eContinue;
 }

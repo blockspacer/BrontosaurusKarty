@@ -72,6 +72,7 @@
 #include "LocalHUD.h"
 #include "GlobalHUD.h"
 #include "PollingStation.h"
+#include "../CommonUtilities/XInputWrapper.h"
 
 // player creationSpeciifcIncludes
 #include "KartComponent.h"
@@ -93,6 +94,8 @@
 #include "AnimationEventFactory.h"
 #include "..\CommonUtilities\JsonValue.h"
 #include "CharacterInfoComponent.h"
+#include "BroadcastINputListener.h"
+#include "InputManager.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -118,6 +121,7 @@ CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	myPlayers[0].myInputDevice = SParticipant::eInputDevice::eKeyboard;
 	//myPlacementLinesGUIElement.Init(8);
 	myPlacementLineScreenSpaceWidth = 0.0f;
+	
 }
 
 CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU::GrowingArray<SParticipant> aPlayers)
@@ -335,6 +339,7 @@ void CPlayState::Load()
 	float time = loadPlaystateTimer.GetDeltaTime().GetMilliseconds();
 	GAMEPLAY_LOG("Game Inited in %f ms", time);
 	Postmaster::Threaded::CPostmaster::GetInstance().GetThreadOffice().HandleMessages();
+
 }
 
 void CPlayState::Init()
@@ -347,6 +352,7 @@ void CPlayState::Init()
 
 	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::eCharPressed);
 	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::eRaceOver);
+	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::eControllerInput);
 	//POSTMASTER.Subscribe()
 
 	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::ePlayerFinished);
@@ -458,7 +464,32 @@ CU::eInputReturn CPlayState::RecieveInput(const CU::SInputMessage& aInputMessage
 		//myStateStack.PushState(new CPauseMenuState(myStateStack));
 		return CU::eInputReturn::eKeepSecret;
 	}
+	switch(aInputMessage.myType)
+	{
+	
+	case CU::eInputType::eGamePadButtonPressed: 
+	if(aInputMessage.myGamePad == CU::GAMEPAD::A)
+	{
+		Postmaster::Message::InputEventData eventData;
+		eventData.eventType = Postmaster::Message::EventType::ButtonChanged;
+		eventData.data.boolValue = true;
+		eventData.buttonIndex = Postmaster::Message::ButtonIndex::A;
+		PostPostmasterEvent(aInputMessage.myGamepadIndex, eventData);
+	}
+	break;
 
+	case CU::eInputType::eGamePadButtonReleased: 
+		if (aInputMessage.myGamePad == CU::GAMEPAD::A)
+		{
+			Postmaster::Message::InputEventData eventData;
+			eventData.eventType = Postmaster::Message::EventType::ButtonChanged;
+			eventData.data.boolValue = false;
+			eventData.buttonIndex = Postmaster::Message::ButtonIndex::A;
+			PostPostmasterEvent(aInputMessage.myGamepadIndex, eventData);
+		}
+		break;
+	
+	}
 	return CU::CInputMessenger::RecieveInput(aInputMessage);
 }
 
@@ -516,6 +547,11 @@ void CPlayState::CreateManagersAndFactories()
 void CPlayState::LoadNavigationSpline(const CU::CJsonValue& splineData)
 {
 	myKartControllerComponentManager->LoadNavigationSpline(splineData);
+}
+
+void CPlayState::PostPostmasterEvent(short aGamepadIndex,const Postmaster::Message::InputEventData& aEventData)
+{
+	POSTMASTER.Broadcast(new Postmaster::Message::CControllerInputMessage(aGamepadIndex,aEventData));
 }
 
 void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticipant, unsigned int aPlayerCount)
