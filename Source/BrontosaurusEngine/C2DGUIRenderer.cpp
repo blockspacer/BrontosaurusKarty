@@ -282,7 +282,7 @@ void C2DGUIRenderer::RenderBar(const SRenderBarMessage* const aRenderMessage)
 	ID3D11DeviceContext& context = *CEngine::GetInstance()->GetFramework()->GetDeviceContext();
 
 	//VertexShader Constant buffer
-	CU::Vector4f rect = aRenderMessage->myRect;
+	const CU::Vector4f& rect = aRenderMessage->myRect;
 
 	SBarVSData barVsData;
 	barVsData.position = CU::Vector2f(rect.x, rect.y);
