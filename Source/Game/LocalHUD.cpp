@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "HUD.h"
+#include "LocalHUD.h"
 
 #include "BrontosaurusEngine/SpriteInstance.h"
 #include "BrontosaurusEngine/Engine.h"
@@ -26,7 +26,7 @@
 #include "TextInstance.h"
 
 
-CHUD::CHUD(unsigned char aPlayerID, unsigned short aAmountOfPlayers)
+CLocalHUD::CLocalHUD(unsigned char aPlayerID, unsigned short aAmountOfPlayers)
 {
 	myPlayerID = aPlayerID;
 	myAmountOfPlayers = aAmountOfPlayers;
@@ -37,7 +37,6 @@ CHUD::CHUD(unsigned char aPlayerID, unsigned short aAmountOfPlayers)
 
 	//POSTMASTER.Subscribe(this, eMessageType::eCharPressed);
 	//POSTMASTER.Subscribe(this, eMessageType::eRaceOver); // why is this crapper?
-	//Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eBlueShellWarning);
 
 	myCameraOffset = CU::Vector2f(0.0f, 0.0f);
 
@@ -68,12 +67,12 @@ CHUD::CHUD(unsigned char aPlayerID, unsigned short aAmountOfPlayers)
 	}
 }
 
-CHUD::~CHUD()
+CLocalHUD::~CLocalHUD()
 {
 	POSTMASTER.Unsubscribe(this);
 }
 
-void CHUD::LoadHUD()
+void CLocalHUD::LoadHUD()
 {
 	CU::CJsonValue jsonDoc;
 
@@ -117,16 +116,11 @@ void CHUD::LoadHUD()
 	LoadPlacement(jsonPlayerObject.at("placement"));
 	LoadFinishText(jsonPlayerObject.at("finishText"));
 	LoadItemGui(jsonPlayerObject.at("itemGui"));
-
-	LoadScoreboard();
+	LoadDangerGui(jsonPlayerObject.at("dangerGui"));
+	
 }
 
-void CHUD::Update()
-{
-
-}
-
-void CHUD::Render()
+void CLocalHUD::Render()
 {
 	unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer) + myLapAdjusterCheat;
 	unsigned char currentPlacement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myPlayer);
@@ -183,6 +177,20 @@ void CHUD::Render()
 			SetGUIToEndBlend(L"finishText" + myPlayerID);
 		}
 	}
+	if (myDangerGuiElement.myShouldRender == false)
+	{
+		myDangerGuiElement.mySprite = myNullSprite;
+	}
+
+	SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"dangerGui" + myPlayerID, myDangerGuiElement.myGUIElement, myDangerGuiElement.myPixelSize);
+
+	RENDERER.AddRenderMessage(guiElement);
+	SetGUIToAlphaBlend(L"dangerGui" + myPlayerID);
+	myDangerGuiElement.mySprite->RenderToGUI(L"dangerGui" + myPlayerID);
+	SetGUIToEndBlend(L"dangerGui" + myPlayerID);
+
+	myDangerGuiElement.myShouldRender = false;
+
 
 	if(myItemGuiElement.myShouldRender == true)
 	{
@@ -248,91 +256,9 @@ void CHUD::Render()
 		myItemGuiElement.mySprite->RenderToGUI(L"itemGui" + myPlayerID);
 		SetGUIToEndBlend(L"itemGui" + myPlayerID);
 	}
-
-
-	if (myScoreboardElement.myShouldRender == true)
-	{
-		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"scoreboard", myScoreboardElement.myGUIElement, myScoreboardElement.myPixelSize);
-		RENDERER.AddRenderMessage(guiElement);
-
-		SetGUIToAlphaBlend(L"scoreboard");
-		{
-			float yOffset = 0.11333f; //shh..
-
-			CU::Vector2f initialPortraitPos = myPortraitSprite->GetPosition();
-
-			myScoreboardElement.mySprite->RenderToGUI(L"scoreboard");
-
-			for (int i = 0; i < 8; ++i)
-			{
-				CTextInstance charNameTxt;
-
-				switch (myWinners[i].character)
-				{
-				case SParticipant::eCharacter::eVanBrat:
-					myPortraitSprite->SetRect({ 0.f, 0.875f, 1.f, 1.f });
-					charNameTxt.SetText(L"Yoshi");
-					break;
-				case SParticipant::eCharacter::eGrandMa:
-					myPortraitSprite->SetRect({ 0.f, 0.750f, 1.f, 0.875f });
-					charNameTxt.SetText(L"Mario");
-					break;
-				default:
-					//myPortraitSprite->SetRect({ 0.f, 0.875f, 1.f, 1.f });
-					myPortraitSprite->SetRect({ 0.f, 0.750f, 1.f, 0.875f });
-					charNameTxt.SetText(L"Error");
-					break;
-				}
-
-				CU::Vector2f lastPortraitPos = myPortraitSprite->GetPosition();
-				CU::Vector2f newPortraitPos = { lastPortraitPos.x, lastPortraitPos.y + yOffset };
-
-				myPortraitSprite->RenderToGUI(L"scoreboard");
-				myPortraitSprite->SetPosition(newPortraitPos);
-			}
-
-			myPortraitSprite->SetPosition(initialPortraitPos);
-
-		}
-		SetGUIToEndBlend(L"scoreboard");
-	}
 }
 
-SHUDElement CHUD::LoadHUDElement(const CU::CJsonValue& aJsonValue)
-{
-	SHUDElement hudElement;
-
-	hudElement.myGUIElement.myOrigin = { 0.f,0.f }; // { 0.5f, 0.5f };
-	hudElement.myGUIElement.myAnchor[(char)eAnchors::eTop] = true;
-	hudElement.myGUIElement.myAnchor[(char)eAnchors::eLeft] = true;
-
-	
-	LoadHUDElementValues(aJsonValue, hudElement, CU::Vector2f(), CU::Vector2f());
-
-	return hudElement;
-}
-
-void CHUD::LoadHUDElementValues(const CU::CJsonValue& aJsonValue, SHUDElement& aHUDElement, CU::Vector2f aPositionOffset, CU::Vector2f aSizeOffset)
-{
-	aHUDElement.myGUIElement.myScreenRect = CU::Vector4f(aJsonValue.at("position").GetVector2f() + myCameraOffset + aPositionOffset);
-
-	const CU::CJsonValue sizeObject = aJsonValue.at("size");
-	aHUDElement.myPixelSize.x = sizeObject.at("pixelWidth").GetUInt();
-	aHUDElement.myPixelSize.y = sizeObject.at("pixelHeight").GetUInt();
-
-	float rectWidth = sizeObject.at("screenSpaceWidth").GetFloat() + aSizeOffset.x;
-	float rectHeight = sizeObject.at("screenSpaceHeight").GetFloat() + aSizeOffset.y;
-
-	float topLeftX = aHUDElement.myGUIElement.myScreenRect.x;
-	float topLeftY = aHUDElement.myGUIElement.myScreenRect.y;
-
-	aHUDElement.myGUIElement.myScreenRect.z = rectWidth + topLeftX;
-	aHUDElement.myGUIElement.myScreenRect.w = rectHeight + topLeftY;
-
-}
-// Remember - Sprites are bot-left based.
-
-void CHUD::LoadLapCounter(const CU::CJsonValue& aJsonValue)
+void CLocalHUD::LoadLapCounter(const CU::CJsonValue& aJsonValue)
 {
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
@@ -343,7 +269,7 @@ void CHUD::LoadLapCounter(const CU::CJsonValue& aJsonValue)
 	myLapCounterElement.mySprite->SetRect({ 0.f, 0.5f, 1.f, 0.75f });
 }
 
-void CHUD::LoadPlacement(const CU::CJsonValue& aJsonValue)
+void CLocalHUD::LoadPlacement(const CU::CJsonValue& aJsonValue)
 {
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
@@ -356,7 +282,7 @@ void CHUD::LoadPlacement(const CU::CJsonValue& aJsonValue)
 
 }
 
-void CHUD::LoadFinishText(const CU::CJsonValue& aJsonValue)
+void CLocalHUD::LoadFinishText(const CU::CJsonValue& aJsonValue)
 {
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
@@ -367,7 +293,7 @@ void CHUD::LoadFinishText(const CU::CJsonValue& aJsonValue)
 	/*myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));*/
 }
 
-void CHUD::LoadItemGui(const CU::CJsonValue& aJsonValue)
+void CLocalHUD::LoadItemGui(const CU::CJsonValue& aJsonValue)
 {
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
@@ -390,64 +316,22 @@ void CHUD::LoadItemGui(const CU::CJsonValue& aJsonValue)
 
 }
 
-void CHUD::LoadScoreboard()
+void CLocalHUD::LoadDangerGui(const CU::CJsonValue& aJsonValue)
 {
-	CU::CJsonValue scoreboard;
-	scoreboard.Parse("Json/HUD/HUDScoreboard.json");
+	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
-	CU::CJsonValue jsonElementData = scoreboard.at("elementData");
-	CU::CJsonValue jsonSprites = scoreboard.at("sprites");
+	myDangerGuiElement = LoadHUDElement(aJsonValue);
+	//myItemGuiElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
-	myScoreboardElement = LoadHUDElement(jsonElementData);
+	float itemGuiWidth = 1.0f;
+	float itemGuiHeight = 1.0f;
+	myBlueShellDangerSprite = new CSpriteInstance("Sprites/GUI/blueShellWarning.dds", { itemGuiWidth,itemGuiHeight });
+	myDangerGuiElement.mySprite = myNullSprite;
+	/*myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));*/
 
-	const std::string scoreboardBGSpritePath = jsonSprites.at("background").GetString();
-	const std::string portraitSpritePath = jsonSprites.at("characterPortrait").GetString();
-
-	myScoreboardBGSprite = new CSpriteInstance(scoreboardBGSpritePath.c_str(), { 1.f,1.0f});
-	myPortraitSprite = new CSpriteInstance(portraitSpritePath.c_str(), { 0.5f, 0.125f}, { 0.196f, -0.004f });
-	
-	myScoreboardElement.mySprite = myScoreboardBGSprite;
-
-	myScoreboardElement.myShouldRender = false;
 }
 
-void CHUD::SetGUIToAlphaBlend(std::wstring aStr)
-{
-	SChangeStatesMessage* changeStatesMessage = new SChangeStatesMessage();
-	changeStatesMessage->myBlendState = eBlendState::eAlphaBlend;
-	changeStatesMessage->myDepthStencilState = eDepthStencilState::eDisableDepth;
-	changeStatesMessage->myRasterizerState = eRasterizerState::eNoCulling;
-	changeStatesMessage->mySamplerState = eSamplerState::eClamp;
-
-	SRenderToGUI* guiChangeState = new SRenderToGUI(aStr, changeStatesMessage);
-	RENDERER.AddRenderMessage(guiChangeState);
-}
-
-void CHUD::SetGUIToEndBlend(std::wstring aStr)
-{
-	SChangeStatesMessage* changeStatesMessage = new SChangeStatesMessage();
-	changeStatesMessage = new SChangeStatesMessage();
-	changeStatesMessage->myBlendState = eBlendState::eEndBlend;
-	changeStatesMessage->myDepthStencilState = eDepthStencilState::eDisableDepth;
-	changeStatesMessage->myRasterizerState = eRasterizerState::eNoCulling;
-	changeStatesMessage->mySamplerState = eSamplerState::eClamp;
-
-	SRenderToGUI* guiChangeState = new SRenderToGUI(aStr, changeStatesMessage);
-	RENDERER.AddRenderMessage(guiChangeState);
-}
-
-void CHUD::AdjustPosBasedOnNrOfPlayers(CU::Vector2f aTopLeft, CU::Vector2f aBotRight)
-{
-	//Detta låter som en bra ide! -mig själv.
-}
-
-void CHUD::PresentScoreboard()
-{
-	DisableRedundantGUI();
-	myScoreboardElement.myShouldRender = true;
-}
-
-void CHUD::DisableRedundantGUI()
+void CLocalHUD::DisableRedundantGUI()
 {
 	auto lambda = [this]()
 	{
@@ -473,16 +357,16 @@ void CHUD::DisableRedundantGUI()
 }
 
 // When the race is finished for all players.
-eMessageReturn CHUD::DoEvent(const CRaceOverMessage& aMessage)
-{
-	myWinners = aMessage.GetWinners();
-	// Present scoreboard. (over the entire screen.)
-	PresentScoreboard();
-	return eMessageReturn::eContinue;
-}
+//eMessageReturn CLocalHUD::DoEvent(const CRaceOverMessage& aMessage)
+//{
+//	myWinners = aMessage.GetWinners();
+//	// Present scoreboard. (over the entire screen.)
+//	PresentScoreboard();
+//	return eMessageReturn::eContinue;
+//}
 
 // Debuging
-eMessageReturn CHUD::DoEvent(const KeyCharPressed& aMessage)
+eMessageReturn CLocalHUD::DoEvent(const KeyCharPressed& aMessage)
 {
 	if (aMessage.GetKey() == 'p')
 		myLapAdjusterCheat += 1;
@@ -493,18 +377,18 @@ eMessageReturn CHUD::DoEvent(const KeyCharPressed& aMessage)
 
 	unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer) + myLapAdjusterCheat;
 	if (currentLap > 3)
-		PresentScoreboard();
+		//PresentScoreboard();
 
 	return eMessageReturn::eContinue;
 }
 
-eMessageReturn CHUD::DoEvent(const CBlueShellWarningMessage & aMessage)
+
+eMessageReturn CLocalHUD::DoEvent(const CBlueShellWarningMessage& aMessage)
 {
-	if (myPlayer == aMessage.GetKartToWarn())
+	if(aMessage.GetKartToWarn() == myPlayer)
 	{
-		//show warning gui
-
+		myDangerGuiElement.mySprite = myBlueShellDangerSprite;
+		myDangerGuiElement.myShouldRender = true;
 	}
-
 	return eMessageReturn::eContinue;
 }

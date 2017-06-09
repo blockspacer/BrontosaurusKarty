@@ -26,7 +26,7 @@ public:
 	void Update(const CU::Time aDeltaTime);
 
 	void AddDirectionalLightToScene(const Lights::SDirectionalLight& aDirectionalLight);
-
+	void SetShadowMapAABB(const CU::Vector3f& aCenterPosition, const CU::Vector3f& aExtents);
 private:
 	CLightComponentManager(CScene& aScene);
 	~CLightComponentManager();

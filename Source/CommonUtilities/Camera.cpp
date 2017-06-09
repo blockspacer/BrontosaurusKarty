@@ -94,7 +94,6 @@ namespace CU
 		myProjection = myProjection.CreateOrthogonalProjectionMatrixLH(aNear, aFar, aProjectionWidth, aProjectionHeight);
 		myProjectionInverse = myProjection.GetInverted();
 
-		//myFrustum.SetFrustum(aFar, aNear, 0.0f, aProjectionWidth, aProjectionHeight);
 		myFrustum.SetFrustum(myProjectionInverse);
 
 		myFar = aFar;

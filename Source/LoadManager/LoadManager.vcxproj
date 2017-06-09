@@ -353,7 +353,7 @@
     <ClInclude Include="LoadModel.h" />
     <ClInclude Include="LoadObject.h" />
     <ClInclude Include="LoadParticleEmitterComponent.h" />
-    <ClInclude Include="LoadPointLightComponent.h" />
+    <ClInclude Include="LoadLightsEnvironment.h" />
     <ClInclude Include="LoadScriptComponent.h" />
     <ClInclude Include="LoadSoundComponent.h" />
     <ClInclude Include="LoadTerrainComponent.h" />
@@ -375,7 +375,7 @@
     <ClCompile Include="LoadModel.cpp" />
     <ClCompile Include="LoadObject.cpp" />
     <ClCompile Include="LoadParticleEmitterComponent.cpp" />
-    <ClCompile Include="LoadPointLightComponent.cpp" />
+    <ClCompile Include="LoadLightsEnvironment.cpp" />
     <ClCompile Include="LoadScriptComponent.cpp" />
     <ClCompile Include="LoadSoundComponent.cpp" />
     <ClCompile Include="LoadTerrainComponent.cpp" />

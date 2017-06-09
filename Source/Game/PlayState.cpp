@@ -69,7 +69,8 @@
 #include "..\ThreadedPostmaster\RaceStartedMessage.h"
 #include <LuaWrapper/SSlua/SSlua.h>
 #include <GUIElement.h>
-#include "HUD.h"
+#include "LocalHUD.h"
+#include "GlobalHUD.h"
 #include "PollingStation.h"
 
 // player creationSpeciifcIncludes
@@ -268,10 +269,6 @@ void CPlayState::Load()
 		DL_MESSAGE_BOX("Loading Failed");
 	}
 	
-	//myScene->AddCamera(CScene::eCameraType::ePlayerOneCamera);
-	//CRenderCamera& playerCamera = myScene->GetRenderCamera(CScene::eCameraType::ePlayerOneCamera);
-	//playerCamera.InitPerspective(90, WINDOW_SIZE_F.x, WINDOW_SIZE_F.y, 0.1f, 500.f);
-
 	myScene->InitPlayerCameras(myPlayerCount);
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
@@ -286,7 +283,7 @@ void CPlayState::Load()
 	///////////////////
 	//     HUD 
 
-	myHUDs.Init(myPlayerCount);
+	myLocalHUDs.Init(myPlayerCount);
 
 	bool myIsOneSplit = false;
 	if (myPlayerCount == 2)
@@ -295,15 +292,42 @@ void CPlayState::Load()
 	}
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
-		myHUDs.Add(new CHUD(i, myPlayerCount));
-		myHUDs[i]->LoadHUD();
+		myLocalHUDs.Add(new CLocalHUD(i, myPlayerCount));
+		myLocalHUDs[i]->LoadHUD();
 	}
+
+	myGlobalHUD = new CGlobalHUD();
+	myGlobalHUD->LoadHUD();
 
 	LoadPlacementLineGUI();
 
 	myCountdownSprite->Render();
 
-	///////////
+	//***************************************************************
+	//*						BAKE SHADOWMAP							*
+	//***************************************************************
+
+	myScene->BakeShadowMap();
+	RENDERER.SwapWrite();
+	DL_PRINT("Baking Shadow Map");
+	RENDERER.DoImportantQueue();
+	{
+		std::string progress = ".";
+		while (!myScene->HasBakedShadowMap())
+		{
+			DL_PRINT(progress.c_str());
+			progress += ".";
+			std::this_thread::sleep_for(std::chrono::microseconds(7500));
+		}
+	}
+	DL_PRINT("Done!");
+
+	//--------------------------------------------------------------
+
+
+
+
+
 	myIsLoaded = true;
 
 	// Get time to load the level:
@@ -315,12 +339,14 @@ void CPlayState::Load()
 
 void CPlayState::Init()
 {
-	for (int i = 0; i < myHUDs.Size(); ++i)
+	for (int i = 0; i < myLocalHUDs.Size(); ++i)
 	{
-		POSTMASTER.Subscribe(myHUDs[i], eMessageType::eCharPressed);
-		POSTMASTER.Subscribe(myHUDs[i], eMessageType::eRaceOver);
-		POSTMASTER.Subscribe(myHUDs[i], eMessageType::eBlueShellWarning);
+		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eBlueShellWarning);
+		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eCharPressed);
 	}
+
+	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::eCharPressed);
+	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::eRaceOver);
 
 	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::ePlayerFinished);
 	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::eRaceStarted);
@@ -374,11 +400,6 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	myRedShellManager->Update(aDeltaTime.GetSeconds());
 	myBlueShellManager->Update(aDeltaTime.GetSeconds());
 
-	for (int i = 0; i < myPlayerCount; ++i)
-	{
-		myHUDs[i]->Update();
-	}
-
 	CPickupComponentManager::GetInstance()->Update(aDeltaTime.GetSeconds());
 	return myStatus;
 }
@@ -392,8 +413,10 @@ void CPlayState::Render()
 
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
-		myHUDs[i]->Render();
+		myLocalHUDs[i]->Render();
 	}
+
+	myGlobalHUD->Render();
 
 	RenderPlacementLine();
 }
@@ -503,6 +526,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent(playerJson.at("Model").GetString());
+	playerModel->SetIsShadowCasting(false);
 
 	CComponent* headLight = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({1.f, 0.f, 0.f}, 10.f, 5.f, 3.141592f * 0.125f);
 	CGameObject* headLightObject = myGameObjectManager->CreateGameObject();
@@ -626,7 +650,7 @@ void CPlayState::CreateAI()
 
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Animations/M_Kart_01.fbx");
-
+	playerModel->SetIsShadowCasting(false);
 	secondPlayerObject->AddComponent(playerModel);
 	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
 

@@ -83,9 +83,9 @@ void CModelComponent::Receive(const eComponentMessageType aType, const SComponen
 	}
 }
 
-void CModelComponent::SetIgnoreDepth(bool aShouldIgnoreDepth)
+void CModelComponent::SetIsShadowCasting(bool aShouldCastShadows)
 {
-	myModel.SetIgnoreDepth(aShouldIgnoreDepth);
+	myModel.SetIsShadowCasting(aShouldCastShadows);
 }
 
 bool CModelComponent::GetAnimationStates(CU::GrowingArray<eAnimationState>& aAnimationStatesOut) const

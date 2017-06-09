@@ -61,17 +61,17 @@ void CRenderCamera::AddRenderMessage(SRenderMessage * aRenderMessage)
 	myRenderQueue.Add(aRenderMessage);
 }
 
-void CRenderCamera::Render()
+void CRenderCamera::Render(bool aImortant /*= false*/)
 {
 	SRenderCameraQueueMessage * camqueueMsg = new SRenderCameraQueueMessage();
 	camqueueMsg->myRenderCamera = *this;
-	RENDERER.AddRenderMessage(camqueueMsg);
+	RENDERER.AddRenderMessage(camqueueMsg, aImortant);
 	myRenderQueue.RemoveAll();
 }
 
-ID3D11PixelShader* CRenderCamera::GetShadowShader()
+ID3D11PixelShader* CRenderCamera::GetShadowShader(const bool aInstanced)
 {
-	return myShadowPS;
+	return aInstanced == true ? myShadowPSInstanced : myShadowPS;
 }
 
 void CRenderCamera::InitRenderPackages(const CU::Vector2ui& aTextureSize, ID3D11Texture2D* aTexture, DXGI_FORMAT aFormat)
