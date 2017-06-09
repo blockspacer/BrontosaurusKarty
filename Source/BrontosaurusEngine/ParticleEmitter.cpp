@@ -165,7 +165,10 @@ void CParticleEmitter::UpdateInstance(const CU::Time& aTime, CParticleEmitterIns
 		if(aInstance.IsActive() == true && aInstance.myParticles.Size() < myEmitterData.emitter.maxNrOfParticles)
 		{
 			SParticle particle;
-			particle.position = aInstance.myToWorldSpace.GetPosition();
+			if(myEmitterData.particles.space == Space::eWorld)
+			{
+				particle.position = aInstance.myToWorldSpace.GetPosition();
+			}
 			SParticleLogic particleLogic;
 
 			SpawnParticle(particle, particleLogic);
