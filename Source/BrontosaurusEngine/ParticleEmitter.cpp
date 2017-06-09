@@ -71,7 +71,19 @@ void CParticleEmitter::Render(const CU::Matrix44f & aToWorldSpace, const CU::Gro
 	if (!myRenderEffects[static_cast<int>(myEmitterData.render.renderMode)]) return;
 
 	myRenderEffects[static_cast<int>(renderMode)]->Activate();
-	UpdateCBuffers(aToWorldSpace);
+
+	switch (myEmitterData.particles.space)
+	{
+	case Space::eWorld: 
+		UpdateCBuffers(CU::Matrix44f::Identity);
+		break;
+	case Space::eLocal: 
+		UpdateCBuffers(aToWorldSpace);
+		break;
+	default: ;
+	}
+	
+
 	ResizeVertexBuffer(aParticleList);
 
 	if(myEmitterData.render.myTexture != nullptr)
