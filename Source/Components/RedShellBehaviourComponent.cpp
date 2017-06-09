@@ -8,6 +8,7 @@
 #include "LapTrackerComponentManager.h"
 
 #include "AIMath.h"
+#include "../ThreadedPostmaster/RedShellWarningMessage.h"
 
 CRedShellBehaviourComponent::CRedShellBehaviourComponent()
 {
@@ -23,6 +24,7 @@ CRedShellBehaviourComponent::CRedShellBehaviourComponent()
 
 	myCurrentSplineIndex = 0;
 	myUserPlacement = 8;
+	myIsActive = false;
 }
 
 
@@ -100,9 +102,16 @@ void CRedShellBehaviourComponent::Update(const float aDeltaTime)
 	{
 		if (myCurrentUser != myKartObjects->At(i))
 		{
-			if (CU::Vector3f(myKartObjects->At(i)->GetWorldPosition() - newRotation.GetPosition()).Length2() < 20*20 && myUserPlacement > CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myKartObjects->At(i)))
+			if (CU::Vector3f(myKartObjects->At(i)->GetWorldPosition() - newRotation.GetPosition()).Length2() < 40*40 && myUserPlacement > CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myKartObjects->At(i)))
 			{
 				newRotation.LookAt(myKartObjects->At(i)->GetWorldPosition());
+
+				if(myIsActive == true)
+				{
+					CRedShellWarningMessage* redWarningMessage = new CRedShellWarningMessage(myKartObjects->At(i));
+
+					Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(redWarningMessage);
+				}
 			}
 		}
 	}
@@ -174,11 +183,13 @@ void CRedShellBehaviourComponent::Receive(const eComponentMessageType aMessageTy
 
 	case eComponentMessageType::eDeactivate:
 	{
+		myIsActive = false;
 		break;
 	}
 	case eComponentMessageType::eActivate:
 	{
 		myVelocity = CU::Vector3f::UnitZ*Speed;
+		myIsActive = true;
 		break;
 	}
 	case eComponentMessageType::eReInitRedShell:

@@ -27,8 +27,11 @@ CGlobalHUD::~CGlobalHUD()
 
 void CGlobalHUD::LoadHUD()
 {
-	LoadMiniMap();
-	LoadScoreboard();
+	CU::CJsonValue jsonDoc;
+	jsonDoc.Parse("Json/HUD/HUDGlobal.json");
+
+	LoadMiniMap(jsonDoc.at("minimap"));
+	LoadScoreboard(jsonDoc.at("scoreboard"));
 }
 
 void CGlobalHUD::Render()
@@ -107,13 +110,10 @@ void CGlobalHUD::Render()
 	//}
 }
 
-void CGlobalHUD::LoadScoreboard()
+void CGlobalHUD::LoadScoreboard(const CU::CJsonValue& aJsonValue)
 {
-	CU::CJsonValue scoreboard;
-	scoreboard.Parse("Json/HUD/HUDGlobal.json");
-
-	CU::CJsonValue jsonElementData = scoreboard.at("elementData");
-	CU::CJsonValue jsonSprites = scoreboard.at("sprites");
+	CU::CJsonValue jsonElementData = aJsonValue.at("elementData");
+	CU::CJsonValue jsonSprites = aJsonValue.at("sprites");
 
 	myScoreboardElement = LoadHUDElement(jsonElementData);
 
@@ -127,7 +127,7 @@ void CGlobalHUD::LoadScoreboard()
 	myScoreboardElement.myShouldRender = false;
 }
 
-void CGlobalHUD::LoadMiniMap()
+void CGlobalHUD::LoadMiniMap(const CU::CJsonValue& aJsonValue)
 {
 	//CU::CJsonValue jsonDoc;
 	//if (myPlayers.Size() == 1)
@@ -174,6 +174,9 @@ void CGlobalHUD::LoadMiniMap()
 	//	hudElement->mySprite = new CSpriteInstance("Sprites/GUI/Scoreboard/characterPortraitYoshi.dds", { 1.0f, 1.0f });
 	//	myPlacementLinesGUIElement.Add(hudElement);
 	//}
+
+
+	// IF 
 }
 
 void CGlobalHUD::PresentScoreboard()

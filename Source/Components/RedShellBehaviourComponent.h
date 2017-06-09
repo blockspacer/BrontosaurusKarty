@@ -33,5 +33,6 @@ private:
 	int myUserPlacement;
 	float Speed;
 
+	bool myIsActive;
 };
 

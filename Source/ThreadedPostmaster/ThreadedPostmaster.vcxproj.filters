@@ -85,6 +85,9 @@
     <Filter Include="Message\ControllerInputMessage">
       <UniqueIdentifier>{be09a65f-65fb-4b01-97a8-69bdc9ec5dbe}</UniqueIdentifier>
     </Filter>
+<Filter Include="Message\RedShellWarning">
+      <UniqueIdentifier>{4f399304-bbd1-468c-b884-93fe96629448}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Postmaster.cpp">
@@ -160,6 +163,9 @@
     </ClCompile>
     <ClCompile Include="ControllerInputMessage.cpp">
       <Filter>Message\ControllerInputMessage</Filter>
+</ClCompile>
+    <ClCompile Include="RedShellWarningMessage.cpp">
+      <Filter>Message\RedShellWarning</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -251,6 +257,9 @@
     </ClInclude>
     <ClInclude Include="ControllerInputMessage.h">
       <Filter>Message\ControllerInputMessage</Filter>
+</ClInclude>
+    <ClInclude Include="RedShellWarningMessage.h">
+      <Filter>Message\RedShellWarning</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

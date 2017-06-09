@@ -347,6 +347,7 @@ void CPlayState::Init()
 	for (int i = 0; i < myLocalHUDs.Size(); ++i)
 	{
 		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eBlueShellWarning);
+		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eRedShellWarning);
 		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eCharPressed);
 	}
 

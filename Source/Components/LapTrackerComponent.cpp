@@ -108,6 +108,15 @@ bool CLapTrackerComponent::Answer(const eComponentQuestionType aQuestionType, SC
 		}
 		break;
 	}
+	case eComponentQuestionType::eCheckIfShouldCheckAbove:
+	{
+		if(mySplineIndex >= 98 && mySplineIndex <= 105 )
+		{
+			return false;
+		}
+		return true;
+		break;
+	}
 	case eComponentQuestionType::eGetLapTraversedPercentage:
 	{
 		aQuestionData.myFloat = GetLapDistanceTravelledPercentage();

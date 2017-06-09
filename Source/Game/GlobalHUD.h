@@ -17,8 +17,8 @@ public:
 	void Render() override;
 
 private:
-	void LoadScoreboard();
-	void LoadMiniMap();
+	void LoadScoreboard(const CU::CJsonValue& aJsonValue);
+	void LoadMiniMap(const CU::CJsonValue& aJsonValue);
 	void PresentScoreboard();
 	void DisableRedundantGUI();
 
