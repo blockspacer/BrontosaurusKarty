@@ -14,7 +14,7 @@ class CPointLightInstance;
 class CSpotLightInstance;
 class CParticleEmitterInstance;
 class CFireEmitterInstance;
-class CCascadeShadowMap;
+class CShadowMap;
 
 namespace CU
 {
@@ -42,6 +42,9 @@ public:
 	void Render();
 	void RenderSplitScreen(const int aRectCount);
 	void RenderToRect(const CU::Vector4f& aRect, CRenderCamera& aCamera);
+
+	void BakeShadowMap();
+	bool HasBakedShadowMap();
 
 	//Add shiz, camera, modeller ljus, partiklar
 	InstanceID AddModelInstance(CModelInstance* aModelInstance); //return int
@@ -84,9 +87,10 @@ public:
 	inline CSkybox& GetSkybox();
 	
 	CRenderCamera& GetPlayerCamera(const int aPlayerIndex);
+	void SetShadowMapAABB(const CU::Vector3f& aCenterPosition, const CU::Vector3f& aExtents);
 
 private:
-	CCascadeShadowMap* myShadowMap;
+	CShadowMap* myShadowMap;
 
 	CU::GrowingArray<CModelInstance*, InstanceID> myModels;
 	CU::Stack<InstanceID, InstanceID> myFreeModels;
@@ -109,8 +113,6 @@ private:
 
 	float myFogStart;
 	float myFogEnd;
-
-	//CRenderCamera myShadowCamera;
 };
 
 inline CSkybox& CScene::GetSkybox()

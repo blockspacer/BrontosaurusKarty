@@ -69,8 +69,8 @@ public:
 	inline void SetVisibility(const bool aIsVisible);
 	inline bool GetVisibility();
 	inline ModelId GetModelID();
-	inline void SetIgnoreDepth(const bool aShouldIgnore);
-	inline bool GetIgnoreDepth() const;
+	inline void SetIsShadowCasting(const bool aShouldCastShadows);
+	inline bool GetIsShadowCasting() const;
 	void SetVertexStreamData(const std::string& aStreamPath);
 private:
 	CU::Matrix44f myTransformation;
@@ -92,7 +92,7 @@ private:
 	bool myAnimationLooping;
 	bool myShouldManuallyUpdate;
 
-	bool myIgnoreDepth;
+	bool myIsShadowCasting;
 	CTexture* myVertexTexture;
 };
 
@@ -116,14 +116,14 @@ inline int CModelInstance::GetModelID()
 	return myModel;
 }
 
-inline void CModelInstance::SetIgnoreDepth(const bool aShouldIgnore)
+inline void CModelInstance::SetIsShadowCasting(const bool aShouldCastShadows)
 {
-	myIgnoreDepth = aShouldIgnore;
+	myIsShadowCasting = aShouldCastShadows;
 }
 
-inline bool CModelInstance::GetIgnoreDepth() const
+inline bool CModelInstance::GetIsShadowCasting() const
 {
-	return myIgnoreDepth;
+	return myIsShadowCasting;
 }
 
 inline bool CModelInstance::GetVisibility()

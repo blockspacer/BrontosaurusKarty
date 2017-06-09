@@ -48,9 +48,8 @@ private:
 	void DoDirectLighting(CFullScreenHelper& aFullscreenHelper, CRenderer& aRenderer);
 
 	void RenderDirectionalLight(SRenderMessage* aRenderMessage, CFullScreenHelper& aFullscreenHelper);
-	void RenderPointLight(SRenderMessage* aRenderMessage, CFullScreenHelper& aFullscreenHelper);
-
-	void RenderSpotLight(SRenderMessage* aRenderMessage, CFullScreenHelper& aFullscreenHelper);
+	void RenderPointLight(SRenderMessage* aRenderMessage);
+	void RenderSpotLight(SRenderMessage* aRenderMessage);
 
 	void ActivateIntermediate();
 	void SetRMAOSRV();

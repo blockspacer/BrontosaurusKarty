@@ -25,3 +25,15 @@ struct SCascadeBuffer
 	float myCascadeEnds[NUM_CASCADES + 1];
 	float garbage[3];
 };
+
+struct SBakedShadowBuffer
+{
+	CU::Matrix44f lightSpace;
+	CU::Matrix44f lightProjection;
+
+	unsigned int shadowMapSize;
+	int pcfPasses;
+
+	int garbage[2];
+};
+

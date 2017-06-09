@@ -22,9 +22,6 @@
     <ClInclude Include="LoadFireComponent.h">
       <Filter>LoadThings\LoadFireComponent</Filter>
     </ClInclude>
-    <ClInclude Include="LoadPointLightComponent.h">
-      <Filter>LoadThings\LoadPointLight</Filter>
-    </ClInclude>
     <ClInclude Include="LoadSoundComponent.h">
       <Filter>LoadThings\LoadSoundComponent</Filter>
     </ClInclude>
@@ -61,6 +58,9 @@
     <ClInclude Include="LoadTerrainComponent.h">
       <Filter>LoadThings\LoadTerrainComponent</Filter>
     </ClInclude>
+    <ClInclude Include="LoadLightsEnvironment.h">
+      <Filter>LoadThings\LoadLights &amp; Environment</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -80,9 +80,6 @@
     </ClCompile>
     <ClCompile Include="LoadFireComponent.cpp">
       <Filter>LoadThings\LoadFireComponent</Filter>
-    </ClCompile>
-    <ClCompile Include="LoadPointLightComponent.cpp">
-      <Filter>LoadThings\LoadPointLight</Filter>
     </ClCompile>
     <ClCompile Include="LoadSoundComponent.cpp">
       <Filter>LoadThings\LoadSoundComponent</Filter>
@@ -120,6 +117,9 @@
     <ClCompile Include="LoadTerrainComponent.cpp">
       <Filter>LoadThings\LoadTerrainComponent</Filter>
     </ClCompile>
+    <ClCompile Include="LoadLightsEnvironment.cpp">
+      <Filter>LoadThings\LoadLights &amp; Environment</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="LoadManager">
@@ -136,9 +136,6 @@
     </Filter>
     <Filter Include="LoadThings\LoadFireComponent">
       <UniqueIdentifier>{bb50d118-6b63-4aee-9b9e-0e031cdf0ca8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="LoadThings\LoadPointLight">
-      <UniqueIdentifier>{2e91866c-ac05-417e-b471-baeb15ed9802}</UniqueIdentifier>
     </Filter>
     <Filter Include="LoadThings\LoadSoundComponent">
       <UniqueIdentifier>{ade5bd1e-58c7-4b36-ab06-afc4059de6df}</UniqueIdentifier>
@@ -181,6 +178,9 @@
     </Filter>
     <Filter Include="LoadThings\LoadTerrainComponent">
       <UniqueIdentifier>{e7363b44-f118-4110-9206-4f787aa80260}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LoadThings\LoadLights &amp; Environment">
+      <UniqueIdentifier>{2e91866c-ac05-417e-b471-baeb15ed9802}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

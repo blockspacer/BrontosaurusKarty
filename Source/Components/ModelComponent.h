@@ -16,6 +16,7 @@ public:
 	void SetVisibility(const bool aVisibility);
 	void FlipVisibility();
 	void Receive(const eComponentMessageType, const SComponentMessageData&) override;
+	void SetIsShadowCasting(bool aShouldCastShadows);
 	inline CModelInstance& GetModelInstance() { return myModel; }
 
 	void SetAnimation(const eAnimationState aAnimationKey);
@@ -25,8 +26,6 @@ public:
 	void SetAnimationManualUpdate(const bool aShouldManuallyUpdate);
 	void SetAnimationCounter(const float aValue);
 	void ResetAnimation();
-	void SetIgnoreDepth(bool aShouldIgnoreDepth);
-
 	bool GetAnimationStates(CU::GrowingArray<eAnimationState>& aAnimationStatesOut) const;
 	const std::string& GetFilePath() const;
 
