@@ -15,6 +15,13 @@
 #include <ThreadPool.h>
 #include "ThreadedPostmaster/PopCurrentState.h"
 
+
+#define DEFAULT	{0.3f, 0.3f, 0.3f, 1.0f}
+#define YELLOW	{1.0f, 1.0f, 0.0f, 1.0f}
+#define GREEN	{0.0f, 1.0f, 0.0f, 1.0f}
+#define PINK	{1.0f, 0.0f, 1.0f, 1.0f}
+#define BLUE	{0.0f, 0.0f, 1.0f, 1.0f}
+
 CGlobalHUD::CGlobalHUD()
 {
 
@@ -83,30 +90,63 @@ void CGlobalHUD::Render()
 		SetGUIToEndBlend(L"scoreboard");
 	}
 
-	//for (unsigned int i = 0; i < myPlacementLinesGUIElement.Size(); i++)
-	//{
-	//	SComponentQuestionData lapTraversedPercentageQuestionData;
-	//	if (myKartObjects[i]->AskComponents(eComponentQuestionType::eGetLapTraversedPercentage, lapTraversedPercentageQuestionData) == true)
-	//	{
-	//	float lapTraversedPlacement = lapTraversedPercentageQuestionData.myFloat;
-	//	myPlacementLinesGUIElement[i]->myGUIElement.myScreenRect.x = lapTraversedPlacement;
-	//	myPlacementLinesGUIElement[i]->myGUIElement.myScreenRect.z = myPlacementLineScreenSpaceWidth + lapTraversedPlacement;
-	//	}
-	//
-	//	SCreateOrClearGuiElement* createOrClear = new SCreateOrClearGuiElement(L"placementLine" + i, myPlacementLinesGUIElement[i]->myGUIElement, CU::Vector2ui(WINDOW_SIZE.x, WINDOW_SIZE.y));
-	//	RENDERER.AddRenderMessage(createOrClear);
-	//
-	//	SChangeStatesMessage* const changeStatesMessage = new SChangeStatesMessage();
-	//	changeStatesMessage->myBlendState = eBlendState::eAlphaBlend;
-	//	changeStatesMessage->myDepthStencilState = eDepthStencilState::eDisableDepth;
-	//	changeStatesMessage->myRasterizerState = eRasterizerState::eNoCulling;
-	//	changeStatesMessage->mySamplerState = eSamplerState::eClamp;
-	//
-	//	SRenderToGUI* const guiChangeState = new SRenderToGUI(L"placementLine" + i, changeStatesMessage);
-	//	RENDERER.AddRenderMessage(guiChangeState);
-	//
-	//	myPlacementLinesGUIElement[i]->mySprite->RenderToGUI(L"placementLine" + i);
-	//}
+	if (myMinimapElement.myShouldRender == true)
+	{
+		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"minimap", myMinimapElement.myGUIElement, myMinimapElement.myPixelSize);
+		RENDERER.AddRenderMessage(guiElement);
+	
+		SetGUIToAlphaBlend(L"minimap");
+		{
+			SParticipant::eInputDevice whoTheFuck;
+	
+			switch (whoTheFuck)
+			{
+			case SParticipant::eInputDevice::eController1:
+				myMinimapPosIndicator->SetColor(YELLOW);
+				break;
+			case SParticipant::eInputDevice::eController2:
+				myMinimapPosIndicator->SetColor(GREEN);
+				break;
+			case SParticipant::eInputDevice::eController3:
+				myMinimapPosIndicator->SetColor(PINK);
+				break;
+			case SParticipant::eInputDevice::eController4:
+				myMinimapPosIndicator->SetColor(BLUE);
+				break;
+			default:
+				myMinimapPosIndicator->SetColor(DEFAULT);
+				break;
+			}
+	
+			myMinimapElement.mySprite->RenderToGUI(L"minimap");
+	
+		}
+	
+		SetGUIToEndBlend(L"minimap");
+
+		//	SComponentQuestionData lapTraversedPercentageQuestionData;
+		//	if (myKartObjects[i]->AskComponents(eComponentQuestionType::eGetLapTraversedPercentage, lapTraversedPercentageQuestionData) == true)
+		//	{
+		//	float lapTraversedPlacement = lapTraversedPercentageQuestionData.myFloat;
+		//	myPlacementLinesGUIElement[i]->myGUIElement.myScreenRect.x = lapTraversedPlacement;
+		//	myPlacementLinesGUIElement[i]->myGUIElement.myScreenRect.z = myPlacementLineScreenSpaceWidth + lapTraversedPlacement;
+		//	}
+		//
+		//	SCreateOrClearGuiElement* createOrClear = new SCreateOrClearGuiElement(L"placementLine" + i, myPlacementLinesGUIElement[i]->myGUIElement, CU::Vector2ui(WINDOW_SIZE.x, WINDOW_SIZE.y));
+		//	RENDERER.AddRenderMessage(createOrClear);
+		//
+		//	SChangeStatesMessage* const changeStatesMessage = new SChangeStatesMessage();
+		//	changeStatesMessage->myBlendState = eBlendState::eAlphaBlend;
+		//	changeStatesMessage->myDepthStencilState = eDepthStencilState::eDisableDepth;
+		//	changeStatesMessage->myRasterizerState = eRasterizerState::eNoCulling;
+		//	changeStatesMessage->mySamplerState = eSamplerState::eClamp;
+		//
+		//	SRenderToGUI* const guiChangeState = new SRenderToGUI(L"placementLine" + i, changeStatesMessage);
+		//	RENDERER.AddRenderMessage(guiChangeState);
+		//
+		//	myPlacementLinesGUIElement[i]->mySprite->RenderToGUI(L"placementLine" + i);
+
+	}
 }
 
 void CGlobalHUD::LoadScoreboard(const CU::CJsonValue& aJsonValue)
@@ -128,54 +168,18 @@ void CGlobalHUD::LoadScoreboard(const CU::CJsonValue& aJsonValue)
 
 void CGlobalHUD::LoadMiniMap(const CU::CJsonValue& aJsonValue)
 {
-	//CU::CJsonValue jsonDoc;
-	//if (myPlayers.Size() == 1)
-	//{
-	//	jsonDoc.Parse("Json/HUD/HUD1Player.json");
-	//}
-	//else if (myPlayers.Size() == 2)
-	//{
-	//	jsonDoc.Parse("Json/HUD/HUD2Player.json");
-	//}
-	//else if (myPlayers.Size() == 3)
-	//{
-	//	jsonDoc.Parse("Json/HUD/HUD3Player.json");
-	//}
-	//else if (myPlayers.Size() == 4)
-	//{
-	//	jsonDoc.Parse("Json/HUD/HUD4Player.json");
-	//}
-	//
-	//CU::CJsonValue jsonPlacementLine = jsonDoc.at("placementLine");
-	//for (unsigned int i = 0; i < myKartObjects.Size(); i++)
-	//{
-	//	SHUDElement* hudElement = new SHUDElement();
-	//
-	//	hudElement->myGUIElement.myOrigin = { 0.f,0.f }; // { 0.5f, 0.5f };
-	//	hudElement->myGUIElement.myAnchor[(char)eAnchors::eTop] = true;
-	//	hudElement->myGUIElement.myAnchor[(char)eAnchors::eLeft] = true;
-	//
-	//	hudElement->myGUIElement.myScreenRect = CU::Vector4f(jsonPlacementLine.at("position").GetVector2f());
-	//
-	//	const CU::CJsonValue sizeObject = jsonPlacementLine.at("size");
-	//	hudElement->myPixelSize.x = sizeObject.at("pixelWidth").GetUInt();
-	//	hudElement->myPixelSize.y = sizeObject.at("pixelHeight").GetUInt();
-	//
-	//	float rectWidth = sizeObject.at("screenSpaceWidth").GetFloat();
-	//	float rectHeight = sizeObject.at("screenSpaceHeight").GetFloat();
-	//	myPlacementLineScreenSpaceWidth = rectWidth;
-	//
-	//	float topLeftX = hudElement->myGUIElement.myScreenRect.x;
-	//	float topLeftY = hudElement->myGUIElement.myScreenRect.y;
-	//
-	//	hudElement->myGUIElement.myScreenRect.z = rectWidth + topLeftX;
-	//	hudElement->myGUIElement.myScreenRect.w = rectHeight + topLeftY;
-	//	hudElement->mySprite = new CSpriteInstance("Sprites/GUI/Scoreboard/characterPortraitYoshi.dds", { 1.0f, 1.0f });
-	//	myPlacementLinesGUIElement.Add(hudElement);
-	//}
+	CU::CJsonValue jsonElementData = aJsonValue.at("elementData");
+	CU::CJsonValue jsonSprites = aJsonValue.at("sprites");
 
+	myMinimapElement = LoadHUDElement(jsonElementData);
 
-	// IF 
+	const std::string backgroundSpritePath = jsonSprites.at("background").GetString();
+	const std::string posIndicatorSpritePath = jsonSprites.at("background").GetString();
+
+	myMinimapElement.mySprite = new CSpriteInstance(backgroundSpritePath.c_str(), { 1.0f, 1.0f });
+	myMinimapPosIndicator = new CSpriteInstance(posIndicatorSpritePath.c_str(), { 1.f,1.f });
+
+	// IF SINGLE PLAYER -> POS AT THE BOTTOM
 }
 
 void CGlobalHUD::PresentScoreboard()

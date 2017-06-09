@@ -29,12 +29,16 @@ private:
 private:
 
 	CU::StaticArray<SPlacementData, 8> myWinners;
-	CU::GrowingArray<SHUDElement*> myPlacementLinesGUIElement;
 
 	SHUDElement myScoreboardElement;
+	SHUDElement myMinimapElement;
 
 	CSpriteInstance* myScoreboardBGSprite;
 	CSpriteInstance* myPortraitSprite;
+
+	CSpriteInstance* myMinimapBGSprite;
+	CSpriteInstance* myMinimapPosIndicator;
+
 	bool myRaceOver;
 };
 
