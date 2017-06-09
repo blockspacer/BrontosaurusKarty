@@ -24,7 +24,7 @@ CAIController::~CAIController()
 void CAIController::Update(const float aDeltaTime)
 {
 	UpdateItemUsage(aDeltaTime);
-	UpdateMovement(aDeltaTime);	
+	UpdateMovement(aDeltaTime);
 }
 
 void CAIController::UpdateWithoutItems(const float aDeltaTime)
