@@ -325,6 +325,22 @@ void CMenuManager::BackButtonPressed(const short aPlayerIndex)
 	myPlayerThatpressed = aPlayerIndex;
 }
 
+void CMenuManager::RecieveGamePadInput(const CU::GAMEPAD aGamepadInput)
+{
+	const int actionIndex = myUsedGamepadButtons.Find(aGamepadInput);
+
+	if (actionIndex != myUsedGamepadButtons.FoundNone)
+	{
+		for (unsigned i = 0; i < myGamepadAction[actionIndex].Size(); ++i)
+		{
+			if (myGamepadAction[actionIndex][i]() == false)
+			{
+				break;
+			}
+		}
+	}
+}
+
 const SMenuSprite& CMenuManager::GetSprite(unsigned aSpriteId)
 {
 	return mySpriteInstances.At(aSpriteId);

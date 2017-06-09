@@ -4,6 +4,7 @@
 #include "../CommonUtilities/CommonUtilities.h"
 #include "GUIElement.h"
 #include <functional>
+#include "InputManager.h"
 
 enum class eMenuThingType
 {
@@ -90,6 +91,8 @@ public:
 	void ActionPressed(const short aPlayerIndex = 0);
 	void BackButtonPressed(const short aPlayerIndex = 0);
 
+	void RecieveGamePadInput(const CU::GAMEPAD);
+
 	const SMenuSprite& GetSprite(unsigned aSpriteId);
 
 	void AddAction(const std::string& aActionName, const std::function<bool(std::string)>& aFunction);
@@ -122,6 +125,9 @@ private:
 	bool myIsRightPressed;
 	bool myHasPlayedHoverSound;
 	bool myHasPlayedClickSound;
+
+	CU::GrowingArray<CU::GAMEPAD, int> myUsedGamepadButtons;
+	CU::GrowingArray<CU::GrowingArray<std::function<bool(void)>>> myGamepadAction;
 };
 
 inline void CMenuManager::UpdateMousePosition(const CU::Vector2f& aPosition)
