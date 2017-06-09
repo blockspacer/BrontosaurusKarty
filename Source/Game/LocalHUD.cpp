@@ -382,9 +382,13 @@ eMessageReturn CLocalHUD::DoEvent(const KeyCharPressed& aMessage)
 	return eMessageReturn::eContinue;
 }
 
+
 eMessageReturn CLocalHUD::DoEvent(const CBlueShellWarningMessage& aMessage)
 {
-	myDangerGuiElement.mySprite = myBlueShellDangerSprite;
-	myDangerGuiElement.myShouldRender = true;
+	if(aMessage.GetKartToWarn() == myPlayer)
+	{
+		myDangerGuiElement.mySprite = myBlueShellDangerSprite;
+		myDangerGuiElement.myShouldRender = true;
+	}
 	return eMessageReturn::eContinue;
 }
