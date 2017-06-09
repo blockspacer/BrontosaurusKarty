@@ -9,7 +9,7 @@ class CGlobalHUD : public CHUDBase, public Postmaster::ISubscriber
 {
 public:
 
-	CGlobalHUD(const std::string& );
+	CGlobalHUD();
 	~CGlobalHUD();
 
 public:
