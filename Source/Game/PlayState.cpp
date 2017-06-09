@@ -507,7 +507,7 @@ void CPlayState::CreateManagersAndFactories()
 	myExplosionManager = new CExplosionComponentManager;
 	myRedShellManager = new CRedShellManager();
 	myRedShellManager->Init(myPhysicsScene, myKartControllerComponentManager,myKartObjects);
-	myBlueShellManager = new CBlueShellComponentManager(myKartObjects,myGameObjectManager,myExplosionManager);
+	myBlueShellManager = new CBlueShellComponentManager(myKartObjects,myGameObjectManager,myExplosionManager,myColliderComponentManager);
 	myItemFactory = new CItemFactory();
 	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager,*myRedShellManager,*myBlueShellManager);
 	myRespawnComponentManager = new CRespawnComponentManager();
