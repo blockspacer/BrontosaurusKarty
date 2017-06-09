@@ -159,9 +159,8 @@ void CKartAnimator::OnMoveFoward()
 	{
 		myEventQueue.clear();
 		AddAnimation(eEventType::eBeginAccelerate);
-		AddAnimation(eEventType::eContinueAccelerate);
+		//AddAnimation(eEventType::eContinueAccelerate);
 		AddAnimation(eEventType::eFinishAccelerate);
-		DL_PRINT("accelerating");
 	}
 
 	myIsAccelerating = true;

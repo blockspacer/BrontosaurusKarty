@@ -201,6 +201,16 @@ void CKartControllerComponent::MoveFoward()
 	myAnimator->OnMoveFoward();
 }
 
+void CKartControllerComponent::MoveForwardWithoutChangingHoldingForward()
+{
+	if (myHasGottenHit == true)
+	{
+		return;
+	}
+	myAcceleration = GetMaxAcceleration();
+	myAnimator->OnMoveFoward();
+}
+
 void CKartControllerComponent::MoveBackWards()
 {
 	if (myHasGottenHit == true)
@@ -729,7 +739,7 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 	}
 	if (myIsBoosting == true)
 	{
-		MoveFoward();
+		MoveForwardWithoutChangingHoldingForward();
 	}
 	
 
@@ -980,6 +990,18 @@ bool CKartControllerComponent::Answer(const eComponentQuestionType aQuestionType
 		}
 		return true;
 		break;
+	case eComponentQuestionType::eCheckIfGroundAbove:
+	{
+		const CU::Vector3f upMove = CU::Vector3f::UnitY;
+		const CU::Vector3f position = GetParent()->GetToWorldTransform().GetPosition();
+		Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(position + upMove, upMove, 100.0f, Physics::eGround);
+		if (raycastHitData.hit == true)
+		{
+			aQuestionData.myVector3f = raycastHitData.position;
+			return true;
+		}
+		break;
+	}
 	default:
 		break;
 	}

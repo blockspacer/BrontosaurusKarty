@@ -5,11 +5,9 @@
 #include "..\Game\NavigationSpline.h"
 #include "..\CommonUtilities\line.h"
 #include "KartControllerComponentManager.h"
+#include "LapTrackerComponentManager.h"
 
-
-
-CU::Vector2f pDistance(const float x, const float y, const float x1, const float y1, const float x2, const float y2);
-
+#include "AIMath.h"
 
 CRedShellBehaviourComponent::CRedShellBehaviourComponent()
 {
@@ -24,6 +22,7 @@ CRedShellBehaviourComponent::CRedShellBehaviourComponent()
 	myVelocity = CU::Vector3f::UnitZ*	Speed;
 
 	myCurrentSplineIndex = 0;
+	myUserPlacement = 8;
 }
 
 
@@ -80,7 +79,7 @@ void CRedShellBehaviourComponent::Update(const float aDeltaTime)
 
 
 
-	CU::Vector2f closestPoint = /*lineVector * shadowLength*/pDistance(pos.x, pos.y, leftPoint.x, leftPoint.y, rightPoint.x, rightPoint.y);
+	CU::Vector2f closestPoint = /*lineVector * shadowLength*/AIMath::pDistance(pos.x, pos.y, leftPoint.x, leftPoint.y, rightPoint.x, rightPoint.y);
 
 
 	//CU::Vector2f toClosestPointDirection = closestPoint - pos;
@@ -101,7 +100,7 @@ void CRedShellBehaviourComponent::Update(const float aDeltaTime)
 	{
 		if (myCurrentUser != myKartObjects->At(i))
 		{
-			if (CU::Vector3f(myKartObjects->At(i)->GetWorldPosition() - newRotation.GetPosition()).Length2() < 20*20)
+			if (CU::Vector3f(myKartObjects->At(i)->GetWorldPosition() - newRotation.GetPosition()).Length2() < 20*20 && myUserPlacement > CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myKartObjects->At(i)))
 			{
 				newRotation.LookAt(myKartObjects->At(i)->GetWorldPosition());
 			}
@@ -187,6 +186,7 @@ void CRedShellBehaviourComponent::Receive(const eComponentMessageType aMessageTy
 		short index = 0;
 		index = myKartManager->GetClosestSpinesIndex(GetParent()->GetWorldPosition());
 		myCurrentUser = aMessageData.myComponent->GetParent();
+		myUserPlacement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myCurrentUser);
 		//myKartManager->GetNavigationSpline().GetNavigationPoints().Find(*myKartManager->GetNavigationPoint(myCurrentSplineIndex),index);
 		myCurrentSplineIndex = index;
 		break;

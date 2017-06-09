@@ -27,6 +27,7 @@ public:
 	void TurnLeft(const float aNormalizedModifier = -1.f);
 	void StopMoving();
 	void MoveFoward();
+	void MoveForwardWithoutChangingHoldingForward();
 	void MoveBackWards();
 	void StopTurning();
 	void StopDrifting(const bool aShouldGetBoost);
@@ -188,7 +189,8 @@ float CKartControllerComponent::GetMaxSpeed() const
 
 float CKartControllerComponent::GetMaxSpeed2() const
 {
-	return GetMaxSpeed() * GetMaxSpeed();
+	float maxSpeed = GetMaxSpeed();
+	return maxSpeed * maxSpeed;
 }
 
 float CKartControllerComponent::GetMaxAcceleration() const

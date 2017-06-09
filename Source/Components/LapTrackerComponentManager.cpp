@@ -17,7 +17,6 @@ CLapTrackerComponentManager::CLapTrackerComponentManager()
 	myRacerPlacements.Init(16);
 	myWinnerPlacements.Init(16);
 	myUpdatePlacementCountdown = 0.0f;
-	myStartedWithOnlyOnePlayer = false;
 	myIsRaceOver = false;
 }
 
@@ -154,6 +153,10 @@ eMessageReturn CLapTrackerComponentManager::DoEvent(const CPlayerFinishedMessage
 		{
 			if (myComponents[i]->GetParent() == aPlayerFinishedMessage.GetGameObject())
 			{
+				if (CheckIfAlreadyInVictoryList(myComponents[i]->GetParent()) == true)
+				{
+					continue;
+				}
 				myWinnerPlacements.Add((myComponents[i]->GetParent()));
 			}
 		}
@@ -162,7 +165,7 @@ eMessageReturn CLapTrackerComponentManager::DoEvent(const CPlayerFinishedMessage
 		{
 			SendRaceOverMessage();
 		}
-		else if (myComponents.Size() <= 1 && myStartedWithOnlyOnePlayer == false)
+		else if (myWinnerPlacements.Size() >= myComponents.Size() - 1)
 		{
 			SendRaceOverMessage();
 		}
@@ -177,11 +180,15 @@ eMessageReturn CLapTrackerComponentManager::DoEvent(const CAIFinishedMessage& aA
 	{
 		if (myComponents[i]->GetParent() == aAIFinishedMessage.GetGameObject())
 		{
+			if (CheckIfAlreadyInVictoryList(myComponents[i]->GetParent()) == true)
+			{
+				continue;
+			}
 			myWinnerPlacements.Add((myComponents[i]->GetParent()));
 		}
 	}
 
-	if (myComponents.Size() <= 1 && myStartedWithOnlyOnePlayer == false)
+	if (myWinnerPlacements.Size() >= myComponents.Size() - 1)
 	{
 		SendRaceOverMessage();
 	}
@@ -195,7 +202,7 @@ bool CLapTrackerComponentManager::HaveAllPlayersFinished()
 	
 	for (unsigned int i = 0; i < myComponents.Size(); i++)
 	{
-		if (myWinnerPlacements.Find(myRacerPlacements[i]) != myWinnerPlacements.FoundNone)
+		if (CheckIfAlreadyInVictoryList(myRacerPlacements[i]) == true)
 		{
 			continue;
 		}
@@ -212,11 +219,6 @@ void CLapTrackerComponentManager::Init()
 {
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::ePlayerFinished);
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eAIFInished);
-
-	if(myComponents.Size() == 1)
-	{
-		myStartedWithOnlyOnePlayer = true;
-	}
 
 	for (unsigned int i = 0; i < myComponents.Size(); i++)
 	{
@@ -252,7 +254,7 @@ void CLapTrackerComponentManager::AddEveryoneToVictoryList()
 {
 	for(unsigned int i = 0; i < myRacerPlacements.Size(); i++)
 	{
-		if(myWinnerPlacements.Find(myRacerPlacements[i]) == myWinnerPlacements.FoundNone)
+		if(CheckIfAlreadyInVictoryList(myRacerPlacements[i]) == false)
 		{
 			myWinnerPlacements.Add(myRacerPlacements[i]);
 		}
@@ -273,4 +275,14 @@ void CLapTrackerComponentManager::AddEveryoneToVictoryList()
 
 		myPlacementData[i] = data;
 	}
+}
+
+bool CLapTrackerComponentManager::CheckIfAlreadyInVictoryList(CGameObject* aGameObject)
+{
+	if(myWinnerPlacements.Find(aGameObject) == myWinnerPlacements.FoundNone)
+	{
+		return false;
+	}
+
+	return true;
 }

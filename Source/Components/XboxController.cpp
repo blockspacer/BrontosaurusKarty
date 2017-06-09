@@ -86,44 +86,26 @@ void CXboxController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 	{
 	case CU::GAMEPAD::DPAD_DOWN:
 	{
-		SComponentMessageData data;
-		data.myInt = 1; //GreenShell
-		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveItem, data);
 		break;
 	}
 	case CU::GAMEPAD::DPAD_LEFT:
 	{
-		SComponentMessageData data;
-		data.myInt = 2; //mushroom
-		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveItem, data);
 		break;
 	}
 	case CU::GAMEPAD::DPAD_RIGHT:
 	{
-		SComponentMessageData data;
-		data.myInt = 4;//Banana
-		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveItem, data);
 		break;
 	}
 	case CU::GAMEPAD::DPAD_UP:
 	{
-		SComponentMessageData data;
-		data.myInt = 6; //Star
-		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveItem, data);
 		break;
 	}
 	case CU::GAMEPAD::X:
 	{
-		SComponentMessageData data;
-		data.myInt = 6; //Star
-		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveItem, data);
 		break;
 	}
 	case CU::GAMEPAD::Y:
 	{
-		SComponentMessageData data;
-		data.myInt = 3; //Star
-		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveItem, data);
 		break;
 	}
 	case CU::GAMEPAD::A:

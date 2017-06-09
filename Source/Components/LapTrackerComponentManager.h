@@ -59,6 +59,7 @@ private:
 	bool HaveAllPlayersFinished();
 	void SendRaceOverMessage();
 	void AddEveryoneToVictoryList();
+	bool CheckIfAlreadyInVictoryList(CGameObject* aGameObject);
 private:
 	CU::GrowingArray<CLapTrackerComponent*> myComponents;
 	CU::GrowingArray<CGameObject*> myRacerPlacements;
@@ -67,7 +68,6 @@ private:
 	static CLapTrackerComponentManager* ourInstance;
 	float myUpdatePlacementCountdown;
 
-	bool myStartedWithOnlyOnePlayer;
 	bool myIsRaceOver;
 };
 
