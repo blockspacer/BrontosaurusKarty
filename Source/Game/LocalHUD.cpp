@@ -24,6 +24,7 @@
 #include "../ThreadedPostmaster/BlueShellWarningMessage.h"
 
 #include "TextInstance.h"
+#include "ThreadedPostmaster/RedShellWarningMessage.h"
 
 
 CLocalHUD::CLocalHUD(unsigned char aPlayerID, unsigned short aAmountOfPlayers)
@@ -37,6 +38,7 @@ CLocalHUD::CLocalHUD(unsigned char aPlayerID, unsigned short aAmountOfPlayers)
 
 	//POSTMASTER.Subscribe(this, eMessageType::eCharPressed);
 	//POSTMASTER.Subscribe(this, eMessageType::eRaceOver); // why is this crapper?
+	//POSTMASTER.Subscribe(this, eMessageType::eBlueShellWarning);
 
 	myCameraOffset = CU::Vector2f(0.0f, 0.0f);
 
@@ -326,6 +328,7 @@ void CLocalHUD::LoadDangerGui(const CU::CJsonValue& aJsonValue)
 	float itemGuiWidth = 1.0f;
 	float itemGuiHeight = 1.0f;
 	myBlueShellDangerSprite = new CSpriteInstance("Sprites/GUI/blueShellWarning.dds", { itemGuiWidth,itemGuiHeight });
+	myRedShellDangerSprite = new CSpriteInstance("Sprites/GUI/redShellWarning.dds", { itemGuiWidth,itemGuiHeight });
 	myDangerGuiElement.mySprite = myNullSprite;
 	/*myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));*/
 
@@ -388,6 +391,16 @@ eMessageReturn CLocalHUD::DoEvent(const CBlueShellWarningMessage& aMessage)
 	if(aMessage.GetKartToWarn() == myPlayer)
 	{
 		myDangerGuiElement.mySprite = myBlueShellDangerSprite;
+		myDangerGuiElement.myShouldRender = true;
+	}
+	return eMessageReturn::eContinue;
+}
+
+eMessageReturn CLocalHUD::DoEvent(const CRedShellWarningMessage& aMessage)
+{
+	if (aMessage.GetKartToWarn() == myPlayer)
+	{
+		myDangerGuiElement.mySprite = myRedShellDangerSprite;
 		myDangerGuiElement.myShouldRender = true;
 	}
 	return eMessageReturn::eContinue;

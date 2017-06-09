@@ -125,6 +125,11 @@ eMessageReturn Postmaster::ISubscriber::DoEvent(const CRaceStartedMessage& aRace
 	return eMessageReturn::eContinue;
 }
 
+eMessageReturn Postmaster::ISubscriber::DoEvent(const CRedShellWarningMessage& aRedShellMessage)
+{
+	return eMessageReturn::eContinue;
+}
+
 eMessageReturn Postmaster::ISubscriber::DoEvent(const CBlueShellWarningMessage& aBlueShellMessage)
 {
 	return eMessageReturn::eContinue;

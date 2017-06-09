@@ -27,6 +27,7 @@ private:
 	//eMessageReturn DoEvent(const CRaceOverMessage& aMessage) override;
 	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
 	eMessageReturn DoEvent(const CBlueShellWarningMessage& aMessage) override;
+	eMessageReturn DoEvent(const CRedShellWarningMessage& aMessage) override;
 
 private:
 	SHUDElement myLapCounterElement;
@@ -44,7 +45,10 @@ private:
 	CSpriteInstance* myLightningSprite;
 	CSpriteInstance* myBlueShellSprite;
 	CSpriteInstance* myFakeItemBoxSprite;
+
 	CSpriteInstance* myBlueShellDangerSprite;
+	CSpriteInstance* myRedShellDangerSprite;
+	
 	CSpriteInstance* myNullSprite;
 
 	CGameObject* myPlayer;
