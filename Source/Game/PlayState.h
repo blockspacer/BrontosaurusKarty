@@ -40,7 +40,8 @@ class CRedShellManager;
 class CBlueShellComponentManager;
 class CRespawnComponentManager;
 class CLapTrackerComponentManager;
-class CHUD;
+class CLocalHUD;
+class CGlobalHUD;
 
 struct SGUIElement;
 struct  SHUDElement;
@@ -113,7 +114,8 @@ private:
 	CU::GrowingArray<SParticipant> myPlayers;
 	CU::GrowingArray<CGameObject*> myKartObjects;
 
-	CU::GrowingArray<CHUD*> myHUDs;
+	CU::GrowingArray<CLocalHUD*> myLocalHUDs;
+	CGlobalHUD* myGlobalHUD;
 	CU::GrowingArray<SHUDElement*> myPlacementLinesGUIElement;
 
 	//CU::TimerManager* myTimerManager;
