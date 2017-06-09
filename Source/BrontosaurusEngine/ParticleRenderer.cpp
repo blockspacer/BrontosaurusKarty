@@ -107,12 +107,8 @@ void CParticleRenderer::DoRenderQueue(ID3D11ShaderResourceView* aDepthResource, 
 			break;
 		case CParticleEmitter::RenderMode::eBillboard:
 			{
-				SetSpriteBlendState();
-				myParticleGBuffer.diffuse.Clear();
-
-				DEVICE_CONTEXT->OMSetRenderTargets(1, &myParticleGBuffer.diffuse.GetRenderTargetView(), myUseDepthStencil);
-
-				emitter->Render(msg->toWorld, msg->particleList, emitter->GetRenderMode());
+				//SetSpriteBlendState();
+				//myParticleGBuffer.diffuse.Clear();
 
 				SChangeStatesMessage changeStateMessage;
 				changeStateMessage.myRasterizerState = eRasterizerState::eNoCulling;
@@ -120,10 +116,16 @@ void CParticleRenderer::DoRenderQueue(ID3D11ShaderResourceView* aDepthResource, 
 				changeStateMessage.myBlendState = eBlendState::eAlphaBlend;
 				changeStateMessage.mySamplerState = eSamplerState::eClamp;
 				mySharedRenderer.SetStates(&changeStateMessage);
-				
-				myInteremediate->Activate();
 
-				mySharedHelper.DoEffect(CFullScreenHelper::eEffectType::eCopy, &myParticleGBuffer.diffuse);
+				DEVICE_CONTEXT->OMSetRenderTargets(1, &myInteremediate->GetRenderTargetView(), myUseDepthStencil);
+			
+
+				emitter->Render(msg->toWorld, msg->particleList, emitter->GetRenderMode());
+
+				
+				/*myInteremediate->Activate();
+
+				mySharedHelper.DoEffect(CFullScreenHelper::eEffectType::eCopy, &myParticleGBuffer.diffuse);*/
 
 				
 			}
