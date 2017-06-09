@@ -270,8 +270,8 @@ void CHUD::Render()
 					charNameTxt.SetText(L"Mario");
 					break;
 				default:
-					myPortraitSprite->SetRect({ 0.f, 0.875f, 1.f, 1.f });
-					//myPortraitSprite->SetRect({ 0.f, 0.750f, 1.f, 0.875f });
+					//myPortraitSprite->SetRect({ 0.f, 0.875f, 1.f, 1.f });
+					myPortraitSprite->SetRect({ 0.f, 0.750f, 1.f, 0.875f });
 					charNameTxt.SetText(L"Error");
 					break;
 				}
