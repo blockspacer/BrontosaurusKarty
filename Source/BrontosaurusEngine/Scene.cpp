@@ -19,8 +19,15 @@
 #define Intify(A_ENUM_CLASS) static_cast<int>(A_ENUM_CLASS)
 #define PlayerOneCamera myRenderCameras[Intify(eCameraType::ePlayerOneCamera)]
 
+// PCF (Percentage-closer filtering), 
+// Level of detail on Anti Aliasing on shadowmap.
+// higher the value, smoother the shadows
+// using Stratified Poisson Sampling
+#define PCF_PASSES 8
 // set quality 0 is lame 4 is neat
-#define SHADOW_QUALITY 3
+#define SHADOW_QUALITY 4
+
+//#define RENDER_SHADOWMAP
 constexpr unsigned int gShadowMapSize = 1024u << SHADOW_QUALITY;
 
 CScene::CScene()
@@ -33,7 +40,8 @@ CScene::CScene()
 	mySkybox = nullptr;
 	myCubemap = nullptr;
 
-	myShadowMap = new CShadowMap();
+	myShadowMap = new CShadowMap(gShadowMapSize);
+	myShadowMap->SetPCFPassCount(PCF_PASSES);
 	CParticleEmitterComponentManager::GetInstance().SetScene(this);
 }
 
@@ -44,6 +52,7 @@ CScene::~CScene()
 		SAFE_DELETE(mySkybox);
 	}
 	myModels.DeleteAll();
+	SAFE_DELETE(myShadowMap);
 	//myParticleEmitters.DeleteAll();
 }
 
@@ -59,6 +68,8 @@ void CScene::Update(const CU::Time aDeltaTime)
 		if (particle == nullptr) continue;
 		particle->Update(aDeltaTime);
 	}*/
+
+	//myDirectionalLight.direction = myDirectionalLight.direction * CU::Matrix44f::CreateRotateAroundY(3.141592f / 16.f * aDeltaTime.GetSeconds());
 }
 
 void CScene::Render()
@@ -213,6 +224,15 @@ void CScene::RenderSplitScreen(const int aRectCount)
 	{
 		RenderToRect(splits[split][rect], myPlayerCameras[rect]);
 	}
+
+
+#ifdef RENDER_SHADOWMAP
+	SRenderToIntermediate * renderShadowMsg = new SRenderToIntermediate();
+	renderShadowMsg->myRect = { 0.8f, 0.0f, 1.0f, 0.2f };
+	renderShadowMsg->useDepthResource = false;
+	renderShadowMsg->myRenderPackage = myShadowMap->GetShadowBuffer();
+	RENDERER.AddRenderMessage(renderShadowMsg);
+#endif
 }
 
 void CScene::RenderToRect(const CU::Vector4f& aRect, CRenderCamera& aCamera)
@@ -327,14 +347,11 @@ void CScene::RenderToRect(const CU::Vector4f& aRect, CRenderCamera& aCamera)
 	interMSG->useDepthResource = false;
 	interMSG->myRenderPackage = aCamera.GetRenderPackage();
 	//interMSG->myRenderPackage = myShadowMap->GetShadowBuffer();
-
-
 	RENDERER.AddRenderMessage(interMSG);
 }
 
 void CScene::BakeShadowMap()
 {
-	myShadowMap->Init(gShadowMapSize);
 	myShadowMap->Render(myModels);
 }
 
