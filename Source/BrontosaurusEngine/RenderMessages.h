@@ -200,7 +200,7 @@ struct SRenderToIntermediate : SRenderMessage
 {
 	SRenderToIntermediate();
 	CRenderPackage myRenderPackage;
-	CU::Vector4f myRect;
+	CU::Vector4f myRect = CU::Vector4f(0.0f, 0.0f, 1.0f, 1.0f);
 	bool useDepthResource;
 };
 
