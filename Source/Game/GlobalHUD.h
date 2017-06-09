@@ -27,7 +27,7 @@ private:
 	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
 
 private:
-
+	const CU::GrowingArray<CGameObject*>* myKartObjects;
 	CU::StaticArray<SPlacementData, 8> myWinners;
 
 	SHUDElement myScoreboardElement;
