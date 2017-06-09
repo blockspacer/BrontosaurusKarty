@@ -117,6 +117,7 @@ void CHUD::LoadHUD()
 	LoadPlacement(jsonPlayerObject.at("placement"));
 	LoadFinishText(jsonPlayerObject.at("finishText"));
 	LoadItemGui(jsonPlayerObject.at("itemGui"));
+	LoadDangerGui(jsonPlayerObject.at("dangerGui"));
 
 	LoadScoreboard();
 }
@@ -249,6 +250,19 @@ void CHUD::Render()
 		SetGUIToEndBlend(L"itemGui" + myPlayerID);
 	}
 
+	if (myDangerGuiElement.myShouldRender == false)
+	{
+		myDangerGuiElement.mySprite = myNullSprite;
+	}
+
+	SCreateOrClearGuiElement* dangerGuiElement = new SCreateOrClearGuiElement(L"dangerGui" + myPlayerID, myDangerGuiElement.myGUIElement, myDangerGuiElement.myPixelSize);
+
+	RENDERER.AddRenderMessage(dangerGuiElement);
+	SetGUIToAlphaBlend(L"dangerGui" + myPlayerID);
+	myDangerGuiElement.mySprite->RenderToGUI(L"dangerGui" + myPlayerID);
+	SetGUIToEndBlend(L"dangerGui" + myPlayerID);
+	
+	myDangerGuiElement.myShouldRender = false;
 
 	if (myScoreboardElement.myShouldRender == true)
 	{
@@ -390,6 +404,19 @@ void CHUD::LoadItemGui(const CU::CJsonValue& aJsonValue)
 
 }
 
+void CHUD::LoadDangerGui(const CU::CJsonValue& aJsonValue)
+{
+	const std::string spritePath = aJsonValue.at("spritePath").GetString();
+
+	myDangerGuiElement = LoadHUDElement(aJsonValue);
+
+	float dangerGuiWidth = 1.0f;
+	float dangerGuiHeight = 1.0f;
+	myBlueShellDangerSprite = new CSpriteInstance("Sprites/GUI/blueShellWarning.dds", { dangerGuiWidth,dangerGuiHeight });
+	myDangerGuiElement.mySprite = myNullSprite;
+
+}
+
 void CHUD::LoadScoreboard()
 {
 	CU::CJsonValue scoreboard;
@@ -502,8 +529,8 @@ eMessageReturn CHUD::DoEvent(const CBlueShellWarningMessage & aMessage)
 {
 	if (myPlayer == aMessage.GetKartToWarn())
 	{
-		//show warning gui
-
+		myDangerGuiElement.myShouldRender = true;
+		myDangerGuiElement.mySprite = myBlueShellDangerSprite;
 	}
 
 	return eMessageReturn::eContinue;
