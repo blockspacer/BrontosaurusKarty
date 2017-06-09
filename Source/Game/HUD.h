@@ -73,6 +73,7 @@ private:
 	CSpriteInstance* myStarSprite;
 	CSpriteInstance* myLightningSprite;
 	CSpriteInstance* myBlueShellSprite;
+	CSpriteInstance* myFakeItemBoxSprite;
 	CSpriteInstance* myNullSprite;
 
 	CSpriteInstance* myScoreboardBGSprite;

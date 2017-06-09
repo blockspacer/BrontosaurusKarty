@@ -224,6 +224,12 @@ void CHUD::Render()
 			case eItemTypes::eBlueShell:
 			{
 				myItemGuiElement.mySprite = myBlueShellSprite;
+				
+				break;
+			}
+			case eItemTypes::eFakeItemBox:
+			{
+				myItemGuiElement.mySprite = myFakeItemBoxSprite;
 				break;
 			}
 			default:
@@ -272,8 +278,8 @@ void CHUD::Render()
 					charNameTxt.SetText(L"Mario");
 					break;
 				default:
-					myPortraitSprite->SetRect({ 0.f, 0.875f, 1.f, 1.f });
-					//myPortraitSprite->SetRect({ 0.f, 0.750f, 1.f, 0.875f });
+					//myPortraitSprite->SetRect({ 0.f, 0.875f, 1.f, 1.f });
+					myPortraitSprite->SetRect({ 0.f, 0.750f, 1.f, 0.875f });
 					charNameTxt.SetText(L"Error");
 					break;
 				}
@@ -377,6 +383,7 @@ void CHUD::LoadItemGui(const CU::CJsonValue& aJsonValue)
 	myRedShellSprite = new CSpriteInstance("Sprites/GUI/redShell.dds", { itemGuiWidth,itemGuiHeight });
 	myLightningSprite = new CSpriteInstance("Sprites/GUI/lightning.dds", { itemGuiWidth,itemGuiHeight });
 	myBlueShellSprite = new CSpriteInstance("Sprites/GUI/blueShell.dds", { itemGuiWidth,itemGuiHeight });
+	myFakeItemBoxSprite = new CSpriteInstance("Sprites/GUI/fakeItemBox.dds", { itemGuiWidth,itemGuiHeight });
 	myNullSprite = new CSpriteInstance("Sprites/GUI/redShell.dds", { 0.0f,0.0f });
 	myItemGuiElement.mySprite = myNullSprite;
 	/*myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));*/
