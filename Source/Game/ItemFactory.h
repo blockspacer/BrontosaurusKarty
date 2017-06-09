@@ -38,6 +38,7 @@ private:
 	void CreateRedShellBuffer();
 	void CreateBlueShellBuffer();
 	void CreatePlacementDrops();
+	eItemTypes CheckItem(std::string  aItem);
 
 private:
 	Physics::CPhysicsScene* myPhysicsScene;
@@ -61,6 +62,7 @@ private:
 
 	SBoostData myStartBoostData;
 	SBoostData myLightningBoostData;
+	float	myLightningTimeModifier;
 
 	CU::GrowingArray<SBoostData> myLightningBoostBuffer;
 	CU::GrowingArray<CU::GrowingArray<SItemDrop>> myPlacementDrops;

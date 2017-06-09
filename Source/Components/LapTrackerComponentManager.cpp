@@ -6,7 +6,7 @@
 #include "../ThreadedPostmaster/MessageType.h"
 #include "../ThreadedPostmaster/Postmaster.h"
 #include "../ThreadedPostmaster/RaceOverMessage.h"
-
+#include "..\Components\CharacterInfoComponent.h"
 
 CLapTrackerComponentManager* CLapTrackerComponentManager::ourInstance = nullptr;
 const float updatePlacementCooldown = 0.1f;
@@ -17,7 +17,7 @@ CLapTrackerComponentManager::CLapTrackerComponentManager()
 	myRacerPlacements.Init(16);
 	myWinnerPlacements.Init(16);
 	myUpdatePlacementCountdown = 0.0f;
-	myStartedWithOnlyOnePlayer = false;
+	myIsRaceOver = false;
 }
 
 
@@ -40,10 +40,9 @@ CLapTrackerComponentManager* CLapTrackerComponentManager::GetInstance()
 
 void CLapTrackerComponentManager::DestoyInstance()
 {
-	if(ourInstance != nullptr)
-	{
+
 		SAFE_DELETE(ourInstance);
-	}
+	
 }
 
 CLapTrackerComponent* CLapTrackerComponentManager::CreateAndRegisterComponent()
@@ -82,9 +81,8 @@ void CLapTrackerComponentManager::CalculateRacerPlacement()
 	{
 		SLapCalculateData lapCalculateData;
 		lapCalculateData.lapTrackerComponent = myComponents[i];
-		lapCalculateData.placementValue = lapCalculateData.lapTrackerComponent->GetPlacementValue();
+		lapCalculateData.distanceTravelled = lapCalculateData.lapTrackerComponent->GetTotalTravelledDistance();
 		lapCalculateData.reversePlacement = 0;
-		lapCalculateData.nextSplineDistance = lapCalculateData.lapTrackerComponent->GetDistanceToNextSpline();
 		racers.Add(lapCalculateData);
 	}
 
@@ -107,16 +105,10 @@ void CLapTrackerComponentManager::CalculateReversePlacement(CU::GrowingArray<SLa
 				continue;
 			}
 
-			if (aLapCalculateDataList[i].placementValue > aLapCalculateDataList[j].placementValue)
+			if (aLapCalculateDataList[i].distanceTravelled > aLapCalculateDataList[j].distanceTravelled)
 			{
 				aLapCalculateDataList[i].reversePlacement++;
 			}
-
-			if(aLapCalculateDataList[i].placementValue == aLapCalculateDataList[j].placementValue && aLapCalculateDataList[i].nextSplineDistance < aLapCalculateDataList[j].nextSplineDistance)
-			{
-				aLapCalculateDataList[i].reversePlacement++;
-			}
-			
 		}
 	}
 }
@@ -154,23 +146,30 @@ CU::GrowingArray<CGameObject*>& CLapTrackerComponentManager::GetRacerPlacements(
 
 eMessageReturn CLapTrackerComponentManager::DoEvent(const CPlayerFinishedMessage& aPlayerFinishedMessage)
 {
-	for (unsigned int i = 0; i < myComponents.Size(); i++)
+	if(myIsRaceOver == false)
 	{
-		if(myComponents[i]->GetParent() == aPlayerFinishedMessage.GetGameObject())
+		for (unsigned int i = 0; i < myComponents.Size(); i++)
 		{
-			myWinnerPlacements.Add((myComponents[i]->GetParent()));
+			if (myComponents[i]->GetParent() == aPlayerFinishedMessage.GetGameObject())
+			{
+				if (CheckIfAlreadyInVictoryList(myComponents[i]->GetParent()) == true)
+				{
+					continue;
+				}
+				myWinnerPlacements.Add((myComponents[i]->GetParent()));
+			}
 		}
-	}
 
-	if(HaveAllPlayersFinished() == true)
-	{
-		SendRaceOverMessage();
+		if (HaveAllPlayersFinished() == true)
+		{
+			SendRaceOverMessage();
+		}
+		else if (myWinnerPlacements.Size() >= myComponents.Size() - 1)
+		{
+			SendRaceOverMessage();
+		}
+		
 	}
-	else if(myComponents.Size() <= 1 && myStartedWithOnlyOnePlayer == false)
-	{
-		SendRaceOverMessage();
-	}
-
 	return eMessageReturn::eContinue;
 }
 
@@ -180,11 +179,15 @@ eMessageReturn CLapTrackerComponentManager::DoEvent(const CAIFinishedMessage& aA
 	{
 		if (myComponents[i]->GetParent() == aAIFinishedMessage.GetGameObject())
 		{
+			if (CheckIfAlreadyInVictoryList(myComponents[i]->GetParent()) == true)
+			{
+				continue;
+			}
 			myWinnerPlacements.Add((myComponents[i]->GetParent()));
 		}
 	}
 
-	if (myComponents.Size() <= 1 && myStartedWithOnlyOnePlayer == false)
+	if (myWinnerPlacements.Size() >= myComponents.Size() - 1)
 	{
 		SendRaceOverMessage();
 	}
@@ -198,6 +201,10 @@ bool CLapTrackerComponentManager::HaveAllPlayersFinished()
 	
 	for (unsigned int i = 0; i < myComponents.Size(); i++)
 	{
+		if (CheckIfAlreadyInVictoryList(myRacerPlacements[i]) == true)
+		{
+			continue;
+		}
 		if(myComponents[i]->GetParent()->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
 		{
 			havePlayersFinished = false;
@@ -212,15 +219,17 @@ void CLapTrackerComponentManager::Init()
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::ePlayerFinished);
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eAIFInished);
 
-	if(myComponents.Size() == 1)
+	for (unsigned int i = 0; i < myComponents.Size(); i++)
 	{
-		myStartedWithOnlyOnePlayer = true;
+		myComponents[i]->Init();
 	}
 }
 
 void CLapTrackerComponentManager::SendRaceOverMessage()
 {
-	Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CRaceOverMessage(myWinnerPlacements));
+	AddEveryoneToVictoryList();
+	Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CRaceOverMessage(myPlacementData));
+	myIsRaceOver = true;
 }
 
 unsigned char CLapTrackerComponentManager::GetSpecificRacerPlacement(CGameObject* aRacer)
@@ -238,4 +247,41 @@ unsigned char CLapTrackerComponentManager::GetSpecificRacerLapIndex(CGameObject*
 	aRacer->AskComponents(eComponentQuestionType::eGetLapIndex, whatLap);
 
 	return whatLap.myChar;
+}
+
+void CLapTrackerComponentManager::AddEveryoneToVictoryList()
+{
+	for(unsigned int i = 0; i < myRacerPlacements.Size(); i++)
+	{
+		if(CheckIfAlreadyInVictoryList(myRacerPlacements[i]) == false)
+		{
+			myWinnerPlacements.Add(myRacerPlacements[i]);
+		}
+	}
+
+	for (unsigned i = 0; i < myWinnerPlacements.Size(); ++i)
+	{
+		SPlacementData data;
+		SComponentQuestionData qData;
+
+		myWinnerPlacements[i]->AskComponents(eComponentQuestionType::eGetCharacterInfo, qData);
+
+		data.character = qData.myCharacterInfo->characterType;
+		data.isPlayer = !qData.myCharacterInfo->isAI;
+		data.placement = i+1;
+
+		data.time = 1337; //how to fix time?
+
+		myPlacementData[i] = data;
+	}
+}
+
+bool CLapTrackerComponentManager::CheckIfAlreadyInVictoryList(CGameObject* aGameObject)
+{
+	if(myWinnerPlacements.Find(aGameObject) == myWinnerPlacements.FoundNone)
+	{
+		return false;
+	}
+
+	return true;
 }

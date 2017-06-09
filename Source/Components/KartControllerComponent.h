@@ -19,7 +19,7 @@ class CModelComponent;
 class CKartControllerComponent : public CComponent
 {
 public:
-	CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent, const short aControllerIndex = -1);
+	CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent, const short aControllerIndex = -1, const short aCharacterIndex = 0);
 	~CKartControllerComponent();
 
 	void Turn(float aDirectionX);
@@ -27,9 +27,10 @@ public:
 	void TurnLeft(const float aNormalizedModifier = -1.f);
 	void StopMoving();
 	void MoveFoward();
+	void MoveForwardWithoutChangingHoldingForward();
 	void MoveBackWards();
 	void StopTurning();
-	void StopDrifting();
+	void StopDrifting(const bool aShouldGetBoost);
 	void GetHit();
 	void ApplyStartBoost();
 
@@ -39,7 +40,7 @@ public:
 
 	void Init(Physics::CPhysicsScene* aPhysicsScene);
 
-	void CheckZKill();
+	void ZKill();
 	void Update(const float aDeltaTime);
 	void CountDownUpdate(const float aDeltaTime);
 	void Receive(const eComponentMessageType, const SComponentMessageData&) override;
@@ -59,6 +60,9 @@ public:
 	inline float GetMaxSpeed2() const;
 	inline float GetMaxAcceleration() const;
 	inline float GetAcceleratiot();
+	inline bool GetIsControlledByAI() const;
+	void LookBack(bool aLookBack);
+
 private:
 	
 	void UpdateMovement(const float aDeltaTime);
@@ -123,8 +127,6 @@ private:
 	
 	float myTerrainModifier;
 
-	
-	bool increaseCountdownValue;
 	float myPreRaceBoostRate;
 	float myPreRaceRate;
 	float myPreRaceBoostValue;
@@ -134,19 +136,28 @@ private:
 
 	int myBoostEmmiterhandle;
 	int myGotHitEmmiterhandle;
+	int myStarEmmiterhandle1;
+	int myStarEmmiterhandle2;
+	int mySlowMovment;
+	int myGrassEmmiter1;
+	int myGrassEmmiter2;
 
 	short myControllerHandle;
 
 	bool myIsOnGround;
 	bool myCanAccelerate;
 	bool myIsBoosting;
-	bool myHasJumped;
 
+	bool myPreviousGotHit;
 	bool myIsInvurnable;
 	bool myHasGottenHit;
 	bool myIsOnGroundLast;
+	bool myIsAIControlled;
+	bool increaseCountdownValue;
+	bool myIsHoldingForward;
 	CComponent* myLastGroundComponent;
-
+	bool myLookingBack;
+	bool myIsplayingEngineLoop;
 };
 
 
@@ -173,12 +184,13 @@ bool CKartControllerComponent::GetHitGround()
 
 float CKartControllerComponent::GetMaxSpeed() const
 {
-	return myMaxSpeed * myTerrainModifier;
+	return myMaxSpeed * (myIsBoosting == false ? myTerrainModifier : 1.f);
 }
 
 float CKartControllerComponent::GetMaxSpeed2() const
 {
-	return GetMaxSpeed() * GetMaxSpeed();
+	float maxSpeed = GetMaxSpeed();
+	return maxSpeed * maxSpeed;
 }
 
 float CKartControllerComponent::GetMaxAcceleration() const
@@ -186,7 +198,12 @@ float CKartControllerComponent::GetMaxAcceleration() const
 	return myMaxAcceleration;
 }
 
+bool CKartControllerComponent::GetIsControlledByAI() const
+{
+	return myIsAIControlled;
+}
+
 float CKartControllerComponent::GetAcceleratiot()
 {
-	return myAcceleration * myTerrainModifier;
+	return myAcceleration * (myIsBoosting == false ? myTerrainModifier : 1.f);
 }

@@ -12,6 +12,8 @@ CLapTrackerComponent::CLapTrackerComponent()
 	myLapIndex = 1;
 	myPlacementValue = 0.0f;
 	myIsReadyToEnterGoal = false;
+	myTravelledDistance = 0.0f;
+	myLapsTotalDistance = 0.0f;
 }
 
 CLapTrackerComponent::~CLapTrackerComponent()
@@ -40,13 +42,21 @@ void CLapTrackerComponent::Update()
 				float splineDistance = CU::Vector3f(splinePosition - kartPosition).Length2();
 				float splineForwardDistance = CU::Vector3f(splineForwardPosition - kartPosition).Length2();
 
-				if (splineForwardDistance < splineDistance)
+				CU::Vector2f kartPosition2D(kartPosition.x, kartPosition.z);
+				CU::Vector3f forward3D = GetParent()->GetToWorldTransform().myForwardVector;
+				CU::Vector2f forward2D(forward3D.x, forward3D.z);
+				forward2D.Normalize();
+				forward2D *= 5.0f;
+				kartPosition2D += forward2D;
+
+				if (splineQuestionData.myNavigationPoint->myForwardDirection.Dot(splineQuestionData.myNavigationPoint->myPosition - kartPosition2D) < 0.0f)
 				{
 					mySplineIndex++;
 					myPlacementValue++;
 					GetParent()->NotifyOnlyComponents(eComponentMessageType::ePassedASpline, SComponentMessageData());
 				}
 
+				myTravelledDistance = myLapsTotalDistance - splineQuestionData.myNavigationPoint->myDistanceToGoal;
 			}
 			else
 			{
@@ -71,7 +81,7 @@ const float CLapTrackerComponent::GetDistanceToNextSpline()
 		if (splineQuestionData.myNavigationPoint != nullptr)
 		{
 			CU::Vector3f splinePosition(splineQuestionData.myNavigationPoint->myPosition.x, GetParent()->GetWorldPosition().y, splineQuestionData.myNavigationPoint->myPosition.y);
-			return CU::Vector3f(splinePosition - GetParent()->GetWorldPosition()).Length2();
+			return CU::Vector3f(splinePosition - GetParent()->GetWorldPosition()).Length();
 		}
 	}
 	return 999999;
@@ -98,6 +108,20 @@ bool CLapTrackerComponent::Answer(const eComponentQuestionType aQuestionType, SC
 		}
 		break;
 	}
+	case eComponentQuestionType::eCheckIfShouldCheckAbove:
+	{
+		if(mySplineIndex >= 98 && mySplineIndex <= 105 )
+		{
+			return false;
+		}
+		return true;
+		break;
+	}
+	case eComponentQuestionType::eGetLapTraversedPercentage:
+	{
+		aQuestionData.myFloat = GetLapDistanceTravelledPercentage();
+		return true;
+	}
 	default:
 		break;
 	}
@@ -112,10 +136,32 @@ void CLapTrackerComponent::Receive(const eComponentMessageType aMessageType, con
 	{
 		if(myIsReadyToEnterGoal == true)
 		{		
+
 			mySplineIndex = 0;
 			myLapIndex++;
 			myPlacementValue++;
 			myIsReadyToEnterGoal = false;
+
+
+			if (myLapIndex > 3)
+			{
+				SComponentMessageData data;
+				data.myString = "PlayFinish";
+				GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
+			}
+			else if (myLapIndex == 3)
+			{
+				SComponentMessageData data;
+				data.myString = "PlayFinalLap";
+				GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
+			}
+			else
+			{
+				SComponentMessageData data;
+				data.myString = "PlayLapDone";
+				GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
+			}
+
 			if (myLapIndex > 3)
 			{
 				if (GetParent()->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
@@ -126,11 +172,39 @@ void CLapTrackerComponent::Receive(const eComponentMessageType aMessageType, con
 				{
 					Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CAIFinishedMessage(GetParent()));
 				}
+
 			}
+			
+		
 		}
 		break;
 	}
 	default:
 		break;
 	}
+}
+
+void CLapTrackerComponent::Init()
+{
+	SComponentQuestionData splineQuestionData;
+	splineQuestionData.myInt = 0;
+	if (GetParent()->AskComponents(eComponentQuestionType::eGetSplineWithIndex, splineQuestionData) == true)
+	{
+		if (splineQuestionData.myNavigationPoint != nullptr)
+		{
+			myLapsTotalDistance = splineQuestionData.myNavigationPoint->myDistanceToGoal;
+		}
+	}
+}
+
+const float CLapTrackerComponent::GetTotalTravelledDistance()
+{
+	float totalTravelledDistance = myTravelledDistance + (myLapIndex - 1) * myLapsTotalDistance;
+	totalTravelledDistance -= GetDistanceToNextSpline();
+	return totalTravelledDistance;
+}
+
+const float CLapTrackerComponent::GetLapDistanceTravelledPercentage()
+{
+	return (myTravelledDistance - GetDistanceToNextSpline()) / myLapsTotalDistance;
 }

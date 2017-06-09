@@ -306,8 +306,10 @@
     <ClCompile Include="BackgroundLoadingManager.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameEventMessenger.cpp" />
+    <ClCompile Include="GlobalHUD.cpp" />
     <ClCompile Include="GlobalLuaFunctions.cpp" />
-    <ClCompile Include="HUD.cpp" />
+    <ClCompile Include="LocalHUD.cpp" />
+    <ClCompile Include="HUDBase.cpp" />
     <ClCompile Include="ItemFactory.cpp" />
     <ClCompile Include="KartAnimator.cpp" />
     <ClCompile Include="KartSpawnPointManager.cpp" />
@@ -335,8 +337,10 @@
     <ClInclude Include="BackgroundLoadingManager.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameEventMessenger.h" />
+    <ClInclude Include="GlobalHUD.h" />
     <ClInclude Include="GlobalLuaFunctions.h" />
-    <ClInclude Include="HUD.h" />
+    <ClInclude Include="LocalHUD.h" />
+    <ClInclude Include="HUDBase.h" />
     <ClInclude Include="ItemFactory.h" />
     <ClInclude Include="KartAnimator.h" />
     <ClInclude Include="KartSpawnPointManager.h" />
@@ -346,6 +350,7 @@
     <ClInclude Include="MenuState.h" />
     <ClInclude Include="NavigationSpline.h" />
     <ClInclude Include="ParticleEffectManager.h" />
+    <ClInclude Include="PlacementData.h" />
     <ClInclude Include="PlayState.h" />
     <ClInclude Include="PollingStation.h" />
     <ClInclude Include="ScriptHelperFunctions.h" />

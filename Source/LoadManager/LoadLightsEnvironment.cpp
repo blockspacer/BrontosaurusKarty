@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "LoadPointLightComponent.h"
+#include "LoadLightsEnvironment.h"
 #include "KevinLoader/KevinLoader.h"
 #include "LoadManager.h"
 #include "ComponentManager.h"
@@ -74,6 +74,14 @@ int LoadEnvironmentSettings(KLoader::SLoadedComponentData someData)
 	CU::Vector4f color = someData.myData.at("fogColor").GetVector4f();
 	color /= 255.f;
 	renderer.SetFogColor(color);
+
+	int id = KLoader::CKevinLoader::GetInstance().GetCurrentObjectIndex();
+	CGameObject* parent = reinterpret_cast<CGameObject*>(CComponentManager::GetInstance().GetComponent(id));
+
+
+	CU::Vector3f shadowAABBposition = parent->GetToWorldTransform().GetPosition();// someData.myData.at("shadowAABBposition").GetVector3f();
+	CU::Vector3f shadowAABBhalfWidth = someData.myData.at("shadowAABBhalfWidth").GetVector3f();
+	CLightComponentManager::GetInstance().SetShadowMapAABB(shadowAABBposition, shadowAABBhalfWidth);
 
 	return NULL_COMPONENT;
 }

@@ -62,7 +62,17 @@ void CRespawnerComponent::Receive(const eComponentMessageType aMessageType, cons
 				CU::Vector3f direction = CU::Vector3f(spineDirectionQuestionData.myNavigationPoint->myForwardDirection.x, 0.0f, spineDirectionQuestionData.myNavigationPoint->myForwardDirection.y);
 				CU::Vector3f LookTowardsDirection = direction + GetParent()->GetWorldPosition();
 				GetParent()->GetLocalTransform().LookAt(LookTowardsDirection);
-				myCurrentSplinePositionY += 2;
+				myCurrentSplinePositionY += 5;
+
+				if (GetParent()->AskComponents(eComponentQuestionType::eCheckIfShouldCheckAbove, SComponentQuestionData()) == true)
+				{
+					SComponentQuestionData groundedPositionData;
+					if (GetParent()->AskComponents(eComponentQuestionType::eCheckIfGroundAbove, groundedPositionData) == true)
+					{
+						CU::Vector3f respawnPosition(groundedPositionData.myVector3f.x, groundedPositionData.myVector3f.y + 5.0f, groundedPositionData.myVector3f.z);
+						GetParent()->SetWorldPosition(respawnPosition);
+					}
+				}
 			}
 		}
 		break;

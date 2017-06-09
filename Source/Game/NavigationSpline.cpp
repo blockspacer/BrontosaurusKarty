@@ -2,7 +2,7 @@
 #include "../CommonUtilities/JsonValue.h"
 #include "NavigationSpline.h"
 #include "CommonUtilities.h"
-
+#include "GoalComponent.h"
 
 CNavigationSpline::CNavigationSpline()
 {
@@ -22,7 +22,7 @@ void CNavigationSpline::LoadFromJson(const CU::CJsonValue& aJsonData)
 
 	for (unsigned i = 0; i < pointsArray.Size(); ++i)
 	{
-		CU::CJsonValue pontData = pointsArray.at(i);
+		CU::CJsonValue pontData = pointsArray.at(i); 
 
 		SNavigationPoint navigationPoint;
 		navigationPoint.myPosition = pontData.at("position").GetVector2f();
@@ -39,3 +39,27 @@ void CNavigationSpline::LoadFromJson(const CU::CJsonValue& aJsonData)
 }
 
 
+void CNavigationSpline::SetDistancesToGoal(CGoalComponent* aGoalComponent)
+{
+	for(short i = myNavPoints.Size() - 1; i >= 0; i--)
+	{
+		CU::Vector2f currentPosition = myNavPoints[i].myPosition;
+		CU::Vector2f nextPosition;
+		float previousDistance;
+		if(i == myNavPoints.Size() - 1)
+		{
+			CU::Vector2f goalComponent(aGoalComponent->GetParent()->GetWorldPosition().x, aGoalComponent->GetParent()->GetWorldPosition().z);
+			nextPosition = goalComponent;
+
+			previousDistance = 0;
+		}
+		else
+		{
+			nextPosition = myNavPoints[i + 1].myPosition;
+			previousDistance = myNavPoints[i + 1].myDistanceToGoal;
+		}
+
+		float distance2 = CU::Vector2f(nextPosition - currentPosition).Length() + previousDistance;
+		myNavPoints[i].myDistanceToGoal = distance2;
+	}
+}

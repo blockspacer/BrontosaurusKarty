@@ -78,6 +78,8 @@ private:
 	eDriftState myDriftState;
 
 	bool myIsDrifting;
+	bool myLargeBoostOn;
+	bool mySmallBoostOn;
 };
 
 inline float CDrifter::GetDriftRate() const

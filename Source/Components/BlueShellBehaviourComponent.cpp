@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "BlueShellBehaviourComponent.h"
 #include "LapTrackerComponentManager.h"
+#include "../ThreadedPostmaster/BlueShellWarningMessage.h"
 
 
 CBlueShellBehaviourComponent::CBlueShellBehaviourComponent(CU::GrowingArray<CGameObject*>& aListOfKartObjects)
@@ -8,10 +9,13 @@ CBlueShellBehaviourComponent::CBlueShellBehaviourComponent(CU::GrowingArray<CGam
 	myKartObjects = &aListOfKartObjects;
 
 	myIsActive = false;
-	myTeleportDelay = 3.5f;
+	myTeleportDelay = 1.0f;
 	myElapsedTime = 0;
 	mySpeed = 90;
+	myDecendSpeed = 5;
 	myVelocity = CU::Vector3f::UnitZ * mySpeed;
+	myAboveHeight = 10;
+	myDropSpeed = CU::Vector3f::UnitY * myAboveHeight;
 }
 
 
@@ -31,7 +35,7 @@ void CBlueShellBehaviourComponent::Update(const float aDeltaTime)
 	if (myElapsedTime < myTeleportDelay)
 	{
 		myElapsedTime += aDeltaTime;
-		CU::Vector3f flyUp(0, 20, 0);
+		CU::Vector3f flyUp(0, myAboveHeight, 0);
 		GetParent()->Move(flyUp*aDeltaTime);
 
 		if (myElapsedTime >= myTeleportDelay)
@@ -62,20 +66,30 @@ void CBlueShellBehaviourComponent::Update(const float aDeltaTime)
 		if (placement == 1)
 		{
 			target = myKartObjects->At(i)->GetToWorldTransform();
+			CBlueShellWarningMessage* blue = new CBlueShellWarningMessage(myKartObjects->At(i));
+
+			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(blue);
 			break;
 		}
 	}
 
-	CU::Matrix44f transform = GetParent()->GetToWorldTransform();
+	myAboveHeight-=(myDecendSpeed*aDeltaTime);
+	myDropSpeed = CU::Vector3f::UnitY * myAboveHeight;
 
-	transform.LookAt(target.GetPosition());
+	CU::Matrix44f transform = target;
 
-	transform.Move(myVelocity*aDeltaTime);
+	//transform.LookAt(target.GetPosition());
+
+	//transform.Move(myVelocity*aDeltaTime);
+
+	transform.Move(myDropSpeed);
 
 	GetParent()->SetWorldTransformation(transform);
 
 	SComponentMessageData data; data.myFloat = aDeltaTime;
 	GetParent()->NotifyOnlyComponents(eComponentMessageType::eMoving, data);
+
+	
 
 }
 
@@ -90,6 +104,7 @@ void CBlueShellBehaviourComponent::Receive(const eComponentMessageType aMessageT
 	{
 		myIsActive = true;
 		myElapsedTime = 0;
+		myAboveHeight = 10;
 		break;
 	}
 

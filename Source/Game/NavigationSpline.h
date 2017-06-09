@@ -1,5 +1,7 @@
 #pragma once
 
+class CGoalComponent;
+
 namespace CU
 {
 	class CJsonValue;
@@ -26,6 +28,7 @@ struct SNavigationPoint
 	CU::Vector2f myPosition;
 	CU::Vector2f myForwardDirection;
 	float myWidth;
+	float myDistanceToGoal;
 };
 
 class CNavigationSpline
@@ -39,6 +42,7 @@ public:
 	const SNavigationPoint& GetPoint(const int anIndex) const;
 	short GetNumberOfPoints() const;
 	const CU::GrowingArray<SNavigationPoint, short> GetNavigationPoints() const;
+	void SetDistancesToGoal(CGoalComponent* aGoalComponent);
 
 private:
 	CU::GrowingArray<SNavigationPoint,  short> myNavPoints;

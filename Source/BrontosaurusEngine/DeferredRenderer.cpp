@@ -24,7 +24,7 @@
 #include "EKeyboardKeys.h"
 #endif
 
-CDeferredRenderer::CDeferredRenderer()
+CDeferredRenderer::CDeferredRenderer() : myGbuffer(nullptr)
 {
 	myBatchedModelIds.Init(64);
 	myFramework = CEngine::GetInstance()->GetFramework();
@@ -105,14 +105,14 @@ void CDeferredRenderer::InitLightModels()
 
 void CDeferredRenderer::DoRenderQueue(CRenderer& aRenderer)
 {
-	if (myGbuffer.IsInited() == false)
+	if (myGbuffer->IsInited() == false)
 	{
 		myRenderMessages.RemoveAll();
 		return;
 	}
-	myGbuffer.Clear();	
-	myGbuffer.UnbindInput();
-	myGbuffer.BindOutput();
+	myGbuffer->Clear();	
+	myGbuffer->UnbindInput();
+	myGbuffer->BindOutput();
 
 	for (unsigned int i = 0; i < myRenderMessages.Size(); ++i)
 	{
@@ -174,8 +174,8 @@ void CDeferredRenderer::DoRenderQueue(CRenderer& aRenderer)
 	}
 
 	myRenderMessages.RemoveAll();
-	myGbuffer.UnbindInput();
-	myGbuffer.UnbindOutput();
+	myGbuffer->UnbindInput();
+	myGbuffer->UnbindOutput();
 }
 
 void CDeferredRenderer::AddRenderMessage(SRenderMessage* aRenderMessage)
@@ -204,7 +204,7 @@ void CDeferredRenderer::UpdateCameraBuffer(const CU::Matrix44f & aCameraSpace, c
 
 void CDeferredRenderer::DoLightingPass(CFullScreenHelper& aFullscreenHelper, CRenderer& aRenderer)
 {
-	if (myGbuffer.IsInited() == false) return;
+	if (myGbuffer->IsInited() == false) return;
 	SetCBuffer();
 
 	//SSAO
@@ -228,7 +228,7 @@ void CDeferredRenderer::DoLightingPass(CFullScreenHelper& aFullscreenHelper, CRe
 	aRenderer.SetStates(&changeStateMessage);
 
 	ActivateIntermediate();
-	myGbuffer.BindInput();
+	myGbuffer->BindInput();
 
 #ifdef _ENABLE_RENDERMODES
 	myInputWrapper->Update();
@@ -237,29 +237,29 @@ void CDeferredRenderer::DoLightingPass(CFullScreenHelper& aFullscreenHelper, CRe
 	switch (myRenderMode)
 	{
 	case ERenderMode::eDiffuse:
-		aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopy, &myGbuffer.GetRenderPackage(CGeometryBuffer::eDiffuse));
+		aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopy, &myGbuffer->GetRenderPackage(CGeometryBuffer::eDiffuse));
 		break;
 	case ERenderMode::eNormal:
-		aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopy, &myGbuffer.GetRenderPackage(CGeometryBuffer::eNormal));
+		aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopy, &myGbuffer->GetRenderPackage(CGeometryBuffer::eNormal));
 		break;
 	case ERenderMode::eRMAO:
-		aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopy, &myGbuffer.GetRenderPackage(CGeometryBuffer::eRMAO));
+		aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopy, &myGbuffer->GetRenderPackage(CGeometryBuffer::eRMAO));
 		break;
 	case ERenderMode::eRoughness:
-		aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopyR, &myGbuffer.GetRenderPackage(CGeometryBuffer::eRMAO));
+		aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopyR, &myGbuffer->GetRenderPackage(CGeometryBuffer::eRMAO));
 		break;
 	case ERenderMode::eMetalness:
-		aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopyG, &myGbuffer.GetRenderPackage(CGeometryBuffer::eRMAO));
+		aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopyG, &myGbuffer->GetRenderPackage(CGeometryBuffer::eRMAO));
 		break;
 	case ERenderMode::eAO:
-		aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopyB, &myGbuffer.GetRenderPackage(CGeometryBuffer::eRMAO));
+		aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopyB, &myGbuffer->GetRenderPackage(CGeometryBuffer::eRMAO));
 		break;
 	case ERenderMode::eSSAO:
-		aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopyB, &myGbuffer.GetRenderPackage(CGeometryBuffer::eRMAO));
+		aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopyB, &myGbuffer->GetRenderPackage(CGeometryBuffer::eRMAO));
 		break;
 	case ERenderMode::eEmissive:
 	case ERenderMode::eHighlight:
-		aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopy, &myGbuffer.GetRenderPackage(CGeometryBuffer::eEmissive));
+		aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopy, &myGbuffer->GetRenderPackage(CGeometryBuffer::eEmissive));
 		break;
 	case ERenderMode::eIntermediate:
 		changeStateMessage.myRasterizerState = eRasterizerState::eNoCulling;
@@ -281,46 +281,41 @@ void CDeferredRenderer::DoLightingPass(CFullScreenHelper& aFullscreenHelper, CRe
 		changeStateMessage.mySamplerState = eSamplerState::eClamp;
 		aRenderer.SetStates(&changeStateMessage);
 		DoAmbientLighting(aFullscreenHelper);
-		changeStateMessage.myRasterizerState = eRasterizerState::eNoCulling;
-		changeStateMessage.myDepthStencilState = eDepthStencilState::eDisableDepth;
-		changeStateMessage.myBlendState = eBlendState::eAddBlend;
-		changeStateMessage.mySamplerState = eSamplerState::eClamp;
-		aRenderer.SetStates(&changeStateMessage);
-		DoDirectLighting(aFullscreenHelper);
+		DoDirectLighting(aFullscreenHelper, aRenderer);
 #endif
 }
 
 ID3D11DepthStencilView* CDeferredRenderer::GetDepthStencil()
 {
-	return myGbuffer.GetRenderPackage(CGeometryBuffer::eDiffuse).GetDepthStencilView();
+	return myGbuffer->GetRenderPackage(CGeometryBuffer::eDiffuse).GetDepthStencilView();
 }
 
 ID3D11ShaderResourceView* CDeferredRenderer::GetDepthResource()
 {
-	return myGbuffer.GetRenderPackage(CGeometryBuffer::eDiffuse).GetDepthResource();
+	return myGbuffer->GetRenderPackage(CGeometryBuffer::eDiffuse).GetDepthResource();
 }
 
 CRenderPackage& CDeferredRenderer::GetFirstPackage()
 {
-	return myGbuffer.GetRenderPackage(CGeometryBuffer::eDiffuse);
+	return myGbuffer->GetRenderPackage(CGeometryBuffer::eDiffuse);
 }
 
 CRenderPackage& CDeferredRenderer::GetSecondPackage()
 {
-	return myGbuffer.GetRenderPackage(CGeometryBuffer::eEmissive);
+	return myGbuffer->GetRenderPackage(CGeometryBuffer::eEmissive);
 }
 
 void CDeferredRenderer::ActivateIntermediate()
 {
 
-	myGbuffer.UnbindOutput();
+	myGbuffer->UnbindOutput();
 	myIntermediatePackage.Clear();
 	myIntermediatePackage.Activate();
 }
 
 void CDeferredRenderer::SetRMAOSRV()
 {
-	myFramework->GetDeviceContext()->PSSetShaderResources(3, 1, &myGbuffer.GetRenderPackage(CGeometryBuffer::eRMAO).GetResource());
+	myFramework->GetDeviceContext()->PSSetShaderResources(3, 1, &myGbuffer->GetRenderPackage(CGeometryBuffer::eRMAO).GetResource());
 }
 
 void CDeferredRenderer::SetCBuffer()
@@ -359,10 +354,10 @@ void CDeferredRenderer::DoDirectLighting(CFullScreenHelper& aFullscreenHelper, C
 			aRenderer.SetStates(&cullfrontStates);
 			break;
 		case SRenderMessage::eRenderMessageType::eRenderPointLight:
-			RenderPointLight(renderMessage, aFullscreenHelper);
+			RenderPointLight(renderMessage);
 			break;
 		case SRenderMessage::eRenderMessageType::eRenderSpotLight:
-			RenderSpotLight(renderMessage, aFullscreenHelper);
+			RenderSpotLight(renderMessage);
 			break;
 		}
 	}
@@ -377,7 +372,7 @@ void CDeferredRenderer::RenderDirectionalLight(SRenderMessage* aRenderMessage, C
 	aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eDeferredDirectional);
 }
 
-void CDeferredRenderer::RenderPointLight(SRenderMessage* aRenderMessage, CFullScreenHelper& aFullscreenHelper)
+void CDeferredRenderer::RenderPointLight(SRenderMessage* aRenderMessage)
 {
 	SRenderPointLight* msg = static_cast<SRenderPointLight*>(aRenderMessage);
 	BSR::UpdateCBuffer<Lights::SPointLight>(myPointLightBuffer, &msg->pointLight);
@@ -390,7 +385,7 @@ void CDeferredRenderer::RenderPointLight(SRenderMessage* aRenderMessage, CFullSc
 	myPointLightModel->Render(pointLightTransformation);
 }
 
-void CDeferredRenderer::RenderSpotLight(SRenderMessage* aRenderMessage, CFullScreenHelper& aFullscreenHelper)
+void CDeferredRenderer::RenderSpotLight(SRenderMessage* aRenderMessage)
 {
 	SRenderSpotLight* msg = static_cast<SRenderSpotLight*>(aRenderMessage);
 
@@ -415,10 +410,10 @@ void CDeferredRenderer::RenderSpotLight(SRenderMessage* aRenderMessage, CFullScr
 
 void CDeferredRenderer::DoSSAO(CFullScreenHelper& aFullscreenHelper)
 {
-	myGbuffer.UnbindOutput();
-	myGbuffer.GetRenderPackage(CGeometryBuffer::eRMAO).Activate();
+	myGbuffer->UnbindOutput();
+	myGbuffer->GetRenderPackage(CGeometryBuffer::eRMAO).Activate();
 	CGeometryBuffer::EGeometryPackages packages = CGeometryBuffer::EGeometryPackage::eALL - CGeometryBuffer::EGeometryPackage::eRMAO;
-	myGbuffer.BindInput(packages);
+	myGbuffer->BindInput(packages);
 
 	myFramework->GetDeviceContext()->PSSetShaderResources(7, 1, mySSAORandomTexture->GetShaderResourceViewPointer());
 	aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eSSAO);
@@ -426,7 +421,7 @@ void CDeferredRenderer::DoSSAO(CFullScreenHelper& aFullscreenHelper)
 
 void CDeferredRenderer::SetGeometryBuffer(CGeometryBuffer& aGeometryBuffer)
 {
-	myGbuffer = aGeometryBuffer;
+	myGbuffer = &aGeometryBuffer;
 }
 
 #ifdef _ENABLE_RENDERMODES

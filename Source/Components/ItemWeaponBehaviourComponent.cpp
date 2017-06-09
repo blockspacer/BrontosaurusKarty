@@ -68,7 +68,10 @@ const float testLength = 2.f;
 
 void CItemWeaponBehaviourComponent::DoPhysics(const float aDeltaTime)
 {
+
+
 	const CU::Matrix44f transformation = GetParent()->GetToWorldTransform();
+	const CU::Vector3f forward = transformation.myForwardVector.GetNormalized();
 	const CU::Vector3f down = -CU::Vector3f::UnitY;
 	const CU::Vector3f upMove = CU::Vector3f::UnitY;
 	const float upMoveLength = upMove.Length();
@@ -77,12 +80,25 @@ void CItemWeaponBehaviourComponent::DoPhysics(const float aDeltaTime)
 	const float controlDist = upDistConst * 100.f + upMoveLength;
 	const CU::Vector3f pos = transformation.GetPosition();
 
+	const CU::Vector3f velInWorld = myVelocity * transformation.GetRotation();
+	Physics::SRaycastHitData  raycastHitData = myPhysicsScene->Raycast(pos, velInWorld.GetNormalized(), testLength, Physics::eWall);
+	const float speed = myVelocity.Length();
+	if (raycastHitData.hit && raycastHitData.distance < speed * aDeltaTime)
+	{
+		const CU::Vector3f& norm = raycastHitData.normal;
+		const CU::Vector3f invVel = -velInWorld;
+		const float dotNorm = invVel.Dot(norm);
+		const CU::Vector3f longNorm = norm * dotNorm;
+		const CU::Vector3f toNorm = velInWorld + longNorm;
+		myVelocity = (((invVel + 2.f * toNorm)) * transformation.GetRotation().GetInverted()).Normalize() * speed;
+		
+	}
 
 	//Update fall speed per wheel
 
 	CU::Vector3f examineVector = pos;
 
-	Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(examineVector + upMove, down, testLength, Physics::eGround);
+	raycastHitData = myPhysicsScene->Raycast(examineVector + upMove, down, testLength, Physics::eGround);
 
 	CU::Vector3f downAccl = down;
 	if (raycastHitData.hit == true)
@@ -111,6 +127,7 @@ void CItemWeaponBehaviourComponent::DoPhysics(const float aDeltaTime)
 
 
 	myVelocity += downAccl  *gravity * aDeltaTime;
+	
 }
 
 void CItemWeaponBehaviourComponent::Receive(const eComponentMessageType aMessageType, const SComponentMessageData & aMessageData)

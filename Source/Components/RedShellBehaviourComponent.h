@@ -30,7 +30,9 @@ private:
 	CU::GrowingArray<CGameObject*>* myKartObjects;
 
 	int myCurrentSplineIndex;
+	int myUserPlacement;
 	float Speed;
 
+	bool myIsActive;
 };
 

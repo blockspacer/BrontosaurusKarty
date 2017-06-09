@@ -54,6 +54,11 @@ public:
 		eConstant,
 		eRandom,
 	};
+	enum class Space
+	{
+		eWorld,
+		eLocal
+	};
 
 	CParticleEmitter();
 
@@ -89,6 +94,7 @@ private:
 
 	void ParseSpawnParameters(const CU::CJsonValue& aJsonValue);
 	void ParseUpdateParameters(const CU::CJsonValue& aJsonValue);
+	Space GetSpace(const std::string& aSpaceString);
 	void ParseParticle(const CU::CJsonValue& aJsonValue);
 	EmitterType ParseEmitterType(const std::string& aTypeString);
 	SpreadType GetSpreadType(const std::string& aTypeString);
@@ -152,6 +158,7 @@ private:
 		Lifetime lifetime;
 		CU::GrowingArray<Particles::IParticleSpawner*> spawners;
 		CU::GrowingArray<Particles::IParticleUpdater*> updaters;
+		Space space;
 	};
 	struct EmitterData
 	{

@@ -383,7 +383,7 @@
     <ClInclude Include="AnimationController.h" />
     <ClInclude Include="AnimationState.h" />
     <ClInclude Include="C2DGUIRenderer.h" />
-    <ClInclude Include="CascadeBuffer.h" />
+    <ClInclude Include="ShadowBuffers.h" />
     <ClInclude Include="CascadeShadowMap.h" />
     <ClInclude Include="ColorGrader.h" />
     <ClInclude Include="Cubemap.h" />
@@ -403,6 +403,7 @@
     <ClInclude Include="RenderCamera.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="ConstBufferTemplate.h" />
+    <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="SpotLight.h" />
     <ClInclude Include="SpotLightInstance.h" />
     <ClInclude Include="Text.h" />
@@ -486,6 +487,7 @@
     <ClCompile Include="ObjLoader.cpp" />
     <ClCompile Include="RenderCamera.cpp" />
     <ClCompile Include="Console.cpp" />
+    <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="SpotLight.cpp" />
     <ClCompile Include="SpotLightInstance.cpp" />
     <ClCompile Include="Text.cpp" />

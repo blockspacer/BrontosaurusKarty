@@ -74,8 +74,8 @@ void CEffect::Activate(const bool aInstanced, const bool aActivateForDepth)
 
 void CEffect::ActivateForDepth(ID3D11PixelShader* aShadowShader, const bool aInstanced)
 {
-	assert((aInstanced && myVertexInstancedShader && myInstancedLayout) || (!aInstanced));
-	if (aInstanced)
+	//assert((aInstanced && myVertexInstancedShader && myInstancedLayout) || (!aInstanced));
+	if (false)
 	{
 		myFramework->GetDeviceContext()->VSSetShader(myVertexInstancedShader, NULL, 0);
 		myFramework->GetDeviceContext()->IASetInputLayout(myInstancedLayout);

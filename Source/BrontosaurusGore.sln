@@ -108,6 +108,24 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Metaballs", "Metaballs", "{
 		..\Bin\Shaders\metaballs\metaSurface.fx = ..\Bin\Shaders\metaballs\metaSurface.fx
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Json", "Json", "{ECBE91D8-0245-4A14-BAF0-6E3C3F0C27E4}"
+	ProjectSection(SolutionItems) = preProject
+		..\Bin\Json\Camera.json = ..\Bin\Json\Camera.json
+		..\Bin\Json\HUD\HUD1Player.json = ..\Bin\Json\HUD\HUD1Player.json
+		..\Bin\Json\HUD\HUD2Player.json = ..\Bin\Json\HUD\HUD2Player.json
+		..\Bin\Json\HUD\HUD3Player.json = ..\Bin\Json\HUD\HUD3Player.json
+		..\Bin\Json\HUD\HUD4Player.json = ..\Bin\Json\HUD\HUD4Player.json
+		..\Bin\Json\HUD\HUDGlobal.json = ..\Bin\Json\HUD\HUDGlobal.json
+		..\Bin\Json\ItemDrops.json = ..\Bin\Json\ItemDrops.json
+		..\Bin\Json\Items.json = ..\Bin\Json\Items.json
+		..\Bin\Json\KartStats.json = ..\Bin\Json\KartStats.json
+		..\Bin\Json\LevelList.json = ..\Bin\Json\LevelList.json
+		..\Bin\Json\Menu\LevelSelectMenu.json = ..\Bin\Json\Menu\LevelSelectMenu.json
+		..\Bin\Json\Menu\MainMenu.json = ..\Bin\Json\Menu\MainMenu.json
+		..\Bin\Json\Particles.json = ..\Bin\Json\Particles.json
+		..\Bin\Json\Menu\SplitScreenSelection.json = ..\Bin\Json\Menu\SplitScreenSelection.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

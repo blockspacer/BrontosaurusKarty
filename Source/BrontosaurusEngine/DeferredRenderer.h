@@ -48,9 +48,8 @@ private:
 	void DoDirectLighting(CFullScreenHelper& aFullscreenHelper, CRenderer& aRenderer);
 
 	void RenderDirectionalLight(SRenderMessage* aRenderMessage, CFullScreenHelper& aFullscreenHelper);
-	void RenderPointLight(SRenderMessage* aRenderMessage, CFullScreenHelper& aFullscreenHelper);
-
-	void RenderSpotLight(SRenderMessage* aRenderMessage, CFullScreenHelper& aFullscreenHelper);
+	void RenderPointLight(SRenderMessage* aRenderMessage);
+	void RenderSpotLight(SRenderMessage* aRenderMessage);
 
 	void ActivateIntermediate();
 	void SetRMAOSRV();
@@ -75,7 +74,7 @@ private:
 	ID3D11Buffer* myPointLightBuffer;
 	ID3D11Buffer* mySpotLightBuffer;
 
-	CGeometryBuffer myGbuffer;
+	CGeometryBuffer* myGbuffer;
 	
 	CRenderPackage myIntermediatePackage;
 	

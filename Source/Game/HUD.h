@@ -1,6 +1,7 @@
 #pragma once
 #include "GUIElement.h"
 #include "../ThreadedPostmaster/Subscriber.h"
+#include "PlacementData.h"
 
 class CSpriteInstance;
 class CRaceOverMessage;
@@ -8,14 +9,6 @@ class CRaceOverMessage;
 class KeyCharPressed; //temp
 
 typedef unsigned int TimerHandle;
-
-enum class eGuiType
-{
-	eLapCounter,
-	ePlacement,
-	eFinish,
-	eItem
-};
 
 namespace CU 
 {
@@ -32,7 +25,6 @@ struct SHUDElement
 	bool myShouldRender;
 };
 
-
 class CHUD : public Postmaster::ISubscriber
 {
 public:
@@ -44,14 +36,18 @@ public:
 	void Render();
 
 private:
-	SHUDElement LoadHUDElement(const CU::CJsonValue& aJsonValue, eGuiType aGuiType);
+	SHUDElement LoadHUDElement(const CU::CJsonValue& aJsonValue);
 	void LoadHUDElementValues(const CU::CJsonValue& aJsonValue, SHUDElement& aHUDElement, CU::Vector2f aPositionOffset, CU::Vector2f aSizeOffset);
 	void LoadLapCounter(const CU::CJsonValue& aJsonValue);
 	void LoadPlacement(const CU::CJsonValue& aJsonValue);
 	void LoadFinishText(const CU::CJsonValue& aJsonValue);
 	void LoadItemGui(const CU::CJsonValue& aJsonValue);
+	void LoadDangerGui(const CU::CJsonValue& aJsonValue);
+	void LoadScoreboard();
 
-	void SetGUIToEmilBlend(std::wstring aStr);
+
+
+	void SetGUIToAlphaBlend(std::wstring aStr);
 	void SetGUIToEndBlend(std::wstring aStr);
 
 	void AdjustPosBasedOnNrOfPlayers(CU::Vector2f aTopLeft, CU::Vector2f aBotRight);
@@ -61,6 +57,7 @@ private:
 
 	eMessageReturn DoEvent(const CRaceOverMessage& aMessage) override;
 	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
+	eMessageReturn DoEvent(const CBlueShellWarningMessage& aMessage) override;
 
 
 private:
@@ -69,6 +66,7 @@ private:
 	SHUDElement myFinishTextElement;
 	SHUDElement myScoreboardElement;
 	SHUDElement myItemGuiElement;
+	SHUDElement myDangerGuiElement;
 
 	CSpriteInstance* myMushroomSprite;
 	CSpriteInstance* myGreenShellSprite;
@@ -77,7 +75,15 @@ private:
 	CSpriteInstance* myStarSprite;
 	CSpriteInstance* myLightningSprite;
 	CSpriteInstance* myBlueShellSprite;
+	CSpriteInstance* myFakeItemBoxSprite;
 	CSpriteInstance* myNullSprite;
+
+	CSpriteInstance* myBlueShellDangerSprite;
+
+	CSpriteInstance* myScoreboardBGSprite;
+	CSpriteInstance* myPortraitSprite;
+
+	CU::StaticArray<SPlacementData, 8> myWinners;
 
 	CU::Vector2f myCameraOffset; //best solution 10/10
 	CU::Vector2f mySpriteOffset;

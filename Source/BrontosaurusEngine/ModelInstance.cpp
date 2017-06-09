@@ -33,7 +33,7 @@ CModelInstance::CModelInstance(const std::string& aModelPath): myVertexTexture(n
 	myIsVisible = true;
 	myHasAnimations = false;
 	myAnimationLooping = true;
-	myIgnoreDepth = false;
+	myIsShadowCasting = true;
 
 	if (aModelPath.find("lasma") != std::string::npos)
 	{
@@ -221,7 +221,7 @@ void CModelInstance::RenderDeferred(CRenderCamera & aRenderToCamera)
 	params.myHighlightColor = myHighlightColor;
 	params.myHighlightIntensivity = myHighlightIntencity;
 	params.aHighlightIntencity = myHighlightIntencity;
-	params.myIgnoreDepth = myIgnoreDepth;
+	params.myIgnoreDepth = !myIsShadowCasting;
 	params.aPixelshader = aRenderToCamera.GetShadowShader();
 	params.myRenderToDepth = aRenderToCamera.GetIsShadowCamera();
 	

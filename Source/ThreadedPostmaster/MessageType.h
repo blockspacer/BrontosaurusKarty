@@ -32,6 +32,8 @@ enum class eMessageType
 	eAIFInished,
 	eRaceOver,
 	eRaceStarted,
+	eBlueShellWarning,
+	eRedShellWarning,
 	eLength,
 };
 

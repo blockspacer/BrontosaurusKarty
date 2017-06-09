@@ -344,7 +344,7 @@ namespace DL_Debug
 		std::string charStr = buffer;
 		std::wstring wcharStr(charStr.begin(), charStr.end());
 
-		(void)memcpy_s(aBuffer, MAX_STRING_BUFFER_SIZE, wcharStr.c_str(), MAX_STRING_BUFFER_SIZE);
+		memcpy(aBuffer, wcharStr.c_str(), MAX_STRING_BUFFER_SIZE);
 
 		return aBuffer;
 	}
@@ -357,7 +357,7 @@ namespace DL_Debug
 		wvsprintf(buffer, aFormattedString, args);
 		va_end(args);
 
-		(void)memcpy_s(aBuffer, MAX_STRING_BUFFER_SIZE, buffer, MAX_STRING_BUFFER_SIZE);
+		memcpy(aBuffer, buffer, MAX_STRING_BUFFER_SIZE);
 
 		return aBuffer;
 	}

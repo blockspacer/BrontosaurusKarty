@@ -18,6 +18,7 @@ public:
 
 	PointLightComponent* CreateAndRegisterPointLightComponent();
 	CSpotLightComponent* CreateAndRegisterSpotLightComponent();
+	CComponent* CreateAndRegisterSpotLightComponent(const CU::Vector3f& aColor, const float aIntensity, const float aRange, const float aSpotAngle);
 
 	void SetSkybox(const char* aPath);
 	void SetCubemap(const char* aPath);
@@ -25,7 +26,7 @@ public:
 	void Update(const CU::Time aDeltaTime);
 
 	void AddDirectionalLightToScene(const Lights::SDirectionalLight& aDirectionalLight);
-
+	void SetShadowMapAABB(const CU::Vector3f& aCenterPosition, const CU::Vector3f& aExtents);
 private:
 	CLightComponentManager(CScene& aScene);
 	~CLightComponentManager();

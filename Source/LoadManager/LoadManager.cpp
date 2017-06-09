@@ -8,7 +8,7 @@
 #include "LoadSoundComponent.h"
 #include "LoadScriptComponent.h"
 #include "LoadFireComponent.h"
-#include "LoadPointLightComponent.h"
+#include "LoadLightsEnvironment.h"
 #include "LoadCollider.h"
 #include "LoadKartSpawnPoint.h"
 #include "LoadManager/LoadWeaponCrate.h"

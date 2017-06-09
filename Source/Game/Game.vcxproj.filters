@@ -53,7 +53,6 @@
     <ClCompile Include="StateStack.cpp">
       <Filter>States\Statestack</Filter>
     </ClCompile>
-    <ClCompile Include="HUD.cpp" />
     <ClCompile Include="AnimationEvent.cpp">
       <Filter>Animation</Filter>
     </ClCompile>
@@ -63,6 +62,9 @@
     <ClCompile Include="AnimationEventFactory.cpp">
       <Filter>Animation</Filter>
     </ClCompile>
+    <ClCompile Include="GlobalHUD.cpp" />
+    <ClCompile Include="HUDBase.cpp" />
+    <ClCompile Include="LocalHUD.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -122,7 +124,6 @@
     <ClInclude Include="StateStack.h">
       <Filter>States\Statestack</Filter>
     </ClInclude>
-    <ClInclude Include="HUD.h" />
     <ClInclude Include="AnimationEvent.h">
       <Filter>Animation</Filter>
     </ClInclude>
@@ -132,6 +133,10 @@
     <ClInclude Include="AnimationEventFactory.h">
       <Filter>Animation</Filter>
     </ClInclude>
+    <ClInclude Include="PlacementData.h" />
+    <ClInclude Include="GlobalHUD.h" />
+    <ClInclude Include="HUDBase.h" />
+    <ClInclude Include="LocalHUD.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="States">
@@ -166,6 +171,9 @@
     </Filter>
     <Filter Include="Animation">
       <UniqueIdentifier>{90a802bc-b08f-466c-ac2c-5fff61c531be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HUD">
+      <UniqueIdentifier>{283cc4c9-0cb9-44e7-97a9-fe8986dc41d2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

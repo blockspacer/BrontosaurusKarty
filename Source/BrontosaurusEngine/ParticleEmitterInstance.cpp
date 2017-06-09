@@ -101,6 +101,7 @@ void CParticleEmitterInstance::Render(CRenderCamera& aRenderCamera)
 		msg.toWorld = myToWorldSpace;
 		msg.particleList = myParticles;
 		msg.myType = SRenderMessage::eRenderMessageType::eRenderParticles;
+		
 		DistanceSort(msg.particleList, aRenderCamera.GetCamera());
 		aRenderCamera.AddRenderMessage(new SRenderParticlesMessage(msg));
 	}
@@ -188,9 +189,12 @@ void CParticleEmitterInstance::EmitParticle()
 
 void CParticleEmitterInstance::Activate()
 {
-	ResetLifetime();
-	ResetSpawnTimer();
-	myIsActive = true;
+	if(myIsActive == false)
+	{
+		ResetLifetime();
+		ResetSpawnTimer();
+		myIsActive = true;
+	}
 }
 
 void CParticleEmitterInstance::Deactivate()

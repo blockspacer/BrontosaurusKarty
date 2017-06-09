@@ -165,7 +165,7 @@ void CCascadeShadowMap::Render(const CU::GrowingArray<CModelInstance*, InstanceI
 			if (myRenderCamera.GetCamera().IsInside(modelInstance->GetModelBoundingSphere()) == false)
 				continue;
 
-			if (modelInstance->GetIgnoreDepth() == true)
+			if (modelInstance->GetIsShadowCasting() == true)
 				continue;
 
 			modelInstance->RenderDeferred(myRenderCamera);

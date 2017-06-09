@@ -63,6 +63,7 @@ CParticleEmitter::~CParticleEmitter()
 
 void CParticleEmitter::Render(const CU::Matrix44f & aToWorldSpace, const CU::GrowingArray<SParticle, unsigned int, false>& aParticleList, RenderMode aRenderMode)
 {
+	
 #ifndef _RETAIL_BUILD
 	std::lock_guard<std::mutex> lock(myRenderMutex);
 #endif
@@ -70,7 +71,19 @@ void CParticleEmitter::Render(const CU::Matrix44f & aToWorldSpace, const CU::Gro
 	if (!myRenderEffects[static_cast<int>(myEmitterData.render.renderMode)]) return;
 
 	myRenderEffects[static_cast<int>(renderMode)]->Activate();
-	UpdateCBuffers(aToWorldSpace);
+
+	switch (myEmitterData.particles.space)
+	{
+	case Space::eWorld: 
+		UpdateCBuffers(CU::Matrix44f::Identity);
+		break;
+	case Space::eLocal: 
+		UpdateCBuffers(aToWorldSpace);
+		break;
+	default: ;
+	}
+	
+
 	ResizeVertexBuffer(aParticleList);
 
 	if(myEmitterData.render.myTexture != nullptr)
@@ -152,7 +165,10 @@ void CParticleEmitter::UpdateInstance(const CU::Time& aTime, CParticleEmitterIns
 		if(aInstance.IsActive() == true && aInstance.myParticles.Size() < myEmitterData.emitter.maxNrOfParticles)
 		{
 			SParticle particle;
-			particle.position = aInstance.myToWorldSpace.GetPosition();
+			if(myEmitterData.particles.space == Space::eWorld)
+			{
+				particle.position = aInstance.myToWorldSpace.GetPosition();
+			}
 			SParticleLogic particleLogic;
 
 			SpawnParticle(particle, particleLogic);
@@ -348,8 +364,23 @@ void CParticleEmitter::ParseUpdateParameters(const CU::CJsonValue& aJsonValue)
 	}
 }
 
+CParticleEmitter::Space CParticleEmitter::GetSpace(const std::string& aSpaceString)
+{
+	if(aSpaceString == "local")
+	{
+		return Space::eLocal;
+	}
+	if(aSpaceString == "world")
+	{
+		return Space::eWorld;
+	}
+
+	return Space::eWorld;
+}
+
 void CParticleEmitter::ParseParticle(const CU::CJsonValue& aJsonValue)
 {
+	myEmitterData.particles.space = GetSpace(aJsonValue["space"].GetString());
 	ParseRender(aJsonValue["render"]);
 	//myEmitterData.particles.spawners.Add(new Particles::CParticleLifetimeSpawner(aJsonValue["lifetime"]));
 	ParseSpawnParameters(aJsonValue["spawn"]);
@@ -440,6 +471,9 @@ bool CParticleEmitter::CanInstansiate() const
 
 void CParticleEmitter::ParseRender(const CU::CJsonValue& aJsonValue)
 {
+#ifndef _RETAIL_BUILD
+	std::lock_guard<std::mutex> lock(myRenderMutex);
+#endif
 	myEmitterData.render.renderMode = GetRenderMode(aJsonValue["type"].GetString());
 
 	myEmitterData.render.color = aJsonValue["color"].GetVector4f("rgba");
