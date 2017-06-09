@@ -9,7 +9,7 @@ class CGlobalHUD : public CHUDBase, public Postmaster::ISubscriber
 {
 public:
 
-	CGlobalHUD();
+	CGlobalHUD(const std::string& );
 	~CGlobalHUD();
 
 public:
@@ -27,6 +27,7 @@ private:
 	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
 
 public:
+	void Retry();
 	eMessageReturn DoEvent(const Postmaster::Message::CControllerInputMessage& aControllerInputMessage) override;
 private:
 

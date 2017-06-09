@@ -232,6 +232,10 @@ eMessageReturn CGlobalHUD::DoEvent(const KeyCharPressed & aMessage)
 	return eMessageReturn::eContinue;
 }
 
+void CGlobalHUD::Retry()
+{
+}
+
 eMessageReturn CGlobalHUD::DoEvent(const Postmaster::Message::CControllerInputMessage& aControllerInputMessage)
 {
 	const Postmaster::Message::InputEventData& data = aControllerInputMessage.GetData();
@@ -240,6 +244,11 @@ eMessageReturn CGlobalHUD::DoEvent(const Postmaster::Message::CControllerInputMe
 		data.data.boolValue == true && data.buttonIndex == Postmaster::Message::ButtonIndex::A)
 	{
 		ToMainMenu();
+	}
+	if (myRaceOver == true && data.eventType == Postmaster::Message::EventType::ButtonChanged &&
+		data.data.boolValue == true && data.buttonIndex == Postmaster::Message::ButtonIndex::A)
+	{
+		Retry();
 	}
 
 	return eMessageReturn::eContinue;

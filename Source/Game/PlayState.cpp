@@ -469,25 +469,37 @@ CU::eInputReturn CPlayState::RecieveInput(const CU::SInputMessage& aInputMessage
 	{
 	
 	case CU::eInputType::eGamePadButtonPressed: 
-	if(aInputMessage.myGamePad == CU::GAMEPAD::A)
+	if(aInputMessage.myGamePad == CU::GAMEPAD::B)
 	{
 		Postmaster::Message::InputEventData eventData;
 		eventData.eventType = Postmaster::Message::EventType::ButtonChanged;
 		eventData.data.boolValue = true;
-		eventData.buttonIndex = Postmaster::Message::ButtonIndex::A;
+		eventData.buttonIndex = Postmaster::Message::ButtonIndex::B;
 		PostPostmasterEvent(aInputMessage.myGamepadIndex, eventData);
+	}
+	if (aInputMessage.myGamePad == CU::GAMEPAD::A)
+	{
+		Postmaster::Message::InputEventData eventData;
+		eventData.eventType = Postmaster::Message::EventType::ButtonChanged;
+		eventData.data.boolValue = true;
+		eventData.buttonIndex = Postmaster::Message::ButtonIndex::B;
+		PostPostmasterEvent(aInputMessage.myGamepadIndex, eventData);
+	}
+	if (aInputMessage.myGamePad == CU::GAMEPAD::X)
+	{
+		if (aInputMessage.myGamePad == CU::GAMEPAD::B)
+		{
+			Postmaster::Message::InputEventData eventData;
+			eventData.eventType = Postmaster::Message::EventType::ButtonChanged;
+			eventData.data.boolValue = true;
+			eventData.buttonIndex = Postmaster::Message::ButtonIndex::B;
+			PostPostmasterEvent(aInputMessage.myGamepadIndex, eventData);
+		}
 	}
 	break;
 
 	case CU::eInputType::eGamePadButtonReleased: 
-		if (aInputMessage.myGamePad == CU::GAMEPAD::A)
-		{
-			Postmaster::Message::InputEventData eventData;
-			eventData.eventType = Postmaster::Message::EventType::ButtonChanged;
-			eventData.data.boolValue = false;
-			eventData.buttonIndex = Postmaster::Message::ButtonIndex::A;
-			PostPostmasterEvent(aInputMessage.myGamepadIndex, eventData);
-		}
+		
 		break;
 	
 	}
