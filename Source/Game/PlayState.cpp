@@ -37,6 +37,7 @@
 #include "BlueShellComponentManager.h"
 #include "RespawnComponentManager.h"
 #include "LapTrackerComponentManager.h"
+#include "ExplosionComponentManager.h"
 
 #include "AudioSourceComponent.h"
 #include "AudioSourceComponentManager.h"
@@ -403,6 +404,7 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 
 	myRedShellManager->Update(aDeltaTime.GetSeconds());
 	myBlueShellManager->Update(aDeltaTime.GetSeconds());
+	myExplosionManager->Update(aDeltaTime.GetSeconds());
 
 	CPickupComponentManager::GetInstance()->Update(aDeltaTime.GetSeconds());
 	return myStatus;
@@ -505,9 +507,10 @@ void CPlayState::CreateManagersAndFactories()
 	myBoostPadComponentManager = new CBoostPadComponentManager();
 	myItemBehaviourManager = new CItemWeaponBehaviourComponentManager();
 	myItemBehaviourManager->Init(myPhysicsScene);
+	myExplosionManager = new CExplosionComponentManager;
 	myRedShellManager = new CRedShellManager();
 	myRedShellManager->Init(myPhysicsScene, myKartControllerComponentManager,myKartObjects);
-	myBlueShellManager = new CBlueShellComponentManager(myKartObjects);
+	myBlueShellManager = new CBlueShellComponentManager(myKartObjects,myGameObjectManager,myExplosionManager);
 	myItemFactory = new CItemFactory();
 	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager,*myRedShellManager,*myBlueShellManager);
 	myRespawnComponentManager = new CRespawnComponentManager();

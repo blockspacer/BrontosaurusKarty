@@ -42,6 +42,7 @@ class CRespawnComponentManager;
 class CLapTrackerComponentManager;
 class CLocalHUD;
 class CGlobalHUD;
+class CExplosionComponentManager;
 
 struct SGUIElement;
 struct  SHUDElement;
@@ -109,6 +110,7 @@ private:
 	CRedShellManager* myRedShellManager;
 	CBlueShellComponentManager* myBlueShellManager;
 	CRespawnComponentManager* myRespawnComponentManager;
+	CExplosionComponentManager* myExplosionManager;
 
 	CU::GrowingArray<CCameraComponent*> myCameraComponents;
 	CU::GrowingArray<SParticipant> myPlayers;
