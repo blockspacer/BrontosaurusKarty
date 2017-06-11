@@ -19,6 +19,12 @@ struct STextInput
 	CTextInstance* myTextInstance;
 };
 
+struct SSelector
+{
+	char mySelection;
+	char myMax;
+};
+
 class CMenuState :public State, Postmaster::ISubscriber
 {
 public:
@@ -72,6 +78,9 @@ private:
 
 	std::string myName;
 	std::string myIp;
+
+	CU::GrowingArray<std::string, char> mySelectorNames;
+	CU::GrowingArray<SSelector, char> mySelectors;
 };
 
 inline bool CMenuState::GetLetThroughRender() const

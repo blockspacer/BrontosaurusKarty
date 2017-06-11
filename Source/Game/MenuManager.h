@@ -24,7 +24,7 @@ enum eInputAction
 };
 
 
-enum class eMenuButtonState
+enum class eMenuButtonState: char
 {
 	eDefault,
 	eOnHover,
@@ -48,15 +48,12 @@ struct SLayerData
 
 struct SMenuSprite
 {
-	SMenuSprite(): myState(eMenuButtonState::eDefault), myDafaultSprite(nullptr), myOnHoverSprite(nullptr), myOnClickSprite(nullptr), myInactiveSprite(nullptr)
+	SMenuSprite(): myState(static_cast<char>(eMenuButtonState::eDefault)), mySprites(4, nullptr), myPlayerIndex(0)
 	{
 	}
 
-	eMenuButtonState myState;
-	CSpriteInstance* myDafaultSprite;
-	CSpriteInstance* myOnHoverSprite;
-	CSpriteInstance* myOnClickSprite;
-	CSpriteInstance* myInactiveSprite;
+	char myState;
+	CU::GrowingArray<CSpriteInstance*, char> mySprites;
 
 	short myPlayerIndex;
 };
@@ -97,6 +94,8 @@ public:
 
 	void AddAction(const std::string& aActionName, const std::function<bool(std::string)>& aFunction);
 	CTextInstance* GetTextInstance(const int aTextInputTextInstanceIndex);
+
+	void SetSpiteState(const unsigned aSpriteIndex, const char aState);
 private:
 	static CSpriteInstance* ChoseSpriteInstance(const SMenuSprite& aMenuSprite);
 

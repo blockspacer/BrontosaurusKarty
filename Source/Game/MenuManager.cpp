@@ -76,9 +76,9 @@ int CMenuManager::CreateSprite(const std::string& aFolder, const CU::Vector2f aP
 
 	if (CU::CJsonValue::FileExists(aFolder + "/" + "default.dds"))
 	{
-		menuSprite.myDafaultSprite = new CSpriteInstance((aFolder + "/" + "default.dds").c_str());
-		menuSprite.myDafaultSprite->SetPosition(aPosition);
-		menuSprite.myDafaultSprite->SetPivot(anOrigin);
+		menuSprite.mySprites[0] = new CSpriteInstance((aFolder + "/" + "default.dds").c_str());
+		menuSprite.mySprites[0]->SetPosition(aPosition);
+		menuSprite.mySprites[0]->SetPivot(anOrigin);
 	}
 	else
 	{
@@ -88,37 +88,34 @@ int CMenuManager::CreateSprite(const std::string& aFolder, const CU::Vector2f aP
 
 	if (CU::CJsonValue::FileExists(aFolder + "/" + "onHover.dds"))
 	{
-		menuSprite.myOnHoverSprite = new CSpriteInstance((aFolder + "/" + "onHover.dds").c_str());
-		menuSprite.myOnHoverSprite->SetPosition(aPosition);
-		menuSprite.myOnHoverSprite->SetPivot(anOrigin);
+		menuSprite.mySprites[1] = new CSpriteInstance((aFolder + "/" + "onHover.dds").c_str());
+		menuSprite.mySprites[1]->SetPosition(aPosition);
+		menuSprite.mySprites[1]->SetPivot(anOrigin);
 	}
 	else
 	{
-		menuSprite.myOnHoverSprite = menuSprite.myDafaultSprite;
 		DL_PRINT("on hover sprite missing using default instead");
 	}
 
 	if (CU::CJsonValue::FileExists(aFolder + "/" + "onClick.dds"))
 	{
-		menuSprite.myOnClickSprite = new CSpriteInstance((aFolder + "/" + "onClick.dds").c_str());
-		menuSprite.myOnClickSprite->SetPosition(aPosition);
-		menuSprite.myOnClickSprite->SetPivot(anOrigin);
+		menuSprite.mySprites[2] = new CSpriteInstance((aFolder + "/" + "onClick.dds").c_str());
+		menuSprite.mySprites[2]->SetPosition(aPosition);
+		menuSprite.mySprites[2]->SetPivot(anOrigin);
 	}
 	else
 	{
-		menuSprite.myOnClickSprite = menuSprite.myDafaultSprite;
 		DL_PRINT("on click sprite missing using default instead");
 	}
 
 	if (CU::CJsonValue::FileExists(aFolder + "/" + "inactive.dds"))
 	{
-		menuSprite.myInactiveSprite = new CSpriteInstance((aFolder + "/" + "inactive.dds").c_str());
-		menuSprite.myInactiveSprite->SetPosition(aPosition);
-		menuSprite.myInactiveSprite->SetPivot(anOrigin);
+		menuSprite.mySprites[3] = new CSpriteInstance((aFolder + "/" + "inactive.dds").c_str());
+		menuSprite.mySprites[3]->SetPosition(aPosition);
+		menuSprite.mySprites[3]->SetPivot(anOrigin);
 	}
 	else
 	{
-		menuSprite.myInactiveSprite = menuSprite.myDafaultSprite;
 		DL_PRINT("inactive sprite missing using default instead");
 	}
 
@@ -171,7 +168,7 @@ void CMenuManager::Update(const CU::Time& aDeltaTime)
 
 		if (myClickAreas.At(i).mySpriteID >= 0)
 		{
-			CSpriteInstance* currentSprite = mySpriteInstances[myClickAreas[i].mySpriteID].myDafaultSprite;
+			CSpriteInstance* currentSprite = mySpriteInstances[myClickAreas[i].mySpriteID].mySprites[0];
 			lowerRight = currentSprite->GetPosition() + currentSprite->GetSize() * myClickAreas[i].myRect.zw - currentSprite->GetPivot() * currentSprite->GetSize();
 			upperLeft = currentSprite->GetPosition() + currentSprite->GetSize() * myClickAreas[i].myRect.xy - currentSprite->GetPivot() * currentSprite->GetSize();
 		}
@@ -187,12 +184,12 @@ void CMenuManager::Update(const CU::Time& aDeltaTime)
 			{
 				if (myCurentlyHoveredClickarea > -1 && myClickAreas[myCurentlyHoveredClickarea].mySpriteID >= 0)
 				{
-					mySpriteInstances[myClickAreas[myCurentlyHoveredClickarea].mySpriteID].myState = eMenuButtonState::eDefault;
+					mySpriteInstances[myClickAreas[myCurentlyHoveredClickarea].mySpriteID].myState = static_cast<char>(eMenuButtonState::eDefault);
 				}
 				myCurentlyHoveredClickarea = i;
 			}
 
-			if (myMouseIsPressed == true && myClickAreas[myCurentlyHoveredClickarea].mySpriteID >= 0 && mySpriteInstances[myClickAreas[i].mySpriteID].myState != eMenuButtonState::eOnClick)
+			if (myMouseIsPressed == true && myClickAreas[myCurentlyHoveredClickarea].mySpriteID >= 0 && mySpriteInstances[myClickAreas[i].mySpriteID].myState != static_cast<char>(eMenuButtonState::eOnClick))
 			{
 				if (myHasPlayedClickSound == false)
 				{
@@ -200,11 +197,11 @@ void CMenuManager::Update(const CU::Time& aDeltaTime)
 					//myHasPlayedClickSound = true;
 				}
 			
-				mySpriteInstances[myClickAreas[i].mySpriteID].myState = eMenuButtonState::eOnClick;
+				mySpriteInstances[myClickAreas[i].mySpriteID].myState = static_cast<char>(eMenuButtonState::eOnClick);
 			}
 			else if (myClickAreas[i].mySpriteID >= 0)
 			{
-				mySpriteInstances[myClickAreas[i].mySpriteID].myState = eMenuButtonState::eOnHover;
+				mySpriteInstances[myClickAreas[i].mySpriteID].myState = static_cast<char>(eMenuButtonState::eOnHover);
 			}
 			hasCollided = true;
 			break;
@@ -217,7 +214,7 @@ void CMenuManager::Update(const CU::Time& aDeltaTime)
 	{
 		if (myClickAreas[myCurentlyHoveredClickarea].mySpriteID >= 0)
 		{
-			mySpriteInstances[myClickAreas[myCurentlyHoveredClickarea].mySpriteID].myState = eMenuButtonState::eDefault;
+			mySpriteInstances[myClickAreas[myCurentlyHoveredClickarea].mySpriteID].myState = static_cast<char>(eMenuButtonState::eDefault);
 			myHasPlayedHoverSound = false;
 			myHasPlayedClickSound = false;
 		}
@@ -265,7 +262,16 @@ void CMenuManager::Render()
 			case eMenuThingType::eSprite:
 			{
 				CSpriteInstance *spriteInstance = ChoseSpriteInstance(mySpriteInstances.At(layeredThing.myIndex));
-				spriteInstance->RenderToGUI(L"__Menu");
+
+				if (spriteInstance == nullptr)
+				{
+					spriteInstance = mySpriteInstances.At(layeredThing.myIndex).mySprites[0];
+				}
+
+				if (spriteInstance != nullptr)
+				{
+					spriteInstance->RenderToGUI(L"__Menu");
+				}
 			}
 			break;
 			case eMenuThingType::eClickArea:
@@ -331,7 +337,7 @@ void CMenuManager::ActionPressed(const short aPlayerIndex)
 	{
 		if (mySpriteInstances[i].myPlayerIndex == aPlayerIndex)
 		{
-			mySpriteInstances[i].myState = eMenuButtonState::eOnHover;
+			mySpriteInstances[i].myState = static_cast<char>(eMenuButtonState::eOnHover);
 		}
 	}
 }
@@ -373,19 +379,12 @@ CTextInstance* CMenuManager::GetTextInstance(const int aTextInputTextInstanceInd
 	return myTextInstances[aTextInputTextInstanceIndex];
 }
 
+void CMenuManager::SetSpiteState(const unsigned aSpriteIndex, const char aState)
+{
+	mySpriteInstances[aSpriteIndex].myState = aState;
+}
+
 CSpriteInstance* CMenuManager::ChoseSpriteInstance(const SMenuSprite& aMenuSprite)
 {
-	switch (aMenuSprite.myState)
-	{
-	case eMenuButtonState::eDefault:
-		return aMenuSprite.myDafaultSprite;
-	case eMenuButtonState::eOnHover:
-		return  aMenuSprite.myOnHoverSprite;
-	case eMenuButtonState::eOnClick:
-		return  aMenuSprite.myOnClickSprite;
-	case eMenuButtonState::eInnactive:
-		return aMenuSprite.myInactiveSprite;
-	default:
-		return aMenuSprite.myDafaultSprite;
-	}
+	return aMenuSprite.mySprites[aMenuSprite.myState];
 }
