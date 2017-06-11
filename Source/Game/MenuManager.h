@@ -1,10 +1,9 @@
 #pragma once
 #include "../BrontosaurusEngine/SpriteInstance.h"
 #include "../BrontosaurusEngine/TextInstance.h"
-#include "../CommonUtilities/CommonUtilities.h"
+#include "../CommonUtilities/GamepadButtons.h"
 #include "GUIElement.h"
 #include <functional>
-#include "InputManager.h"
 
 enum class eMenuThingType
 {
@@ -69,6 +68,7 @@ public:
 	~CMenuManager();
 
 	void CreateClickArea(CU::GrowingArray<std::string> someActions, CU::GrowingArray<std::string> someArguments, const int aSpriteID, CU::Vector4f aRect, const unsigned char aLayer);
+	void AddGamepadAction(const CU::GAMEPAD aGamepadButton, const CU::GrowingArray<std::string>& someActions, const CU::GrowingArray<std::string>& someArguments);
 
 	int CreateSprite(const std::string& aFolder, const CU::Vector2f aPosition, const CU::Vector2f anOrigin, const unsigned char aLayer, const short aListeningToPlayer = -1);
 	unsigned CreateText(const std::string& aFontName, const CU::Vector2f& aPosition, const std::wstring someText, const unsigned char aLayer, const eAlignment anAlignment = eAlignment::eLeft);
@@ -129,6 +129,7 @@ private:
 	CU::GrowingArray<CU::GAMEPAD, int> myUsedGamepadButtons;
 	CU::GrowingArray<CU::GrowingArray<std::function<bool(void)>>> myGamepadAction;
 };
+
 
 inline void CMenuManager::UpdateMousePosition(const CU::Vector2f& aPosition)
 {

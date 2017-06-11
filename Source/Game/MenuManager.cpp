@@ -4,7 +4,6 @@
 #include "../BrontosaurusEngine/Renderer.h"
 #include "../BrontosaurusEngine/Engine.h"
 #include "../CommonUtilities/JsonValue.h"
-#include "../Audio/AudioInterface.h"
 
 
 CU::Vector2f CMenuManager::ourMousePosition(0.5f, 0.5f);
@@ -14,7 +13,7 @@ bool CompareLayers(SLayerData aFirstData, SLayerData aSecondData)
 	return aFirstData.myLayer > aSecondData.myLayer;
 }
 
-CMenuManager::CMenuManager() : myPointerSprite(nullptr), myShouldRender(true), myCurentlyHoveredClickarea(-1), myMouseIsPressed(false)
+CMenuManager::CMenuManager() : myPointerSprite(nullptr), myShouldRender(true), myCurentlyHoveredClickarea(-1), myInput(eInputAction::eNone), myMouseIsPressed(false),myUsedGamepadButtons(4),myGamepadAction(4)
 {
 	myClickAreas.Init(1);
 	mySpriteInstances.Init(1);
@@ -51,6 +50,24 @@ void CMenuManager::CreateClickArea(CU::GrowingArray<std::string> someActions, CU
 	myClickAreas.Add(clickArea);
 
 	myLayers.Add({ aLayer, myClickAreas.Size() - 1, eMenuThingType::eClickArea });
+}
+
+void CMenuManager::AddGamepadAction(const CU::GAMEPAD aGamepadButton,const CU::GrowingArray<std::string>& someActions,const CU::GrowingArray<std::string>& someArguments)
+{
+	int buttonIndex = myUsedGamepadButtons.Find(aGamepadButton);
+	if (buttonIndex == myUsedGamepadButtons.FoundNone)
+	{
+		buttonIndex = myUsedGamepadButtons.Size();
+		myUsedGamepadButtons.Add(aGamepadButton);
+		myGamepadAction.Add(CU::GrowingArray<std::function<bool()>>(someActions.Size()));
+	}
+
+	CU::GrowingArray<std::function<bool()>>& actions = myGamepadAction[buttonIndex];
+
+	for (unsigned i = 0; i < someActions.Size(); ++i)
+	{
+		actions.Add(bind(myActions[someActions[i]], someArguments[i]));
+	}
 }
 
 int CMenuManager::CreateSprite(const std::string& aFolder, const CU::Vector2f aPosition, const CU::Vector2f anOrigin, const unsigned char aLayer, const short aListeningToPlayer)

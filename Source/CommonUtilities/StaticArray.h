@@ -1,5 +1,6 @@
 #pragma once
 
+
 namespace CU
 {
 	template <typename Type, int ArraySize>
@@ -14,6 +15,7 @@ namespace CU
 		StaticArray(Type (&aArray)[ArraySize]);
 		StaticArray(const Type& aObject);
 		StaticArray(std::nullptr_t);
+		StaticArray(std::initializer_list<Type> aInitializerList);
 		~StaticArray();
 
 		StaticArray& operator=(const StaticArray& aStaticArray);
@@ -84,6 +86,17 @@ namespace CU
 	}
 
 	template <typename Type, int ArraySize>
+	StaticArray<Type, ArraySize>::StaticArray(std::initializer_list<Type> aInitializerList)
+	{
+		assert(aInitializerList.size() <= ArraySize && "To many items in initializer list");
+		int i = 0;
+		for (Type initValue : aInitializerList)
+		{
+			myStaticArray[i++] = initValue;
+		}
+	}
+
+	template <typename Type, int ArraySize>
 	StaticArray<Type, ArraySize>::~StaticArray()
 	{
 	}
@@ -93,7 +106,7 @@ namespace CU
 	{
 		for (int i = 0; i < ArraySize; ++i)
 		{
-			myStaticArray[i] = aStaticArray[i];
+			operator[](i++) = aStaticArray[i];
 		}
 		return *this;
 	}

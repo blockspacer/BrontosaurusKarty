@@ -15,6 +15,8 @@
 #include "ThreadedPostmaster/LoadLevelMessage.h"
 #include "SplitScreenSelection.h"
 #include "../Audio/AudioInterface.h"
+#include "GamepadButtons.h"
+#include "CommonUtilities.h"
 
 char CMenuState::ourMenuesToPop = 0;
 
@@ -36,6 +38,10 @@ CMenuState::~CMenuState()
 
 void CMenuState::Init()
 {
+	for (unsigned i = 0; i < 4; ++i)
+	{
+		AddXboxController();
+	}
 }
 
 eStateStatus CMenuState::Update(const CU::Time& aDeltaTime)
@@ -153,6 +159,9 @@ CU::eInputReturn CMenuState::RecieveInput(const CU::SInputMessage& aInputMessage
 		}
 		break;
 	case CU::eInputType::eKeyboardReleased: break;
+	case CU::eInputType::eGamePadButtonPressed:
+		myManager.RecieveGamePadInput(aInputMessage.myGamePad);
+		break;
 	default: break;
 	}
 
@@ -292,6 +301,31 @@ void CMenuState::MenuLoad(const std::string& aFile)
 	myManager.SetMousePointer(new CSpriteInstance(root.at("cursor").GetString().c_str()));
 	const std::string &folderPath = root.at("folder").GetString();
 	myShowStateBelow = root.at("letThroughRender").GetBool();
+
+	if (root.HasKey("GamePadActions"))
+	{
+		CU::CJsonValue gamePadActionsObject = root.at("GamePadActions");
+
+		for (unsigned i = 0; i < CU::GamePadButtonNames.Size(); ++i)
+		{
+			if (gamePadActionsObject.HasKey(CU::GamePadButtonNames[i]))
+			{
+				CU::CJsonValue actionsArray = gamePadActionsObject[CU::GamePadButtonNames[i]];
+
+				CU::GrowingArray<std::string> actions(actionsArray.Size());
+				CU::GrowingArray<std::string> arguments(actionsArray.Size());
+				for (unsigned j = 0; j < actionsArray.Size(); ++j)
+				{
+					CU::CJsonValue actionValue = actionsArray[j];
+
+					actions.Add(actionsArray[j].at("type").GetString());
+					arguments.Add(actionsArray[j].at("argument").GetString());
+				}
+
+				myManager.AddGamepadAction(CU::GamePadButtons[i], actions, arguments);
+			}
+		}
+	}
 
 	const CU::CJsonValue elementArray = root.at("elements");
 	for (unsigned i = 0; i < elementArray.Size(); ++i)

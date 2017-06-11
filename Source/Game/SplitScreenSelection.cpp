@@ -8,6 +8,7 @@
 #include "CommonUtilities/JsonValue.h"
 #include "StateStack.h"
 #include "LoadState.h"
+#include "CommonUtilities.h"
 
 CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aStateStack,eInputMessengerType::eSplitScreenSelectionMenu, 1)
 {
