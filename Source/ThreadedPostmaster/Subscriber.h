@@ -31,6 +31,7 @@ namespace Postmaster
 {
 	namespace Message
 	{
+		class CControllerInputMessage;
 		class CPrintMessage;
 	}
 
@@ -63,6 +64,7 @@ namespace Postmaster
 		virtual eMessageReturn DoEvent(const CRaceOverMessage& aRaceOverMessage);
 		virtual eMessageReturn DoEvent(const CRaceStartedMessage& aRaceOverMessage);
 		virtual eMessageReturn DoEvent(const CBlueShellWarningMessage& aBlueShellWarningMessage);
+		virtual eMessageReturn DoEvent(const Message::CControllerInputMessage& aControllerInputMessage);
 		virtual eMessageReturn DoEvent(const CRedShellWarningMessage& aRedShellWarningMessage);
 
 		void SetSubscribedThread(const std::thread::id& aId);

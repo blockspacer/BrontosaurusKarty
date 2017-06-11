@@ -17,7 +17,9 @@ struct SParticipant
 		eVanBrat2,
 		eGrandMa,
 		eGrandMa2,
+		eLength,
 	};
 	eInputDevice myInputDevice;
 	eCharacter mySelectedCharacter;
+	bool myIsReady;
 };
