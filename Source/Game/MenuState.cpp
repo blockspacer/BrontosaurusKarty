@@ -20,6 +20,9 @@
 
 char CMenuState::ourMenuesToPop = 0;
 
+std::map<CU::eKeys, CU::GAMEPAD> CMenuState::ourKeyboardToGamePadMap = { {CU::eKeys::RETURN, CU::GAMEPAD::START} };
+
+
 CMenuState::CMenuState(StateStack& aStateStack, std::string aFile) : State(aStateStack, eInputMessengerType::eMainMenu), myTextInputs(2), myCurrentTextInput(-1), myShowStateBelow(false), myPointerSprite(nullptr), myIsInFocus(false), myBlinkeyBool(true), myBlinkeyTimer(0)
 {
 
@@ -148,14 +151,9 @@ CU::eInputReturn CMenuState::RecieveInput(const CU::SInputMessage& aInputMessage
 		break;
 	case CU::eInputType::eScrollWheelChanged: break;
 	case CU::eInputType::eKeyboardPressed:
-		if (aInputMessage.myKey == CU::eKeys::BACK && myCurrentTextInput > -1)
+		if (ourKeyboardToGamePadMap.count(aInputMessage.myKey) != 0)
 		{
-			CTextInstance& currentTextInput = *myTextInputs[myCurrentTextInput].myTextInstance;
-			currentTextInput.SetTextLine(0, currentTextInput.GetTextLines()[0].substr(0, currentTextInput.GetTextLines()[0].length() - 1));
-		}
-		else if(aInputMessage.myKey == CU::eKeys::F10)
-		{
-			PushLevel("0");
+			myManager.RecieveGamePadInput(ourKeyboardToGamePadMap[aInputMessage.myKey]);
 		}
 		break;
 	case CU::eInputType::eKeyboardReleased: break;

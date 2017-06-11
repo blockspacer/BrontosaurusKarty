@@ -2,6 +2,7 @@
 #include "State.h"
 #include "MenuManager.h"
 #include "../ThreadedPostmaster/Subscriber.h"
+#include "EKeyboardKeys.h"
 
 namespace CU 
 {
@@ -41,6 +42,7 @@ public:
 	eMessageReturn DoEvent(const CLoadLevelMessage& aLoadLevelMessage) override;
 
 private:
+
 	static eAlignment LoadAlignment(const CU::CJsonValue& aJsonValue);
 	void LoadElement(const CU::CJsonValue& aJsonValue, const std::string& aFolderpath);
 	void MenuLoad(const std::string& aFile);
@@ -51,6 +53,8 @@ private:
 	bool PopMenues(std::string aNumberOfMenues);
 	bool PushLevel(std::string aLevelIndexString);
 	bool SetCurrentTextInput(std::string aTexINputIndex);
+
+	static std::map<CU::eKeys, CU::GAMEPAD> ourKeyboardToGamePadMap;
 
 	CU::GrowingArray<STextInput> myTextInputs;
 	int myCurrentTextInput;
