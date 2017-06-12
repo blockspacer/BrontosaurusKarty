@@ -37,22 +37,27 @@ CDeferredRenderer::CDeferredRenderer() : myGbuffer(nullptr)
 	mySSAOPackage.Init(windowSize, nullptr, DXGI_FORMAT_R8G8B8A8_UNORM);
 	myRenderMessages.Init(128);
 	myLightMessages.Init(128);
+	myDecalMessages.Init(16);
 
 	SCameraStruct temp;
-	myProjectionInverseBuffer = BSR::CreateCBuffer<SCameraStruct>(&temp);
+	myProjectionInverseBuffer = BSR::CreateCBuffer(&temp);
 
 	Lights::SDirectionalLight directionalLight;
-	myDirectionalLightBuffer = BSR::CreateCBuffer<Lights::SDirectionalLight>(&directionalLight);
+	myDirectionalLightBuffer = BSR::CreateCBuffer(&directionalLight);
 
 	Lights::SPointLight pointLight;
-	myPointLightBuffer = BSR::CreateCBuffer<Lights::SPointLight>(&pointLight);
+	myPointLightBuffer = BSR::CreateCBuffer(&pointLight);
 
 	Lights::SSpotLight spotLight;
-	mySpotLightBuffer = BSR::CreateCBuffer<Lights::SSpotLight>(&spotLight);
+	mySpotLightBuffer = BSR::CreateCBuffer(&spotLight);
+
+	SDecalData decal;
+	myDecalBuffer = BSR::CreateCBuffer(&decal);
 
 	InitLightModels();
-	
-	
+	InitDecalModel();
+
+
 #ifdef _ENABLE_RENDERMODES
 	myInputWrapper = new CU::InputWrapper();
 	myInputWrapper->Init(HINSTGET, HWNDGET);
@@ -96,11 +101,35 @@ void CDeferredRenderer::InitLightModels()
 	myPointLightModel->Init(pointEffect, pointMesh);
 	mySpotLightModel->Init(spotEffect, spotMesh);
 
+	myDecalDiffuse = &CEngine::GetInstance()->GetTextureManager().LoadTexture("Models/Textures/decalDiffuse.dds");
+
 	delete pointMesh;
 	delete pointModel;
 
 	delete spotMesh;
 	delete spotModel;
+}
+
+void CDeferredRenderer::InitDecalModel()
+{
+	myDecalModel = new CLightModel();
+
+	CFBXLoader modelLoader;
+	CLoaderModel* decalModel = modelLoader.LoadModel("Models/lightmeshes/cube.fbx");
+	CLoaderMesh* decalMesh = decalModel->myMeshes[0];
+
+	unsigned int shaderBlueprint = decalMesh->myShaderType;
+	ID3D11VertexShader* vertexShader = SHADERMGR->LoadVertexShader(L"Shaders/Deferred/deferred_vertex.fx", shaderBlueprint);
+	ID3D11PixelShader* pixelShader = SHADERMGR->LoadPixelShader(L"Shaders/Deferred/deferred_decal.fx", shaderBlueprint);
+	ID3D11InputLayout* inputLayout = SHADERMGR->LoadInputLayout(L"Shaders/Deferred/deferred_vertex.fx", shaderBlueprint);
+
+
+	CEffect* decalEffect = new CEffect(vertexShader, pixelShader, nullptr, inputLayout, D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	myDecalModel->Init(decalEffect, decalMesh);
+
+	delete decalMesh;
+	delete decalModel;
 }
 
 void CDeferredRenderer::DoRenderQueue(CRenderer& aRenderer)
@@ -187,6 +216,9 @@ void CDeferredRenderer::AddRenderMessage(SRenderMessage* aRenderMessage)
 	case SRenderMessage::eRenderMessageType::eRenderDirectionalLight:
 		myLightMessages.Add(aRenderMessage);
 		break;
+	case SRenderMessage::eRenderMessageType::eRenderDecal:
+		myDecalMessages.Add(aRenderMessage);
+		break;
 	default:
 		myRenderMessages.Add(aRenderMessage);
 		break;
@@ -227,6 +259,27 @@ void CDeferredRenderer::DoLightingPass(CFullScreenHelper& aFullscreenHelper, CRe
 	changeStateMessage.mySamplerState = eSamplerState::eClamp;
 	aRenderer.SetStates(&changeStateMessage);
 
+	CGeometryBuffer::EGeometryPackages packages = CGeometryBuffer::EGeometryPackage::eALL - CGeometryBuffer::EGeometryPackage::eEmissive;
+
+
+	ID3D11Resource* diffuseDepth = nullptr;
+	myGbuffer->GetRenderPackage(CGeometryBuffer::eDiffuse).GetDepthResource()->GetResource(&diffuseDepth);
+
+	ID3D11Resource* emissiveDepth = nullptr;
+	myGbuffer->GetRenderPackage(CGeometryBuffer::eEmissive).GetDepthResource()->GetResource(&emissiveDepth);
+
+	DEVICE_CONTEXT->CopyResource(emissiveDepth, diffuseDepth);
+
+
+	myGbuffer->BindOutput(packages, CGeometryBuffer::eEmissive);
+	myGbuffer->BindInput(CGeometryBuffer::EGeometryPackage::eDepth, CGeometryBuffer::eDiffuse);
+
+
+	DEVICE_CONTEXT->PSSetShaderResources(1, 1, myDecalDiffuse->GetShaderResourceViewPointer());
+
+	DoDecals(aRenderer);
+
+	myGbuffer->UnbindOutput();
 	ActivateIntermediate();
 	myGbuffer->BindInput();
 
@@ -307,7 +360,6 @@ CRenderPackage& CDeferredRenderer::GetSecondPackage()
 
 void CDeferredRenderer::ActivateIntermediate()
 {
-
 	myGbuffer->UnbindOutput();
 	myIntermediatePackage.Clear();
 	myIntermediatePackage.Activate();
@@ -422,6 +474,19 @@ void CDeferredRenderer::DoSSAO(CFullScreenHelper& aFullscreenHelper)
 void CDeferredRenderer::SetGeometryBuffer(CGeometryBuffer& aGeometryBuffer)
 {
 	myGbuffer = &aGeometryBuffer;
+}
+
+void CDeferredRenderer::DoDecals(CRenderer& aRenderer)
+{
+	for (SRenderMessage* message : myDecalMessages)
+	{
+		SRenderDecal* msg = static_cast<SRenderDecal*>(message);
+		msg->myData.worldSpace = msg->myWorldSpace.GetInverted();
+		BSR::UpdateCBuffer<SDecalData>(myDecalBuffer, &msg->myData);
+		myFramework->GetDeviceContext()->PSSetConstantBuffers(2, 1, &myDecalBuffer);
+		myDecalModel->Render(msg->myWorldSpace);
+	}
+	myDecalMessages.RemoveAll();
 }
 
 #ifdef _ENABLE_RENDERMODES

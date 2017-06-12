@@ -38,6 +38,8 @@ public:
 	void UpdateCameraBuffer(const CU::Matrix44f & aCameraSpace, const CU::Matrix44f & aProjectionInverse);
 	void SetGeometryBuffer(CGeometryBuffer& myGbuffer);
 
+	void DoDecals(CRenderer& aRenderer);
+
 	void DoLightingPass(CFullScreenHelper& aFullscreenHelper, CRenderer& aRenderer);
 	ID3D11DepthStencilView* GetDepthStencil();
 	ID3D11ShaderResourceView* GetDepthResource();
@@ -58,6 +60,7 @@ private:
 
 
 	void InitLightModels();
+	void InitDecalModel();
 
 	void DoSSAO(CFullScreenHelper& aFullscreenHelper);
 
@@ -65,14 +68,17 @@ private:
 	CU::GrowingArray<SRenderMessage*> myRenderMessages;
 	CU::GrowingArray<SRenderMessage*> myLightMessages;
 	CU::GrowingArray<int> myBatchedModelIds;
+	CU::GrowingArray<SRenderMessage*> myDecalMessages;
 
 	CLightModel* myPointLightModel;
 	CLightModel* mySpotLightModel;
+	CLightModel* myDecalModel;
 
 	ID3D11Buffer* myProjectionInverseBuffer;
 	ID3D11Buffer* myDirectionalLightBuffer;
 	ID3D11Buffer* myPointLightBuffer;
 	ID3D11Buffer* mySpotLightBuffer;
+	ID3D11Buffer* myDecalBuffer;
 
 	CGeometryBuffer* myGbuffer;
 	
@@ -80,6 +86,8 @@ private:
 	
 	CDXFramework* myFramework;
 	CTexture* mySSAORandomTexture;
+	CTexture* myDecalDiffuse;
+
 	CRenderPackage mySSAOPackage;
 
 #ifdef _ENABLE_RENDERMODES
