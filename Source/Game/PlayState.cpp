@@ -41,6 +41,7 @@
 
 #include "AudioSourceComponent.h"
 #include "AudioSourceComponentManager.h"
+#include "TimeTrackerComponentManager.h"
 
 //Networking
 #include "ThreadedPostmaster/Postmaster.h"
@@ -97,6 +98,7 @@
 #include "CharacterInfoComponent.h"
 #include "BroadcastINputListener.h"
 #include "InputManager.h"
+#include "TimeTrackerComponent.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -107,9 +109,22 @@ CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	, myModelComponentManager(nullptr)
 	, myColliderComponentManager(nullptr)
 	, myScriptComponentManager(nullptr)
+	, myKartComponentManager(nullptr)
+	, myBoostPadComponentManager(nullptr)
+	, myKartControllerComponentManager(nullptr)
+	, myPlayerControllerManager(nullptr)
 	, myItemFactory(nullptr)
+	, myItemBehaviourManager(nullptr)
+	, myRedShellManager(nullptr)
+	, myBlueShellManager(nullptr)
 	, myRespawnComponentManager(nullptr)
+	, myExplosionManager(nullptr)
+	, myTimeTrackerComponentManager(nullptr)
 	, myCameraComponents(4)
+	, myGlobalHUD(nullptr)
+	, myCountdownTimerHandle(0)
+	, myCountdownSprite(nullptr)
+	, myCountdownElement(nullptr)	
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
@@ -122,7 +137,6 @@ CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	myPlayers[0].myInputDevice = SParticipant::eInputDevice::eKeyboard;
 	//myPlacementLinesGUIElement.Init(8);
 	myPlacementLineScreenSpaceWidth = 0.0f;
-	
 }
 
 CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU::GrowingArray<SParticipant> aPlayers)
@@ -134,14 +148,27 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	, myModelComponentManager(nullptr)
 	, myColliderComponentManager(nullptr)
 	, myScriptComponentManager(nullptr)
+	, myKartComponentManager(nullptr)
+	, myBoostPadComponentManager(nullptr)
+	, myKartControllerComponentManager(nullptr)
+	, myPlayerControllerManager(nullptr)
 	, myItemFactory(nullptr)
+	, myItemBehaviourManager(nullptr)
+	, myRedShellManager(nullptr)
+	, myBlueShellManager(nullptr)
 	, myRespawnComponentManager(nullptr)
+	, myExplosionManager(nullptr)
+	, myTimeTrackerComponentManager(nullptr)
 	, myCameraComponents(4)
+	, myGlobalHUD(nullptr)
+	, myCountdownTimerHandle(0)
+	, myCountdownSprite(nullptr)
+	, myCountdownElement(nullptr)
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
 	, myCountdownShouldRender(false)
-	,myIsCountingDown(true)
+	, myIsCountingDown(true)
 {
 	if (aPlayers.Size() > 0)
 	{
@@ -196,15 +223,21 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myItemFactory);
 	SAFE_DELETE(myRespawnComponentManager);
 	SAFE_DELETE(myItemBehaviourManager);
+	SAFE_DELETE(myTimeTrackerComponentManager);
 	CLapTrackerComponentManager::DestoyInstance();
 
 	CKartSpawnPointManager::GetInstance()->Destroy();
 	CPickupComponentManager::Destroy();
+
+	myLocalHUDs.DeleteAll();
+
+	CPollingStation::Destroy();
 }
 
 // Runs on its own thread.
 void CPlayState::Load()
 {
+	CPollingStation::Create();
 	CU::CStopWatch loadPlaystateTimer;
 	loadPlaystateTimer.Start();
 
@@ -260,6 +293,7 @@ void CPlayState::Load()
 		return;
 	}
 
+	myLevelsCount = levelsArray.Size();
 	std::string levelPath = "Json/Levels/";
 	levelPath += levelsArray[myLevelIndex].GetString();
 	levelPath += "/LevelData.json";
@@ -306,10 +340,9 @@ void CPlayState::Load()
 		myLocalHUDs[i]->LoadHUD();
 	}
 
-	myGlobalHUD = new CGlobalHUD();
+	myGlobalHUD = new CGlobalHUD(myLevelIndex);
 	myGlobalHUD->LoadHUD();
 
-	LoadPlacementLineGUI();
 
 	myCountdownSprite->Render();
 
@@ -361,7 +394,7 @@ void CPlayState::Init()
 
 	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::ePlayerFinished);
 	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::eRaceStarted);
-
+	POSTMASTER.Subscribe(this, eMessageType::eControllerInput);
 	myGameObjectManager->SendObjectsDoneMessage();
 	myKartControllerComponentManager->Init();
 	CLapTrackerComponentManager::GetInstance()->Init();
@@ -407,6 +440,10 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	{
 		myItemBehaviourManager->Update(aDeltaTime.GetSeconds());
 	}
+	if (myTimeTrackerComponentManager != nullptr)
+	{
+		myTimeTrackerComponentManager->Update(aDeltaTime.GetSeconds());
+	}
 
 	myRedShellManager->Update(aDeltaTime.GetSeconds());
 	myBlueShellManager->Update(aDeltaTime.GetSeconds());
@@ -430,7 +467,6 @@ void CPlayState::Render()
 
 	myGlobalHUD->Render();
 
-	RenderPlacementLine();
 }
 
 void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
@@ -553,8 +589,9 @@ void CPlayState::CreateManagersAndFactories()
 	myRedShellManager->Init(myPhysicsScene, myKartControllerComponentManager,myKartObjects);
 	myBlueShellManager = new CBlueShellComponentManager(myKartObjects,myGameObjectManager,myExplosionManager,myColliderComponentManager);
 	myItemFactory = new CItemFactory();
-	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager,*myRedShellManager,*myBlueShellManager);
+	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager,*myRedShellManager,*myBlueShellManager,myScene);
 	myRespawnComponentManager = new CRespawnComponentManager();
+	myTimeTrackerComponentManager = new CTimeTrackerComponentManager();
 	CLapTrackerComponentManager::CreateInstance();
 	CKartSpawnPointManager::GetInstance()->Create();
 	CPickupComponentManager::Create();
@@ -627,6 +664,10 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 
 	CRespawnerComponent* respawnComponent = myRespawnComponentManager->CreateAndRegisterComponent();
 	playerObject->AddComponent(respawnComponent);
+
+	CTimeTrackerComponent* timeTrackerComponent = myTimeTrackerComponentManager->CreateAndRegisterComponent();
+	playerObject->AddComponent(timeTrackerComponent);
+
 
 	if(CLapTrackerComponentManager::GetInstance() != nullptr)
 	{
@@ -733,6 +774,9 @@ void CPlayState::CreateAI()
 	CRespawnerComponent* respawnComponent = myRespawnComponentManager->CreateAndRegisterComponent();
 	playerObject->AddComponent(respawnComponent);
 
+	CTimeTrackerComponent* timeTrackerComponent = myTimeTrackerComponentManager->CreateAndRegisterComponent();
+	playerObject->AddComponent(timeTrackerComponent);
+
 	if (CLapTrackerComponentManager::GetInstance() != nullptr)
 	{
 		CLapTrackerComponent* lapTrackerComponent = CLapTrackerComponentManager::GetInstance()->CreateAndRegisterComponent();
@@ -810,7 +854,7 @@ void CPlayState::InitiateRace()
 			myKartObjects[i]->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
 		}
 
-		while (floatTime <= 3.5)
+		while (floatTime <= 4.5f)
 		{
 			timerManager.UpdateTimers();
 			floatTime = timerManager.GetTimer(timer).GetLifeTime().GetSeconds();
@@ -818,14 +862,15 @@ void CPlayState::InitiateRace()
 			if ((unsigned char)floatTime > startCountdownTime)
 			{
 				startCountdownTime = std::floor(floatTime);
-
-				if		(startCountdownTime == 0) 	myCountdownSprite->SetRect({ 0.f,0.75f,1.f,1.00f });
-				else if (startCountdownTime == 1) 	myCountdownSprite->SetRect({ 0.f,0.50f,1.f,0.75f });
-				else if (startCountdownTime == 2) 	myCountdownSprite->SetRect({ 0.f,0.25f,1.f,0.50f });
-				else if (startCountdownTime == 3)
+				if (startCountdownTime == 0)		myCountdownSprite->SetAlpha(0);	
+				else if (startCountdownTime == 1) { myCountdownSprite->SetRect({ 0.f,0.75f,1.f,1.00f }); myCountdownSprite->SetAlpha(1); }
+				else if (startCountdownTime == 2) 	myCountdownSprite->SetRect({ 0.f,0.50f,1.f,0.75f });
+				else if (startCountdownTime == 3) 	myCountdownSprite->SetRect({ 0.f,0.25f,1.f,0.50f });
+				else if (startCountdownTime == 4)
 				{
 					myCountdownSprite->SetRect({ 0.f,0.00f,1.f,0.25f });
 					myKartControllerComponentManager->ShouldUpdate(true);
+					myTimeTrackerComponentManager->RaceStart();
 					POSTMASTER.Broadcast(new CRaceStartedMessage());
 					POSTMASTER.GetThreadOffice().HandleMessages();
 				}
@@ -884,79 +929,25 @@ void CPlayState::RenderCountdown()
 	myCountdownSprite->RenderToGUI(L"countdown");
 }
 
-void CPlayState::LoadPlacementLineGUI()
+eMessageReturn CPlayState::DoEvent(const Postmaster::Message::CControllerInputMessage& aControllerInputMessage)
 {
-	//CU::CJsonValue jsonDoc;
-	//if (myPlayers.Size() == 1)
-	//{
-	//	jsonDoc.Parse("Json/HUD/HUD1Player.json");
-	//}
-	//else if (myPlayers.Size() == 2)
-	//{
-	//	jsonDoc.Parse("Json/HUD/HUD2Player.json");
-	//}
-	//else if (myPlayers.Size() == 3)
-	//{
-	//	jsonDoc.Parse("Json/HUD/HUD3Player.json");
-	//}
-	//else if (myPlayers.Size() == 4)
-	//{
-	//	jsonDoc.Parse("Json/HUD/HUD4Player.json");
-	//}
+	const Postmaster::Message::InputEventData& data = aControllerInputMessage.GetData();
 
-	//CU::CJsonValue jsonPlacementLine = jsonDoc.at("placementLine");
-	//for(unsigned int i = 0; i < myKartObjects.Size(); i++)
-	//{
-	//	SHUDElement* hudElement = new SHUDElement();
+	if (myGlobalHUD != nullptr && myGlobalHUD->GetRaceOVer() == true && data.eventType == Postmaster::Message::EventType::ButtonChanged &&
+		data.data.boolValue == true && data.buttonIndex == Postmaster::Message::ButtonIndex::B)
+	{
+		myStateStack.Pop();
+	}
+	else if (myGlobalHUD != nullptr && myGlobalHUD->GetRaceOVer() == true && data.eventType == Postmaster::Message::EventType::ButtonChanged &&
+		data.data.boolValue == true && data.buttonIndex == Postmaster::Message::ButtonIndex::X)
+	{
+		myStateStack.SwapState(new CLoadState(myStateStack, myLevelIndex, myPlayers));
+	}
+	else if (myGlobalHUD != nullptr && myGlobalHUD->GetRaceOVer() == true && data.eventType == Postmaster::Message::EventType::ButtonChanged &&
+		data.data.boolValue == true && data.buttonIndex == Postmaster::Message::ButtonIndex::A)
+	{
+		myStateStack.SwapState(new CLoadState(myStateStack, (myLevelIndex + 1) % myLevelsCount, myPlayers));
+	}
 
-	//	hudElement->myGUIElement.myOrigin = { 0.f,0.f }; // { 0.5f, 0.5f };
-	//	hudElement->myGUIElement.myAnchor[(char)eAnchors::eTop] = true;
-	//	hudElement->myGUIElement.myAnchor[(char)eAnchors::eLeft] = true;
-
-	//	hudElement->myGUIElement.myScreenRect = CU::Vector4f(jsonPlacementLine.at("position").GetVector2f());
-
-	//	const CU::CJsonValue sizeObject = jsonPlacementLine.at("size");
-	//	hudElement->myPixelSize.x = sizeObject.at("pixelWidth").GetUInt();
-	//	hudElement->myPixelSize.y = sizeObject.at("pixelHeight").GetUInt();
-
-	//	float rectWidth = sizeObject.at("screenSpaceWidth").GetFloat();
-	//	float rectHeight = sizeObject.at("screenSpaceHeight").GetFloat();
-	//	myPlacementLineScreenSpaceWidth = rectWidth;
-
-	//	float topLeftX = hudElement->myGUIElement.myScreenRect.x;
-	//	float topLeftY = hudElement->myGUIElement.myScreenRect.y;
-
-	//	hudElement->myGUIElement.myScreenRect.z = rectWidth + topLeftX;
-	//	hudElement->myGUIElement.myScreenRect.w = rectHeight + topLeftY;
-	//	hudElement->mySprite = new CSpriteInstance("Sprites/GUI/Scoreboard/characterPortraitYoshi.dds", { 1.0f, 1.0f });
-	//	myPlacementLinesGUIElement.Add(hudElement);
-	//}
-}
-
-void CPlayState::RenderPlacementLine()
-{
-	//for(unsigned int i = 0; i < myPlacementLinesGUIElement.Size(); i++)
-	//{
-	//	SComponentQuestionData lapTraversedPercentageQuestionData;
-	//	if (myKartObjects[i]->AskComponents(eComponentQuestionType::eGetLapTraversedPercentage, lapTraversedPercentageQuestionData) == true)
-	//	{
-	//		float lapTraversedPlacement = lapTraversedPercentageQuestionData.myFloat;
-	//		myPlacementLinesGUIElement[i]->myGUIElement.myScreenRect.x = lapTraversedPlacement;
-	//		myPlacementLinesGUIElement[i]->myGUIElement.myScreenRect.z = myPlacementLineScreenSpaceWidth + lapTraversedPlacement;
-	//	}
-
-	//	SCreateOrClearGuiElement* createOrClear = new SCreateOrClearGuiElement(L"placementLine" + i, myPlacementLinesGUIElement[i]->myGUIElement, CU::Vector2ui(WINDOW_SIZE.x, WINDOW_SIZE.y));
-	//	RENDERER.AddRenderMessage(createOrClear);
-
-	//	SChangeStatesMessage* const changeStatesMessage = new SChangeStatesMessage();
-	//	changeStatesMessage->myBlendState = eBlendState::eAlphaBlend;
-	//	changeStatesMessage->myDepthStencilState = eDepthStencilState::eDisableDepth;
-	//	changeStatesMessage->myRasterizerState = eRasterizerState::eNoCulling;
-	//	changeStatesMessage->mySamplerState = eSamplerState::eClamp;
-
-	//	SRenderToGUI* const guiChangeState = new SRenderToGUI(L"placementLine" + i, changeStatesMessage);
-	//	RENDERER.AddRenderMessage(guiChangeState);
-
-	//	myPlacementLinesGUIElement[i]->mySprite->RenderToGUI(L"placementLine" + i);
-	//}
+	return eMessageReturn::eContinue;
 }

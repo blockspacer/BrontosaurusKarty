@@ -8,6 +8,8 @@ public:
 	~PopCurrentState();
 
 	eMessageReturn DoEvent(::Postmaster::ISubscriber& aSubscriber) const override;
+	
 	IMessage* Copy() override;
+
 };
 

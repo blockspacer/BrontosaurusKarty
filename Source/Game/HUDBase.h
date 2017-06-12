@@ -24,7 +24,7 @@ class CHUDBase
 {
 public:
 	CHUDBase();
-	~CHUDBase();
+	virtual ~CHUDBase();
 
 	virtual void LoadHUD() = 0;
 	virtual void Render() = 0;

@@ -20,10 +20,17 @@
 
 char CMenuState::ourMenuesToPop = 0;
 
-std::map<CU::eKeys, CU::GAMEPAD> CMenuState::ourKeyboardToGamePadMap = { {CU::eKeys::RETURN, CU::GAMEPAD::START} };
+std::map<CU::eKeys, CU::GAMEPAD> CMenuState::ourKeyboardToGamePadMap = { 
+	{CU::eKeys::RETURN, CU::GAMEPAD::START} , 
+	{CU::eKeys::SPACE, CU::GAMEPAD::A}, 
+	{CU::eKeys::LEFT, CU::GAMEPAD::DPAD_LEFT},
+	{CU::eKeys::RIGHT , CU::GAMEPAD::DPAD_RIGHT},
+	{CU::eKeys::A, CU::GAMEPAD::DPAD_LEFT},
+	{CU::eKeys::D , CU::GAMEPAD::DPAD_RIGHT}
+};
 
 
-CMenuState::CMenuState(StateStack& aStateStack, std::string aFile) : State(aStateStack, eInputMessengerType::eMainMenu), myTextInputs(2), myCurrentTextInput(-1), myShowStateBelow(false), myPointerSprite(nullptr), myIsInFocus(false), myBlinkeyBool(true), myBlinkeyTimer(0), mySelectorNames(1), mySelectors(1)
+CMenuState::CMenuState(StateStack& aStateStack, std::string aFile) : State(aStateStack, eInputMessengerType::eMainMenu), myTextInputs(2), myCurrentTextInput(-1), myShowStateBelow(false), myPointerSprite(nullptr), myIsInFocus(false), myJoystickEngaged(false), myBlinkeyBool(true), myBlinkeyTimer(0), mySelectorNames(1),mySelectors(1)
 {
 	myManager.AddAction("ExitGame", bind(&CMenuState::ExitGame, std::placeholders::_1));
 	myManager.AddAction("PushMenu", [this](std::string string)-> bool { return PushMenu(string); });
@@ -31,6 +38,9 @@ CMenuState::CMenuState(StateStack& aStateStack, std::string aFile) : State(aStat
 	myManager.AddAction("PushLevel", [this](std::string string)-> bool { return PushLevel(string); });
 	myManager.AddAction("SelectTextInput", [this](std::string string)-> bool { return SetCurrentTextInput(string); });
 	myManager.AddAction("PushSplitScreenSelection", [this](std::string string)-> bool { return PushSplitScreenSelection();});
+	myManager.AddAction("SelectNext", [this](std::string string)-> bool { return SelectNext(string); });
+	myManager.AddAction("SelectPrevious", [this](std::string string)-> bool { return SelectPrevious(string); });
+	myManager.AddAction("PushSelectedLevel", [this](std::string string)-> bool { return PushSelectedLevel(string); });
 	MenuLoad(aFile);
 }
 
@@ -159,6 +169,24 @@ CU::eInputReturn CMenuState::RecieveInput(const CU::SInputMessage& aInputMessage
 	case CU::eInputType::eGamePadButtonPressed:
 		myManager.RecieveGamePadInput(aInputMessage.myGamePad);
 		break;
+	case CU::eInputType::eGamePadLeftJoyStickChanged:
+		if (myJoystickEngaged == false)
+		{
+			myJoystickEngaged = true;
+			if (aInputMessage.myJoyStickPosition.x > 0)
+			{
+				myManager.RecieveGamePadInput(CU::GAMEPAD::DPAD_RIGHT);
+			}
+			else if(aInputMessage.myJoyStickPosition.x < 0)
+			{
+				myManager.RecieveGamePadInput(CU::GAMEPAD::DPAD_LEFT);
+			}
+		}
+
+		if(aInputMessage.myJoyStickPosition.x == 0)
+		{
+			myJoystickEngaged = false;
+		}
 	default: break;
 	}
 
@@ -194,7 +222,6 @@ eMessageReturn CMenuState::DoEvent(const CLoadLevelMessage& aLoadLevelMessage)
 {
 	myStateStack.PushState(new CLoadState(myStateStack, aLoadLevelMessage.myLevelIndex));
 	return eMessageReturn::eContinue;
-
 }
 
 eAlignment CMenuState::LoadAlignment(const CU::CJsonValue& aJsonValue)
@@ -217,6 +244,17 @@ void CMenuState::LoadElement(const CU::CJsonValue& aJsonValue, const std::string
 	const CU::Vector2f origin = aJsonValue.at("origin").GetVector2f("xy");
 
 	const int spriteID = myManager.CreateSprite(aFolderpath + "/" + name, position, origin, 1);
+
+	if (aJsonValue.HasKey("isSelector") && aJsonValue.at("isSelector").GetBool())
+	{
+		mySelectorNames.Add(name);
+
+		SSelector selector;
+		selector.myMax = myManager.GetSpriteAmount(spriteID);
+		selector.mySelection = 0;
+		selector.mySpriteIndex = spriteID;
+		mySelectors.Add(selector);
+	}
 
 	if (aJsonValue.at("isButton").GetBool())
 	{
@@ -366,5 +404,51 @@ bool CMenuState::SetCurrentTextInput(std::string aTexINputIndex)
 {
 	myCurrentTextInput = stoi(aTexINputIndex);
 	myTextInputs[myCurrentTextInput].myInputIsValid = true;
+	return true;
+}
+
+bool CMenuState::SelectNext(const std::string aSelectorName)
+{
+	const char selectorIndex = mySelectorNames.Find(aSelectorName);
+	if (selectorIndex != mySelectorNames.FoundNone)
+	{
+		SSelector& selector = mySelectors[selectorIndex];
+		selector.mySelection += 1;
+		if (selector.mySelection >= selector.myMax)
+		{
+			selector.mySelection = 0;
+		}
+
+		myManager.SetSpiteState(selector.mySpriteIndex, selector.mySelection);
+	}
+
+	return true;
+}
+
+bool CMenuState::SelectPrevious(const std::string aSelectorName)
+{
+	const char selectorIndex = mySelectorNames.Find(aSelectorName);
+	if (selectorIndex != mySelectorNames.FoundNone)
+	{
+		SSelector& selector = mySelectors[selectorIndex];
+		selector.mySelection -= 1;
+		if (selector.mySelection < 0)
+		{
+			selector.mySelection = selector.myMax - 1;
+		}
+
+		myManager.SetSpiteState(selector.mySpriteIndex, selector.mySelection);
+	}
+
+	return true;
+}
+
+bool CMenuState::PushSelectedLevel(const std::string aSelector)
+{
+	const char selectorIndex = mySelectorNames.Find(aSelector);
+	if (selectorIndex != mySelectorNames.FoundNone)
+	{
+		myStateStack.SwapState(new CLoadState(myStateStack, mySelectors[selectorIndex].mySelection, myManager.ourParticipants));
+	}
 	return true;
 }

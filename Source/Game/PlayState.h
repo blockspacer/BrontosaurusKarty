@@ -44,6 +44,7 @@ class CLapTrackerComponentManager;
 class CLocalHUD;
 class CGlobalHUD;
 class CExplosionComponentManager;
+class CTimeTrackerComponentManager;
 
 struct SGUIElement;
 struct  SHUDElement;
@@ -90,9 +91,9 @@ private:
 	void InitiateRace();
 	void RenderCountdown();
 	void BroadcastRaceStart();
-	void LoadPlacementLineGUI();
-	void RenderPlacementLine();
 
+public:
+	eMessageReturn DoEvent(const Postmaster::Message::CControllerInputMessage& aControllerInputMessage) override;
 private:
 	Physics::CPhysicsScene* myPhysicsScene;
 	Physics::CPhysics* myPhysics;
@@ -114,6 +115,7 @@ private:
 	CBlueShellComponentManager* myBlueShellManager;
 	CRespawnComponentManager* myRespawnComponentManager;
 	CExplosionComponentManager* myExplosionManager;
+	CTimeTrackerComponentManager* myTimeTrackerComponentManager;
 
 	CU::GrowingArray<CCameraComponent*> myCameraComponents;
 	CU::GrowingArray<SParticipant> myPlayers;
@@ -136,6 +138,7 @@ private:
 	int myPlayerCount;
 	int myLevelIndex;
 	std::atomic_bool myIsLoaded;
+	int myLevelsCount;
 };
 
 inline bool CPlayState::IsLoaded() const

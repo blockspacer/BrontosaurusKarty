@@ -15,7 +15,6 @@
 #include <ThreadPool.h>
 
 #include "..\ThreadedPostmaster\Postmaster.h"
-#include "..\ThreadedPostmaster\RaceOverMessage.h"
 
 //Debug
 #include "..\ThreadedPostmaster\KeyCharPressed.h"
@@ -35,10 +34,6 @@ CLocalHUD::CLocalHUD(unsigned char aPlayerID, unsigned short aAmountOfPlayers)
 	myPlayer = CPollingStation::GetInstance()->GetPlayerAtID(aPlayerID);
 	if (myPlayer == nullptr)
 		DL_ASSERT("HUD - The player retrieved with ID %d was nullptr", aPlayerID);
-
-	//POSTMASTER.Subscribe(this, eMessageType::eCharPressed);
-	//POSTMASTER.Subscribe(this, eMessageType::eRaceOver); // why is this crapper?
-	//POSTMASTER.Subscribe(this, eMessageType::eBlueShellWarning);
 
 	myCameraOffset = CU::Vector2f(0.0f, 0.0f);
 
@@ -72,6 +67,19 @@ CLocalHUD::CLocalHUD(unsigned char aPlayerID, unsigned short aAmountOfPlayers)
 CLocalHUD::~CLocalHUD()
 {
 	POSTMASTER.Unsubscribe(this);
+
+	SAFE_DELETE(myMushroomSprite);
+	SAFE_DELETE(myGreenShellSprite);
+	SAFE_DELETE(myRedShellSprite);
+	SAFE_DELETE(myBananaSprite);
+	SAFE_DELETE(myStarSprite);
+	SAFE_DELETE(myLightningSprite);
+	SAFE_DELETE(myBlueShellSprite);
+	SAFE_DELETE(myFakeItemBoxSprite);
+
+	SAFE_DELETE(myBlueShellDangerSprite);
+	SAFE_DELETE(myRedShellDangerSprite);
+
 }
 
 void CLocalHUD::LoadHUD()
@@ -151,7 +159,6 @@ void CLocalHUD::Render()
 		float placementRektValue1 = 1.0f - (1.0f / 8.0f) * currentPlacement;
 		float placementRektValue2 = (1.0f + (1.0f / 8.0f)) - (1.0f / 8.0f) * currentPlacement;
 
-		//myPlacementElement.mySprite->SetPosition(myCameraOffset);
 		myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, placementRektValue1, 1.7f, placementRektValue2));
 
 		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"placement" + myPlayerID, myPlacementElement.myGUIElement, myPlacementElement.myPixelSize);
@@ -276,7 +283,6 @@ void CLocalHUD::LoadPlacement(const CU::CJsonValue& aJsonValue)
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
 	myPlacementElement = LoadHUDElement(aJsonValue);
-//	myPlacementElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
 	CU::Vector2f spriteSize(1.0f, 1.0f);
 	myPlacementElement.mySprite = new CSpriteInstance(spritePath.c_str(), spriteSize);
@@ -287,12 +293,8 @@ void CLocalHUD::LoadPlacement(const CU::CJsonValue& aJsonValue)
 void CLocalHUD::LoadFinishText(const CU::CJsonValue& aJsonValue)
 {
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
-
 	myFinishTextElement = LoadHUDElement(aJsonValue);
-//	myFinishTextElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
-
 	myFinishTextElement.mySprite = new CSpriteInstance(spritePath.c_str(), { 1.f,1.f });
-	/*myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));*/
 }
 
 void CLocalHUD::LoadItemGui(const CU::CJsonValue& aJsonValue)
@@ -300,7 +302,6 @@ void CLocalHUD::LoadItemGui(const CU::CJsonValue& aJsonValue)
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
 	myItemGuiElement = LoadHUDElement(aJsonValue);
-	//myItemGuiElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
 	float itemGuiWidth = 1.0f;
 	float itemGuiHeight = 1.0f;
@@ -314,7 +315,6 @@ void CLocalHUD::LoadItemGui(const CU::CJsonValue& aJsonValue)
 	myFakeItemBoxSprite = new CSpriteInstance("Sprites/GUI/Items/fakeItemBox.dds", { itemGuiWidth,itemGuiHeight });
 	myNullSprite = new CSpriteInstance("Sprites/GUI/Items/redShell.dds", { 0.0f,0.0f });
 	myItemGuiElement.mySprite = myNullSprite;
-	/*myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));*/
 
 }
 
@@ -323,15 +323,12 @@ void CLocalHUD::LoadDangerGui(const CU::CJsonValue& aJsonValue)
 	const std::string spritePath = aJsonValue.at("spritePath").GetString();
 
 	myDangerGuiElement = LoadHUDElement(aJsonValue);
-	//myItemGuiElement.myGUIElement.myOrigin = CU::Vector2f(0.0f, 0.0f);
 
 	float itemGuiWidth = 1.0f;
 	float itemGuiHeight = 1.0f;
 	myBlueShellDangerSprite = new CSpriteInstance("Sprites/GUI/blueShellWarning.dds", { itemGuiWidth,itemGuiHeight });
 	myRedShellDangerSprite = new CSpriteInstance("Sprites/GUI/redShellWarning.dds", { itemGuiWidth,itemGuiHeight });
 	myDangerGuiElement.mySprite = myNullSprite;
-	/*myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, 0.f, 1.0f, 1.0f));*/
-
 }
 
 void CLocalHUD::DisableRedundantGUI()
@@ -359,15 +356,6 @@ void CLocalHUD::DisableRedundantGUI()
 	CU::ThreadPool::GetInstance()->AddWork(work);
 }
 
-// When the race is finished for all players.
-//eMessageReturn CLocalHUD::DoEvent(const CRaceOverMessage& aMessage)
-//{
-//	myWinners = aMessage.GetWinners();
-//	// Present scoreboard. (over the entire screen.)
-//	PresentScoreboard();
-//	return eMessageReturn::eContinue;
-//}
-
 // Debuging
 eMessageReturn CLocalHUD::DoEvent(const KeyCharPressed& aMessage)
 {
@@ -379,8 +367,6 @@ eMessageReturn CLocalHUD::DoEvent(const KeyCharPressed& aMessage)
 
 
 	unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer) + myLapAdjusterCheat;
-	if (currentLap > 3)
-		//PresentScoreboard();
 
 	return eMessageReturn::eContinue;
 }

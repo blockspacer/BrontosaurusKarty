@@ -18,6 +18,7 @@
 #include "ParticleEmitterComponent.h"
 #include "PointLightComponent.h"
 #include "LightManager.h"
+#include "Scene.h"
 
 #include "ModelComponentManager.h"
 #include "ConcaveMeshCollider.h"
@@ -66,7 +67,7 @@ CItemFactory::~CItemFactory()
 {
 }
 
-void CItemFactory::Init(CGameObjectManager& aGameObjectManager, CItemWeaponBehaviourComponentManager & aManager, Physics::CPhysicsScene* aPhysicsScene, CColliderComponentManager& aColliderManager, CRedShellManager& aRedShellManager, CBlueShellComponentManager& aBlueShellManager)
+void CItemFactory::Init(CGameObjectManager& aGameObjectManager, CItemWeaponBehaviourComponentManager & aManager, Physics::CPhysicsScene* aPhysicsScene, CColliderComponentManager& aColliderManager, CRedShellManager& aRedShellManager, CBlueShellComponentManager& aBlueShellManager, CScene* aScene)
 {
 	myItemBeheviourComponentManager = &aManager;
 	myPhysicsScene = aPhysicsScene;
@@ -74,6 +75,7 @@ void CItemFactory::Init(CGameObjectManager& aGameObjectManager, CItemWeaponBehav
 	myColliderManager = &aColliderManager;
 	myRedShellManager = &aRedShellManager;
 	myBlueShellManager = &aBlueShellManager;
+	myScene = aScene;
 
 	CreateShellBuffer();
 	CreateBananaBuffer();
@@ -94,6 +96,16 @@ void CItemFactory::CreateBananaBuffer()
 		CModelComponent* model = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_Banana_01.fbx");
 		model->FlipVisibility();
 		banana->AddComponent(model);
+
+		PointLightComponent* pointLight = new PointLightComponent(*myScene);
+		pointLight->SetOffsetToParent(CU::Vector3f(0, 1, 0));
+		pointLight->SetColor(CU::Vector3f(1, 1, 0));
+		pointLight->SetIntensity(1.0f);
+		pointLight->SetRange(5);
+		
+
+		banana->AddComponent(pointLight);
+		banana->NotifyOnlyComponents(eComponentMessageType::eTurnOffThePointLight, SComponentMessageData());
 
 		CItemWeaponBehaviourComponent* physics = myItemBeheviourComponentManager->CreateAndRegisterComponent();
 		physics->SetToNoSpeed();
@@ -147,6 +159,15 @@ void CItemFactory::CreateShellBuffer()
 		CModelComponent* model = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_shell_green_01.fbx");
 		model->FlipVisibility();
 		shell->AddComponent(model);
+
+		PointLightComponent* pointLight = new PointLightComponent(*myScene);
+		pointLight->SetOffsetToParent(CU::Vector3f(0, 1, 0));
+		pointLight->SetColor(CU::Vector3f(0, 1, 0));
+		pointLight->SetIntensity(1.0f);
+		pointLight->SetRange(10);
+
+		shell->AddComponent(pointLight);
+		shell->NotifyOnlyComponents(eComponentMessageType::eTurnOffThePointLight, SComponentMessageData());
 
 		CParticleEmitterComponent* particle = CParticleEmitterComponentManager::GetInstance().CreateComponent("ShellTrail");
 		particle->Deactivate();
@@ -203,6 +224,15 @@ void CItemFactory::CreateRedShellBuffer()
 		CModelComponent* model = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_Shell_Red_01.fbx");
 		model->FlipVisibility();
 		shell->AddComponent(model);
+
+		PointLightComponent* pointLight = new PointLightComponent(*myScene);
+		pointLight->SetOffsetToParent(CU::Vector3f(0, 1, 0));
+		pointLight->SetColor(CU::Vector3f(1, 0, 0));
+		pointLight->SetIntensity(1.0f);
+		pointLight->SetRange(5);
+
+		shell->AddComponent(pointLight);
+		shell->NotifyOnlyComponents(eComponentMessageType::eTurnOffThePointLight, SComponentMessageData());
 
 		CParticleEmitterComponent* particle = CParticleEmitterComponentManager::GetInstance().CreateComponent("DriftDebris");
 		particle->Deactivate();
@@ -404,6 +434,7 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 		myShells.Remove(shell);
 		shell->NotifyOnlyComponents(eComponentMessageType::eActivate, SComponentMessageData());
 		shell->NotifyOnlyComponents(eComponentMessageType::eActivateEmitter, SComponentMessageData());
+		shell->NotifyOnlyComponents(eComponentMessageType::eTurnOnThePointLight, SComponentMessageData());
 		myActiveShells.Add(shell);
 		CU::Matrix44f transform = userComponent->GetParent()->GetToWorldTransform();
 		CU::Vector3f position = userComponent->GetParent()->GetWorldPosition();
@@ -426,6 +457,7 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 		myRedShells.Remove(shell);
 		shell->NotifyOnlyComponents(eComponentMessageType::eActivate, SComponentMessageData());
 		shell->NotifyOnlyComponents(eComponentMessageType::eActivateEmitter, SComponentMessageData());
+		shell->NotifyOnlyComponents(eComponentMessageType::eTurnOnThePointLight, SComponentMessageData());
 		myActiveRedShells.Add(shell);
 		CU::Matrix44f transform = userComponent->GetParent()->GetToWorldTransform();
 		CU::Vector3f position = userComponent->GetParent()->GetWorldPosition();
@@ -513,6 +545,7 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 		CGameObject* banana = myBananas.GetLast();
 		myBananas.Remove(banana);
 		banana->NotifyComponents(eComponentMessageType::eActivate, SComponentMessageData());
+		banana->NotifyOnlyComponents(eComponentMessageType::eTurnOnThePointLight, SComponentMessageData());
 		myActiveBananas.Add(banana);
 		CU::Matrix44f transform = userComponent->GetParent()->GetToWorldTransform();
 		CU::Vector3f position = userComponent->GetParent()->GetWorldPosition();

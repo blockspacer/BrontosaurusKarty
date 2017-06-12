@@ -15,6 +15,8 @@ eMessageReturn PopCurrentState::DoEvent(::Postmaster::ISubscriber& aSubscriber) 
 	return aSubscriber.DoEvent(*this);
 }
 
+
+
 Postmaster::Message::IMessage* PopCurrentState::Copy()
 {
 	return new PopCurrentState(*this);
