@@ -59,7 +59,7 @@ namespace CU
 	{
 		aKeys.RemoveAll();
 
-		for (unsigned short i = 0; i < 14; ++i)
+		for (unsigned short i = 0; i < 16; ++i)
 		{
 			unsigned short downNow = (1 << i) & myJoysticks[aJoystickIndex].Gamepad.wButtons;
 			unsigned short downBefore = (1 << i) & myPreviousButtonState[aJoystickIndex];

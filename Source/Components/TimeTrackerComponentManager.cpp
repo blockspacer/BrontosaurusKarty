@@ -27,9 +27,14 @@ void CTimeTrackerComponentManager::RaceStart()
 	}
 }
 
-CTimeTrackerComponent* CTimeTrackerComponentManager::CreateComponent()
+CTimeTrackerComponent* CTimeTrackerComponentManager::CreateAndRegisterComponent()
 {
-	CTimeTrackerComponent* newComponent = new CTimeTrackerComponent();
-	myComponents.Add(newComponent);
+	CTimeTrackerComponent* newComponent = nullptr;
+	if(CComponentManager::GetInstancePtr() != nullptr)
+	{
+		newComponent = new CTimeTrackerComponent();
+		CComponentManager::GetInstancePtr()->RegisterComponent(newComponent);
+		myComponents.Add(newComponent);
+	}
 	return newComponent;
 }

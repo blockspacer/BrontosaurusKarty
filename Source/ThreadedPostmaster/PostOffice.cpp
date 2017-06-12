@@ -35,6 +35,7 @@ void Postmaster::Threaded::CPostOffice::Broadcast(Message::IMessage* aMessage)
 		{
 			aMessage->DoEvent(*subscribers[i]);
 		}
+		aMessage->DoCallback();
 		delete aMessage;
 	}
 }
@@ -105,6 +106,7 @@ void Postmaster::Threaded::CPostOffice::HandleBroadcastMessages()
 		{
 			message->DoEvent(*subscribers[i]);
 		}
+		message->DoCallback();
 		delete message;
 	}
 }
@@ -129,6 +131,8 @@ void Postmaster::Threaded::CPostOffice::HandleNarrowcastMessages()
 				nMessage.message->DoEvent(*subscriber);
 			}
 		}
+
+		nMessage.message->DoCallback();
 
 		delete nMessage.message;
 	}

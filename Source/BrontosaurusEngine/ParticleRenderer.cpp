@@ -82,7 +82,7 @@ void CParticleRenderer::DoRenderQueue(ID3D11ShaderResourceView* aDepthResource, 
 	depthResources[0] = mySecondaryDepthStencil;
 	depthResources[1] = myDepthStencilResourceToUse;
 
-	DEVICE_CONTEXT->PSSetShaderResources(20, 2, depthResources);
+	DEVICE_CONTEXT->PSSetShaderResources(10, 1, &myDepthStencilResourceToUse);
 	for (int i = 0; i < myParticleMessages.Size(); ++i)
 	{
 		
