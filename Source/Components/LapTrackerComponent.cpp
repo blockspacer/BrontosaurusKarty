@@ -162,8 +162,9 @@ void CLapTrackerComponent::Receive(const eComponentMessageType aMessageType, con
 				GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
 			}
 
-			if (myLapIndex > 3)
+			if (myLapIndex == 4)
 			{
+				GetParent()->NotifyOnlyComponents(eComponentMessageType::eFinishedRace, SComponentMessageData());
 				if (GetParent()->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
 				{
 					Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CPlayerFinishedMessage(GetParent()));

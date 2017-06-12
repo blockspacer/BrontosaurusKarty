@@ -132,6 +132,7 @@ private:
 	int myPlayerCount;
 	int myLevelIndex;
 	std::atomic_bool myIsLoaded;
+	int myLevelsCount;
 };
 
 inline bool CPlayState::IsLoaded() const

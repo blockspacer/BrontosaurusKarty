@@ -9,7 +9,7 @@ public:
 	CTimeTrackerComponentManager();
 	~CTimeTrackerComponentManager();
 
-	CTimeTrackerComponent* CreateComponent();
+	CTimeTrackerComponent* CreateAndRegisterComponent();
 	void Update(float aDeltaTime);
 
 private:

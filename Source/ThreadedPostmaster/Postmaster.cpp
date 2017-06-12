@@ -137,7 +137,7 @@ void Postmaster::Threaded::CPostmaster::HandleOutgoingBroadcast(Container::CLock
 	std::map<std::thread::id, CPostOffice*>::iterator it;
 	for (it = myOffices.begin(); it != myOffices.end(); ++it)
 	{
-		if(it->second->GetIsActive() == true)
+		if(it->second != nullptr && it->second->GetIsActive() == true)
 		{
 			Container::CLocklessQueue<Message::IMessage*> bufferQueue;
 			for (int i = 0; i < buffer.Size(); ++i)

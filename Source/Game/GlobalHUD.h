@@ -9,12 +9,13 @@ class CGlobalHUD : public CHUDBase, public Postmaster::ISubscriber
 {
 public:
 
-	CGlobalHUD();
+	CGlobalHUD(int aLevelIndex);
 	~CGlobalHUD();
 
 public:
 	void LoadHUD() override;
 	void Render() override;
+	bool GetRaceOVer() const;
 
 	void StartCountDown();
 
@@ -28,10 +29,12 @@ private:
 	eMessageReturn DoEvent(const CRaceOverMessage& aMessage) override;
 	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
 	void ToMainMenu();
+	void ToMainMenu(const std::function<void(void)>& aCallback);
+	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
 
 public:
 	void Retry();
-	eMessageReturn DoEvent(const Postmaster::Message::CControllerInputMessage& aControllerInputMessage) override;
+	void LoadNext();
 private:
 	const CU::GrowingArray<CGameObject*>* myKartObjects;
 	CU::StaticArray<SPlacementData, 8> myWinners;
@@ -50,5 +53,6 @@ private:
 
 	const unsigned char myNrOfPlayers;
 	bool myRaceOver;
+	int myLevelIndex;
 };
 
