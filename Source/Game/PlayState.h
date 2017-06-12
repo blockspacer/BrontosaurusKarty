@@ -93,6 +93,8 @@ private:
 	void LoadPlacementLineGUI();
 	void RenderPlacementLine();
 
+public:
+	eMessageReturn DoEvent(const Postmaster::Message::CControllerInputMessage& aControllerInputMessage) override;
 private:
 	Physics::CPhysicsScene* myPhysicsScene;
 	Physics::CPhysics* myPhysics;
@@ -136,6 +138,7 @@ private:
 	int myPlayerCount;
 	int myLevelIndex;
 	std::atomic_bool myIsLoaded;
+	int myLevelsCount;
 };
 
 inline bool CPlayState::IsLoaded() const

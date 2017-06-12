@@ -107,9 +107,21 @@ CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	, myModelComponentManager(nullptr)
 	, myColliderComponentManager(nullptr)
 	, myScriptComponentManager(nullptr)
+	, myKartComponentManager(nullptr)
+	, myBoostPadComponentManager(nullptr)
+	, myKartControllerComponentManager(nullptr)
+	, myPlayerControllerManager(nullptr)
 	, myItemFactory(nullptr)
+	, myItemBehaviourManager(nullptr)
+	, myRedShellManager(nullptr)
+	, myBlueShellManager(nullptr)
 	, myRespawnComponentManager(nullptr)
+	, myExplosionManager(nullptr)
 	, myCameraComponents(4)
+	, myGlobalHUD(nullptr)
+	, myCountdownTimerHandle(0)
+	, myCountdownSprite(nullptr)
+	, myCountdownElement(nullptr)	
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
@@ -122,7 +134,6 @@ CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	myPlayers[0].myInputDevice = SParticipant::eInputDevice::eKeyboard;
 	//myPlacementLinesGUIElement.Init(8);
 	myPlacementLineScreenSpaceWidth = 0.0f;
-	
 }
 
 CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU::GrowingArray<SParticipant> aPlayers)
@@ -134,14 +145,26 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	, myModelComponentManager(nullptr)
 	, myColliderComponentManager(nullptr)
 	, myScriptComponentManager(nullptr)
+	, myKartComponentManager(nullptr)
+	, myBoostPadComponentManager(nullptr)
+	, myKartControllerComponentManager(nullptr)
+	, myPlayerControllerManager(nullptr)
 	, myItemFactory(nullptr)
+	, myItemBehaviourManager(nullptr)
+	, myRedShellManager(nullptr)
+	, myBlueShellManager(nullptr)
 	, myRespawnComponentManager(nullptr)
+	, myExplosionManager(nullptr)
 	, myCameraComponents(4)
+	, myGlobalHUD(nullptr)
+	, myCountdownTimerHandle(0)
+	, myCountdownSprite(nullptr)
+	, myCountdownElement(nullptr)
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
 	, myCountdownShouldRender(false)
-	,myIsCountingDown(true)
+	, myIsCountingDown(true)
 {
 	if (aPlayers.Size() > 0)
 	{
@@ -200,11 +223,16 @@ CPlayState::~CPlayState()
 
 	CKartSpawnPointManager::GetInstance()->Destroy();
 	CPickupComponentManager::Destroy();
+
+	myLocalHUDs.DeleteAll();
+
+	CPollingStation::Destroy();
 }
 
 // Runs on its own thread.
 void CPlayState::Load()
 {
+	CPollingStation::Create();
 	CU::CStopWatch loadPlaystateTimer;
 	loadPlaystateTimer.Start();
 
@@ -260,6 +288,7 @@ void CPlayState::Load()
 		return;
 	}
 
+	myLevelsCount = levelsArray.Size();
 	std::string levelPath = "Json/Levels/";
 	levelPath += levelsArray[myLevelIndex].GetString();
 	levelPath += "/LevelData.json";
@@ -306,7 +335,7 @@ void CPlayState::Load()
 		myLocalHUDs[i]->LoadHUD();
 	}
 
-	myGlobalHUD = new CGlobalHUD();
+	myGlobalHUD = new CGlobalHUD(myLevelIndex);
 	myGlobalHUD->LoadHUD();
 
 	LoadPlacementLineGUI();
@@ -361,7 +390,7 @@ void CPlayState::Init()
 
 	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::ePlayerFinished);
 	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::eRaceStarted);
-
+	POSTMASTER.Subscribe(this, eMessageType::eControllerInput);
 	myGameObjectManager->SendObjectsDoneMessage();
 	myKartControllerComponentManager->Init();
 	CLapTrackerComponentManager::GetInstance()->Init();
@@ -959,4 +988,27 @@ void CPlayState::RenderPlacementLine()
 
 	//	myPlacementLinesGUIElement[i]->mySprite->RenderToGUI(L"placementLine" + i);
 	//}
+}
+
+eMessageReturn CPlayState::DoEvent(const Postmaster::Message::CControllerInputMessage& aControllerInputMessage)
+{
+	const Postmaster::Message::InputEventData& data = aControllerInputMessage.GetData();
+
+	if (myGlobalHUD != nullptr && myGlobalHUD->GetRaceOVer() == true && data.eventType == Postmaster::Message::EventType::ButtonChanged &&
+		data.data.boolValue == true && data.buttonIndex == Postmaster::Message::ButtonIndex::B)
+	{
+		myStateStack.Pop();
+	}
+	else if (myGlobalHUD != nullptr && myGlobalHUD->GetRaceOVer() == true && data.eventType == Postmaster::Message::EventType::ButtonChanged &&
+		data.data.boolValue == true && data.buttonIndex == Postmaster::Message::ButtonIndex::X)
+	{
+		myStateStack.SwapState(new CLoadState(myStateStack, myLevelIndex, myPlayers));
+	}
+	else if (myGlobalHUD != nullptr && myGlobalHUD->GetRaceOVer() == true && data.eventType == Postmaster::Message::EventType::ButtonChanged &&
+		data.data.boolValue == true && data.buttonIndex == Postmaster::Message::ButtonIndex::A)
+	{
+		myStateStack.SwapState(new CLoadState(myStateStack, (myLevelIndex + 1) % myLevelsCount, myPlayers));
+	}
+
+	return eMessageReturn::eContinue;
 }

@@ -16,6 +16,7 @@
 #include <ThreadPool.h>
 #include "ThreadedPostmaster/PopCurrentState.h"
 #include "ThreadedPostmaster/ControllerInputMessage.h"
+#include "ThreadedPostmaster/PushState.h"
 
 
 #define DEFAULT	{0.3f, 0.3f, 0.3f, 1.0f}
@@ -24,7 +25,7 @@
 #define PINK	{1.0f, 0.0f, 1.0f, 1.0f}
 #define BLUE	{0.0f, 0.0f, 1.0f, 1.0f}
 
-CGlobalHUD::CGlobalHUD()
+CGlobalHUD::CGlobalHUD(int aLevelIndex): myScoreboardBGSprite(nullptr), myPortraitSprite(nullptr), myMinimapBGSprite(nullptr), myMinimapPosIndicator(nullptr), myRaceOver(false), myLevelIndex(aLevelIndex)
 {
 	myKartObjects = CPollingStation::GetInstance()->GetKartList();
 }
@@ -134,6 +135,11 @@ void CGlobalHUD::Render()
 	}
 }
 
+bool CGlobalHUD::GetRaceOVer() const
+{
+	return myRaceOver;
+}
+
 void CGlobalHUD::LoadScoreboard(const CU::CJsonValue& aJsonValue)
 {
 	CU::CJsonValue jsonElementData = aJsonValue.at("elementData");
@@ -204,9 +210,11 @@ eMessageReturn CGlobalHUD::DoEvent(const CRaceOverMessage & aMessage)
 	return eMessageReturn::eContinue;
 }
 
-void CGlobalHUD::ToMainMenu()
+void CGlobalHUD::ToMainMenu(const std::function<void(void)>& aCallback)
 {
-	POSTMASTER.Broadcast(new PopCurrentState());
+	PopCurrentState* message = new PopCurrentState();
+	message->SetCallback(aCallback);
+	POSTMASTER.BroadcastLocal(message);
 }
 
 // debugging
@@ -215,29 +223,17 @@ eMessageReturn CGlobalHUD::DoEvent(const KeyCharPressed & aMessage)
 	if (aMessage.GetKey() == 'p')
 		PresentScoreboard();
 	if (aMessage.GetKey() == 'c' && myRaceOver == true)
-		ToMainMenu();
+		ToMainMenu([](){});
 
 	return eMessageReturn::eContinue;
 }
 
 void CGlobalHUD::Retry()
 {
+	ToMainMenu([this]() {POSTMASTER.BroadcastLocal(new PushState(PushState::eState::ePlayState, myLevelIndex)); });
 }
 
-eMessageReturn CGlobalHUD::DoEvent(const Postmaster::Message::CControllerInputMessage& aControllerInputMessage)
+void CGlobalHUD::LoadNext()
 {
-	const Postmaster::Message::InputEventData& data = aControllerInputMessage.GetData();
-
-	if(myRaceOver == true && data.eventType == Postmaster::Message::EventType::ButtonChanged &&
-		data.data.boolValue == true && data.buttonIndex == Postmaster::Message::ButtonIndex::A)
-	{
-		ToMainMenu();
-	}
-	if (myRaceOver == true && data.eventType == Postmaster::Message::EventType::ButtonChanged &&
-		data.data.boolValue == true && data.buttonIndex == Postmaster::Message::ButtonIndex::A)
-	{
-		Retry();
-	}
-
-	return eMessageReturn::eContinue;
+	ToMainMenu([this](){POSTMASTER.BroadcastLocal(new PushState(PushState::eState::ePlayState, myLevelIndex + 1)); });
 }
