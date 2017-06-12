@@ -8,6 +8,7 @@
 #include "CommonUtilities/JsonValue.h"
 #include "StateStack.h"
 #include "LoadState.h"
+#include "CommonUtilities.h"
 
 CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aStateStack,eInputMessengerType::eSplitScreenSelectionMenu, 1)
 {
@@ -149,7 +150,7 @@ void CSplitScreenSelection::LoadElement(const CU::CJsonValue & aJsonValue, const
 		else
 		{
 			const SMenuSprite& currentSprite = myMenuManager.GetSprite(spriteID);
-			textPosition = position + (textValue.at("offset").GetVector2f() - currentSprite.myDafaultSprite->GetPivot()) * currentSprite.myDafaultSprite->GetSize();
+			textPosition = position + (textValue.at("offset").GetVector2f() - currentSprite.mySprites[0]->GetPivot()) * currentSprite.mySprites[0]->GetSize();
 		}
 
 		if (text.size() > 0 && text.at(0) == L'#')

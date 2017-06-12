@@ -65,6 +65,7 @@
     <ClCompile Include="GlobalHUD.cpp" />
     <ClCompile Include="HUDBase.cpp" />
     <ClCompile Include="LocalHUD.cpp" />
+    <ClCompile Include="BroadcastINputListener.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -137,6 +138,7 @@
     <ClInclude Include="GlobalHUD.h" />
     <ClInclude Include="HUDBase.h" />
     <ClInclude Include="LocalHUD.h" />
+    <ClInclude Include="BroadcastINputListener.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="States">

@@ -26,15 +26,22 @@ private:
 	void ToMainMenu();
 	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
 
+public:
+	void Retry();
+	eMessageReturn DoEvent(const Postmaster::Message::CControllerInputMessage& aControllerInputMessage) override;
 private:
-
+	const CU::GrowingArray<CGameObject*>* myKartObjects;
 	CU::StaticArray<SPlacementData, 8> myWinners;
-	CU::GrowingArray<SHUDElement*> myPlacementLinesGUIElement;
 
 	SHUDElement myScoreboardElement;
+	SHUDElement myMinimapElement;
 
 	CSpriteInstance* myScoreboardBGSprite;
 	CSpriteInstance* myPortraitSprite;
+
+	CSpriteInstance* myMinimapBGSprite;
+	CSpriteInstance* myMinimapPosIndicator;
+
 	bool myRaceOver;
 };
 

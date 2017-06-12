@@ -397,6 +397,9 @@
     <ClInclude Include="WindowsHelper.h">
       <Filter>WindowsHelper</Filter>
     </ClInclude>
+    <ClInclude Include="GamepadButtons.h">
+      <Filter>Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -486,6 +489,9 @@
     </ClCompile>
     <ClCompile Include="WindowsHelper.cpp">
       <Filter>WindowsHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="GamePadButtons.cpp">
+      <Filter>Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

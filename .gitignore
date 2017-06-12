@@ -434,3 +434,4 @@ Bin/KartMultiplayer.bat
 *.png
 Bin/Json/Animation/types.txt
 *.diagsession
+/Bin/Json/Menu/GamePadButtons.txt

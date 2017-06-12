@@ -135,6 +135,11 @@ eMessageReturn Postmaster::ISubscriber::DoEvent(const CBlueShellWarningMessage& 
 	return eMessageReturn::eContinue;
 }
 
+eMessageReturn Postmaster::ISubscriber::DoEvent(const Message::CControllerInputMessage& aControllerInputMessage)
+{
+	return eMessageReturn::eContinue;
+}
+
 void Postmaster::ISubscriber::SetSubscribedThread(const std::thread::id & aId)
 {
 	if(mySubscribedId != std::thread::id() && mySubscribedId != aId)

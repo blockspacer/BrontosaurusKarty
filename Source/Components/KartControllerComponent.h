@@ -3,6 +3,7 @@
 #include "CurrentAction.h"
 #include "../ThreadedPostmaster/Postmaster.h"
 #include "../ThreadedPostmaster/SetVibrationOnController.h"
+#include "JsonValue.h"
 
 namespace Physics
 {
@@ -158,6 +159,7 @@ private:
 	CComponent* myLastGroundComponent;
 	bool myLookingBack;
 	bool myIsplayingEngineLoop;
+	float myTerrainResistance;
 };
 
 
@@ -184,7 +186,7 @@ bool CKartControllerComponent::GetHitGround()
 
 float CKartControllerComponent::GetMaxSpeed() const
 {
-	return myMaxSpeed * (myIsBoosting == false ? myTerrainModifier : 1.f);
+	return myMaxSpeed * (myIsBoosting == false ? pow(myTerrainModifier,myTerrainResistance) : 1.f);
 }
 
 float CKartControllerComponent::GetMaxSpeed2() const
@@ -205,5 +207,5 @@ bool CKartControllerComponent::GetIsControlledByAI() const
 
 float CKartControllerComponent::GetAcceleratiot()
 {
-	return myAcceleration * (myIsBoosting == false ? myTerrainModifier : 1.f);
+	return myAcceleration * (myIsBoosting == false ? pow(myTerrainModifier, myTerrainResistance) : 1.f);
 }
