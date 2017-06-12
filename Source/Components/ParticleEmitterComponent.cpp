@@ -5,6 +5,11 @@
 
 #include "../BrontosaurusEngine/ParticleEmitterInstance.h"
 
+CParticleEmitterComponent::CParticleEmitterComponent(const std::string& anId) : 
+CParticleEmitterComponent(CParticleEmitterManager::GetInstance().GetEmitterInstance(anId))
+{
+}
+
 CParticleEmitterComponent::CParticleEmitterComponent(int anId)
 {
 	myInstanceId = anId;

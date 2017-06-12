@@ -607,6 +607,9 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	cameraComponent->SetCamera(aCamera);
 	cameraObject->AddComponent(cameraComponent);
 	myCameraComponents.Add(cameraComponent);
+
+	
+
 	//Create top player object
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
 	playerObject->AddComponent(cameraObject);
