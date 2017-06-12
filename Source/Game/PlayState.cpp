@@ -507,9 +507,9 @@ CU::eInputReturn CPlayState::RecieveInput(const CU::SInputMessage& aInputMessage
 	}
 	switch(aInputMessage.myType)
 	{
-	
-	case CU::eInputType::eGamePadButtonPressed: 
-	if(aInputMessage.myGamePad == CU::GAMEPAD::B)
+	case CU::eInputType::eKeyboardPressed:
+	case CU::eInputType::eGamePadButtonPressed:
+	if(aInputMessage.myGamePad == CU::GAMEPAD::B || aInputMessage.myKey == CU::eKeys::RCONTROL)
 	{
 		Postmaster::Message::InputEventData eventData;
 		eventData.eventType = Postmaster::Message::EventType::ButtonChanged;
@@ -517,7 +517,7 @@ CU::eInputReturn CPlayState::RecieveInput(const CU::SInputMessage& aInputMessage
 		eventData.buttonIndex = Postmaster::Message::ButtonIndex::B;
 		PostPostmasterEvent(aInputMessage.myGamepadIndex, eventData);
 	}
-	if (aInputMessage.myGamePad == CU::GAMEPAD::A)
+	if (aInputMessage.myGamePad == CU::GAMEPAD::A || aInputMessage.myKey == CU::eKeys::SPACE)
 	{
 		Postmaster::Message::InputEventData eventData;
 		eventData.eventType = Postmaster::Message::EventType::ButtonChanged;
@@ -525,7 +525,7 @@ CU::eInputReturn CPlayState::RecieveInput(const CU::SInputMessage& aInputMessage
 		eventData.buttonIndex = Postmaster::Message::ButtonIndex::A;
 		PostPostmasterEvent(aInputMessage.myGamepadIndex, eventData);
 	}
-	if (aInputMessage.myGamePad == CU::GAMEPAD::X)
+	if (aInputMessage.myGamePad == CU::GAMEPAD::X || aInputMessage.myKey == CU::eKeys::RETURN)
 	{
 		Postmaster::Message::InputEventData eventData;
 		eventData.eventType = Postmaster::Message::EventType::ButtonChanged;
@@ -650,15 +650,18 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 
 	//Create player number object
 	CGameObject* playerNumber = myGameObjectManager->CreateGameObject();
-	CParticleEmitterComponent* emitterComponent = CParticleEmitterComponentManager::GetInstance().CreateComponent("Player1");
-	emitterComponent->Activate();
-	playerNumber->AddComponent(emitterComponent);
-	playerNumber->GetLocalTransform().SetPosition({ 0.f,5.f,0.f });
+	CModelComponent* numberModel = myModelComponentManager->CreateComponent(std::string("Models/Meshes/M_PlayerN") + std::to_string(static_cast<int>(aParticipant.myInputDevice)) + ".fbx");
+
+	numberModel->SetIsBillboard(true);
+
+	playerNumber->AddComponent(numberModel);
+	playerNumber->GetLocalTransform().SetPosition({ 0.f,2.f,0.f });
 
 	//Create top player object
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
 	playerObject->AddComponent(cameraObject);
 	playerObject->AddComponent(intermediary);
+	playerObject->AddComponent(playerNumber);
 
 	CAudioSourceComponent* audio = CAudioSourceComponentManager::GetInstance().CreateComponent();
 	playerObject->AddComponent(audio);

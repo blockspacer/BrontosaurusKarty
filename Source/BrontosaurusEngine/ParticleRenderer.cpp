@@ -93,6 +93,12 @@ void CParticleRenderer::DoRenderQueue(ID3D11ShaderResourceView* aDepthResource, 
 		
 		SRenderParticlesMessage* msg = static_cast<SRenderParticlesMessage*>(myParticleMessages[i]);
 		CParticleEmitter* emitter = CParticleEmitterManager::GetInstance().GetEmitter(msg->particleEmitter);
+		if(msg->particleEmitter == 118)
+		{
+			int i = 0;
+		}
+
+
 		if (emitter == nullptr)	break;
 		switch(emitter->GetRenderMode())
 		{
