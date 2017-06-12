@@ -24,7 +24,7 @@
 #define PINK	{1.0f, 0.0f, 1.0f, 1.0f}
 #define BLUE	{0.0f, 0.0f, 1.0f, 1.0f}
 
-CGlobalHUD::CGlobalHUD()
+CGlobalHUD::CGlobalHUD(): myNrOfPlayers(0)
 {
 	myKartObjects = CPollingStation::GetInstance()->GetKartList();
 }
@@ -35,6 +35,7 @@ CGlobalHUD::~CGlobalHUD()
 
 void CGlobalHUD::LoadHUD()
 {
+	(unsigned char)myNrOfPlayers = CPollingStation::GetInstance()->GetAmmountOfPlayer();
 	CU::CJsonValue jsonDoc;
 	jsonDoc.Parse("Json/HUD/HUDGlobal.json");
 
@@ -103,7 +104,13 @@ void CGlobalHUD::Render()
 				if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eGetLapTraversedPercentage, percentDoneQuestion) == true)
 				{
 					float distancePercent = percentDoneQuestion.myFloat;
-					myMinimapPosIndicator->SetPosition({ myMinimapElement.mySprite->GetPosition().x + distancePercent, 0.5f });
+					float xPos = ((myMinimapElement.mySprite->GetPosition().x + distancePercent) * 0.87f) + 0.055f;
+					CLAMP(xPos, 0.1f, 0.8f);
+					
+					myMinimapPosIndicator->SetPosition({ xPos, 0.43f });
+					//if (myNrOfPlayers == 1)
+					//	myMinimapPosIndicator->SetPosition({ xPos, 0.95f });
+
 				}
 
 				myMinimapPosIndicator->SetColor(DEFAULT);
@@ -165,7 +172,13 @@ void CGlobalHUD::LoadScoreboard(const CU::CJsonValue& aJsonValue)
 
 void CGlobalHUD::LoadMiniMap(const CU::CJsonValue& aJsonValue)
 {
-	CU::CJsonValue jsonElementData = aJsonValue.at("elementData");
+	CU::CJsonValue jsonElementData;
+
+	if (myNrOfPlayers == 1)
+		jsonElementData = aJsonValue.at("elementDataSP");
+	else
+		jsonElementData = aJsonValue.at("elementDataMP");
+
 	CU::CJsonValue jsonSprites = aJsonValue.at("sprites");
 
 	myMinimapElement = LoadHUDElement(jsonElementData);
@@ -174,9 +187,8 @@ void CGlobalHUD::LoadMiniMap(const CU::CJsonValue& aJsonValue)
 	const std::string posIndicatorSpritePath = jsonSprites.at("mark").GetString();
 
 	myMinimapElement.mySprite = new CSpriteInstance(backgroundSpritePath.c_str(), { 1.0f, 1.0f });
-	myMinimapPosIndicator = new CSpriteInstance(posIndicatorSpritePath.c_str(), { 0.016f, 0.16f });
+	myMinimapPosIndicator = new CSpriteInstance(posIndicatorSpritePath.c_str(), { 0.016f, 0.29f });
 
-	// IF SINGLE PLAYER -> POS AT THE BOTTOM
 }
 
 void CGlobalHUD::PresentScoreboard()

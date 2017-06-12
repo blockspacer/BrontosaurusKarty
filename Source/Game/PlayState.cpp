@@ -561,7 +561,7 @@ void CPlayState::CreateManagersAndFactories()
 	myRedShellManager->Init(myPhysicsScene, myKartControllerComponentManager,myKartObjects);
 	myBlueShellManager = new CBlueShellComponentManager(myKartObjects,myGameObjectManager,myExplosionManager,myColliderComponentManager);
 	myItemFactory = new CItemFactory();
-	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager,*myRedShellManager,*myBlueShellManager);
+	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager,*myRedShellManager,*myBlueShellManager,myScene);
 	myRespawnComponentManager = new CRespawnComponentManager();
 	myTimeTrackerComponentManager = new CTimeTrackerComponentManager();
 	CLapTrackerComponentManager::CreateInstance();
