@@ -26,9 +26,19 @@ void CDecalComponent::Receive(const eComponentMessageType aMessageType, const SC
 	switch (aMessageType)
 	{
 	case eComponentMessageType::eObjectDone:
-		decal->SetSize(10.f, 10.f, 10.f);
+		//decal->SetSize(1.f, 10.f, 10.f);
 	case eComponentMessageType::eMoving:
 		decal->GetTransformation() = GetParent()->GetToWorldTransform();
 		break;
 	}
+}
+
+void CDecalComponent::SetDecalIndex(const unsigned int decalIndex)
+{
+	CDecalInstance* decal = myScene.GetDecal(myID);
+	if (!decal)
+	{
+		return;
+	}
+	decal->SetDecalIndex(decalIndex);
 }
