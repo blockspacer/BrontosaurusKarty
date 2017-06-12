@@ -6,7 +6,7 @@
 #include "VertexStreamComponent.h"
 
 CModelComponent::CModelComponent(CModelInstance& aModel)
-	: myModel(aModel)
+	: myModel(aModel), myIsBillboard(false)
 {
 	myType = eComponentType::eModel;
 }
@@ -19,7 +19,17 @@ CU::Matrix44f CModelComponent::GetToWorldTransform()
 {
 	if (GetParent() != nullptr)
 	{
-		CU::Matrix44f worldTransform = GetParent()->GetToWorldTransform();
+		CU::Matrix44f worldTransform;
+		if (myIsBillboard == false)
+		{
+			worldTransform = GetParent()->GetToWorldTransform();
+
+			
+		}
+		else
+		{
+			worldTransform.SetPosition(GetParent()->GetWorldPosition());
+		}
 
 		return worldTransform;
 	}
@@ -101,6 +111,11 @@ const std::string& CModelComponent::GetFilePath() const
 float CModelComponent::GetAnimationDuration(const eAnimationState aAnimationState) const
 {
 	return myModel.GetAnimationDuration(aAnimationState);
+}
+
+void CModelComponent::SetIsBillboard(bool aIsBillboard)
+{
+	myIsBillboard = aIsBillboard;
 }
 
 void CModelComponent::SetAnimation(const eAnimationState aAnimationKey)
