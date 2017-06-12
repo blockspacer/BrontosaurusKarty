@@ -1,5 +1,10 @@
 #pragma once
 
+namespace CU
+{
+	class CJsonValue;
+}
+
 class CAnimationEvent;
 class CAnimationEventFactory;
 class CModelComponent;
@@ -9,7 +14,7 @@ enum class eEventType;
 class CKartAnimator
 {
 public:
-	CKartAnimator(CModelComponent& aModelComponent);
+	CKartAnimator(CModelComponent& aModelComponent, const CU::CJsonValue aJsonValue);
 	~CKartAnimator();
 
 	void Update(const float aDeltaTime, const float aForwardVelocity, const float aSteering);
