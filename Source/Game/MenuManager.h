@@ -5,6 +5,7 @@
 #include "GUIElement.h"
 #include <functional>
 
+
 enum class eMenuThingType
 {
 	eClickArea,
@@ -48,7 +49,7 @@ struct SLayerData
 
 struct SMenuSprite
 {
-	SMenuSprite(): myState(static_cast<char>(eMenuButtonState::eDefault)), mySprites(4, nullptr), myPlayerIndex(0)
+	SMenuSprite(): myState(static_cast<char>(eMenuButtonState::eDefault)), mySprites(4), myPlayerIndex(0)
 	{
 	}
 
@@ -96,6 +97,7 @@ public:
 	CTextInstance* GetTextInstance(const int aTextInputTextInstanceIndex);
 
 	void SetSpiteState(const unsigned aSpriteIndex, const char aState);
+	char GetSpriteAmount(const int aSpriteId) const;
 private:
 	static CSpriteInstance* ChoseSpriteInstance(const SMenuSprite& aMenuSprite);
 
