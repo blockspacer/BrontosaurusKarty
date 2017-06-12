@@ -15,17 +15,20 @@ public:
 public:
 	void LoadHUD() override;
 	void Render() override;
-	bool GetRaceOVer() const;
+	bool GetRaceOver() const { return myRaceOver; }
+
+	void StartCountDown();
 
 private:
+	void LoadCountDown(const CU::CJsonValue& aJsonValue);
 	void LoadScoreboard(const CU::CJsonValue& aJsonValue);
 	void LoadMiniMap(const CU::CJsonValue& aJsonValue);
 	void PresentScoreboard();
 	void DisableRedundantGUI();
 
 	eMessageReturn DoEvent(const CRaceOverMessage& aMessage) override;
-	void ToMainMenu(const std::function<void(void)>& aCallback);
 	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
+	void ToMainMenu(const std::function<void(void)>& aCallback);
 
 public:
 	void Retry();
@@ -36,12 +39,15 @@ private:
 
 	SHUDElement myScoreboardElement;
 	SHUDElement myMinimapElement;
+	SHUDElement myCountdownElement;
 
 	CSpriteInstance* myScoreboardBGSprite;
 	CSpriteInstance* myPortraitSprite;
 
 	CSpriteInstance* myMinimapBGSprite;
 	CSpriteInstance* myMinimapPosIndicator;
+
+	CSpriteInstance* myCountdownSprite;
 
 	const unsigned char myNrOfPlayers;
 	bool myRaceOver;
