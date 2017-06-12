@@ -66,10 +66,6 @@ public:
 	inline float GetAcceleratiot();
 	inline bool GetIsControlledByAI() const;
 	void LookBack(bool aLookBack);
-
-
-	void SetDecalInfo(const InstanceID aID, CScene* aScene);
-
 private:
 	
 	void UpdateMovement(const float aDeltaTime);
@@ -100,14 +96,6 @@ private:
 
 	CKartControllerComponentManager* myManager;
 	Physics::CPhysicsScene* myPhysicsScene;
-
-	// Decal
-	// 
-	InstanceID myDecalID;
-	CScene* myScene;
-
-	//
-
 
 
 	float myMaxSpeed;

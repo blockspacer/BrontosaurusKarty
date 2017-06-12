@@ -113,8 +113,6 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 
 	myCurrentAction = eCurrentAction::eDefault;
 
-	myDecalID = -1;
-	myScene = nullptr;
 }
 
 CKartControllerComponent::~CKartControllerComponent()
@@ -570,9 +568,6 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
 
-	// Jag lovar
-	myScene->GetDecal(myDecalID)->GetTransformation() = GetParent()->GetToWorldTransform();
-
 	myAnimator->Update(aDeltaTime, myVelocity.z, mySteering);
 }
 
@@ -996,6 +991,7 @@ bool CKartControllerComponent::Answer(const eComponentQuestionType aQuestionType
 {
 	switch (aQuestionType)
 	{
+
 	case eComponentQuestionType::eGetIsGrounded:
 		if(myIsOnGround == true)
 		{
@@ -1043,8 +1039,3 @@ bool CKartControllerComponent::Answer(const eComponentQuestionType aQuestionType
 	return false;
 }
 
-void CKartControllerComponent::SetDecalInfo(const InstanceID aID, CScene* aScene)
-{
-	myDecalID = aScene->AddDecal();
-	myScene = aScene;
-}
