@@ -394,7 +394,13 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 			{
 				if (myPlayers[i].myInputDevice == SParticipant::eInputDevice::eKeyboard)
 				{
-					myPlayers[i].mySelectedCharacter = SParticipant::eCharacter::eVanBrat2;
+					short u = static_cast<short>(myPlayers[i].mySelectedCharacter);
+					++u;
+					if (u >= static_cast<short>(SParticipant::eCharacter::eLength))
+					{
+						u = 0;
+					}
+					myPlayers[i].mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
 				}
 			}
 		}
@@ -413,12 +419,17 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 		break;
 		case CU::eKeys::LEFT:
 		{
-			bool found = false;
 			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
 			{
 				if (myPlayers[i].myInputDevice == SParticipant::eInputDevice::eKeyboard)
 				{
-					myPlayers[i].mySelectedCharacter = SParticipant::eCharacter::eGrandMa2;
+					short u = static_cast<short>(myPlayers[i].mySelectedCharacter);
+					--u;
+					if (u < 0)
+					{
+						u = static_cast<short>(SParticipant::eCharacter::eLength) - 1;
+					}
+					myPlayers[i].mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
 				}
 			}
 		}
