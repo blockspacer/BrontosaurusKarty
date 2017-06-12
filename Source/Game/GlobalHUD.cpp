@@ -16,7 +16,11 @@
 #include <ThreadPool.h>
 #include "ThreadedPostmaster/PopCurrentState.h"
 #include "ThreadedPostmaster/ControllerInputMessage.h"
+#include "ThreadedPostmaster/PostOffice.h"
+#include "ThreadedPostmaster/RaceStartedMessage.h"
 
+#include "..\Components\KartControllerComponentManager.h"
+#include "..\Components\TimeTrackerComponentManager.h"
 
 #define DEFAULT	{0.3f, 0.3f, 0.3f, 1.0f}
 #define YELLOW	{1.0f, 1.0f, 0.0f, 1.0f}
@@ -37,6 +41,7 @@ CGlobalHUD::~CGlobalHUD()
 	SAFE_DELETE(myPortraitSprite);
 	SAFE_DELETE(myMinimapBGSprite);
 	SAFE_DELETE(myMinimapPosIndicator);
+	SAFE_DELETE(myCountdownSprite);
 }
 
 void CGlobalHUD::LoadHUD()
@@ -47,6 +52,7 @@ void CGlobalHUD::LoadHUD()
 
 	LoadMiniMap(jsonDoc.at("minimap"));
 	LoadScoreboard(jsonDoc.at("scoreboard"));
+	LoadCountDown(jsonDoc.at("countdown"));
 }
 
 void CGlobalHUD::Render()
@@ -155,6 +161,86 @@ void CGlobalHUD::Render()
 		}	
 		SetGUIToEndBlend(L"minimap");
 	}
+
+	if (myCountdownElement.myShouldRender == true)
+	{
+		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"countdown", myCountdownElement.myGUIElement, myCountdownElement.myPixelSize);
+		RENDERER.AddRenderMessage(guiElement);
+
+		SetGUIToAlphaBlend(L"countdown");
+
+		myCountdownElement.mySprite->RenderToGUI(L"countdown");
+
+		SetGUIToEndBlend(L"countdown");
+
+	}
+}
+
+void CGlobalHUD::StartCountDown()
+{
+
+	auto countdownLambda = [this]() {
+
+		CU::TimerManager timerManager;
+		TimerHandle timer = timerManager.CreateTimer();
+		unsigned char startCountdownTime = 0;
+		float floatTime = 0.f;
+
+
+		while (floatTime <= 4.5f)
+		{
+			timerManager.UpdateTimers();
+			floatTime = timerManager.GetTimer(timer).GetLifeTime().GetSeconds();
+
+			if ((unsigned char)floatTime > startCountdownTime)
+			{
+				startCountdownTime = std::floor(floatTime);
+				if (startCountdownTime == 0)		myCountdownSprite->SetAlpha(0);
+				else if (startCountdownTime == 1) { myCountdownSprite->SetRect({ 0.f,0.75f,1.f,1.00f }); myCountdownSprite->SetAlpha(1); }
+				else if (startCountdownTime == 2) 	myCountdownSprite->SetRect({ 0.f,0.50f,1.f,0.75f });
+				else if (startCountdownTime == 3) 	myCountdownSprite->SetRect({ 0.f,0.25f,1.f,0.50f });
+				else if (startCountdownTime == 4)
+				{
+					myCountdownSprite->SetRect({ 0.f,0.00f,1.f,0.25f });
+					POSTMASTER.Broadcast(new CRaceStartedMessage());
+					POSTMASTER.GetThreadOffice().HandleMessages();
+				}
+			}
+		}
+	};
+
+	CU::Work work(countdownLambda);
+	work.SetName("Countdown thread");
+
+	std::function<void(void)> callback = [this]()
+	{
+		CU::TimerManager timerManager;
+		TimerHandle timer = timerManager.CreateTimer();
+
+		while (timerManager.GetTimer(timer).GetLifeTime().GetSeconds() < .05f)
+		{
+			timerManager.UpdateTimers(); // för att komma runt att trippelbuffringen slänger bort meddelanden.
+			myCountdownSprite->SetAlpha(0);
+		}
+
+		myCountdownElement.myShouldRender = false;
+		myMinimapElement.myShouldRender = true;
+	};
+
+	work.SetFinishedCallback(callback);
+	CU::ThreadPool::GetInstance()->AddWork(work);
+}
+
+void CGlobalHUD::LoadCountDown(const CU::CJsonValue & aJsonValue)
+{
+	CU::CJsonValue jsonElementData = aJsonValue.at("elementData");
+	myCountdownElement = LoadHUDElement(jsonElementData);
+
+	const std::string countdownSprite = aJsonValue.at("sprite").GetString();
+
+	myCountdownSprite = new CSpriteInstance(countdownSprite.c_str(), { 1.f, 1.f });
+	myCountdownElement.mySprite = myCountdownSprite;
+	myCountdownSprite->SetRect({ 0.f,0.75f,1.f,1.00f });
 }
 
 void CGlobalHUD::LoadScoreboard(const CU::CJsonValue& aJsonValue)
@@ -167,7 +253,7 @@ void CGlobalHUD::LoadScoreboard(const CU::CJsonValue& aJsonValue)
 	const std::string scoreboardBGSpritePath = jsonSprites.at("background").GetString();
 	const std::string portraitSpritePath = jsonSprites.at("characterPortrait").GetString();
 
-	myScoreboardBGSprite = new CSpriteInstance(scoreboardBGSpritePath.c_str(), { 1.f,1.0f });
+	myScoreboardBGSprite = new CSpriteInstance(scoreboardBGSpritePath.c_str(), { 1.0f, 1.0f });
 	myPortraitSprite = new CSpriteInstance(portraitSpritePath.c_str(), { 0.5f, 0.125f }, { 0.196f, -0.004f });
 
 	myScoreboardElement.mySprite = myScoreboardBGSprite;
@@ -193,6 +279,7 @@ void CGlobalHUD::LoadMiniMap(const CU::CJsonValue& aJsonValue)
 	myMinimapElement.mySprite = new CSpriteInstance(backgroundSpritePath.c_str(), { 1.0f, 1.0f });
 	myMinimapPosIndicator = new CSpriteInstance(posIndicatorSpritePath.c_str(), { 0.016f, 0.29f });
 
+	myMinimapElement.myShouldRender = false;
 }
 
 void CGlobalHUD::PresentScoreboard()
