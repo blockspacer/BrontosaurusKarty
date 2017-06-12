@@ -53,7 +53,8 @@ enum class eComponentQuestionType
 	eGetLapTraversedPercentage,
 	eCheckIfGroundAbove,
 	eCheckIfShouldCheckAbove,
-	eGetFinishTime,
+	eGetFinishTimeMinutes,
+	eGetFinishTimeSeconds,
 	eLength,
 };
 struct SComponentQuestionData
