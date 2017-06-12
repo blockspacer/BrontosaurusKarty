@@ -29,19 +29,18 @@ void CGeometryBuffer::Init(const CU::Vector2ui & aSize, CDXFramework* aFramework
 
 void CGeometryBuffer::BindInput(const EGeometryPackages aMask, const EGeometryPackage aDepthPackage/* = EGeometryPackage::eDiffuse*/)
 {
-	ID3D11ShaderResourceView* srvs[6];
+	ID3D11ShaderResourceView* srvs[5];
 	srvs[0] = (aMask & EGeometryPackage::eDiffuse)	? myPackages[0].GetResource()	: nullptr;
 	srvs[1] = (aMask & EGeometryPackage::eNormal)	? myPackages[1].GetResource()	: nullptr;
 	srvs[2] = (aMask & EGeometryPackage::eRMAO)		? myPackages[2].GetResource()	: nullptr;
 	srvs[3] = (aMask & EGeometryPackage::eEmissive) ? myPackages[3].GetResource()	: nullptr;
 	srvs[4] = (aMask & EGeometryPackage::eDepth)	? GetRenderPackage(aDepthPackage).GetDepthResource() : nullptr;
-	srvs[5] = (aMask & EGeometryPackage::eDepth)	? GetRenderPackage(eEmissive).GetDepthResource()	: nullptr;
-	myFramework->GetDeviceContext()->PSSetShaderResources(1, 6, srvs);
+	myFramework->GetDeviceContext()->PSSetShaderResources(1, 5, srvs);
 }
 
 void CGeometryBuffer::BindOutput(const EGeometryPackages aMask, const EGeometryPackage aDepthPackage/* = EGeometryPackage::eDiffuse*/)
 {
-	ID3D11RenderTargetView* rtvs[5];
+	ID3D11RenderTargetView* rtvs[4];
 	rtvs[0] = (aMask & EGeometryPackage::eDiffuse)		? myPackages[0].GetRenderTargetView() : nullptr;
 	rtvs[1] = (aMask & EGeometryPackage::eNormal)		? myPackages[1].GetRenderTargetView() : nullptr;
 	rtvs[2] = (aMask & EGeometryPackage::eRMAO)			? myPackages[2].GetRenderTargetView() : nullptr;
