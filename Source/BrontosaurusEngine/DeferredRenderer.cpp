@@ -197,6 +197,8 @@ void CDeferredRenderer::DoRenderQueue(CRenderer& aRenderer)
 			aRenderer.SetStates(msg);
 			break;
 		}
+		
+		
 		default:
 			break;
 		}

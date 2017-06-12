@@ -18,7 +18,7 @@ DECLARE_ANIMATION_ENUM_AND_STRINGS;
 
 #undef CreateEvent
 
-CKartAnimator::CKartAnimator(CModelComponent& aModelComponent, const CU::CJsonValue aJsonValue)
+CKartAnimator::CKartAnimator(CModelComponent& aModelComponent, const CU::CJsonValue& aJsonValue)
 	: myModelComponent(aModelComponent)
 	, myTurnState(eTurnState::eNone)
 	, myIsBreaking(false)
@@ -34,11 +34,12 @@ CKartAnimator::CKartAnimator(CModelComponent& aModelComponent, const CU::CJsonVa
 	myModelComponent.SetNextAnimation(eAnimationState::none);
 	myModelComponent.SetAnimationLerpValue(0.f);
 
+	CU::CJsonValue wheels = aJsonValue["Wheels"];
 	CModelComponent* wheelModels[4];
-	wheelModels[0] = CModelComponentManager::GetInstance().CreateComponent(aJsonValue["FrontLeft"].GetString());
-	wheelModels[1] = CModelComponentManager::GetInstance().CreateComponent(aJsonValue["FrontRight"].GetString());
-	wheelModels[2] = CModelComponentManager::GetInstance().CreateComponent(aJsonValue["BackLeft"].GetString());
-	wheelModels[3] = CModelComponentManager::GetInstance().CreateComponent(aJsonValue["BackRight"].GetString());
+	wheelModels[0] = CModelComponentManager::GetInstance().CreateComponent(wheels["FrontLeft"].GetString());
+	wheelModels[1] = CModelComponentManager::GetInstance().CreateComponent(wheels["FrontRight"].GetString());
+	wheelModels[2] = CModelComponentManager::GetInstance().CreateComponent(wheels["BackLeft"].GetString());
+	wheelModels[3] = CModelComponentManager::GetInstance().CreateComponent(wheels["BackRight"].GetString());
 
 	for (int i = 0; i < myWheels.Size(); ++i)
 	{
@@ -62,11 +63,11 @@ CKartAnimator::CKartAnimator(CModelComponent& aModelComponent, const CU::CJsonVa
 		return;
 	}
 
-	const char* socketNames[4]  = { "P_wheelFront_SOCKET_left", "P_wheelFront_SOCKET_right", "P_wheelBack_SOCKET_right", "P_wheelBack_SOCKET_left" };
-	for (int i = 0; i < 4; ++i)
-	{
-		myWheels[i]->GetParent()->GetLocalTransform() = model->GetBoneTransform(0.f, eAnimationState::idle01, socketNames[i]);
-	}
+	CU::CJsonValue joints = aJsonValue["WheelJoints"];
+	myWheels[0]->GetParent()->GetLocalTransform() = model->GetBoneTransform(0.f, eAnimationState::idle01, joints["FrontLeft"].GetString());
+	myWheels[1]->GetParent()->GetLocalTransform() = model->GetBoneTransform(0.f, eAnimationState::idle01, joints["FrontRight"].GetString());
+	myWheels[2]->GetParent()->GetLocalTransform() = model->GetBoneTransform(0.f, eAnimationState::idle01, joints["BackLeft"].GetString());
+	myWheels[3]->GetParent()->GetLocalTransform() = model->GetBoneTransform(0.f, eAnimationState::idle01, joints["BackRight"].GetString());
 
 	for (CGameObject* wheel : myWheels)
 	{

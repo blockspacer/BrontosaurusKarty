@@ -38,9 +38,19 @@ bool CTimeTrackerComponent::Answer(const eComponentQuestionType aQuestionType, S
 {
 	switch (aQuestionType)
 	{
-	case eComponentQuestionType::eGetFinishTime:
+	case eComponentQuestionType::eGetFinishTimeMinutes:
 	{
-		aQuestionData.myFloat = myElapsedRaceTime;
+		float minutesPassed = myElapsedRaceTime / 60.0f;
+		minutesPassed = floor(minutesPassed);
+		aQuestionData.myFloat = minutesPassed;
+		return true;
+	}
+	case eComponentQuestionType::eGetFinishTimeSeconds:
+	{
+		float minutesPassed = myElapsedRaceTime / 60.0f;
+		minutesPassed = floor(minutesPassed);
+		float secondsPassed = myElapsedRaceTime - minutesPassed * 60.0f;
+		aQuestionData.myFloat = secondsPassed;
 		return true;
 	}
 	break;

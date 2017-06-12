@@ -1,5 +1,6 @@
 #pragma once
 #include "GeometryBuffer.h"
+#include "RenderMessages.h"
 
 #ifndef _RETAIL_BUILD
 #define _ENABLE_RENDERMODES
@@ -32,6 +33,7 @@ public:
 	CDeferredRenderer();
 	~CDeferredRenderer();
 
+	
 	void DoRenderQueue(CRenderer & aRenderer);
 
 	void AddRenderMessage(SRenderMessage* aRenderMessage);
@@ -46,6 +48,7 @@ public:
 	CRenderPackage& GetFirstPackage();
 	CRenderPackage& GetSecondPackage();
 private:
+	
 	void DoAmbientLighting(CFullScreenHelper& aFullscreenHelper);
 	void DoDirectLighting(CFullScreenHelper& aFullscreenHelper, CRenderer& aRenderer);
 

@@ -89,7 +89,8 @@ struct SRenderMessage
 		eRenderToGui,
 		eLUTFADECOLORGRADE,
 		eClearGui,
-		eRenderDecal
+		eRenderDecal,
+		e3DSprite
 	};
 
 	SRenderMessage(const eRenderMessageType aRenderMessageType);
@@ -386,4 +387,12 @@ struct SRenderCallback : SRenderMessage
 {
 	SRenderCallback() : SRenderMessage(SRenderMessage::eRenderMessageType::eRenderCallback) {};
 	std::function<void()> myFunction;
+};
+
+struct S3DSprite : SRenderMessage
+{
+	S3DSprite() : SRenderMessage(SRenderMessage::eRenderMessageType::e3DSprite){}
+	CU::Matrix44f myTransformation;
+	CU::Vector4f myLocalPosition;
+	CU::Vector2f mySize;
 };

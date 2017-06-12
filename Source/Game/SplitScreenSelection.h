@@ -27,6 +27,66 @@ public:
 	CSplitScreenSelection(StateStack & aStateStack);
 	~CSplitScreenSelection();
 
+	struct GUIPart
+	{
+		bool operator == (const GUIPart& left)
+		{
+			if (left.hasJoined == hasJoined)
+			{
+				if (LeftArrowOriginPosition == left.LeftArrowOriginPosition)
+				{
+					if (RightArrowOriginPosition == left.RightArrowOriginPosition)
+					{
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		void Delete()
+		{
+			delete LeftArrow;
+			LeftArrow = nullptr;
+			delete RightArrow;
+			RightArrow = nullptr;
+			delete NameTag;
+			NameTag = nullptr;
+			delete JoinSprite;
+			JoinSprite = nullptr;
+		}
+		CSpriteInstance* LeftArrow;
+		CSpriteInstance* RightArrow;
+		CSpriteInstance* NameTag;
+		CSpriteInstance* JoinSprite;
+		CU::Vector2f LeftArrowOriginPosition;
+		CU::Vector2f RightArrowOriginPosition;
+		bool hasJoined;
+		float timer = 0.0f;
+		void Update(float aDeltaTime)
+		{
+			float speed = 0.33f;
+			if (LeftArrow->GetPosition().x < LeftArrowOriginPosition.x)
+			{
+				LeftArrow->SetPosition(CU::Vector2f(LeftArrow->GetPosition().x + speed * aDeltaTime, LeftArrow->GetPosition().y));
+			}
+			if (RightArrow->GetPosition().x > RightArrowOriginPosition.x)
+			{
+				RightArrow->SetPosition(CU::Vector2f(RightArrow->GetPosition().x - speed * aDeltaTime, RightArrow->GetPosition().y));
+			}
+		}
+		void Redner()
+		{
+			if (hasJoined == false)
+			{
+				JoinSprite->RenderToGUI(L"__Menu");
+				return;
+			}
+			LeftArrow->RenderToGUI(L"__Menu");
+			RightArrow->RenderToGUI(L"__Menu");
+			NameTag->RenderToGUI(L"__Menu");
+		}
+	};
+
 	CU::eInputReturn RecieveInput(const CU::SInputMessage & aInputMessage) override;
 
 	// Inherited via State
@@ -39,9 +99,8 @@ public:
 	void LoadElement(const CU::CJsonValue& aJsonValue, const std::string& aFolderpath);
 	static eAlignment LoadAlignment(const CU::CJsonValue& aJsonValue);
 private:
-	void RightChar();
-	void LeftChar();
-
+	void RightChar(SParticipant& aParticipant);
+	void LeftChar(SParticipant& aParticipant);
 
 	bool PushLevel(const std::string& aString);
 	bool BackToMenu(const std::string& aString);
@@ -52,6 +111,7 @@ private:
 	CU::GrowingArray<STextInput> myTextInputs;
 	CU::GrowingArray<SParticipant> myPlayers;
 	CU::GrowingArray<CSpriteInstance*> myCharacterSprites;
+	CU::GrowingArray<GUIPart> myGUIParts;
 
 	CU::StaticArray<SParticipant::eInputDevice,4> myPlayerInputDevices;
 	bool myHasKeyboardResponded;

@@ -78,6 +78,7 @@ public:
 	inline bool IsLoaded() const;
 
 	eMessageReturn DoEvent(const CLoadLevelMessage& aLoadLevelMessage) override;
+	eMessageReturn DoEvent(const Postmaster::Message::CControllerInputMessage& aControllerInputMessage);
 	CU::eInputReturn RecieveInput(const CU::SInputMessage& aInputMessage) override;
 	inline CBoostPadComponentManager* GetBoostPadComponentManager();
 
@@ -88,12 +89,6 @@ private:
 	void CreatePlayer(CU::Camera& aCamera, const SParticipant& aIntputDevice, unsigned int aPlayerCount);
 	void CreateAI();
 
-	void InitiateRace();
-	void RenderCountdown();
-	void BroadcastRaceStart();
-
-public:
-	eMessageReturn DoEvent(const Postmaster::Message::CControllerInputMessage& aControllerInputMessage) override;
 private:
 	Physics::CPhysicsScene* myPhysicsScene;
 	Physics::CPhysics* myPhysics;
@@ -128,11 +123,11 @@ private:
 	//CU::TimerManager* myTimerManager;
 	TimerHandle myCountdownTimerHandle;
 
-	CSpriteInstance* myCountdownSprite;
+	//CSpriteInstance* myCountdownSprite;
 	SGUIElement* myCountdownElement;
 
 	float myPlacementLineScreenSpaceWidth;
-	bool myCountdownShouldRender;
+	//bool myCountdownShouldRender;
 	bool myIsCountingDown;
 
 	int myPlayerCount;
