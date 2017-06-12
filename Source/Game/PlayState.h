@@ -91,8 +91,6 @@ private:
 	void InitiateRace();
 	void RenderCountdown();
 	void BroadcastRaceStart();
-	void LoadPlacementLineGUI();
-	void RenderPlacementLine();
 
 private:
 	Physics::CPhysicsScene* myPhysicsScene;

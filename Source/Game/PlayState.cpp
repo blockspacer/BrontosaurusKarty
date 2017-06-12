@@ -313,7 +313,6 @@ void CPlayState::Load()
 	myGlobalHUD = new CGlobalHUD();
 	myGlobalHUD->LoadHUD();
 
-	LoadPlacementLineGUI();
 
 	myCountdownSprite->Render();
 
@@ -438,7 +437,6 @@ void CPlayState::Render()
 
 	myGlobalHUD->Render();
 
-	RenderPlacementLine();
 }
 
 void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
@@ -819,7 +817,7 @@ void CPlayState::InitiateRace()
 			myKartObjects[i]->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
 		}
 
-		while (floatTime <= 3.5)
+		while (floatTime <= 4.5f)
 		{
 			timerManager.UpdateTimers();
 			floatTime = timerManager.GetTimer(timer).GetLifeTime().GetSeconds();
@@ -827,11 +825,11 @@ void CPlayState::InitiateRace()
 			if ((unsigned char)floatTime > startCountdownTime)
 			{
 				startCountdownTime = std::floor(floatTime);
-
-				if		(startCountdownTime == 0) 	myCountdownSprite->SetRect({ 0.f,0.75f,1.f,1.00f });
-				else if (startCountdownTime == 1) 	myCountdownSprite->SetRect({ 0.f,0.50f,1.f,0.75f });
-				else if (startCountdownTime == 2) 	myCountdownSprite->SetRect({ 0.f,0.25f,1.f,0.50f });
-				else if (startCountdownTime == 3)
+				if (startCountdownTime == 0)		myCountdownSprite->SetAlpha(0);	
+				else if (startCountdownTime == 1) { myCountdownSprite->SetRect({ 0.f,0.75f,1.f,1.00f }); myCountdownSprite->SetAlpha(1); }
+				else if (startCountdownTime == 2) 	myCountdownSprite->SetRect({ 0.f,0.50f,1.f,0.75f });
+				else if (startCountdownTime == 3) 	myCountdownSprite->SetRect({ 0.f,0.25f,1.f,0.50f });
+				else if (startCountdownTime == 4)
 				{
 					myCountdownSprite->SetRect({ 0.f,0.00f,1.f,0.25f });
 					myKartControllerComponentManager->ShouldUpdate(true);
@@ -892,81 +890,4 @@ void CPlayState::RenderCountdown()
 	RENDERER.AddRenderMessage(guiChangeState);
 
 	myCountdownSprite->RenderToGUI(L"countdown");
-}
-
-void CPlayState::LoadPlacementLineGUI()
-{
-	//CU::CJsonValue jsonDoc;
-	//if (myPlayers.Size() == 1)
-	//{
-	//	jsonDoc.Parse("Json/HUD/HUD1Player.json");
-	//}
-	//else if (myPlayers.Size() == 2)
-	//{
-	//	jsonDoc.Parse("Json/HUD/HUD2Player.json");
-	//}
-	//else if (myPlayers.Size() == 3)
-	//{
-	//	jsonDoc.Parse("Json/HUD/HUD3Player.json");
-	//}
-	//else if (myPlayers.Size() == 4)
-	//{
-	//	jsonDoc.Parse("Json/HUD/HUD4Player.json");
-	//}
-
-	//CU::CJsonValue jsonPlacementLine = jsonDoc.at("placementLine");
-	//for(unsigned int i = 0; i < myKartObjects.Size(); i++)
-	//{
-	//	SHUDElement* hudElement = new SHUDElement();
-
-	//	hudElement->myGUIElement.myOrigin = { 0.f,0.f }; // { 0.5f, 0.5f };
-	//	hudElement->myGUIElement.myAnchor[(char)eAnchors::eTop] = true;
-	//	hudElement->myGUIElement.myAnchor[(char)eAnchors::eLeft] = true;
-
-	//	hudElement->myGUIElement.myScreenRect = CU::Vector4f(jsonPlacementLine.at("position").GetVector2f());
-
-	//	const CU::CJsonValue sizeObject = jsonPlacementLine.at("size");
-	//	hudElement->myPixelSize.x = sizeObject.at("pixelWidth").GetUInt();
-	//	hudElement->myPixelSize.y = sizeObject.at("pixelHeight").GetUInt();
-
-	//	float rectWidth = sizeObject.at("screenSpaceWidth").GetFloat();
-	//	float rectHeight = sizeObject.at("screenSpaceHeight").GetFloat();
-	//	myPlacementLineScreenSpaceWidth = rectWidth;
-
-	//	float topLeftX = hudElement->myGUIElement.myScreenRect.x;
-	//	float topLeftY = hudElement->myGUIElement.myScreenRect.y;
-
-	//	hudElement->myGUIElement.myScreenRect.z = rectWidth + topLeftX;
-	//	hudElement->myGUIElement.myScreenRect.w = rectHeight + topLeftY;
-	//	hudElement->mySprite = new CSpriteInstance("Sprites/GUI/Scoreboard/characterPortraitYoshi.dds", { 1.0f, 1.0f });
-	//	myPlacementLinesGUIElement.Add(hudElement);
-	//}
-}
-
-void CPlayState::RenderPlacementLine()
-{
-	//for(unsigned int i = 0; i < myPlacementLinesGUIElement.Size(); i++)
-	//{
-	//	SComponentQuestionData lapTraversedPercentageQuestionData;
-	//	if (myKartObjects[i]->AskComponents(eComponentQuestionType::eGetLapTraversedPercentage, lapTraversedPercentageQuestionData) == true)
-	//	{
-	//		float lapTraversedPlacement = lapTraversedPercentageQuestionData.myFloat;
-	//		myPlacementLinesGUIElement[i]->myGUIElement.myScreenRect.x = lapTraversedPlacement;
-	//		myPlacementLinesGUIElement[i]->myGUIElement.myScreenRect.z = myPlacementLineScreenSpaceWidth + lapTraversedPlacement;
-	//	}
-
-	//	SCreateOrClearGuiElement* createOrClear = new SCreateOrClearGuiElement(L"placementLine" + i, myPlacementLinesGUIElement[i]->myGUIElement, CU::Vector2ui(WINDOW_SIZE.x, WINDOW_SIZE.y));
-	//	RENDERER.AddRenderMessage(createOrClear);
-
-	//	SChangeStatesMessage* const changeStatesMessage = new SChangeStatesMessage();
-	//	changeStatesMessage->myBlendState = eBlendState::eAlphaBlend;
-	//	changeStatesMessage->myDepthStencilState = eDepthStencilState::eDisableDepth;
-	//	changeStatesMessage->myRasterizerState = eRasterizerState::eNoCulling;
-	//	changeStatesMessage->mySamplerState = eSamplerState::eClamp;
-
-	//	SRenderToGUI* const guiChangeState = new SRenderToGUI(L"placementLine" + i, changeStatesMessage);
-	//	RENDERER.AddRenderMessage(guiChangeState);
-
-	//	myPlacementLinesGUIElement[i]->mySprite->RenderToGUI(L"placementLine" + i);
-	//}
 }
