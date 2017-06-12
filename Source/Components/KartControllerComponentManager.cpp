@@ -3,6 +3,10 @@
 #include "KartControllerComponent.h"
 #include "../Game/NavigationSpline.h"
 #include "SParticipant.h"
+
+#include "..\ThreadedPostmaster/RaceStartedMessage.h"
+
+
 CKartControllerComponentManager::CKartControllerComponentManager(): myPhysicsScene(nullptr)
 {
 	myComponents.Init(4);
@@ -11,6 +15,7 @@ CKartControllerComponentManager::CKartControllerComponentManager(): myPhysicsSce
 
 CKartControllerComponentManager::~CKartControllerComponentManager()
 {
+	POSTMASTER.Unsubscribe(this);
 }
 
 CKartControllerComponent * CKartControllerComponentManager::CreateAndRegisterComponent(CModelComponent& aModelComponent, const short aControllerIndex)
@@ -62,10 +67,10 @@ void CKartControllerComponentManager::Update(const float aDeltaTime)
 #endif
 }
 
-void CKartControllerComponentManager::ShouldUpdate(const bool aShouldUpdate)
-{
-	myShouldUpdate = aShouldUpdate;
-}
+//void CKartControllerComponentManager::ShouldUpdate(const bool aShouldUpdate)
+//{
+//	myShouldUpdate = aShouldUpdate;
+//}
 
 void CKartControllerComponentManager::LoadNavigationSpline(const CU::CJsonValue& aJsonValue)
 {
@@ -144,6 +149,13 @@ const SNavigationPoint* CKartControllerComponentManager::GetNavigationPoint(cons
 	}
 	return nullptr;
 }
+
+eMessageReturn CKartControllerComponentManager::DoEvent(const CRaceStartedMessage& aMessage)
+{
+	myShouldUpdate = true;
+	return eMessageReturn::eContinue;
+}
+
 
 #if RENDER_SPLINE == 1
 #include "Engine.h"
