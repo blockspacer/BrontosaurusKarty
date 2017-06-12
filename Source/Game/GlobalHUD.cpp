@@ -106,22 +106,34 @@ void CGlobalHUD::Render()
 					myMinimapPosIndicator->SetPosition({ myMinimapElement.mySprite->GetPosition().x + distancePercent, 0.5f });
 				}
 
+				myMinimapPosIndicator->SetColor(DEFAULT);
 				switch (i)
 				{
 				case (int)SParticipant::eInputDevice::eController1:
-					myMinimapPosIndicator->SetColor(YELLOW);
+					if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
+					{
+						myMinimapPosIndicator->SetColor(YELLOW);
+					}
 					break;
 				case (int)SParticipant::eInputDevice::eController2:
-					myMinimapPosIndicator->SetColor(GREEN);
+					if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
+					{
+						myMinimapPosIndicator->SetColor(GREEN);
+					}
 					break;
 				case (int)SParticipant::eInputDevice::eController3:
-					myMinimapPosIndicator->SetColor(PINK);
+					if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
+					{
+						myMinimapPosIndicator->SetColor(PINK);
+					}
 					break;
 				case (int)SParticipant::eInputDevice::eController4:
-					myMinimapPosIndicator->SetColor(BLUE);
+					if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
+					{
+						myMinimapPosIndicator->SetColor(BLUE);
+					}
 					break;
 				default:
-					myMinimapPosIndicator->SetColor(DEFAULT);
 					// Also make mark a bit smaller.
 					break;
 				}
