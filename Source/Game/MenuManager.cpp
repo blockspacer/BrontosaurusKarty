@@ -5,7 +5,7 @@
 #include "../BrontosaurusEngine/Engine.h"
 #include "../CommonUtilities/JsonValue.h"
 
-
+CU::GrowingArray<SParticipant> CMenuManager::ourParticipants = CU::GrowingArray<SParticipant>(4);
 CU::Vector2f CMenuManager::ourMousePosition(0.5f, 0.5f);
 
 bool CompareLayers(SLayerData aFirstData, SLayerData aSecondData)
@@ -74,49 +74,58 @@ int CMenuManager::CreateSprite(const std::string& aFolder, const CU::Vector2f aP
 {
 	SMenuSprite menuSprite;
 
-	if (CU::CJsonValue::FileExists(aFolder + "/" + "default.dds"))
+	int index = 0;
+	while (CU::CJsonValue::FileExists(aFolder + "/" + std::to_string(index) + ".dds"))
 	{
-		menuSprite.mySprites[0] = new CSpriteInstance((aFolder + "/" + "default.dds").c_str());
-		menuSprite.mySprites[0]->SetPosition(aPosition);
-		menuSprite.mySprites[0]->SetPivot(anOrigin);
-	}
-	else
-	{
-		DL_PRINT_WARNING("no default menu immage found no sprite created");
-		return -1;
+		menuSprite.mySprites.Add(new CSpriteInstance((aFolder + "/" + std::to_string(index) + ".dds").c_str()));
+		menuSprite.mySprites[index]->SetPosition(aPosition);
+		menuSprite.mySprites[index]->SetPivot(anOrigin);
+		++index;
 	}
 
-	if (CU::CJsonValue::FileExists(aFolder + "/" + "onHover.dds"))
+	if(index == 0)
 	{
-		menuSprite.mySprites[1] = new CSpriteInstance((aFolder + "/" + "onHover.dds").c_str());
-		menuSprite.mySprites[1]->SetPosition(aPosition);
-		menuSprite.mySprites[1]->SetPivot(anOrigin);
-	}
-	else
-	{
-		DL_PRINT("on hover sprite missing using default instead");
-	}
+		menuSprite.mySprites = CU::GrowingArray<CSpriteInstance*, char>(4, nullptr);
 
-	if (CU::CJsonValue::FileExists(aFolder + "/" + "onClick.dds"))
-	{
-		menuSprite.mySprites[2] = new CSpriteInstance((aFolder + "/" + "onClick.dds").c_str());
-		menuSprite.mySprites[2]->SetPosition(aPosition);
-		menuSprite.mySprites[2]->SetPivot(anOrigin);
-	}
-	else
-	{
-		DL_PRINT("on click sprite missing using default instead");
-	}
+		if (CU::CJsonValue::FileExists(aFolder + "/" + "default.dds"))
+		{
+			menuSprite.mySprites[0] = new CSpriteInstance((aFolder + "/" + "default.dds").c_str());
+			menuSprite.mySprites[0]->SetPosition(aPosition);
+			menuSprite.mySprites[0]->SetPivot(anOrigin);
+		}
 
-	if (CU::CJsonValue::FileExists(aFolder + "/" + "inactive.dds"))
-	{
-		menuSprite.mySprites[3] = new CSpriteInstance((aFolder + "/" + "inactive.dds").c_str());
-		menuSprite.mySprites[3]->SetPosition(aPosition);
-		menuSprite.mySprites[3]->SetPivot(anOrigin);
-	}
-	else
-	{
-		DL_PRINT("inactive sprite missing using default instead");
+		if (CU::CJsonValue::FileExists(aFolder + "/" + "onHover.dds"))
+		{
+			menuSprite.mySprites[1] = new CSpriteInstance((aFolder + "/" + "onHover.dds").c_str());
+			menuSprite.mySprites[1]->SetPosition(aPosition);
+			menuSprite.mySprites[1]->SetPivot(anOrigin);
+		}
+		else
+		{
+			DL_PRINT("on hover sprite missing using default instead");
+		}
+
+		if (CU::CJsonValue::FileExists(aFolder + "/" + "onClick.dds"))
+		{
+			menuSprite.mySprites[2] = new CSpriteInstance((aFolder + "/" + "onClick.dds").c_str());
+			menuSprite.mySprites[2]->SetPosition(aPosition);
+			menuSprite.mySprites[2]->SetPivot(anOrigin);
+		}
+		else
+		{
+			DL_PRINT("on click sprite missing using default instead");
+		}
+
+		if (CU::CJsonValue::FileExists(aFolder + "/" + "inactive.dds"))
+		{
+			menuSprite.mySprites[3] = new CSpriteInstance((aFolder + "/" + "inactive.dds").c_str());
+			menuSprite.mySprites[3]->SetPosition(aPosition);
+			menuSprite.mySprites[3]->SetPivot(anOrigin);
+		}
+		else
+		{
+			DL_PRINT("inactive sprite missing using default instead");
+		}
 	}
 
 	if (aListeningToPlayer != -1)
@@ -166,7 +175,7 @@ void CMenuManager::Update(const CU::Time& aDeltaTime)
 		CU::Vector2f lowerRight;
 		CU::Vector2f upperLeft;
 
-		if (myClickAreas.At(i).mySpriteID >= 0)
+		/*if (myClickAreas.At(i).mySpriteID >= 0)
 		{
 			CSpriteInstance* currentSprite = mySpriteInstances[myClickAreas[i].mySpriteID].mySprites[0];
 			lowerRight = currentSprite->GetPosition() + currentSprite->GetSize() * myClickAreas[i].myRect.zw - currentSprite->GetPivot() * currentSprite->GetSize();
@@ -176,7 +185,7 @@ void CMenuManager::Update(const CU::Time& aDeltaTime)
 		{
 			upperLeft = myClickAreas[i].myRect.xy;
 			lowerRight = myClickAreas[i].myRect.zw;
-		}
+		}*/
 
 		if (ourMousePosition.x > upperLeft.x && ourMousePosition.y > upperLeft.y && ourMousePosition.x < lowerRight.x && ourMousePosition.y < lowerRight.y)
 		{
@@ -382,6 +391,11 @@ CTextInstance* CMenuManager::GetTextInstance(const int aTextInputTextInstanceInd
 void CMenuManager::SetSpiteState(const unsigned aSpriteIndex, const char aState)
 {
 	mySpriteInstances[aSpriteIndex].myState = aState;
+}
+
+char CMenuManager::GetSpriteAmount(const int aSpriteId) const
+{
+	return mySpriteInstances[aSpriteId].mySprites.Size();
 }
 
 CSpriteInstance* CMenuManager::ChoseSpriteInstance(const SMenuSprite& aMenuSprite)
