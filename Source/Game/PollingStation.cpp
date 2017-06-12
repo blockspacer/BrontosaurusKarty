@@ -35,6 +35,16 @@ unsigned char CPollingStation::GetIDFromPlayer(CGameObject * aPlayer)
 	return myPlayers.Find(aPlayer);
 }
 
+void CPollingStation::BindKartList(CU::GrowingArray<CGameObject*>* aKartList)
+{
+	myKartList = aKartList;
+}
+
+const CU::GrowingArray<CGameObject*>* CPollingStation::GetKartList()
+{
+	return myKartList;
+}
+
 CPollingStation::CPollingStation()
 {
 	myPlayers.Init(4);

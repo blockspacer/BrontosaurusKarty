@@ -30,7 +30,7 @@ public:
 	void Retry();
 	eMessageReturn DoEvent(const Postmaster::Message::CControllerInputMessage& aControllerInputMessage) override;
 private:
-
+	const CU::GrowingArray<CGameObject*>* myKartObjects;
 	CU::StaticArray<SPlacementData, 8> myWinners;
 
 	SHUDElement myScoreboardElement;

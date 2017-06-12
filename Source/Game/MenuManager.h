@@ -1,7 +1,7 @@
 #pragma once
 #include "../BrontosaurusEngine/SpriteInstance.h"
 #include "../BrontosaurusEngine/TextInstance.h"
-#include "../CommonUtilities/CommonUtilities.h"
+#include "../CommonUtilities/GamepadButtons.h"
 #include "GUIElement.h"
 #include <functional>
 
@@ -24,7 +24,7 @@ enum eInputAction
 };
 
 
-enum class eMenuButtonState
+enum class eMenuButtonState: char
 {
 	eDefault,
 	eOnHover,
@@ -48,15 +48,12 @@ struct SLayerData
 
 struct SMenuSprite
 {
-	SMenuSprite(): myState(eMenuButtonState::eDefault), myDafaultSprite(nullptr), myOnHoverSprite(nullptr), myOnClickSprite(nullptr), myInactiveSprite(nullptr)
+	SMenuSprite(): myState(static_cast<char>(eMenuButtonState::eDefault)), mySprites(4, nullptr), myPlayerIndex(0)
 	{
 	}
 
-	eMenuButtonState myState;
-	CSpriteInstance* myDafaultSprite;
-	CSpriteInstance* myOnHoverSprite;
-	CSpriteInstance* myOnClickSprite;
-	CSpriteInstance* myInactiveSprite;
+	char myState;
+	CU::GrowingArray<CSpriteInstance*, char> mySprites;
 
 	short myPlayerIndex;
 };
@@ -68,6 +65,7 @@ public:
 	~CMenuManager();
 
 	void CreateClickArea(CU::GrowingArray<std::string> someActions, CU::GrowingArray<std::string> someArguments, const int aSpriteID, CU::Vector4f aRect, const unsigned char aLayer);
+	void AddGamepadAction(const CU::GAMEPAD aGamepadButton, const CU::GrowingArray<std::string>& someActions, const CU::GrowingArray<std::string>& someArguments);
 
 	int CreateSprite(const std::string& aFolder, const CU::Vector2f aPosition, const CU::Vector2f anOrigin, const unsigned char aLayer, const short aListeningToPlayer = -1);
 	unsigned CreateText(const std::string& aFontName, const CU::Vector2f& aPosition, const std::wstring someText, const unsigned char aLayer, const eAlignment anAlignment = eAlignment::eLeft);
@@ -90,10 +88,14 @@ public:
 	void ActionPressed(const short aPlayerIndex = 0);
 	void BackButtonPressed(const short aPlayerIndex = 0);
 
+	void RecieveGamePadInput(const CU::GAMEPAD);
+
 	const SMenuSprite& GetSprite(unsigned aSpriteId);
 
 	void AddAction(const std::string& aActionName, const std::function<bool(std::string)>& aFunction);
 	CTextInstance* GetTextInstance(const int aTextInputTextInstanceIndex);
+
+	void SetSpiteState(const unsigned aSpriteIndex, const char aState);
 private:
 	static CSpriteInstance* ChoseSpriteInstance(const SMenuSprite& aMenuSprite);
 
@@ -122,7 +124,11 @@ private:
 	bool myIsRightPressed;
 	bool myHasPlayedHoverSound;
 	bool myHasPlayedClickSound;
+
+	CU::GrowingArray<CU::GAMEPAD, int> myUsedGamepadButtons;
+	CU::GrowingArray<CU::GrowingArray<std::function<bool(void)>>> myGamepadAction;
 };
+
 
 inline void CMenuManager::UpdateMousePosition(const CU::Vector2f& aPosition)
 {

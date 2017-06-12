@@ -9,6 +9,7 @@
 #include "JsonValue.h"
 
 #include "SParticipant.h"
+#include "PollingStation.h"
 #include "..\ThreadedPostmaster\RaceOverMessage.h"
 #include "..\ThreadedPostmaster\KeyCharPressed.h"
 
@@ -25,7 +26,7 @@
 
 CGlobalHUD::CGlobalHUD()
 {
-
+	myKartObjects = CPollingStation::GetInstance()->GetKartList();
 }
 
 CGlobalHUD::~CGlobalHUD()
@@ -59,22 +60,16 @@ void CGlobalHUD::Render()
 
 			for (int i = 0; i < 8; ++i)
 			{
-				CTextInstance charNameTxt;
-
 				switch (myWinners[i].character)
 				{
 				case SParticipant::eCharacter::eVanBrat:
 					myPortraitSprite->SetRect({ 0.f, 0.875f, 1.f, 1.f });
-					charNameTxt.SetText(L"Yoshi");
 					break;
 				case SParticipant::eCharacter::eGrandMa:
 					myPortraitSprite->SetRect({ 0.f, 0.750f, 1.f, 0.875f });
-					charNameTxt.SetText(L"Mario");
 					break;
 				default:
-					//myPortraitSprite->SetRect({ 0.f, 0.875f, 1.f, 1.f });
 					myPortraitSprite->SetRect({ 0.f, 0.750f, 1.f, 0.875f });
-					charNameTxt.SetText(L"Error");
 					break;
 				}
 
@@ -98,55 +93,44 @@ void CGlobalHUD::Render()
 	
 		SetGUIToAlphaBlend(L"minimap");
 		{
-			SParticipant::eInputDevice whoTheFuck = SParticipant::eInputDevice::eController1;
-	
-			switch (whoTheFuck)
-			{
-			case SParticipant::eInputDevice::eController1:
-				myMinimapPosIndicator->SetColor(YELLOW);
-				break;
-			case SParticipant::eInputDevice::eController2:
-				myMinimapPosIndicator->SetColor(GREEN);
-				break;
-			case SParticipant::eInputDevice::eController3:
-				myMinimapPosIndicator->SetColor(PINK);
-				break;
-			case SParticipant::eInputDevice::eController4:
-				myMinimapPosIndicator->SetColor(BLUE);
-				break;
-			default:
-				myMinimapPosIndicator->SetColor(DEFAULT);
-				break;
-			}
-	
 			myMinimapElement.mySprite->RenderToGUI(L"minimap");
-	
-		}
-	
+
+
+			for (int i = 0; i < myKartObjects->Size(); ++i)
+			{
+				SComponentQuestionData percentDoneQuestion;
+
+				if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eGetLapTraversedPercentage, percentDoneQuestion) == true)
+				{
+					float distancePercent = percentDoneQuestion.myFloat;
+					myMinimapPosIndicator->SetPosition({ myMinimapElement.mySprite->GetPosition().x + distancePercent, 0.5f });
+				}
+
+				switch (i)
+				{
+				case (int)SParticipant::eInputDevice::eController1:
+					myMinimapPosIndicator->SetColor(YELLOW);
+					break;
+				case (int)SParticipant::eInputDevice::eController2:
+					myMinimapPosIndicator->SetColor(GREEN);
+					break;
+				case (int)SParticipant::eInputDevice::eController3:
+					myMinimapPosIndicator->SetColor(PINK);
+					break;
+				case (int)SParticipant::eInputDevice::eController4:
+					myMinimapPosIndicator->SetColor(BLUE);
+					break;
+				default:
+					myMinimapPosIndicator->SetColor(DEFAULT);
+					// Also make mark a bit smaller.
+					break;
+				}
+
+				myMinimapPosIndicator->RenderToGUI(L"minimap");
+
+			}
+		}	
 		SetGUIToEndBlend(L"minimap");
-
-		//	SComponentQuestionData lapTraversedPercentageQuestionData;
-		//	if (myKartObjects[i]->AskComponents(eComponentQuestionType::eGetLapTraversedPercentage, lapTraversedPercentageQuestionData) == true)
-		//	{
-		//	float lapTraversedPlacement = lapTraversedPercentageQuestionData.myFloat;
-		//	myPlacementLinesGUIElement[i]->myGUIElement.myScreenRect.x = lapTraversedPlacement;
-		//	myPlacementLinesGUIElement[i]->myGUIElement.myScreenRect.z = myPlacementLineScreenSpaceWidth + lapTraversedPlacement;
-		//	}
-		//
-		//	SCreateOrClearGuiElement* createOrClear = new SCreateOrClearGuiElement(L"placementLine" + i, myPlacementLinesGUIElement[i]->myGUIElement, CU::Vector2ui(WINDOW_SIZE.x, WINDOW_SIZE.y));
-		//	RENDERER.AddRenderMessage(createOrClear);
-		//
-		//	SChangeStatesMessage* const changeStatesMessage = new SChangeStatesMessage();
-		//	changeStatesMessage->myBlendState = eBlendState::eAlphaBlend;
-		//	changeStatesMessage->myDepthStencilState = eDepthStencilState::eDisableDepth;
-		//	changeStatesMessage->myRasterizerState = eRasterizerState::eNoCulling;
-		//	changeStatesMessage->mySamplerState = eSamplerState::eClamp;
-		//
-		//	SRenderToGUI* const guiChangeState = new SRenderToGUI(L"placementLine" + i, changeStatesMessage);
-		//	RENDERER.AddRenderMessage(guiChangeState);
-		//
-		//	myPlacementLinesGUIElement[i]->mySprite->RenderToGUI(L"placementLine" + i);
-
 	}
 }
 
@@ -175,10 +159,10 @@ void CGlobalHUD::LoadMiniMap(const CU::CJsonValue& aJsonValue)
 	myMinimapElement = LoadHUDElement(jsonElementData);
 
 	const std::string backgroundSpritePath = jsonSprites.at("background").GetString();
-	const std::string posIndicatorSpritePath = jsonSprites.at("background").GetString();
+	const std::string posIndicatorSpritePath = jsonSprites.at("mark").GetString();
 
 	myMinimapElement.mySprite = new CSpriteInstance(backgroundSpritePath.c_str(), { 1.0f, 1.0f });
-	myMinimapPosIndicator = new CSpriteInstance(posIndicatorSpritePath.c_str(), { 1.f,1.f });
+	myMinimapPosIndicator = new CSpriteInstance(posIndicatorSpritePath.c_str(), { 0.016f, 0.16f });
 
 	// IF SINGLE PLAYER -> POS AT THE BOTTOM
 }
