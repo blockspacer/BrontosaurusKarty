@@ -23,6 +23,7 @@ struct SSelector
 {
 	char mySelection;
 	char myMax;
+	int mySpriteIndex;
 };
 
 class CMenuState :public State, Postmaster::ISubscriber
@@ -59,6 +60,11 @@ private:
 	bool PopMenues(std::string aNumberOfMenues);
 	bool PushLevel(std::string aLevelIndexString);
 	bool SetCurrentTextInput(std::string aTexINputIndex);
+
+	bool SelectNext(const std::string aSelectorName);
+	bool SelectPrevious(const std::string aSelectorName);
+
+	bool PushSelectedLevel(const std::string aSelector);
 
 	static std::map<CU::eKeys, CU::GAMEPAD> ourKeyboardToGamePadMap;
 

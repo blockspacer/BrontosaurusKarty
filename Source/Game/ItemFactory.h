@@ -12,6 +12,7 @@ class CGameObjectManager;
 class CColliderComponentManager;
 class CRedShellManager;
 class CBlueShellComponentManager;
+class CScene;
 
 struct SItemDrop
 {
@@ -25,7 +26,7 @@ public:
 	CItemFactory();
 	~CItemFactory();
 
-	void Init(CGameObjectManager& aGameObjectManager ,CItemWeaponBehaviourComponentManager& aManager, Physics::CPhysicsScene* aPhysicsScene, CColliderComponentManager& aColliderManager, CRedShellManager& aRedShellManager, CBlueShellComponentManager& aBlueShellManager);
+	void Init(CGameObjectManager& aGameObjectManager ,CItemWeaponBehaviourComponentManager& aManager, Physics::CPhysicsScene* aPhysicsScene, CColliderComponentManager& aColliderManager, CRedShellManager& aRedShellManager, CBlueShellComponentManager& aBlueShellManager, CScene* aScene);
 
 
 	eItemTypes RandomizeItem(CComponent* aPlayerCollider);
@@ -47,6 +48,7 @@ private:
 	CColliderComponentManager* myColliderManager;
 	CRedShellManager* myRedShellManager;
 	CBlueShellComponentManager* myBlueShellManager;
+	CScene* myScene;
 
 	CU::GrowingArray<CGameObject*> myShells;
 	CU::GrowingArray<CGameObject*> myActiveShells;

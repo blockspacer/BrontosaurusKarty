@@ -43,6 +43,7 @@ private:
 	CSpriteInstance* myMinimapBGSprite;
 	CSpriteInstance* myMinimapPosIndicator;
 
+	const unsigned char myNrOfPlayers;
 	bool myRaceOver;
 	int myLevelIndex;
 };

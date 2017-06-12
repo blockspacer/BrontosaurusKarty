@@ -25,7 +25,7 @@
 #define PINK	{1.0f, 0.0f, 1.0f, 1.0f}
 #define BLUE	{0.0f, 0.0f, 1.0f, 1.0f}
 
-CGlobalHUD::CGlobalHUD(int aLevelIndex): myScoreboardBGSprite(nullptr), myPortraitSprite(nullptr), myMinimapBGSprite(nullptr), myMinimapPosIndicator(nullptr), myRaceOver(false), myLevelIndex(aLevelIndex)
+CGlobalHUD::CGlobalHUD(int aLevelIndex):myNrOfPlayers(0), myScoreboardBGSprite(nullptr), myPortraitSprite(nullptr), myMinimapBGSprite(nullptr), myMinimapPosIndicator(nullptr), myRaceOver(false), myLevelIndex(aLevelIndex)
 {
 	myKartObjects = CPollingStation::GetInstance()->GetKartList();
 }
@@ -36,6 +36,7 @@ CGlobalHUD::~CGlobalHUD()
 
 void CGlobalHUD::LoadHUD()
 {
+	(unsigned char)myNrOfPlayers = CPollingStation::GetInstance()->GetAmmountOfPlayer();
 	CU::CJsonValue jsonDoc;
 	jsonDoc.Parse("Json/HUD/HUDGlobal.json");
 
@@ -104,25 +105,43 @@ void CGlobalHUD::Render()
 				if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eGetLapTraversedPercentage, percentDoneQuestion) == true)
 				{
 					float distancePercent = percentDoneQuestion.myFloat;
-					myMinimapPosIndicator->SetPosition({ myMinimapElement.mySprite->GetPosition().x + distancePercent, 0.5f });
+					float xPos = ((myMinimapElement.mySprite->GetPosition().x + distancePercent) * 0.87f) + 0.055f;
+					CLAMP(xPos, 0.1f, 0.8f);
+					
+					myMinimapPosIndicator->SetPosition({ xPos, 0.43f });
+					//if (myNrOfPlayers == 1)
+					//	myMinimapPosIndicator->SetPosition({ xPos, 0.95f });
+
 				}
 
+				myMinimapPosIndicator->SetColor(DEFAULT);
 				switch (i)
 				{
 				case (int)SParticipant::eInputDevice::eController1:
-					myMinimapPosIndicator->SetColor(YELLOW);
+					if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
+					{
+						myMinimapPosIndicator->SetColor(YELLOW);
+					}
 					break;
 				case (int)SParticipant::eInputDevice::eController2:
-					myMinimapPosIndicator->SetColor(GREEN);
+					if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
+					{
+						myMinimapPosIndicator->SetColor(GREEN);
+					}
 					break;
 				case (int)SParticipant::eInputDevice::eController3:
-					myMinimapPosIndicator->SetColor(PINK);
+					if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
+					{
+						myMinimapPosIndicator->SetColor(PINK);
+					}
 					break;
 				case (int)SParticipant::eInputDevice::eController4:
-					myMinimapPosIndicator->SetColor(BLUE);
+					if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
+					{
+						myMinimapPosIndicator->SetColor(BLUE);
+					}
 					break;
 				default:
-					myMinimapPosIndicator->SetColor(DEFAULT);
 					// Also make mark a bit smaller.
 					break;
 				}
@@ -159,7 +178,13 @@ void CGlobalHUD::LoadScoreboard(const CU::CJsonValue& aJsonValue)
 
 void CGlobalHUD::LoadMiniMap(const CU::CJsonValue& aJsonValue)
 {
-	CU::CJsonValue jsonElementData = aJsonValue.at("elementData");
+	CU::CJsonValue jsonElementData;
+
+	if (myNrOfPlayers == 1)
+		jsonElementData = aJsonValue.at("elementDataSP");
+	else
+		jsonElementData = aJsonValue.at("elementDataMP");
+
 	CU::CJsonValue jsonSprites = aJsonValue.at("sprites");
 
 	myMinimapElement = LoadHUDElement(jsonElementData);
@@ -168,9 +193,8 @@ void CGlobalHUD::LoadMiniMap(const CU::CJsonValue& aJsonValue)
 	const std::string posIndicatorSpritePath = jsonSprites.at("mark").GetString();
 
 	myMinimapElement.mySprite = new CSpriteInstance(backgroundSpritePath.c_str(), { 1.0f, 1.0f });
-	myMinimapPosIndicator = new CSpriteInstance(posIndicatorSpritePath.c_str(), { 0.016f, 0.16f });
+	myMinimapPosIndicator = new CSpriteInstance(posIndicatorSpritePath.c_str(), { 0.016f, 0.29f });
 
-	// IF SINGLE PLAYER -> POS AT THE BOTTOM
 }
 
 void CGlobalHUD::PresentScoreboard()
