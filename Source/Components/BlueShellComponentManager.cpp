@@ -3,10 +3,13 @@
 #include "BlueShellBehaviourComponent.h"
 
 
-CBlueShellComponentManager::CBlueShellComponentManager(CU::GrowingArray<CGameObject*>& aListOfKartObjects)
+CBlueShellComponentManager::CBlueShellComponentManager(CU::GrowingArray<CGameObject*>& aListOfKartObjects, CGameObjectManager* aGameObjectManager, CExplosionComponentManager* aExplosionManager, CColliderComponentManager* aColliderManager)
 {
 	myKartObjects = &aListOfKartObjects;
 	myComponents.Init(10);
+	myGameObjectManager = aGameObjectManager;
+	myExplosionManager = aExplosionManager;
+	myColliderManager = aColliderManager;
 }
 
 
@@ -24,7 +27,7 @@ void CBlueShellComponentManager::Update(const float aDeltaTime)
 
 CBlueShellBehaviourComponent * CBlueShellComponentManager::CreateAndRegisterComponent()
 {
-	CBlueShellBehaviourComponent* blue = new CBlueShellBehaviourComponent(*myKartObjects);
+	CBlueShellBehaviourComponent* blue = new CBlueShellBehaviourComponent(*myKartObjects,myGameObjectManager,myExplosionManager,myColliderManager);
 
 	CComponentManager::GetInstance().RegisterComponent(blue);
 

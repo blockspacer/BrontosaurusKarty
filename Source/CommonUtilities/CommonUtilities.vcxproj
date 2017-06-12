@@ -395,6 +395,7 @@
     <ClInclude Include="EMouseButtons.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="Function.h" />
+    <ClInclude Include="GamepadButtons.h" />
     <ClInclude Include="GrowingArray.h" />
     <ClInclude Include="Heap.h" />
     <ClInclude Include="InputListener.h" />
@@ -490,6 +491,7 @@
     <ClCompile Include="dbtweener.cpp" />
     <ClCompile Include="DL_Debug.cpp" />
     <ClCompile Include="Frustum.cpp" />
+    <ClCompile Include="GamePadButtons.cpp" />
     <ClCompile Include="InputListener.cpp" />
     <ClCompile Include="InputMessenger.cpp" />
     <ClCompile Include="InputWrapper.cpp" />

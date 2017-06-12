@@ -35,21 +35,26 @@ public:
 	void Render() override;
 	void OnEnter(const bool aLetThroughRender) override;
 	void OnExit(const bool aLetThroughRender) override;
-
 	void MenuLoad(const std::string& aFile);
 	void LoadElement(const CU::CJsonValue& aJsonValue, const std::string& aFolderpath);
 	static eAlignment LoadAlignment(const CU::CJsonValue& aJsonValue);
 private:
+	void RightChar();
+	void LeftChar();
+
+
 	bool PushLevel(const std::string& aString);
 	bool BackToMenu(const std::string& aString);
+
+	float myLastJoyX;
+
 	CMenuManager myMenuManager;
 	CU::GrowingArray<STextInput> myTextInputs;
 	CU::GrowingArray<SParticipant> myPlayers;
+	CU::GrowingArray<CSpriteInstance*> myCharacterSprites;
 
 	CU::StaticArray<SParticipant::eInputDevice,4> myPlayerInputDevices;
-	//StateStack* myStateStack;
 	bool myHasKeyboardResponded;
 	bool myShowStateBelow;
-	// Inherited via IInputListener
 };
 

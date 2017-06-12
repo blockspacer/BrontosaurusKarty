@@ -37,6 +37,7 @@
 #include "BlueShellComponentManager.h"
 #include "RespawnComponentManager.h"
 #include "LapTrackerComponentManager.h"
+#include "ExplosionComponentManager.h"
 
 #include "AudioSourceComponent.h"
 #include "AudioSourceComponentManager.h"
@@ -72,6 +73,7 @@
 #include "LocalHUD.h"
 #include "GlobalHUD.h"
 #include "PollingStation.h"
+#include "../CommonUtilities/XInputWrapper.h"
 
 // player creationSpeciifcIncludes
 #include "KartComponent.h"
@@ -93,6 +95,8 @@
 #include "AnimationEventFactory.h"
 #include "..\CommonUtilities\JsonValue.h"
 #include "CharacterInfoComponent.h"
+#include "BroadcastINputListener.h"
+#include "InputManager.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -116,8 +120,9 @@ CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	myPlayerCount = 1;
 	myPlayers.Add(SParticipant());
 	myPlayers[0].myInputDevice = SParticipant::eInputDevice::eKeyboard;
-	myPlacementLinesGUIElement.Init(8);
+	//myPlacementLinesGUIElement.Init(8);
 	myPlacementLineScreenSpaceWidth = 0.0f;
+	
 }
 
 CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU::GrowingArray<SParticipant> aPlayers)
@@ -157,7 +162,7 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 		myPlayers[0].myInputDevice = SParticipant::eInputDevice::eController1;
 	}
 
-	myPlacementLinesGUIElement.Init(8);
+	//myPlacementLinesGUIElement.Init(8);
 	myPlacementLineScreenSpaceWidth = 0.0f;
 
 	if (CAnimationEventFactory::GetInstance() == nullptr)
@@ -171,7 +176,7 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 CPlayState::~CPlayState()
 {
 	CParticleEmitterComponentManager::Destroy();
-
+	CAudioSourceComponentManager::Destroy();
 
 	SAFE_DELETE(myScene);
 
@@ -192,6 +197,9 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myRespawnComponentManager);
 	SAFE_DELETE(myItemBehaviourManager);
 	CLapTrackerComponentManager::DestoyInstance();
+
+	CKartSpawnPointManager::GetInstance()->Destroy();
+	CPickupComponentManager::Destroy();
 }
 
 // Runs on its own thread.
@@ -280,6 +288,8 @@ void CPlayState::Load()
 		CreateAI();
 	}
 
+	CPollingStation::GetInstance()->BindKartList(&myKartObjects);
+
 	///////////////////
 	//     HUD 
 
@@ -325,9 +335,6 @@ void CPlayState::Load()
 	//--------------------------------------------------------------
 
 
-
-
-
 	myIsLoaded = true;
 
 	// Get time to load the level:
@@ -335,6 +342,7 @@ void CPlayState::Load()
 	float time = loadPlaystateTimer.GetDeltaTime().GetMilliseconds();
 	GAMEPLAY_LOG("Game Inited in %f ms", time);
 	Postmaster::Threaded::CPostmaster::GetInstance().GetThreadOffice().HandleMessages();
+
 }
 
 void CPlayState::Init()
@@ -342,11 +350,14 @@ void CPlayState::Init()
 	for (int i = 0; i < myLocalHUDs.Size(); ++i)
 	{
 		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eBlueShellWarning);
+		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eRedShellWarning);
 		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eCharPressed);
 	}
 
 	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::eCharPressed);
 	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::eRaceOver);
+	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::eControllerInput);
+	//POSTMASTER.Subscribe()
 
 	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::ePlayerFinished);
 	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::eRaceStarted);
@@ -399,6 +410,7 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 
 	myRedShellManager->Update(aDeltaTime.GetSeconds());
 	myBlueShellManager->Update(aDeltaTime.GetSeconds());
+	myExplosionManager->Update(aDeltaTime.GetSeconds());
 
 	CPickupComponentManager::GetInstance()->Update(aDeltaTime.GetSeconds());
 	return myStatus;
@@ -457,7 +469,42 @@ CU::eInputReturn CPlayState::RecieveInput(const CU::SInputMessage& aInputMessage
 		//myStateStack.PushState(new CPauseMenuState(myStateStack));
 		return CU::eInputReturn::eKeepSecret;
 	}
+	switch(aInputMessage.myType)
+	{
+	
+	case CU::eInputType::eGamePadButtonPressed: 
+	if(aInputMessage.myGamePad == CU::GAMEPAD::B)
+	{
+		Postmaster::Message::InputEventData eventData;
+		eventData.eventType = Postmaster::Message::EventType::ButtonChanged;
+		eventData.data.boolValue = true;
+		eventData.buttonIndex = Postmaster::Message::ButtonIndex::B;
+		PostPostmasterEvent(aInputMessage.myGamepadIndex, eventData);
+	}
+	if (aInputMessage.myGamePad == CU::GAMEPAD::A)
+	{
+		Postmaster::Message::InputEventData eventData;
+		eventData.eventType = Postmaster::Message::EventType::ButtonChanged;
+		eventData.data.boolValue = true;
+		eventData.buttonIndex = Postmaster::Message::ButtonIndex::A;
+		PostPostmasterEvent(aInputMessage.myGamepadIndex, eventData);
+	}
+	if (aInputMessage.myGamePad == CU::GAMEPAD::X)
+	{
+		Postmaster::Message::InputEventData eventData;
+		eventData.eventType = Postmaster::Message::EventType::ButtonChanged;
+		eventData.data.boolValue = true;
+		eventData.buttonIndex = Postmaster::Message::ButtonIndex::X;
+		PostPostmasterEvent(aInputMessage.myGamepadIndex, eventData);
+		
+	}
+	break;
 
+	case CU::eInputType::eGamePadButtonReleased: 
+		
+		break;
+	
+	}
 	return CU::CInputMessenger::RecieveInput(aInputMessage);
 }
 
@@ -501,9 +548,10 @@ void CPlayState::CreateManagersAndFactories()
 	myBoostPadComponentManager = new CBoostPadComponentManager();
 	myItemBehaviourManager = new CItemWeaponBehaviourComponentManager();
 	myItemBehaviourManager->Init(myPhysicsScene);
+	myExplosionManager = new CExplosionComponentManager;
 	myRedShellManager = new CRedShellManager();
 	myRedShellManager->Init(myPhysicsScene, myKartControllerComponentManager,myKartObjects);
-	myBlueShellManager = new CBlueShellComponentManager(myKartObjects);
+	myBlueShellManager = new CBlueShellComponentManager(myKartObjects,myGameObjectManager,myExplosionManager,myColliderComponentManager);
 	myItemFactory = new CItemFactory();
 	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager,*myRedShellManager,*myBlueShellManager);
 	myRespawnComponentManager = new CRespawnComponentManager();
@@ -517,6 +565,11 @@ void CPlayState::LoadNavigationSpline(const CU::CJsonValue& splineData)
 	myKartControllerComponentManager->LoadNavigationSpline(splineData);
 }
 
+void CPlayState::PostPostmasterEvent(short aGamepadIndex,const Postmaster::Message::InputEventData& aEventData)
+{
+	POSTMASTER.Broadcast(new Postmaster::Message::CControllerInputMessage(aGamepadIndex,aEventData));
+}
+
 void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticipant, unsigned int aPlayerCount)
 {
 	//Create sub sub player object
@@ -528,12 +581,22 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent(playerJson.at("Model").GetString());
 	playerModel->SetIsShadowCasting(false);
 
-	CComponent* headLight = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({1.f, 0.f, 0.f}, 10.f, 5.f, 3.141592f * 0.125f);
-	CGameObject* headLightObject = myGameObjectManager->CreateGameObject();
-	headLightObject->GetLocalTransform().myPosition.y += 2.f;
-	headLightObject->AddComponent(headLight);
+	CComponent* headLight1 = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({ 1.f, 1.0f, 0.5f }, 5.f, 5.f, 3.141592f / 16.f);
+	CGameObject* headLightObject1 = myGameObjectManager->CreateGameObject();
+	headLightObject1->GetLocalTransform().myPosition.Set(-0.45f, 1.f, 1.f);
+	headLightObject1->GetLocalTransform().RotateAroundAxis(-3.141592f / 8.f, CU::Axees::X);
+	headLightObject1->AddComponent(headLight1);
 
-	secondPlayerObject->AddComponent(headLightObject);
+	secondPlayerObject->AddComponent(headLightObject1);
+
+	CComponent* headLight2 = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({ 1.f, 1.0f, 0.5f }, 5.f, 5.f, 3.141592f / 16.f);
+	CGameObject* headLightObject2 = myGameObjectManager->CreateGameObject();
+	headLightObject2->GetLocalTransform().myPosition.Set(0.45f, 1.f, 1.f);
+	headLightObject2->GetLocalTransform().RotateAroundAxis(-3.141592f / 8.f, CU::Axees::X);
+	headLightObject2->AddComponent(headLight2);
+
+	secondPlayerObject->AddComponent(headLightObject2);
+
 	secondPlayerObject->AddComponent(playerModel);
 	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
 	//Create sub player object
@@ -547,6 +610,9 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	cameraComponent->SetCamera(aCamera);
 	cameraObject->AddComponent(cameraComponent);
 	myCameraComponents.Add(cameraComponent);
+
+	
+
 	//Create top player object
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
 	playerObject->AddComponent(cameraObject);
@@ -824,77 +890,77 @@ void CPlayState::RenderCountdown()
 
 void CPlayState::LoadPlacementLineGUI()
 {
-	CU::CJsonValue jsonDoc;
-	if (myPlayers.Size() == 1)
-	{
-		jsonDoc.Parse("Json/HUD/HUD1Player.json");
-	}
-	else if (myPlayers.Size() == 2)
-	{
-		jsonDoc.Parse("Json/HUD/HUD2Player.json");
-	}
-	else if (myPlayers.Size() == 3)
-	{
-		jsonDoc.Parse("Json/HUD/HUD3Player.json");
-	}
-	else if (myPlayers.Size() == 4)
-	{
-		jsonDoc.Parse("Json/HUD/HUD4Player.json");
-	}
+	//CU::CJsonValue jsonDoc;
+	//if (myPlayers.Size() == 1)
+	//{
+	//	jsonDoc.Parse("Json/HUD/HUD1Player.json");
+	//}
+	//else if (myPlayers.Size() == 2)
+	//{
+	//	jsonDoc.Parse("Json/HUD/HUD2Player.json");
+	//}
+	//else if (myPlayers.Size() == 3)
+	//{
+	//	jsonDoc.Parse("Json/HUD/HUD3Player.json");
+	//}
+	//else if (myPlayers.Size() == 4)
+	//{
+	//	jsonDoc.Parse("Json/HUD/HUD4Player.json");
+	//}
 
-	CU::CJsonValue jsonPlacementLine = jsonDoc.at("placementLine");
-	for(unsigned int i = 0; i < myKartObjects.Size(); i++)
-	{
-		SHUDElement* hudElement = new SHUDElement();
+	//CU::CJsonValue jsonPlacementLine = jsonDoc.at("placementLine");
+	//for(unsigned int i = 0; i < myKartObjects.Size(); i++)
+	//{
+	//	SHUDElement* hudElement = new SHUDElement();
 
-		hudElement->myGUIElement.myOrigin = { 0.f,0.f }; // { 0.5f, 0.5f };
-		hudElement->myGUIElement.myAnchor[(char)eAnchors::eTop] = true;
-		hudElement->myGUIElement.myAnchor[(char)eAnchors::eLeft] = true;
+	//	hudElement->myGUIElement.myOrigin = { 0.f,0.f }; // { 0.5f, 0.5f };
+	//	hudElement->myGUIElement.myAnchor[(char)eAnchors::eTop] = true;
+	//	hudElement->myGUIElement.myAnchor[(char)eAnchors::eLeft] = true;
 
-		hudElement->myGUIElement.myScreenRect = CU::Vector4f(jsonPlacementLine.at("position").GetVector2f());
+	//	hudElement->myGUIElement.myScreenRect = CU::Vector4f(jsonPlacementLine.at("position").GetVector2f());
 
-		const CU::CJsonValue sizeObject = jsonPlacementLine.at("size");
-		hudElement->myPixelSize.x = sizeObject.at("pixelWidth").GetUInt();
-		hudElement->myPixelSize.y = sizeObject.at("pixelHeight").GetUInt();
+	//	const CU::CJsonValue sizeObject = jsonPlacementLine.at("size");
+	//	hudElement->myPixelSize.x = sizeObject.at("pixelWidth").GetUInt();
+	//	hudElement->myPixelSize.y = sizeObject.at("pixelHeight").GetUInt();
 
-		float rectWidth = sizeObject.at("screenSpaceWidth").GetFloat();
-		float rectHeight = sizeObject.at("screenSpaceHeight").GetFloat();
-		myPlacementLineScreenSpaceWidth = rectWidth;
+	//	float rectWidth = sizeObject.at("screenSpaceWidth").GetFloat();
+	//	float rectHeight = sizeObject.at("screenSpaceHeight").GetFloat();
+	//	myPlacementLineScreenSpaceWidth = rectWidth;
 
-		float topLeftX = hudElement->myGUIElement.myScreenRect.x;
-		float topLeftY = hudElement->myGUIElement.myScreenRect.y;
+	//	float topLeftX = hudElement->myGUIElement.myScreenRect.x;
+	//	float topLeftY = hudElement->myGUIElement.myScreenRect.y;
 
-		hudElement->myGUIElement.myScreenRect.z = rectWidth + topLeftX;
-		hudElement->myGUIElement.myScreenRect.w = rectHeight + topLeftY;
-		hudElement->mySprite = new CSpriteInstance("Sprites/GUI/Scoreboard/characterPortraitYoshi.dds", { 1.0f, 1.0f });
-		myPlacementLinesGUIElement.Add(hudElement);
-	}
+	//	hudElement->myGUIElement.myScreenRect.z = rectWidth + topLeftX;
+	//	hudElement->myGUIElement.myScreenRect.w = rectHeight + topLeftY;
+	//	hudElement->mySprite = new CSpriteInstance("Sprites/GUI/Scoreboard/characterPortraitYoshi.dds", { 1.0f, 1.0f });
+	//	myPlacementLinesGUIElement.Add(hudElement);
+	//}
 }
 
 void CPlayState::RenderPlacementLine()
 {
-	for(unsigned int i = 0; i < myPlacementLinesGUIElement.Size(); i++)
-	{
-		/*SComponentQuestionData lapTraversedPercentageQuestionData;
-		if (myKartObjects[i]->AskComponents(eComponentQuestionType::eGetLapTraversedPercentage, lapTraversedPercentageQuestionData) == true)
-		{
-			float lapTraversedPlacement = lapTraversedPercentageQuestionData.myFloat;
-			myPlacementLinesGUIElement[i]->myGUIElement.myScreenRect.x = lapTraversedPlacement;
-			myPlacementLinesGUIElement[i]->myGUIElement.myScreenRect.z = myPlacementLineScreenSpaceWidth + lapTraversedPlacement;
-		}
+	//for(unsigned int i = 0; i < myPlacementLinesGUIElement.Size(); i++)
+	//{
+	//	SComponentQuestionData lapTraversedPercentageQuestionData;
+	//	if (myKartObjects[i]->AskComponents(eComponentQuestionType::eGetLapTraversedPercentage, lapTraversedPercentageQuestionData) == true)
+	//	{
+	//		float lapTraversedPlacement = lapTraversedPercentageQuestionData.myFloat;
+	//		myPlacementLinesGUIElement[i]->myGUIElement.myScreenRect.x = lapTraversedPlacement;
+	//		myPlacementLinesGUIElement[i]->myGUIElement.myScreenRect.z = myPlacementLineScreenSpaceWidth + lapTraversedPlacement;
+	//	}
 
-		SCreateOrClearGuiElement* createOrClear = new SCreateOrClearGuiElement(L"placementLine" + i, myPlacementLinesGUIElement[i]->myGUIElement, CU::Vector2ui(WINDOW_SIZE.x, WINDOW_SIZE.y));
-		RENDERER.AddRenderMessage(createOrClear);
+	//	SCreateOrClearGuiElement* createOrClear = new SCreateOrClearGuiElement(L"placementLine" + i, myPlacementLinesGUIElement[i]->myGUIElement, CU::Vector2ui(WINDOW_SIZE.x, WINDOW_SIZE.y));
+	//	RENDERER.AddRenderMessage(createOrClear);
 
-		SChangeStatesMessage* const changeStatesMessage = new SChangeStatesMessage();
-		changeStatesMessage->myBlendState = eBlendState::eAlphaBlend;
-		changeStatesMessage->myDepthStencilState = eDepthStencilState::eDisableDepth;
-		changeStatesMessage->myRasterizerState = eRasterizerState::eNoCulling;
-		changeStatesMessage->mySamplerState = eSamplerState::eClamp;
+	//	SChangeStatesMessage* const changeStatesMessage = new SChangeStatesMessage();
+	//	changeStatesMessage->myBlendState = eBlendState::eAlphaBlend;
+	//	changeStatesMessage->myDepthStencilState = eDepthStencilState::eDisableDepth;
+	//	changeStatesMessage->myRasterizerState = eRasterizerState::eNoCulling;
+	//	changeStatesMessage->mySamplerState = eSamplerState::eClamp;
 
-		SRenderToGUI* const guiChangeState = new SRenderToGUI(L"placementLine" + i, changeStatesMessage);
-		RENDERER.AddRenderMessage(guiChangeState);
+	//	SRenderToGUI* const guiChangeState = new SRenderToGUI(L"placementLine" + i, changeStatesMessage);
+	//	RENDERER.AddRenderMessage(guiChangeState);
 
-		myPlacementLinesGUIElement[i]->mySprite->RenderToGUI(L"placementLine" + i);*/
-	}
+	//	myPlacementLinesGUIElement[i]->mySprite->RenderToGUI(L"placementLine" + i);
+	//}
 }

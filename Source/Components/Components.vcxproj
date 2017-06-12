@@ -384,6 +384,8 @@
     <ClInclude Include="DecalComponent.h" />
     <ClInclude Include="Drifter.h" />
     <ClInclude Include="DriftTurner.h" />
+    <ClInclude Include="ExplosionComponent.h" />
+    <ClInclude Include="ExplosionComponentManager.h" />
     <ClInclude Include="GoalComponent.h" />
     <ClInclude Include="HazardComponent.h" />
     <ClInclude Include="IPickupComponent.h" />
@@ -461,6 +463,8 @@
     <ClCompile Include="DecalComponent.cpp" />
     <ClCompile Include="Drifter.cpp" />
     <ClCompile Include="DriftTurner.cpp" />
+    <ClCompile Include="ExplosionComponent.cpp" />
+    <ClCompile Include="ExplosionComponentManager.cpp" />
     <ClCompile Include="FireComponent.cpp" />
     <ClCompile Include="GoalComponent.cpp" />
     <ClCompile Include="HazardComponent.cpp" />

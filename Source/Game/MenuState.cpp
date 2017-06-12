@@ -15,18 +15,25 @@
 #include "ThreadedPostmaster/LoadLevelMessage.h"
 #include "SplitScreenSelection.h"
 #include "../Audio/AudioInterface.h"
+#include "GamepadButtons.h"
+#include "CommonUtilities.h"
 
 char CMenuState::ourMenuesToPop = 0;
 
-CMenuState::CMenuState(StateStack& aStateStack, std::string aFile) : State(aStateStack, eInputMessengerType::eMainMenu), myTextInputs(2), myCurrentTextInput(-1), myShowStateBelow(false), myPointerSprite(nullptr), myIsInFocus(false), myBlinkeyBool(true), myBlinkeyTimer(0)
-{
+std::map<CU::eKeys, CU::GAMEPAD> CMenuState::ourKeyboardToGamePadMap = { {CU::eKeys::RETURN, CU::GAMEPAD::START} };
 
+
+CMenuState::CMenuState(StateStack& aStateStack, std::string aFile) : State(aStateStack, eInputMessengerType::eMainMenu), myTextInputs(2), myCurrentTextInput(-1), myShowStateBelow(false), myPointerSprite(nullptr), myIsInFocus(false), myBlinkeyBool(true), myBlinkeyTimer(0), mySelectorNames(1), mySelectors(1)
+{
 	myManager.AddAction("ExitGame", bind(&CMenuState::ExitGame, std::placeholders::_1));
 	myManager.AddAction("PushMenu", [this](std::string string)-> bool { return PushMenu(string); });
 	myManager.AddAction("PopMenues", [this](std::string string)-> bool { return PopMenues(string); });
 	myManager.AddAction("PushLevel", [this](std::string string)-> bool { return PushLevel(string); });
 	myManager.AddAction("SelectTextInput", [this](std::string string)-> bool { return SetCurrentTextInput(string); });
 	myManager.AddAction("PushSplitScreenSelection", [this](std::string string)-> bool { return PushSplitScreenSelection();});
+	myManager.AddAction("SelectNext", [this](std::string string)-> bool { return SelectNext(string); });
+	myManager.AddAction("SelectPrevious", [this](std::string string)-> bool { return SelectPrevious(string); });
+	myManager.AddAction("PushSelectedLevel", [this](std::string string)-> bool { return PushSelectedLevel(string); });
 	MenuLoad(aFile);
 }
 
@@ -36,6 +43,10 @@ CMenuState::~CMenuState()
 
 void CMenuState::Init()
 {
+	for (unsigned i = 0; i < 4; ++i)
+	{
+		AddXboxController();
+	}
 }
 
 eStateStatus CMenuState::Update(const CU::Time& aDeltaTime)
@@ -142,17 +153,15 @@ CU::eInputReturn CMenuState::RecieveInput(const CU::SInputMessage& aInputMessage
 		break;
 	case CU::eInputType::eScrollWheelChanged: break;
 	case CU::eInputType::eKeyboardPressed:
-		if (aInputMessage.myKey == CU::eKeys::BACK && myCurrentTextInput > -1)
+		if (ourKeyboardToGamePadMap.count(aInputMessage.myKey) != 0)
 		{
-			CTextInstance& currentTextInput = *myTextInputs[myCurrentTextInput].myTextInstance;
-			currentTextInput.SetTextLine(0, currentTextInput.GetTextLines()[0].substr(0, currentTextInput.GetTextLines()[0].length() - 1));
-		}
-		else if(aInputMessage.myKey == CU::eKeys::F10)
-		{
-			PushLevel("0");
+			myManager.RecieveGamePadInput(ourKeyboardToGamePadMap[aInputMessage.myKey]);
 		}
 		break;
 	case CU::eInputType::eKeyboardReleased: break;
+	case CU::eInputType::eGamePadButtonPressed:
+		myManager.RecieveGamePadInput(aInputMessage.myGamePad);
+		break;
 	default: break;
 	}
 
@@ -188,7 +197,6 @@ eMessageReturn CMenuState::DoEvent(const CLoadLevelMessage& aLoadLevelMessage)
 {
 	myStateStack.PushState(new CLoadState(myStateStack, aLoadLevelMessage.myLevelIndex));
 	return eMessageReturn::eContinue;
-
 }
 
 eAlignment CMenuState::LoadAlignment(const CU::CJsonValue& aJsonValue)
@@ -211,6 +219,17 @@ void CMenuState::LoadElement(const CU::CJsonValue& aJsonValue, const std::string
 	const CU::Vector2f origin = aJsonValue.at("origin").GetVector2f("xy");
 
 	const int spriteID = myManager.CreateSprite(aFolderpath + "/" + name, position, origin, 1);
+
+	if (aJsonValue.HasKey("isSelector") && aJsonValue.at("isSelector").GetBool())
+	{
+		mySelectorNames.Add(name);
+
+		SSelector selector;
+		selector.myMax = myManager.GetSpriteAmount(spriteID);
+		selector.mySelection = 0;
+		selector.mySpriteIndex = spriteID;
+		mySelectors.Add(selector);
+	}
 
 	if (aJsonValue.at("isButton").GetBool())
 	{
@@ -246,7 +265,7 @@ void CMenuState::LoadElement(const CU::CJsonValue& aJsonValue, const std::string
 		else
 		{
 			const SMenuSprite& currentSprite = myManager.GetSprite(spriteID);
-			textPosition = position + (textValue.at("offset").GetVector2f() - currentSprite.myDafaultSprite->GetPivot()) * currentSprite.myDafaultSprite->GetSize();
+			textPosition = position + (textValue.at("offset").GetVector2f() - currentSprite.mySprites[0]->GetPivot()) * currentSprite.mySprites[0]->GetSize();
 		}
 
 		if (text.size() > 0 && text.at(0) == L'#')
@@ -293,6 +312,31 @@ void CMenuState::MenuLoad(const std::string& aFile)
 	const std::string &folderPath = root.at("folder").GetString();
 	myShowStateBelow = root.at("letThroughRender").GetBool();
 
+	if (root.HasKey("GamePadActions"))
+	{
+		CU::CJsonValue gamePadActionsObject = root.at("GamePadActions");
+
+		for (unsigned i = 0; i < CU::GamePadButtonNames.Size(); ++i)
+		{
+			if (gamePadActionsObject.HasKey(CU::GamePadButtonNames[i]))
+			{
+				CU::CJsonValue actionsArray = gamePadActionsObject[CU::GamePadButtonNames[i]];
+
+				CU::GrowingArray<std::string> actions(actionsArray.Size());
+				CU::GrowingArray<std::string> arguments(actionsArray.Size());
+				for (unsigned j = 0; j < actionsArray.Size(); ++j)
+				{
+					CU::CJsonValue actionValue = actionsArray[j];
+
+					actions.Add(actionsArray[j].at("type").GetString());
+					arguments.Add(actionsArray[j].at("argument").GetString());
+				}
+
+				myManager.AddGamepadAction(CU::GamePadButtons[i], actions, arguments);
+			}
+		}
+	}
+
 	const CU::CJsonValue elementArray = root.at("elements");
 	for (unsigned i = 0; i < elementArray.Size(); ++i)
 	{
@@ -335,5 +379,51 @@ bool CMenuState::SetCurrentTextInput(std::string aTexINputIndex)
 {
 	myCurrentTextInput = stoi(aTexINputIndex);
 	myTextInputs[myCurrentTextInput].myInputIsValid = true;
+	return true;
+}
+
+bool CMenuState::SelectNext(const std::string aSelectorName)
+{
+	const char selectorIndex = mySelectorNames.Find(aSelectorName);
+	if (selectorIndex != mySelectorNames.FoundNone)
+	{
+		SSelector& selector = mySelectors[selectorIndex];
+		selector.mySelection += 1;
+		if (selector.mySelection >= selector.myMax)
+		{
+			selector.mySelection = 0;
+		}
+
+		myManager.SetSpiteState(selector.mySpriteIndex, selector.mySelection);
+	}
+
+	return true;
+}
+
+bool CMenuState::SelectPrevious(const std::string aSelectorName)
+{
+	const char selectorIndex = mySelectorNames.Find(aSelectorName);
+	if (selectorIndex != mySelectorNames.FoundNone)
+	{
+		SSelector& selector = mySelectors[selectorIndex];
+		selector.mySelection -= 1;
+		if (selector.mySelection < 0)
+		{
+			selector.mySelection = selector.myMax - 1;
+		}
+
+		myManager.SetSpiteState(selector.mySpriteIndex, selector.mySelection);
+	}
+
+	return true;
+}
+
+bool CMenuState::PushSelectedLevel(const std::string aSelector)
+{
+	const char selectorIndex = mySelectorNames.Find(aSelector);
+	if (selectorIndex != mySelectorNames.FoundNone)
+	{
+		myStateStack.SwapState(new CLoadState(myStateStack, mySelectors[selectorIndex].mySelection, myManager.ourParticipants));
+	}
 	return true;
 }

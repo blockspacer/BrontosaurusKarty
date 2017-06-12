@@ -190,6 +190,7 @@
     <ClInclude Include="ConectedMessage.h" />
     <ClInclude Include="ConetctMessage.h" />
     <ClInclude Include="ConsoleCalledUpon.h" />
+    <ClInclude Include="ControllerInputMessage.h" />
     <ClInclude Include="DrawCallsCount.h" />
     <ClInclude Include="DroppedFile.h" />
     <ClInclude Include="EMessageReturn.h" />
@@ -210,6 +211,7 @@
     <ClInclude Include="QuitGame.h" />
     <ClInclude Include="RaceOverMessage.h" />
     <ClInclude Include="RaceStartedMessage.h" />
+    <ClInclude Include="RedShellWarningMessage.h" />
     <ClInclude Include="SetClientIDMessage.h" />
     <ClInclude Include="SetVibrationOnController.h" />
     <ClInclude Include="stdafx.h" />
@@ -222,6 +224,7 @@
     <ClCompile Include="ConectedMessage.cpp" />
     <ClCompile Include="ConetctMessage.cpp" />
     <ClCompile Include="ConsoleCalledUpon.cpp" />
+    <ClCompile Include="ControllerInputMessage.cpp" />
     <ClCompile Include="DrawCallsCount.cpp" />
     <ClCompile Include="DroppedFile.cpp" />
     <ClCompile Include="FocusChange.cpp" />
@@ -237,6 +240,7 @@
     <ClCompile Include="QuitGame.cpp" />
     <ClCompile Include="RaceOverMessage.cpp" />
     <ClCompile Include="RaceStartedMessage.cpp" />
+    <ClCompile Include="RedShellWarningMessage.cpp" />
     <ClCompile Include="SetClientIDMessage.cpp" />
     <ClCompile Include="SetVibrationOnController.cpp" />
     <ClCompile Include="stdafx.cpp">

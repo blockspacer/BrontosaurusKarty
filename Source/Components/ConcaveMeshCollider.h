@@ -13,6 +13,7 @@ public:
 	CConcaveMeshColliderComponent(const SConcaveMeshColliderData& aColliderData, Physics::CPhysicsScene* aScene);
 	~CConcaveMeshColliderComponent();
 
+	void ReInit(const CU::Vector3f& aScale);
 	virtual void Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData) override;
 
 	const SConcaveMeshColliderData* GetData() override { return &myData; };

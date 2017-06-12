@@ -51,8 +51,8 @@ void Init(int argc, char* argv[])
 		SInitEngineParams engineParams;
 		engineParams.myWindowParams.Width = 1920;
 		engineParams.myWindowParams.Height = 1080;
-		engineParams.myWindowParams.Name = L"High Doom";
-		engineParams.myWindowParams.Title = L"High Doom";
+		engineParams.myWindowParams.Name = L"Get Moo Moo Moving";
+		engineParams.myWindowParams.Title = L"Get Moo Moo Moving";
 		engineParams.myWindowParams.Fullscreen = false;
 		engineParams.myThreadRender = true;
 		engineParams.myUseVsync = false;

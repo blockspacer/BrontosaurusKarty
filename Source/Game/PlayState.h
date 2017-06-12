@@ -3,6 +3,7 @@
 #include "../ThreadedPostmaster/Subscriber.h"
 #include "SParticipant.h"
 #include "NavigationSpline.h"
+#include "../ThreadedPostmaster/ControllerInputMessage.h"
 
 namespace CU
 {
@@ -42,6 +43,7 @@ class CRespawnComponentManager;
 class CLapTrackerComponentManager;
 class CLocalHUD;
 class CGlobalHUD;
+class CExplosionComponentManager;
 
 struct SGUIElement;
 struct  SHUDElement;
@@ -80,6 +82,8 @@ public:
 
 	void LoadNavigationSpline(const CU::CJsonValue &splineData);
 private:
+
+	void PostPostmasterEvent(short aGamepadIndex, const Postmaster::Message::InputEventData& aEventData);
 	void CreatePlayer(CU::Camera& aCamera, const SParticipant& aIntputDevice, unsigned int aPlayerCount);
 	void CreateAI();
 
@@ -109,6 +113,7 @@ private:
 	CRedShellManager* myRedShellManager;
 	CBlueShellComponentManager* myBlueShellManager;
 	CRespawnComponentManager* myRespawnComponentManager;
+	CExplosionComponentManager* myExplosionManager;
 
 	CU::GrowingArray<CCameraComponent*> myCameraComponents;
 	CU::GrowingArray<SParticipant> myPlayers;
@@ -116,13 +121,14 @@ private:
 
 	CU::GrowingArray<CLocalHUD*> myLocalHUDs;
 	CGlobalHUD* myGlobalHUD;
-	CU::GrowingArray<SHUDElement*> myPlacementLinesGUIElement;
+	//CU::GrowingArray<SHUDElement*> myPlacementLinesGUIElement;
 
 	//CU::TimerManager* myTimerManager;
 	TimerHandle myCountdownTimerHandle;
 
 	CSpriteInstance* myCountdownSprite;
 	SGUIElement* myCountdownElement;
+
 	float myPlacementLineScreenSpaceWidth;
 	bool myCountdownShouldRender;
 	bool myIsCountingDown;
@@ -130,7 +136,6 @@ private:
 	int myPlayerCount;
 	int myLevelIndex;
 	std::atomic_bool myIsLoaded;
-
 };
 
 inline bool CPlayState::IsLoaded() const

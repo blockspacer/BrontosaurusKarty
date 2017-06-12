@@ -33,7 +33,10 @@ enum class eMessageType
 	eRaceOver,
 	eRaceStarted,
 	eBlueShellWarning,
+	eControllerInput,
+	eRedShellWarning,
 	eLength,
+	
 };
 
 static const int MessageTypeLength = static_cast<int>(eMessageType::eLength);
