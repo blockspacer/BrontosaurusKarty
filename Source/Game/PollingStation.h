@@ -13,6 +13,7 @@ public:
 	
 	void BindKartList(CU::GrowingArray<CGameObject*>* aKartList);
 	const CU::GrowingArray<CGameObject*>* GetKartList();
+	const unsigned short GetAmmountOfPlayer();
 
 private:
 	CPollingStation();

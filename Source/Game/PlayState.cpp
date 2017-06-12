@@ -41,6 +41,7 @@
 
 #include "AudioSourceComponent.h"
 #include "AudioSourceComponentManager.h"
+#include "TimeTrackerComponentManager.h"
 
 //Networking
 #include "ThreadedPostmaster/Postmaster.h"
@@ -109,6 +110,7 @@ CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	, myScriptComponentManager(nullptr)
 	, myItemFactory(nullptr)
 	, myRespawnComponentManager(nullptr)
+	, myTimeTrackerComponentManager(nullptr)
 	, myCameraComponents(4)
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
@@ -136,6 +138,7 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	, myScriptComponentManager(nullptr)
 	, myItemFactory(nullptr)
 	, myRespawnComponentManager(nullptr)
+	, myTimeTrackerComponentManager(nullptr)
 	, myCameraComponents(4)
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
@@ -196,6 +199,7 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myItemFactory);
 	SAFE_DELETE(myRespawnComponentManager);
 	SAFE_DELETE(myItemBehaviourManager);
+	SAFE_DELETE(myTimeTrackerComponentManager);
 	CLapTrackerComponentManager::DestoyInstance();
 
 	CKartSpawnPointManager::GetInstance()->Destroy();
@@ -407,6 +411,10 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	{
 		myItemBehaviourManager->Update(aDeltaTime.GetSeconds());
 	}
+	if (myTimeTrackerComponentManager != nullptr)
+	{
+		myTimeTrackerComponentManager->Update(aDeltaTime.GetSeconds());
+	}
 
 	myRedShellManager->Update(aDeltaTime.GetSeconds());
 	myBlueShellManager->Update(aDeltaTime.GetSeconds());
@@ -555,6 +563,7 @@ void CPlayState::CreateManagersAndFactories()
 	myItemFactory = new CItemFactory();
 	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager,*myRedShellManager,*myBlueShellManager,myScene);
 	myRespawnComponentManager = new CRespawnComponentManager();
+	myTimeTrackerComponentManager = new CTimeTrackerComponentManager();
 	CLapTrackerComponentManager::CreateInstance();
 	CKartSpawnPointManager::GetInstance()->Create();
 	CPickupComponentManager::Create();
@@ -830,6 +839,7 @@ void CPlayState::InitiateRace()
 				{
 					myCountdownSprite->SetRect({ 0.f,0.00f,1.f,0.25f });
 					myKartControllerComponentManager->ShouldUpdate(true);
+					myTimeTrackerComponentManager->RaceStart();
 					POSTMASTER.Broadcast(new CRaceStartedMessage());
 					POSTMASTER.GetThreadOffice().HandleMessages();
 				}

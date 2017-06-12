@@ -94,7 +94,8 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 
 	myDrifter = std::make_unique<CDrifter>();
 	myDrifter->Init(Karts);
-	myAnimator = std::make_unique<CKartAnimator>(aModelComponent);
+	myAnimator = std::make_unique<CKartAnimator>(aModelComponent, Karts["Wheels"]);
+
 	myBoostEmmiterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("GunFire");
 	myGotHitEmmiterhandle = CParticleEmitterManager::GetInstance().GetEmitterInstance("Stars");
 	myStarEmmiterhandle1 = CParticleEmitterManager::GetInstance().GetEmitterInstance("StarBoost");

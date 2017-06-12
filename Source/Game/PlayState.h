@@ -44,6 +44,7 @@ class CLapTrackerComponentManager;
 class CLocalHUD;
 class CGlobalHUD;
 class CExplosionComponentManager;
+class CTimeTrackerComponentManager;
 
 struct SGUIElement;
 struct  SHUDElement;
@@ -114,6 +115,7 @@ private:
 	CBlueShellComponentManager* myBlueShellManager;
 	CRespawnComponentManager* myRespawnComponentManager;
 	CExplosionComponentManager* myExplosionManager;
+	CTimeTrackerComponentManager* myTimeTrackerComponentManager;
 
 	CU::GrowingArray<CCameraComponent*> myCameraComponents;
 	CU::GrowingArray<SParticipant> myPlayers;

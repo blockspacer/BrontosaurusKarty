@@ -71,6 +71,8 @@
     <ClCompile Include="AIMath.cpp" />
     <ClCompile Include="ExplosionComponent.cpp" />
     <ClCompile Include="ExplosionComponentManager.cpp" />
+    <ClCompile Include="TimeTrackerComponent.cpp" />
+    <ClCompile Include="TimeTrackerComponentManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -151,5 +153,7 @@
     <ClInclude Include="AIMath.h" />
     <ClInclude Include="ExplosionComponent.h" />
     <ClInclude Include="ExplosionComponentManager.h" />
+    <ClInclude Include="TimeTrackerComponent.h" />
+    <ClInclude Include="TimeTrackerComponentManager.h" />
   </ItemGroup>
 </Project>
