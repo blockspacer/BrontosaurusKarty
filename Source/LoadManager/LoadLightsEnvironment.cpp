@@ -90,5 +90,6 @@ int LoadEnvironmentSettings(KLoader::SLoadedComponentData someData)
 int LoadDecal(KLoader::SLoadedComponentData someData)
 {
 	CDecalComponent* component = CLightComponentManager::GetInstance().CreateAndRegisterDecalComponent();
+	component->SetDecalIndex(someData.myData.at("decalIndex").GetUInt());
 	return component->GetId();
 }
