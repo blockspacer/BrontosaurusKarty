@@ -105,7 +105,7 @@ void CGlobalHUD::Render()
 					float distancePercent = percentDoneQuestion.myFloat;
 					float xPos = ((myMinimapElement.mySprite->GetPosition().x + distancePercent) * 0.87f) + 0.055f;
 					CLAMP(xPos, 0.1f, 0.8f);
-					myMinimapPosIndicator->SetPosition({ xPos, 0.5f });
+					myMinimapPosIndicator->SetPosition({ xPos, 0.45f });
 				}
 
 				switch (i)
