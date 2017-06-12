@@ -312,7 +312,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 				}
 			}
 		}
-		else if (aInputMessage.myJoyStickPosition.x > 0.0f)
+		else if (aInputMessage.myJoyStickPosition.x < 0.0f)
 		{
 			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
 			{
