@@ -22,6 +22,8 @@
 #include "ColliderComponent.h"
 
 #include "../Audio/AudioInterface.h"
+#include "../BrontosaurusEngine/Scene.h"
+#include "../BrontosaurusEngine/DecalInstance.h"
 
 
 CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent, const short aControllerIndex, const short aCharacterIndex)
@@ -100,6 +102,9 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myAirControl = Karts.at("AirControl").GetFloat();
 
 	myCurrentAction = eCurrentAction::eDefault;
+
+	myDecalID = -1;
+	myScene = nullptr;
 }
 
 CKartControllerComponent::~CKartControllerComponent()
@@ -559,6 +564,10 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	}
 
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
+
+	// Jag lovar
+	myScene->GetDecal(myDecalID)->GetTransformation() = GetParent()->GetToWorldTransform();
+
 	myAnimator->Update(aDeltaTime, myVelocity.z, mySteering);
 }
 
@@ -593,6 +602,8 @@ void CKartControllerComponent::LookBack(bool aLookBack)
 		GetParent()->NotifyComponents(eComponentMessageType::eSetCameraRotation, data);
 	}
 }
+
+
 
 void CKartControllerComponent::Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData)
 {
@@ -1011,4 +1022,10 @@ bool CKartControllerComponent::Answer(const eComponentQuestionType aQuestionType
 		break;
 	}
 	return false;
+}
+
+void CKartControllerComponent::SetDecalInfo(const InstanceID aID, CScene* aScene)
+{
+	myDecalID = aScene->AddDecal();
+	myScene = aScene;
 }

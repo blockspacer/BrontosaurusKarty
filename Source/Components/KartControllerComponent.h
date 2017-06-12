@@ -9,6 +9,9 @@ namespace Physics
 	class CPhysicsScene;
 }
 
+using InstanceID = unsigned int;
+
+class CScene;
 class CNavigationSpline;
 class CParticleEmitterInstance;
 class CKartControllerComponentManager;
@@ -63,6 +66,9 @@ public:
 	inline bool GetIsControlledByAI() const;
 	void LookBack(bool aLookBack);
 
+
+	void SetDecalInfo(const InstanceID aID, CScene* aScene);
+
 private:
 	
 	void UpdateMovement(const float aDeltaTime);
@@ -93,6 +99,15 @@ private:
 
 	CKartControllerComponentManager* myManager;
 	Physics::CPhysicsScene* myPhysicsScene;
+
+	// Decal
+	// 
+	InstanceID myDecalID;
+	CScene* myScene;
+
+	//
+
+
 
 	float myMaxSpeed;
 	float myMinSpeed;
@@ -207,3 +222,4 @@ float CKartControllerComponent::GetAcceleratiot()
 {
 	return myAcceleration * (myIsBoosting == false ? myTerrainModifier : 1.f);
 }
+
