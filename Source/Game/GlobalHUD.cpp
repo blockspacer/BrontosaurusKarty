@@ -98,7 +98,7 @@ void CGlobalHUD::Render()
 	
 		SetGUIToAlphaBlend(L"minimap");
 		{
-			SParticipant::eInputDevice whoTheFuck;
+			SParticipant::eInputDevice whoTheFuck = SParticipant::eInputDevice::eController1;
 	
 			switch (whoTheFuck)
 			{
