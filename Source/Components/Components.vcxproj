@@ -435,6 +435,8 @@
     <ClInclude Include="StreakEmitterComponent.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TerrainComponent.h" />
+    <ClInclude Include="TimeTrackerComponent.h" />
+    <ClInclude Include="TimeTrackerComponentManager.h" />
     <ClInclude Include="VertexStreamComponent.h" />
     <ClInclude Include="WeaponCratePickupComponent.h" />
     <ClInclude Include="XboxController.h" />
@@ -518,6 +520,8 @@
     </ClCompile>
     <ClCompile Include="StreakEmitterComponent.cpp" />
     <ClCompile Include="TerrainComponent.cpp" />
+    <ClCompile Include="TimeTrackerComponent.cpp" />
+    <ClCompile Include="TimeTrackerComponentManager.cpp" />
     <ClCompile Include="VertexStreamComponent.cpp" />
     <ClCompile Include="WeaponCratePickupComponent.cpp" />
     <ClCompile Include="XboxController.cpp" />

@@ -31,6 +31,12 @@ CGlobalHUD::CGlobalHUD(): myNrOfPlayers(0)
 
 CGlobalHUD::~CGlobalHUD()
 {
+	POSTMASTER.Unsubscribe(this);
+
+	SAFE_DELETE(myScoreboardBGSprite);
+	SAFE_DELETE(myPortraitSprite);
+	SAFE_DELETE(myMinimapBGSprite);
+	SAFE_DELETE(myMinimapPosIndicator);
 }
 
 void CGlobalHUD::LoadHUD()
@@ -108,8 +114,6 @@ void CGlobalHUD::Render()
 					CLAMP(xPos, 0.1f, 0.8f);
 					
 					myMinimapPosIndicator->SetPosition({ xPos, 0.43f });
-					//if (myNrOfPlayers == 1)
-					//	myMinimapPosIndicator->SetPosition({ xPos, 0.95f });
 
 				}
 
