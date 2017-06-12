@@ -2,6 +2,7 @@
 
 class CSpotLightComponent;
 class PointLightComponent;
+class CDecalComponent;
 class CScene;
 
 namespace Lights
@@ -20,6 +21,8 @@ public:
 	CSpotLightComponent* CreateAndRegisterSpotLightComponent();
 	CComponent* CreateAndRegisterSpotLightComponent(const CU::Vector3f& aColor, const float aIntensity, const float aRange, const float aSpotAngle);
 
+	CDecalComponent* CreateAndRegisterDecalComponent();
+
 	void SetSkybox(const char* aPath);
 	void SetCubemap(const char* aPath);
 
@@ -37,6 +40,7 @@ private:
 	
 	CU::GrowingArray<PointLightComponent*> myPointLightComponents;
 	CU::GrowingArray<CSpotLightComponent*> mySpotLightComponents;
+	CU::GrowingArray<CDecalComponent*> myDecalComponents;
 
 	CScene& myScene;
 };

@@ -3,6 +3,7 @@
 #include "PointLightComponent.h"
 #include "Scene.h"
 #include "SpotLightComponent.h"
+#include "DecalComponent.h"
 
 CLightComponentManager* CLightComponentManager::ourInstance = nullptr;
 
@@ -57,6 +58,14 @@ CComponent* CLightComponentManager::CreateAndRegisterSpotLightComponent(const CU
 	return spotLight;
 }
 
+CDecalComponent* CLightComponentManager::CreateAndRegisterDecalComponent()
+{
+	CDecalComponent* decal = new CDecalComponent(myScene);
+	CComponentManager::GetInstance().RegisterComponent(decal);
+	myDecalComponents.Add(decal);
+	return decal;
+}
+
 void CLightComponentManager::Update(const CU::Time aDeltaTime)
 {
 	for (PointLightComponent* component : myPointLightComponents)
@@ -80,7 +89,7 @@ CLightComponentManager::CLightComponentManager(CScene& aScene)
 	: myScene(aScene)
 	, myPointLightComponents(10)
 	, mySpotLightComponents(10)
-
+	, myDecalComponents(10)
 {
 }
 
