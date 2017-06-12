@@ -57,6 +57,7 @@ void CHazardComponent::Receive(const eComponentMessageType aMessageType, const S
 				{
 					GetParent()->NotifyOnlyComponents(eComponentMessageType::eDeactivate, SComponentMessageData()); //can be a problem with unity parenting...
 					GetParent()->NotifyOnlyComponents(eComponentMessageType::eDeactivateEmitter, SComponentMessageData());
+					GetParent()->NotifyOnlyComponents(eComponentMessageType::eTurnOffThePointLight, SComponentMessageData());
 				}
 			}
 		}

@@ -18,6 +18,7 @@
 #include "ParticleEmitterComponent.h"
 #include "PointLightComponent.h"
 #include "LightManager.h"
+#include "Scene.h"
 
 #include "ModelComponentManager.h"
 #include "ConcaveMeshCollider.h"
@@ -66,7 +67,7 @@ CItemFactory::~CItemFactory()
 {
 }
 
-void CItemFactory::Init(CGameObjectManager& aGameObjectManager, CItemWeaponBehaviourComponentManager & aManager, Physics::CPhysicsScene* aPhysicsScene, CColliderComponentManager& aColliderManager, CRedShellManager& aRedShellManager, CBlueShellComponentManager& aBlueShellManager)
+void CItemFactory::Init(CGameObjectManager& aGameObjectManager, CItemWeaponBehaviourComponentManager & aManager, Physics::CPhysicsScene* aPhysicsScene, CColliderComponentManager& aColliderManager, CRedShellManager& aRedShellManager, CBlueShellComponentManager& aBlueShellManager, CScene* aScene)
 {
 	myItemBeheviourComponentManager = &aManager;
 	myPhysicsScene = aPhysicsScene;
@@ -74,6 +75,7 @@ void CItemFactory::Init(CGameObjectManager& aGameObjectManager, CItemWeaponBehav
 	myColliderManager = &aColliderManager;
 	myRedShellManager = &aRedShellManager;
 	myBlueShellManager = &aBlueShellManager;
+	myScene = aScene;
 
 	CreateShellBuffer();
 	CreateBananaBuffer();
@@ -94,6 +96,14 @@ void CItemFactory::CreateBananaBuffer()
 		CModelComponent* model = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_Banana_01.fbx");
 		model->FlipVisibility();
 		banana->AddComponent(model);
+
+		PointLightComponent* pointLight = new PointLightComponent(*myScene);
+		pointLight->SetOffsetToParent(CU::Vector3f(0, 1, 0));
+		pointLight->SetColor(CU::Vector3f(1, 1, 0));
+		pointLight->SetIntensity(1.0f);
+		pointLight->SetRange(5);
+
+		banana->AddComponent(pointLight);
 
 		CItemWeaponBehaviourComponent* physics = myItemBeheviourComponentManager->CreateAndRegisterComponent();
 		physics->SetToNoSpeed();
@@ -147,6 +157,14 @@ void CItemFactory::CreateShellBuffer()
 		CModelComponent* model = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_shell_green_01.fbx");
 		model->FlipVisibility();
 		shell->AddComponent(model);
+
+		PointLightComponent* pointLight = new PointLightComponent(*myScene);
+		pointLight->SetOffsetToParent(CU::Vector3f(0, 1, 0));
+		pointLight->SetColor(CU::Vector3f(0, 1, 0));
+		pointLight->SetIntensity(1.0f);
+		pointLight->SetRange(10);
+
+		shell->AddComponent(pointLight);
 
 		CParticleEmitterComponent* particle = CParticleEmitterComponentManager::GetInstance().CreateComponent("ShellTrail");
 		particle->Deactivate();
@@ -203,6 +221,14 @@ void CItemFactory::CreateRedShellBuffer()
 		CModelComponent* model = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_Shell_Red_01.fbx");
 		model->FlipVisibility();
 		shell->AddComponent(model);
+
+		PointLightComponent* pointLight = new PointLightComponent(*myScene);
+		pointLight->SetOffsetToParent(CU::Vector3f(0, 1, 0));
+		pointLight->SetColor(CU::Vector3f(1, 0, 0));
+		pointLight->SetIntensity(1.0f);
+		pointLight->SetRange(5);
+
+		shell->AddComponent(pointLight);
 
 		CParticleEmitterComponent* particle = CParticleEmitterComponentManager::GetInstance().CreateComponent("DriftDebris");
 		particle->Deactivate();
