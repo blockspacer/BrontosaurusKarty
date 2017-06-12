@@ -103,7 +103,9 @@ void CGlobalHUD::Render()
 				if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eGetLapTraversedPercentage, percentDoneQuestion) == true)
 				{
 					float distancePercent = percentDoneQuestion.myFloat;
-					myMinimapPosIndicator->SetPosition({ myMinimapElement.mySprite->GetPosition().x + distancePercent, 0.5f });
+					float xPos = ((myMinimapElement.mySprite->GetPosition().x + distancePercent) * 0.87f) + 0.055f;
+					CLAMP(xPos, 0.1f, 0.8f);
+					myMinimapPosIndicator->SetPosition({ xPos, 0.5f });
 				}
 
 				switch (i)
