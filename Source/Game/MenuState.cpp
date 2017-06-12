@@ -20,7 +20,7 @@
 
 char CMenuState::ourMenuesToPop = 0;
 
-std::map<CU::eKeys, CU::GAMEPAD> CMenuState::ourKeyboardToGamePadMap = { {CU::eKeys::RETURN, CU::GAMEPAD::START} };
+std::map<CU::eKeys, CU::GAMEPAD> CMenuState::ourKeyboardToGamePadMap = { {CU::eKeys::RETURN, CU::GAMEPAD::START} , {CU::eKeys::SPACE, CU::GAMEPAD::A}};
 
 
 CMenuState::CMenuState(StateStack& aStateStack, std::string aFile) : State(aStateStack, eInputMessengerType::eMainMenu), myTextInputs(2), myCurrentTextInput(-1), myShowStateBelow(false), myPointerSprite(nullptr), myIsInFocus(false), myBlinkeyBool(true), myBlinkeyTimer(0), mySelectorNames(1), mySelectors(1)
