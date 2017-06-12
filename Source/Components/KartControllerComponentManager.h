@@ -1,5 +1,9 @@
 #pragma once
 #include "../Game/NavigationSpline.h"
+#include "../ThreadedPostmaster/Subscriber.h"
+
+class CRaceStartedMessage;
+
 
 #define RENDER_SPLINE 0
 
@@ -13,7 +17,7 @@ class CGoalComponent;
 
 struct SParticipant;
 
-class CKartControllerComponentManager
+class CKartControllerComponentManager : public Postmaster::ISubscriber
 {
 public:
 	CKartControllerComponentManager();
@@ -26,7 +30,7 @@ public:
 	void Init();
 
 
-	void ShouldUpdate(const bool aShouldUpdate);
+	//void ShouldUpdate(const bool aShouldUpdate);
 
 	void LoadNavigationSpline(const CU::CJsonValue& aJsonValue);
 
@@ -41,6 +45,10 @@ public:
 #endif
 	void SetPhysiscsScene(Physics::CPhysicsScene* aPhysicsScene);
 private:
+
+	eMessageReturn DoEvent(const CRaceStartedMessage& aMessage) override;
+
+
 	CU::GrowingArray<CKartControllerComponent*> myComponents;
 	CGoalComponent* myGoalComponentPointer;
 	Physics::CPhysicsScene* myPhysicsScene;

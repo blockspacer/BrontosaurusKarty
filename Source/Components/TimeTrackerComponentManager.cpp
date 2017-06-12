@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "TimeTrackerComponentManager.h"
 #include "TimeTrackerComponent.h"
+#include "..\ThreadedPostmaster/RaceStartedMessage.h"
+
 
 CTimeTrackerComponentManager::CTimeTrackerComponentManager()
 {
@@ -10,6 +12,7 @@ CTimeTrackerComponentManager::CTimeTrackerComponentManager()
 
 CTimeTrackerComponentManager::~CTimeTrackerComponentManager()
 {
+	POSTMASTER.Unsubscribe(this);
 }
 
 void CTimeTrackerComponentManager::Update(float aDeltaTime)
@@ -25,6 +28,12 @@ void CTimeTrackerComponentManager::RaceStart()
 	{
 		myComponents[i]->StartAddingTime();
 	}
+}
+
+eMessageReturn CTimeTrackerComponentManager::DoEvent(const CRaceStartedMessage & aMessage)
+{
+	RaceStart();
+	return eMessageReturn::eContinue;
 }
 
 CTimeTrackerComponent* CTimeTrackerComponentManager::CreateComponent()

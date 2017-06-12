@@ -1,6 +1,9 @@
 #pragma once
+#include "../ThreadedPostmaster/Subscriber.h"
+
 class CTimeTrackerComponent;
-class CTimeTrackerComponentManager
+
+class CTimeTrackerComponentManager : public Postmaster::ISubscriber
 {
 public:
 	CTimeTrackerComponentManager();
@@ -8,8 +11,11 @@ public:
 
 	CTimeTrackerComponent* CreateComponent();
 	void Update(float aDeltaTime);
-	void RaceStart();
+
 private:
+	eMessageReturn DoEvent(const CRaceStartedMessage& aMessage) override;
+	void RaceStart();
+
 	CU::GrowingArray<CTimeTrackerComponent*, unsigned short> myComponents;
 };
 
