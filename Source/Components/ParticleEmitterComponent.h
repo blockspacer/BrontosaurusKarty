@@ -6,6 +6,7 @@ class CParticleEmitterInstance;
 class CParticleEmitterComponent : public CComponent
 {
 public:
+	explicit CParticleEmitterComponent(const std::string& anId);
 	CParticleEmitterComponent(int anId);
 	~CParticleEmitterComponent();
 	void Update(CU::Time aDeltaTime);

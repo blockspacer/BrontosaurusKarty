@@ -2,20 +2,69 @@
 #include "BlueShellBehaviourComponent.h"
 #include "LapTrackerComponentManager.h"
 #include "../ThreadedPostmaster/BlueShellWarningMessage.h"
+#include "GameObjectManager.h"
+#include "ModelComponent.h"
+#include "ModelComponentManager.h"
+#include "HazardComponent.h"
+#include "ExplosionComponent.h"
+#include "ExplosionComponentManager.h"
+#include "ColliderComponentManager.h"
+#include "ColliderComponent.h"
 
 
-CBlueShellBehaviourComponent::CBlueShellBehaviourComponent(CU::GrowingArray<CGameObject*>& aListOfKartObjects)
+CBlueShellBehaviourComponent::CBlueShellBehaviourComponent(CU::GrowingArray<CGameObject*>& aListOfKartObjects, CGameObjectManager* aGameObjectManager, CExplosionComponentManager* aExplosionManager, CColliderComponentManager* aColliderManager)
 {
 	myKartObjects = &aListOfKartObjects;
 
 	myIsActive = false;
-	myTeleportDelay = 1.0f;
+	myTeleportDelay = 2.0f;
 	myElapsedTime = 0;
-	mySpeed = 90;
+	mySpeed = 30;
 	myDecendSpeed = 5;
 	myVelocity = CU::Vector3f::UnitZ * mySpeed;
 	myAboveHeight = 10;
 	myDropSpeed = CU::Vector3f::UnitY * myAboveHeight;
+
+
+	//create explosion object
+	myExplosion = aGameObjectManager->CreateGameObject();
+
+	CModelComponent* model = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_ExplosionSphere_01.fbx");
+	model->FlipVisibility();
+	myExplosion->AddComponent(model);
+
+	CHazardComponent* hazard = new CHazardComponent;
+	hazard->SetToPermanent();
+	CComponentManager::GetInstance().RegisterComponent(hazard);
+	myExplosion->AddComponent(hazard);
+
+	//explosionComponent
+	CExplosionComponent* explosion = aExplosionManager->CreateExplosionComponent();
+	myExplosion->AddComponent(explosion);
+
+	//adds collider
+	SSphereColliderData crystalMeshColliderData;
+	crystalMeshColliderData.IsTrigger = true;
+	crystalMeshColliderData.myLayer = Physics::eHazzard;
+	crystalMeshColliderData.myCollideAgainst = Physics::GetCollideAgainst(crystalMeshColliderData.myLayer);
+	crystalMeshColliderData.material.aDynamicFriction = 0.5f;
+	crystalMeshColliderData.material.aRestitution = 0.5f;
+	crystalMeshColliderData.material.aStaticFriction = 0.5f;
+	crystalMeshColliderData.center.y = 0.0f;
+	crystalMeshColliderData.myRadius = 10.5f;
+	//crystalMeshColliderData.myHalfExtent = CU::Vector3f(10.5f, 10.5f, 10.5f);
+	CColliderComponent* shellColliderComponent = aColliderManager->CreateComponent(&crystalMeshColliderData, myExplosion->GetId());
+	//CGameObject* colliderObject = myGameObjectManager->CreateGameObject();
+
+	SRigidBodyData rigidbodah;
+	rigidbodah.isKinematic = true;
+	rigidbodah.useGravity = false;
+	rigidbodah.myLayer = Physics::eHazzard;
+	rigidbodah.myCollideAgainst = Physics::GetCollideAgainst(rigidbodah.myLayer);
+	CColliderComponent* rigidComponent = aColliderManager->CreateComponent(&rigidbodah, myExplosion->GetId());
+
+	myExplosion->AddComponent(shellColliderComponent);
+	myExplosion->AddComponent(rigidComponent);
 }
 
 
@@ -36,7 +85,9 @@ void CBlueShellBehaviourComponent::Update(const float aDeltaTime)
 	{
 		myElapsedTime += aDeltaTime;
 		CU::Vector3f flyUp(0, myAboveHeight, 0);
-		GetParent()->Move(flyUp*aDeltaTime);
+		GetParent()->SetWorldPosition(CU::Vector3f(myUser->GetWorldPosition().x,GetParent()->GetWorldPosition().y,myUser->GetWorldPosition().z));
+		CU::Vector3f movement = flyUp * aDeltaTime;
+		GetParent()->Move(movement);
 
 		if (myElapsedTime >= myTeleportDelay)
 		{
@@ -97,6 +148,14 @@ void CBlueShellBehaviourComponent::Receive(const eComponentMessageType aMessageT
 {
 	switch (aMessageType)
 	{
+	case eComponentMessageType::eHazzardCollide:
+	{
+		myExplosion->SetWorldPosition(aMessageData.myComponent->GetParent()->GetWorldPosition());
+		myExplosion->NotifyOnlyComponents(eComponentMessageType::eMoving, SComponentMessageData());
+		SComponentMessageData data;
+		data.myVector3f = aMessageData.myComponent->GetParent()->GetWorldPosition();
+		myExplosion->NotifyOnlyComponents(eComponentMessageType::eResetExplosion, data);
+	}
 	case (eComponentMessageType::eDeactivate):
 		myIsActive = false;
 		break;
@@ -105,6 +164,7 @@ void CBlueShellBehaviourComponent::Receive(const eComponentMessageType aMessageT
 		myIsActive = true;
 		myElapsedTime = 0;
 		myAboveHeight = 10;
+		myUser = aMessageData.myComponent->GetParent();
 		break;
 	}
 

@@ -16,6 +16,8 @@
 #include "HazardComponent.h"
 #include "ModelComponent.h"
 #include "ParticleEmitterComponent.h"
+#include "PointLightComponent.h"
+#include "LightManager.h"
 
 #include "ModelComponentManager.h"
 #include "ConcaveMeshCollider.h"
@@ -454,8 +456,11 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 		shell->SetWorldPosition(position);
 		//CU::Vector3f forward = userComponent->GetParent()->GetToWorldTransform().myForwardVector;
 		//forward  *=3;
-		shell->Move(CU::Vector3f(0, -0.5f, 3));
-		shell->NotifyOnlyComponents(eComponentMessageType::eReInitBlueShell, SComponentMessageData());
+		shell->Move(CU::Vector3f(0, 0.5f, 3));
+
+		SComponentMessageData data;
+		data.myComponent = userComponent;
+		shell->NotifyOnlyComponents(eComponentMessageType::eReInitBlueShell, data);
 		break;
 	}
 	case eItemTypes::eMushroom:

@@ -92,6 +92,8 @@ enum class eComponentMessageType
 	ePassedASpline,
 	eAITakeOver,
 	eSetCameraRotation,
+	eResetExplosion,
+	eHazzardCollide,
 	eLength,
 };
 
