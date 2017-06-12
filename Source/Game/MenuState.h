@@ -64,6 +64,8 @@ private:
 	bool SelectNext(const std::string aSelectorName);
 	bool SelectPrevious(const std::string aSelectorName);
 
+	bool PushSelectedLevel(const std::string aSelector);
+
 	static std::map<CU::eKeys, CU::GAMEPAD> ourKeyboardToGamePadMap;
 
 	CU::GrowingArray<STextInput> myTextInputs;

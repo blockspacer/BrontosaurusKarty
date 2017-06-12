@@ -33,6 +33,7 @@ CMenuState::CMenuState(StateStack& aStateStack, std::string aFile) : State(aStat
 	myManager.AddAction("PushSplitScreenSelection", [this](std::string string)-> bool { return PushSplitScreenSelection();});
 	myManager.AddAction("SelectNext", [this](std::string string)-> bool { return SelectNext(string); });
 	myManager.AddAction("SelectPrevious", [this](std::string string)-> bool { return SelectPrevious(string); });
+	myManager.AddAction("PushSelectedLevel", [this](std::string string)-> bool { return PushSelectedLevel(string); });
 	MenuLoad(aFile);
 }
 
@@ -414,5 +415,15 @@ bool CMenuState::SelectPrevious(const std::string aSelectorName)
 		myManager.SetSpiteState(selector.mySpriteIndex, selector.mySelection);
 	}
 
+	return true;
+}
+
+bool CMenuState::PushSelectedLevel(const std::string aSelector)
+{
+	const char selectorIndex = mySelectorNames.Find(aSelector);
+	if (selectorIndex != mySelectorNames.FoundNone)
+	{
+		myStateStack.SwapState(new CLoadState(myStateStack, mySelectors[selectorIndex].mySelection, myManager.ourParticipants));
+	}
 	return true;
 }
