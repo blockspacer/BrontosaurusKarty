@@ -304,6 +304,7 @@
     <ClCompile Include="AnimationEvent.cpp" />
     <ClCompile Include="AnimationEventFactory.cpp" />
     <ClCompile Include="BackgroundLoadingManager.cpp" />
+    <ClCompile Include="BroadcastINputListener.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameEventMessenger.cpp" />
     <ClCompile Include="GlobalHUD.cpp" />
@@ -335,6 +336,7 @@
     <ClInclude Include="AnimationEvent.h" />
     <ClInclude Include="AnimationEventFactory.h" />
     <ClInclude Include="BackgroundLoadingManager.h" />
+    <ClInclude Include="BroadcastINputListener.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameEventMessenger.h" />
     <ClInclude Include="GlobalHUD.h" />

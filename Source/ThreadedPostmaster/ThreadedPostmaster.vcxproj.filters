@@ -82,7 +82,10 @@
     <Filter Include="Message\BlueShellWarning">
       <UniqueIdentifier>{95eed5fe-a1b5-49f6-bcf0-8bf8325e32e4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Message\RedShellWarning">
+    <Filter Include="Message\ControllerInputMessage">
+      <UniqueIdentifier>{be09a65f-65fb-4b01-97a8-69bdc9ec5dbe}</UniqueIdentifier>
+    </Filter>
+<Filter Include="Message\RedShellWarning">
       <UniqueIdentifier>{4f399304-bbd1-468c-b884-93fe96629448}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -158,6 +161,9 @@
     <ClCompile Include="BlueShellWarningMessage.cpp">
       <Filter>Message\BlueShellWarning</Filter>
     </ClCompile>
+    <ClCompile Include="ControllerInputMessage.cpp">
+      <Filter>Message\ControllerInputMessage</Filter>
+</ClCompile>
     <ClCompile Include="RedShellWarningMessage.cpp">
       <Filter>Message\RedShellWarning</Filter>
     </ClCompile>
@@ -249,6 +255,9 @@
     <ClInclude Include="BlueShellWarningMessage.h">
       <Filter>Message\BlueShellWarning</Filter>
     </ClInclude>
+    <ClInclude Include="ControllerInputMessage.h">
+      <Filter>Message\ControllerInputMessage</Filter>
+</ClInclude>
     <ClInclude Include="RedShellWarningMessage.h">
       <Filter>Message\RedShellWarning</Filter>
     </ClInclude>

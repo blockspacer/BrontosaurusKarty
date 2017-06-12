@@ -119,15 +119,13 @@ void CParticleRenderer::DoRenderQueue(ID3D11ShaderResourceView* aDepthResource, 
 
 				DEVICE_CONTEXT->OMSetRenderTargets(1, &myInteremediate->GetRenderTargetView(), myUseDepthStencil);
 			
-
+				
 				emitter->Render(msg->toWorld, msg->particleList, emitter->GetRenderMode());
 
 				
 				/*myInteremediate->Activate();
 
 				mySharedHelper.DoEffect(CFullScreenHelper::eEffectType::eCopy, &myParticleGBuffer.diffuse);*/
-
-				
 			}
 			break;
 		case CParticleEmitter::RenderMode::eNURBSSphere: 

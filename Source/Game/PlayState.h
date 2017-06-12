@@ -3,6 +3,7 @@
 #include "../ThreadedPostmaster/Subscriber.h"
 #include "SParticipant.h"
 #include "NavigationSpline.h"
+#include "../ThreadedPostmaster/ControllerInputMessage.h"
 
 namespace CU
 {
@@ -81,6 +82,8 @@ public:
 
 	void LoadNavigationSpline(const CU::CJsonValue &splineData);
 private:
+
+	void PostPostmasterEvent(short aGamepadIndex, const Postmaster::Message::InputEventData& aEventData);
 	void CreatePlayer(CU::Camera& aCamera, const SParticipant& aIntputDevice, unsigned int aPlayerCount);
 	void CreateAI();
 
@@ -133,7 +136,6 @@ private:
 	int myPlayerCount;
 	int myLevelIndex;
 	std::atomic_bool myIsLoaded;
-
 };
 
 inline bool CPlayState::IsLoaded() const

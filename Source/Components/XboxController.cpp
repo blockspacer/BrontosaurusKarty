@@ -15,6 +15,7 @@
 
 #include "AIController.h"
 #include "..\BrontosaurusEngine\Engine.h"
+#include "../ThreadedPostmaster/ControllerInputMessage.h"
 
 CXboxController::CXboxController(CKartControllerComponent& aKartComponent)
 	: CController(aKartComponent)
@@ -116,6 +117,7 @@ void CXboxController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 		myControllerComponent.MoveFoward();
 		myControllerComponent.IncreasePreGameBoostValue();
 		myIsMovingFoward = true;
+		
 		break;
 	case CU::GAMEPAD::B:
 		myControllerComponent.MoveBackWards();
@@ -155,6 +157,7 @@ void CXboxController::GamePadReleasedKey(const CU::SInputMessage& aInputMessage)
 		{
 			myControllerComponent.MoveBackWards();
 		}
+	
 		break;
 	case CU::GAMEPAD::B:
 		myControllerComponent.StopMoving();
@@ -186,6 +189,7 @@ void CXboxController::MovedJoystick(const CU::SInputMessage& aInputMessage)
 	{
 		myControllerComponent.Turn(aInputMessage.myJoyStickPosition.x);
 	}
+	
 }
 
 void CXboxController::GamePadLeftTrigger(const CU::SInputMessage& aInputMessage)
@@ -219,3 +223,7 @@ void CXboxController::JoystickDeadzone()
 {
 	myControllerComponent.StopTurning();
 }
+
+
+	
+

@@ -8,14 +8,12 @@
 #include "CommonUtilities/JsonValue.h"
 #include "StateStack.h"
 #include "LoadState.h"
+#include "CommonUtilities.h"
 
 CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aStateStack,eInputMessengerType::eSplitScreenSelectionMenu, 1)
 {
 	myPlayers.Init(4);
 	myHasKeyboardResponded = false;
-	//myStateStack = &aStateStack;
-
-	//borde ändras till något annat senare men eh
 	myMenuManager.AddAction("PushLevel", [this](std::string string)-> bool { return PushLevel(string); });
 	myMenuManager.AddAction("BackToMenu", [this](std::string string)-> bool { return BackToMenu(string); });
 	MenuLoad("Json/Menu/SplitScreenSelection.json");
@@ -25,7 +23,17 @@ CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aS
 		SParticipant::eInputDevice input = SParticipant::eInputDevice::eNone;
 		myPlayerInputDevices.Insert(i, input);
 	}
-	
+	myCharacterSprites.Init(static_cast<int>(SParticipant::eCharacter::eLength));
+	std::string path = "";
+	for (unsigned short i = 0; i < static_cast<unsigned short>(SParticipant::eCharacter::eLength); ++i)
+	{
+		path = "Sprites/GUI/CharacterSelectImages/CharacterSelect_Kart_0";
+		path += std::to_string(i + 1);
+		path += ".dds";
+		CSpriteInstance* sprite = new CSpriteInstance(path.c_str());
+		sprite->SetPosition(CU::Vector2f(CU::Vector2f(0,0)));
+		myCharacterSprites.Add(sprite);
+	}
 }
 
 
@@ -46,6 +54,26 @@ eStateStatus CSplitScreenSelection::Update(const CU::Time & aDeltaTime)
 void CSplitScreenSelection::Render()
 {
 	myMenuManager.Render();
+	if (myPlayers.Size() > 0)
+	{
+		myCharacterSprites[static_cast<short>(myPlayers[0].mySelectedCharacter)]->SetPosition(CU::Vector2f(0, 0));
+		myCharacterSprites[static_cast<short>(myPlayers[0].mySelectedCharacter)]->RenderToGUI(L"__Menu");
+		if (myPlayers.Size() > 1)
+		{
+			myCharacterSprites[static_cast<short>(myPlayers[1].mySelectedCharacter)]->SetPosition(CU::Vector2f(0.5f, 0));
+			myCharacterSprites[static_cast<short>(myPlayers[1].mySelectedCharacter)]->RenderToGUI(L"__Menu");
+			if (myPlayers.Size() > 2)
+			{
+				myCharacterSprites[static_cast<short>(myPlayers[2].mySelectedCharacter)]->SetPosition(CU::Vector2f(0, 0.5f));
+				myCharacterSprites[static_cast<short>(myPlayers[2].mySelectedCharacter)]->RenderToGUI(L"__Menu");
+				if (myPlayers.Size() > 3)
+				{
+					myCharacterSprites[static_cast<short>(myPlayers[3].mySelectedCharacter)]->SetPosition(CU::Vector2f(0.5f, 0.5f));
+					myCharacterSprites[static_cast<short>(myPlayers[3].mySelectedCharacter)]->RenderToGUI(L"__Menu");
+				}
+			}
+		}
+	}
 }
 
 void CSplitScreenSelection::OnEnter(const bool aLetThroughRender)
@@ -122,7 +150,7 @@ void CSplitScreenSelection::LoadElement(const CU::CJsonValue & aJsonValue, const
 		else
 		{
 			const SMenuSprite& currentSprite = myMenuManager.GetSprite(spriteID);
-			textPosition = position + (textValue.at("offset").GetVector2f() - currentSprite.myDafaultSprite->GetPivot()) * currentSprite.myDafaultSprite->GetSize();
+			textPosition = position + (textValue.at("offset").GetVector2f() - currentSprite.mySprites[0]->GetPivot()) * currentSprite.mySprites[0]->GetSize();
 		}
 
 		if (text.size() > 0 && text.at(0) == L'#')
@@ -170,6 +198,15 @@ eAlignment CSplitScreenSelection::LoadAlignment(const CU::CJsonValue & aJsonValu
 	return eAlignment::eLeft;
 }
 
+void CSplitScreenSelection::RightChar()
+{
+
+}
+
+void CSplitScreenSelection::LeftChar()
+{
+}
+
 bool CSplitScreenSelection::PushLevel(const std::string & aString)
 {
 	return false;
@@ -180,7 +217,6 @@ bool CSplitScreenSelection::BackToMenu(const std::string & aString)
 	myStateStack.Pop();
 	return false;
 }
-
 
 CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & aInputMessage)
 {
@@ -220,18 +256,6 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 				myStateStack.SwapState(new CLoadState(myStateStack,0, myPlayers));
 			}
 			break;
-		case CU::GAMEPAD::DPAD_UP:
-		{
-			bool found = false;
-			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
-			{
-				if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
-				{
-					myPlayers[i].mySelectedCharacter = SParticipant::eCharacter::eVanBrat;
-				}
-			}
-		}
-		break;
 		case CU::GAMEPAD::DPAD_RIGHT:
 		{
 			bool found = false;
@@ -239,19 +263,13 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 			{
 				if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
 				{
-					myPlayers[i].mySelectedCharacter = SParticipant::eCharacter::eVanBrat2;
-				}
-			}
-		}
-		break;
-		case CU::GAMEPAD::DPAD_DOWN:
-		{
-			bool found = false;
-			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
-			{
-				if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
-				{
-					myPlayers[i].mySelectedCharacter = SParticipant::eCharacter::eGrandMa;
+					short u = static_cast<short>(myPlayers[i].mySelectedCharacter); 
+					++u;
+					if (u >= static_cast<short>(SParticipant::eCharacter::eLength))
+					{
+						u = 0;
+					}
+					myPlayers[i].mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
 				}
 			}
 		}
@@ -263,11 +281,53 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 			{
 				if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
 				{
-					myPlayers[i].mySelectedCharacter = SParticipant::eCharacter::eGrandMa2;
+					short u = static_cast<short>(myPlayers[i].mySelectedCharacter); 
+					--u;
+					if (u < 0)
+					{
+						u = static_cast<short>(SParticipant::eCharacter::eLength) - 1;
+					}
+					myPlayers[i].mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
 				}
 			}
 		}
 		break;
+		}
+	}
+	else if (aInputMessage.myType == CU::eInputType::eGamePadLeftJoyStickChanged)
+	{
+		if (aInputMessage.myJoyStickPosition.x > 0.0f)
+		{
+			bool found = false;
+			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+			{
+				if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
+				{
+					short u = static_cast<short>(myPlayers[i].mySelectedCharacter);
+					++u;
+					if (u >= static_cast<short>(SParticipant::eCharacter::eLength))
+					{
+						u = 0;
+					}
+					myPlayers[i].mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
+				}
+			}
+		}
+		else if (aInputMessage.myJoyStickPosition.x > 0.0f)
+		{
+			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+			{
+				if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
+				{
+					short u = static_cast<short>(myPlayers[i].mySelectedCharacter);
+					--u;
+					if (u < 0)
+					{
+						u = static_cast<short>(SParticipant::eCharacter::eLength) - 1;
+					}
+					myPlayers[i].mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
+				}
+			}
 		}
 	}
 	else if (aInputMessage.myType == CU::eInputType::eKeyboardPressed)

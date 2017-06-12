@@ -190,6 +190,7 @@
     <ClInclude Include="ConectedMessage.h" />
     <ClInclude Include="ConetctMessage.h" />
     <ClInclude Include="ConsoleCalledUpon.h" />
+    <ClInclude Include="ControllerInputMessage.h" />
     <ClInclude Include="DrawCallsCount.h" />
     <ClInclude Include="DroppedFile.h" />
     <ClInclude Include="EMessageReturn.h" />
@@ -223,6 +224,7 @@
     <ClCompile Include="ConectedMessage.cpp" />
     <ClCompile Include="ConetctMessage.cpp" />
     <ClCompile Include="ConsoleCalledUpon.cpp" />
+    <ClCompile Include="ControllerInputMessage.cpp" />
     <ClCompile Include="DrawCallsCount.cpp" />
     <ClCompile Include="DroppedFile.cpp" />
     <ClCompile Include="FocusChange.cpp" />
