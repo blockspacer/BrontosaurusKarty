@@ -17,7 +17,7 @@ CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aS
 	myHasKeyboardResponded = false;
 	myMenuManager.AddAction("PushLevel", [this](std::string string)-> bool { return PushLevel(string); });
 	myMenuManager.AddAction("BackToMenu", [this](std::string string)-> bool { return BackToMenu(string); });
-	MenuLoad("Json/Menu/SplitScreenSelection.json");
+	//MenuLoad("Json/Menu/SplitScreenSelection.json");
 	for (int i = 0; i < 4; ++i)
 	{
 		AddXboxController();
@@ -35,6 +35,58 @@ CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aS
 		sprite->SetPosition(CU::Vector2f(CU::Vector2f(0,0)));
 		myCharacterSprites.Add(sprite);
 	}
+
+	myGUIParts.Init(4);
+	for (unsigned int i = 0; i < 4; ++i)
+	{
+		GUIPart part;
+		part.hasJoined = false;
+		part.JoinSprite = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/JoinImage.dds");
+		part.LeftArrow = nullptr;
+		part.RightArrow = nullptr;
+		part.NameTag = nullptr;
+		myGUIParts.Add(part);
+	}
+	myGUIParts[0].NameTag = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player1.dds");
+	myGUIParts[0].LeftArrow = new  CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player1_arrowLeft.dds");
+	myGUIParts[0].RightArrow = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player1_arrowRight.dds");
+	myGUIParts[0].JoinSprite->SetPosition(CU::Vector2f::Zero);
+	myGUIParts[0].LeftArrow->SetPosition(CU::Vector2f(0.025f, 0.2f));
+	myGUIParts[0].RightArrow->SetPosition(CU::Vector2f(0.45f, 0.2f));
+	myGUIParts[0].NameTag->SetPosition(CU::Vector2f(0.2f, 0.4f));
+	myGUIParts[0].LeftArrowOriginPosition = myGUIParts[0].LeftArrow->GetPosition();
+	myGUIParts[0].RightArrowOriginPosition = myGUIParts[0].RightArrow->GetPosition();
+
+
+	myGUIParts[1].LeftArrow = new  CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player2_arrowLeft.dds");
+	myGUIParts[1].RightArrow = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player2_arrowRight.dds");
+	myGUIParts[1].NameTag = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player2.dds");
+	myGUIParts[1].JoinSprite->SetPosition(CU::Vector2f(0.5f, 0.0f));
+	myGUIParts[1].LeftArrow->SetPosition(CU::Vector2f(0.525f, 0.2f));
+	myGUIParts[1].RightArrow->SetPosition(CU::Vector2f(0.95f, 0.2f));
+	myGUIParts[1].NameTag->SetPosition(CU::Vector2f(0.5f, 0));
+	myGUIParts[1].LeftArrowOriginPosition = myGUIParts[1].LeftArrow->GetPosition();
+	myGUIParts[1].RightArrowOriginPosition = myGUIParts[1].RightArrow->GetPosition();
+
+	myGUIParts[2].LeftArrow = new  CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player3_arrowLeft.dds");
+	myGUIParts[2].RightArrow = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player3_arrowRight.dds");
+	myGUIParts[2].NameTag = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player3.dds");
+	myGUIParts[2].JoinSprite->SetPosition(CU::Vector2f(0, 0.5f));
+	myGUIParts[2].LeftArrow->SetPosition(CU::Vector2f(0.025f, 0.7f));
+	myGUIParts[2].RightArrow->SetPosition(CU::Vector2f(0.45f, 0.7f));
+	myGUIParts[2].NameTag->SetPosition(CU::Vector2f(0, 0.5f));
+	myGUIParts[2].LeftArrowOriginPosition = myGUIParts[2].LeftArrow->GetPosition();
+	myGUIParts[2].RightArrowOriginPosition = myGUIParts[2].RightArrow->GetPosition();
+
+	myGUIParts[3].LeftArrow = new  CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player4_arrowLeft.dds");
+	myGUIParts[3].RightArrow = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player4_arrowRight.dds");
+	myGUIParts[3].NameTag = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player4.dds");
+	myGUIParts[3].JoinSprite->SetPosition(CU::Vector2f(0.5f, 0.5f));
+	myGUIParts[3].LeftArrow->SetPosition(CU::Vector2f(0.525f, 0.7f));
+	myGUIParts[3].RightArrow->SetPosition(CU::Vector2f(0.95f, 0.7f));
+	myGUIParts[3].NameTag->SetPosition(CU::Vector2f(0.5f, 0.5f));
+	myGUIParts[3].LeftArrowOriginPosition = myGUIParts[3].LeftArrow->GetPosition();
+	myGUIParts[3].RightArrowOriginPosition = myGUIParts[3].RightArrow->GetPosition();
 }
 
 
@@ -49,6 +101,10 @@ void CSplitScreenSelection::Init()
 eStateStatus CSplitScreenSelection::Update(const CU::Time & aDeltaTime)
 {
 	myMenuManager.Update(aDeltaTime);
+	for (unsigned int i = 0; i < myGUIParts.Size(); ++i)
+	{
+		myGUIParts[i].Update(aDeltaTime.GetSeconds());
+	}
 	return eStateStatus::eKeep;
 }
 
@@ -75,6 +131,10 @@ void CSplitScreenSelection::Render()
 			}
 		}
 	}
+	for (unsigned int i = 0; i < myGUIParts.Size(); ++i)
+	{
+		myGUIParts[i].Redner();
+	}
 }
 
 void CSplitScreenSelection::OnEnter(const bool aLetThroughRender)
@@ -84,7 +144,11 @@ void CSplitScreenSelection::OnEnter(const bool aLetThroughRender)
 
 void CSplitScreenSelection::OnExit(const bool aLetThroughRender)
 {
-
+	for (unsigned int i = 0; i < myGUIParts.Size(); ++i)
+	{
+		myGUIParts[i].Delete();
+	}
+	myCharacterSprites.DeleteAll();
 }
 
 void CSplitScreenSelection::MenuLoad(const std::string & aFile)
@@ -199,13 +263,45 @@ eAlignment CSplitScreenSelection::LoadAlignment(const CU::CJsonValue & aJsonValu
 	return eAlignment::eLeft;
 }
 
-void CSplitScreenSelection::RightChar()
+void CSplitScreenSelection::RightChar(SParticipant& aParticipant)
 {
+	for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+	{
+		if (myPlayers[i] == aParticipant)
+		{
+			int index = i;
+			myGUIParts[index].RightArrow->SetPosition(CU::Vector2f(myGUIParts[index].RightArrowOriginPosition.x + 0.025f, myGUIParts[index].RightArrow->GetPosition().y));
+			break;
+		}
+	}
+	short u = static_cast<short>(aParticipant.mySelectedCharacter);
+	++u;
+	if (u >= static_cast<short>(SParticipant::eCharacter::eLength))
+	{
+		u = 0;
+	}
+	aParticipant.mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
 
 }
 
-void CSplitScreenSelection::LeftChar()
+void CSplitScreenSelection::LeftChar(SParticipant& aParticipant)
 {
+	for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+	{
+		if (myPlayers[i] == aParticipant)
+		{
+			int index = i;
+			myGUIParts[index].LeftArrow->SetPosition(CU::Vector2f(myGUIParts[index].LeftArrowOriginPosition.x - 0.025f, myGUIParts[index].LeftArrow->GetPosition().y));
+			break;
+		}
+	}
+	short u = static_cast<short>(aParticipant.mySelectedCharacter);
+	--u;
+	if (u < 0)
+	{
+		u = static_cast<short>(SParticipant::eCharacter::eLength) - 1;
+	}
+	aParticipant.mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
 }
 
 bool CSplitScreenSelection::PushLevel(const std::string & aString)
@@ -244,6 +340,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 					participant.mySelectedCharacter = SParticipant::eCharacter::eVanBrat;
 					myPlayers.Add(participant);
 					myPlayerInputDevices[myPlayers.Size() - 1] = static_cast<SParticipant::eInputDevice>(aInputMessage.myGamepadIndex);
+					myGUIParts[myPlayers.Size() - 1].hasJoined = true;
 				}
 			}
 		}
@@ -265,13 +362,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 			{
 				if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
 				{
-					short u = static_cast<short>(myPlayers[i].mySelectedCharacter); 
-					++u;
-					if (u >= static_cast<short>(SParticipant::eCharacter::eLength))
-					{
-						u = 0;
-					}
-					myPlayers[i].mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
+					RightChar(myPlayers[i]);
 				}
 			}
 		}
@@ -283,13 +374,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 			{
 				if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
 				{
-					short u = static_cast<short>(myPlayers[i].mySelectedCharacter); 
-					--u;
-					if (u < 0)
-					{
-						u = static_cast<short>(SParticipant::eCharacter::eLength) - 1;
-					}
-					myPlayers[i].mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
+					LeftChar(myPlayers[i]);
 				}
 			}
 		}
@@ -303,18 +388,11 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 		{
 			if (aInputMessage.myJoyStickPosition.x > inbuiltdeadzone)
 			{
-				bool found = false;
 				for (unsigned int i = 0; i < myPlayers.Size(); ++i)
 				{
 					if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
 					{
-						short u = static_cast<short>(myPlayers[i].mySelectedCharacter);
-						++u;
-						if (u >= static_cast<short>(SParticipant::eCharacter::eLength))
-						{
-							u = 0;
-						}
-						myPlayers[i].mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
+						RightChar(myPlayers[i]);
 					}
 				}
 			}
@@ -324,13 +402,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 				{
 					if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
 					{
-						short u = static_cast<short>(myPlayers[i].mySelectedCharacter);
-						--u;
-						if (u < 0)
-						{
-							u = static_cast<short>(SParticipant::eCharacter::eLength) - 1;
-						}
-						myPlayers[i].mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
+						LeftChar(myPlayers[i]);
 					}
 				}
 			}
@@ -353,6 +425,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 					participant.myInputDevice = SParticipant::eInputDevice::eKeyboard;
 					myPlayers.Add(participant);
 					myPlayerInputDevices[myPlayers.Size() - 1] = static_cast<SParticipant::eInputDevice>(aInputMessage.myGamepadIndex);
+					myGUIParts[myPlayers.Size() - 1].hasJoined = true;
 				}
 			}
 			break;		
@@ -396,25 +469,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 			{
 				if (myPlayers[i].myInputDevice == SParticipant::eInputDevice::eKeyboard)
 				{
-					short u = static_cast<short>(myPlayers[i].mySelectedCharacter);
-					++u;
-					if (u >= static_cast<short>(SParticipant::eCharacter::eLength))
-					{
-						u = 0;
-					}
-					myPlayers[i].mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
-				}
-			}
-		}
-		break;
-		case CU::eKeys::DOWN:
-		{
-			bool found = false;
-			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
-			{
-				if (myPlayers[i].myInputDevice == SParticipant::eInputDevice::eKeyboard)
-				{
-					myPlayers[i].mySelectedCharacter = SParticipant::eCharacter::eGrandMa;
+					RightChar(myPlayers[i]);
 				}
 			}
 		}
@@ -425,13 +480,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 			{
 				if (myPlayers[i].myInputDevice == SParticipant::eInputDevice::eKeyboard)
 				{
-					short u = static_cast<short>(myPlayers[i].mySelectedCharacter);
-					--u;
-					if (u < 0)
-					{
-						u = static_cast<short>(SParticipant::eCharacter::eLength) - 1;
-					}
-					myPlayers[i].mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
+					LeftChar(myPlayers[i]);
 				}
 			}
 		}

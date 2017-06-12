@@ -5,10 +5,6 @@
 
 #include "../BrontosaurusEngine/ParticleEmitterInstance.h"
 
-CParticleEmitterComponent::CParticleEmitterComponent(const std::string& anId) : 
-CParticleEmitterComponent(CParticleEmitterManager::GetInstance().GetEmitterInstance(anId))
-{
-}
 
 CParticleEmitterComponent::CParticleEmitterComponent(int anId)
 {
@@ -25,6 +21,10 @@ CParticleEmitterComponent::~CParticleEmitterComponent()
 
 void CParticleEmitterComponent::Update(CU::Time aDeltaTime)
 {
+	if (myInstanceId == 118)
+	{
+		int i = 0;
+	}
 	if (!GetParent())
 	{
 		return;

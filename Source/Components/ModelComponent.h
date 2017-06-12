@@ -30,7 +30,9 @@ public:
 	const std::string& GetFilePath() const;
 
 	float GetAnimationDuration(const eAnimationState aAnimationState) const;
+	void SetIsBillboard(bool aIsBillboard);
 
 private:
 	CModelInstance& myModel;
+	bool myIsBillboard;
 };
