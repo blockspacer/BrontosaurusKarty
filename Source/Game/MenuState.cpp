@@ -20,10 +20,17 @@
 
 char CMenuState::ourMenuesToPop = 0;
 
-std::map<CU::eKeys, CU::GAMEPAD> CMenuState::ourKeyboardToGamePadMap = { {CU::eKeys::RETURN, CU::GAMEPAD::START} , {CU::eKeys::SPACE, CU::GAMEPAD::A}};
+std::map<CU::eKeys, CU::GAMEPAD> CMenuState::ourKeyboardToGamePadMap = { 
+	{CU::eKeys::RETURN, CU::GAMEPAD::START} , 
+	{CU::eKeys::SPACE, CU::GAMEPAD::A}, 
+	{CU::eKeys::LEFT, CU::GAMEPAD::DPAD_LEFT},
+	{CU::eKeys::RIGHT , CU::GAMEPAD::DPAD_RIGHT},
+	{CU::eKeys::A, CU::GAMEPAD::DPAD_LEFT},
+	{CU::eKeys::D , CU::GAMEPAD::DPAD_RIGHT}
+};
 
 
-CMenuState::CMenuState(StateStack& aStateStack, std::string aFile) : State(aStateStack, eInputMessengerType::eMainMenu), myTextInputs(2), myCurrentTextInput(-1), myShowStateBelow(false), myPointerSprite(nullptr), myIsInFocus(false), myBlinkeyBool(true), myBlinkeyTimer(0), mySelectorNames(1), mySelectors(1)
+CMenuState::CMenuState(StateStack& aStateStack, std::string aFile) : State(aStateStack, eInputMessengerType::eMainMenu), myTextInputs(2), myCurrentTextInput(-1), myShowStateBelow(false), myPointerSprite(nullptr), myIsInFocus(false), myJoystickEngaged(false), myBlinkeyBool(true), myBlinkeyTimer(0), mySelectorNames(1),mySelectors(1)
 {
 	myManager.AddAction("ExitGame", bind(&CMenuState::ExitGame, std::placeholders::_1));
 	myManager.AddAction("PushMenu", [this](std::string string)-> bool { return PushMenu(string); });
@@ -162,6 +169,24 @@ CU::eInputReturn CMenuState::RecieveInput(const CU::SInputMessage& aInputMessage
 	case CU::eInputType::eGamePadButtonPressed:
 		myManager.RecieveGamePadInput(aInputMessage.myGamePad);
 		break;
+	case CU::eInputType::eGamePadLeftJoyStickChanged:
+		if (myJoystickEngaged == false)
+		{
+			myJoystickEngaged = true;
+			if (aInputMessage.myJoyStickPosition.x > 0)
+			{
+				myManager.RecieveGamePadInput(CU::GAMEPAD::DPAD_RIGHT);
+			}
+			else if(aInputMessage.myJoyStickPosition.x < 0)
+			{
+				myManager.RecieveGamePadInput(CU::GAMEPAD::DPAD_LEFT);
+			}
+		}
+
+		if(aInputMessage.myJoyStickPosition.x == 0)
+		{
+			myJoystickEngaged = false;
+		}
 	default: break;
 	}
 

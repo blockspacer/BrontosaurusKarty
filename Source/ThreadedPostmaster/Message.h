@@ -18,13 +18,18 @@ namespace Postmaster
 			virtual eMessageReturn DoEvent(::Postmaster::ISubscriber& aSubscriber) const = 0;
 
 			eMessageType GetType() const;
+
+			void SetCallback(const std::function<void(void)>& aCallback);
+			void DoCallback() const;
 		private:
 			eMessageType myType;
+			std::function<void()> myCallback;
 		};
 	}
 }
 
-inline Postmaster::Message::IMessage::IMessage(eMessageType aType) : myType(aType)
+//This initialization is probably the best thing ever!
+inline Postmaster::Message::IMessage::IMessage(eMessageType aType) : myType(aType), myCallback([](){})
 {
 }
 
@@ -35,4 +40,14 @@ inline Postmaster::Message::IMessage::~IMessage()
 inline eMessageType Postmaster::Message::IMessage::GetType() const
 {
 	return myType;
+}
+
+inline void Postmaster::Message::IMessage::SetCallback(const std::function<void()>& aCallback)
+{
+	myCallback = aCallback;
+}
+
+inline void Postmaster::Message::IMessage::DoCallback() const
+{
+	myCallback();
 }

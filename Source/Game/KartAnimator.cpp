@@ -18,7 +18,7 @@ DECLARE_ANIMATION_ENUM_AND_STRINGS;
 
 #undef CreateEvent
 
-CKartAnimator::CKartAnimator(CModelComponent& aModelComponent)
+CKartAnimator::CKartAnimator(CModelComponent& aModelComponent, const CU::CJsonValue aJsonValue)
 	: myModelComponent(aModelComponent)
 	, myTurnState(eTurnState::eNone)
 	, myIsBreaking(false)
@@ -35,10 +35,10 @@ CKartAnimator::CKartAnimator(CModelComponent& aModelComponent)
 	myModelComponent.SetAnimationLerpValue(0.f);
 
 	CModelComponent* wheelModels[4];
-	wheelModels[0] = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_kart_01_wheel_left.fbx");
-	wheelModels[1] = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_kart_01_wheel_right.fbx");
-	wheelModels[2] = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_kart_01_wheel_right.fbx");
-	wheelModels[3] = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_kart_01_wheel_left.fbx");
+	wheelModels[0] = CModelComponentManager::GetInstance().CreateComponent(aJsonValue["FrontLeft"].GetString());
+	wheelModels[1] = CModelComponentManager::GetInstance().CreateComponent(aJsonValue["FrontRight"].GetString());
+	wheelModels[2] = CModelComponentManager::GetInstance().CreateComponent(aJsonValue["BackLeft"].GetString());
+	wheelModels[3] = CModelComponentManager::GetInstance().CreateComponent(aJsonValue["BackRight"].GetString());
 
 	for (int i = 0; i < myWheels.Size(); ++i)
 	{
@@ -54,10 +54,19 @@ CKartAnimator::CKartAnimator(CModelComponent& aModelComponent)
 		myModelComponent.GetParent()->AddComponent(turnParent);
 	}
 
-	myWheels[0]->GetParent()->GetLocalTransform() = MODELMGR->GetModel(myModelComponent.GetModelInstance().GetModelID())->GetBoneTransform(0.f, eAnimationState::idle01, "P_wheelFront_SOCKET_left");
-	myWheels[1]->GetParent()->GetLocalTransform() = MODELMGR->GetModel(myModelComponent.GetModelInstance().GetModelID())->GetBoneTransform(0.f, eAnimationState::idle01, "P_wheelFront_SOCKET_right");
-	myWheels[2]->GetParent()->GetLocalTransform() = MODELMGR->GetModel(myModelComponent.GetModelInstance().GetModelID())->GetBoneTransform(0.f, eAnimationState::idle01, "P_wheelBack_SOCKET_left");
-	myWheels[3]->GetParent()->GetLocalTransform() = MODELMGR->GetModel(myModelComponent.GetModelInstance().GetModelID())->GetBoneTransform(0.f, eAnimationState::idle01, "P_wheelBack_SOCKET_right");
+	CModelManager* modelManager = MODELMGR;
+	CModel* model = modelManager->GetModel(myModelComponent.GetModelInstance().GetModelID());
+	if (!model)
+	{
+		DL_ASSERT("kart got non existing model :(");
+		return;
+	}
+
+	const char* socketNames[4]  = { "P_wheelFront_SOCKET_left", "P_wheelFront_SOCKET_right", "P_wheelBack_SOCKET_right", "P_wheelBack_SOCKET_left" };
+	for (int i = 0; i < 4; ++i)
+	{
+		myWheels[i]->GetParent()->GetLocalTransform() = model->GetBoneTransform(0.f, eAnimationState::idle01, socketNames[i]);
+	}
 
 	for (CGameObject* wheel : myWheels)
 	{
@@ -103,9 +112,14 @@ void CKartAnimator::Update(const float aDeltaTime, const float aForwardVelocity,
 	myWheels[1]->GetParent()->GetLocalTransform().SetEulerRotation(eulerRotation);
 
 	float movement = aForwardVelocity * aDeltaTime;
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 2; ++i)
 	{
-		myWheels[i]->GetLocalTransform().RotateAroundAxis(i < 2 ? movement : -movement, CU::Axees::X);
+		myWheels[i]->GetLocalTransform().RotateAroundAxis(movement, CU::Axees::X);
+	}
+
+	for (int i = 2; i < 4; ++i)
+	{
+		myWheels[i]->GetLocalTransform().RotateAroundAxis(-movement, CU::Axees::X);
 	}
 }
 
