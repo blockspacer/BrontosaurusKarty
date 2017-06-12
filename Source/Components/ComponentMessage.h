@@ -94,6 +94,7 @@ enum class eComponentMessageType
 	eSetCameraRotation,
 	eResetExplosion,
 	eHazzardCollide,
+	eFinishedRace,
 	eLength,
 };
 

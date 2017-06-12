@@ -98,6 +98,7 @@
 #include "CharacterInfoComponent.h"
 #include "BroadcastINputListener.h"
 #include "InputManager.h"
+#include "TimeTrackerComponent.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -637,6 +638,10 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	CRespawnerComponent* respawnComponent = myRespawnComponentManager->CreateAndRegisterComponent();
 	playerObject->AddComponent(respawnComponent);
 
+	CTimeTrackerComponent* timeTrackerComponent = myTimeTrackerComponentManager->CreateAndRegisterComponent();
+	playerObject->AddComponent(timeTrackerComponent);
+
+
 	if(CLapTrackerComponentManager::GetInstance() != nullptr)
 	{
 		CLapTrackerComponent* lapTrackerComponent = CLapTrackerComponentManager::GetInstance()->CreateAndRegisterComponent();
@@ -741,6 +746,9 @@ void CPlayState::CreateAI()
 
 	CRespawnerComponent* respawnComponent = myRespawnComponentManager->CreateAndRegisterComponent();
 	playerObject->AddComponent(respawnComponent);
+
+	CTimeTrackerComponent* timeTrackerComponent = myTimeTrackerComponentManager->CreateAndRegisterComponent();
+	playerObject->AddComponent(timeTrackerComponent);
 
 	if (CLapTrackerComponentManager::GetInstance() != nullptr)
 	{
