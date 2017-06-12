@@ -43,6 +43,17 @@ public:
 			}
 			return false;
 		}
+		void Delete()
+		{
+			delete LeftArrow;
+			LeftArrow = nullptr;
+			delete RightArrow;
+			RightArrow = nullptr;
+			delete NameTag;
+			NameTag = nullptr;
+			delete JoinSprite;
+			JoinSprite = nullptr;
+		}
 		CSpriteInstance* LeftArrow;
 		CSpriteInstance* RightArrow;
 		CSpriteInstance* NameTag;

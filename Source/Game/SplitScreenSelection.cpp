@@ -53,7 +53,7 @@ CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aS
 	myGUIParts[0].JoinSprite->SetPosition(CU::Vector2f::Zero);
 	myGUIParts[0].LeftArrow->SetPosition(CU::Vector2f(0.025f, 0.2f));
 	myGUIParts[0].RightArrow->SetPosition(CU::Vector2f(0.45f, 0.2f));
-	myGUIParts[0].NameTag->SetPosition(CU::Vector2f(0.2375f, 0.2f));
+	myGUIParts[0].NameTag->SetPosition(CU::Vector2f(0.2f, 0.4f));
 	myGUIParts[0].LeftArrowOriginPosition = myGUIParts[0].LeftArrow->GetPosition();
 	myGUIParts[0].RightArrowOriginPosition = myGUIParts[0].RightArrow->GetPosition();
 
@@ -144,7 +144,11 @@ void CSplitScreenSelection::OnEnter(const bool aLetThroughRender)
 
 void CSplitScreenSelection::OnExit(const bool aLetThroughRender)
 {
-
+	for (unsigned int i = 0; i < myGUIParts.Size(); ++i)
+	{
+		myGUIParts[i].Delete();
+	}
+	myCharacterSprites.DeleteAll();
 }
 
 void CSplitScreenSelection::MenuLoad(const std::string & aFile)

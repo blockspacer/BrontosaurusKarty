@@ -35,8 +35,6 @@ struct SParticipant
 		eGrandMa2,
 		eCat,
 		eCat2,
-		eSkullguy,
-		eSkullguy2,
 		eLength,
 	};
 	eInputDevice myInputDevice;
