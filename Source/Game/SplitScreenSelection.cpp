@@ -261,6 +261,15 @@ eAlignment CSplitScreenSelection::LoadAlignment(const CU::CJsonValue & aJsonValu
 
 void CSplitScreenSelection::RightChar(SParticipant& aParticipant)
 {
+	for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+	{
+		if (myPlayers[i] == aParticipant)
+		{
+			int index = i;
+			myGUIParts[index].RightArrow->SetPosition(CU::Vector2f(myGUIParts[index].RightArrowOriginPosition.x + 0.025f, myGUIParts[index].RightArrow->GetPosition().y));
+			break;
+		}
+	}
 	short u = static_cast<short>(aParticipant.mySelectedCharacter);
 	++u;
 	if (u >= static_cast<short>(SParticipant::eCharacter::eLength))
@@ -268,10 +277,20 @@ void CSplitScreenSelection::RightChar(SParticipant& aParticipant)
 		u = 0;
 	}
 	aParticipant.mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
+
 }
 
 void CSplitScreenSelection::LeftChar(SParticipant& aParticipant)
 {
+	for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+	{
+		if (myPlayers[i] == aParticipant)
+		{
+			int index = i;
+			myGUIParts[index].LeftArrow->SetPosition(CU::Vector2f(myGUIParts[index].LeftArrowOriginPosition.x - 0.025f, myGUIParts[index].LeftArrow->GetPosition().y));
+			break;
+		}
+	}
 	short u = static_cast<short>(aParticipant.mySelectedCharacter);
 	--u;
 	if (u < 0)

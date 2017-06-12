@@ -1,6 +1,22 @@
 #pragma once
 struct SParticipant
 {
+	bool operator== (const SParticipant& left)
+	{
+		if (myInputDevice != left.myInputDevice)
+		{
+			return false;
+		}
+		if (myIsReady != left.myIsReady)
+		{
+			return false;
+		}
+		if (mySelectedCharacter != left.mySelectedCharacter)
+		{
+			return false;
+		}
+		return true;
+	}
 	enum class eInputDevice
 	{
 		//den som ändrar här dör. Best regards Johan
@@ -17,6 +33,10 @@ struct SParticipant
 		eVanBrat2,
 		eGrandMa,
 		eGrandMa2,
+		eCat,
+		eCat2,
+		eSkullguy,
+		eSkullguy2,
 		eLength,
 	};
 	eInputDevice myInputDevice;

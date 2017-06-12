@@ -29,6 +29,20 @@ public:
 
 	struct GUIPart
 	{
+		bool operator == (const GUIPart& left)
+		{
+			if (left.hasJoined == hasJoined)
+			{
+				if (LeftArrowOriginPosition == left.LeftArrowOriginPosition)
+				{
+					if (RightArrowOriginPosition == left.RightArrowOriginPosition)
+					{
+						return true;
+					}
+				}
+			}
+			return false;
+		}
 		CSpriteInstance* LeftArrow;
 		CSpriteInstance* RightArrow;
 		CSpriteInstance* NameTag;
@@ -39,14 +53,14 @@ public:
 		float timer = 0.0f;
 		void Update(float aDeltaTime)
 		{
-			float speed = 1.0f;
+			float speed = 0.33f;
 			if (LeftArrow->GetPosition().x < LeftArrowOriginPosition.x)
 			{
-				LeftArrow->SetPosition(CU::Vector2f(LeftArrow->GetPosition().x - speed * aDeltaTime, LeftArrow->GetPosition().y));
+				LeftArrow->SetPosition(CU::Vector2f(LeftArrow->GetPosition().x + speed * aDeltaTime, LeftArrow->GetPosition().y));
 			}
 			if (RightArrow->GetPosition().x > RightArrowOriginPosition.x)
 			{
-				RightArrow->SetPosition(CU::Vector2f(RightArrow->GetPosition().x + speed * aDeltaTime, RightArrow->GetPosition().y));
+				RightArrow->SetPosition(CU::Vector2f(RightArrow->GetPosition().x - speed * aDeltaTime, RightArrow->GetPosition().y));
 			}
 		}
 		void Redner()
