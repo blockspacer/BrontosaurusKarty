@@ -14,7 +14,7 @@ enum class eEventType;
 class CKartAnimator
 {
 public:
-	CKartAnimator(CModelComponent& aModelComponent, const CU::CJsonValue aJsonValue);
+	CKartAnimator(CModelComponent& aModelComponent, const CU::CJsonValue& aJsonValue);
 	~CKartAnimator();
 
 	void Update(const float aDeltaTime, const float aForwardVelocity, const float aSteering);
