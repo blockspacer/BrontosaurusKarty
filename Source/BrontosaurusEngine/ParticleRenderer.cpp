@@ -112,7 +112,7 @@ void CParticleRenderer::DoRenderQueue(ID3D11ShaderResourceView* aDepthResource, 
 
 				SChangeStatesMessage changeStateMessage;
 				changeStateMessage.myRasterizerState = eRasterizerState::eNoCulling;
-				changeStateMessage.myDepthStencilState = eDepthStencilState::eDefault;
+				changeStateMessage.myDepthStencilState = eDepthStencilState::eReadOnly;
 				changeStateMessage.myBlendState = eBlendState::eAlphaBlend;
 				changeStateMessage.mySamplerState = eSamplerState::eClamp;
 				mySharedRenderer.SetStates(&changeStateMessage);
