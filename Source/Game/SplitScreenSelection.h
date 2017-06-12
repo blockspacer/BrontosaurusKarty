@@ -45,6 +45,9 @@ private:
 
 	bool PushLevel(const std::string& aString);
 	bool BackToMenu(const std::string& aString);
+
+	float myLastJoyX;
+
 	CMenuManager myMenuManager;
 	CU::GrowingArray<STextInput> myTextInputs;
 	CU::GrowingArray<SParticipant> myPlayers;

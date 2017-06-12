@@ -58,7 +58,7 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myDriftAngle = Karts.at("DriftAngle").GetFloat();
 	if(Karts.HasKey("TerrainResistance") == true)
 	{
-		myTerrainResistance = Karts.at("TerrainResistance").GetFloat();
+		myTerrainResistance = 1.f - Karts.at("TerrainResistance").GetFloat();
 	}
 	else
 	{

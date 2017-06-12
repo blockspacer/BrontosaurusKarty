@@ -37,6 +37,7 @@
 #include "BlueShellComponentManager.h"
 #include "RespawnComponentManager.h"
 #include "LapTrackerComponentManager.h"
+#include "ExplosionComponentManager.h"
 
 #include "AudioSourceComponent.h"
 #include "AudioSourceComponentManager.h"
@@ -409,6 +410,7 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 
 	myRedShellManager->Update(aDeltaTime.GetSeconds());
 	myBlueShellManager->Update(aDeltaTime.GetSeconds());
+	myExplosionManager->Update(aDeltaTime.GetSeconds());
 
 	CPickupComponentManager::GetInstance()->Update(aDeltaTime.GetSeconds());
 	return myStatus;
@@ -484,7 +486,7 @@ CU::eInputReturn CPlayState::RecieveInput(const CU::SInputMessage& aInputMessage
 		Postmaster::Message::InputEventData eventData;
 		eventData.eventType = Postmaster::Message::EventType::ButtonChanged;
 		eventData.data.boolValue = true;
-		eventData.buttonIndex = Postmaster::Message::ButtonIndex::B;
+		eventData.buttonIndex = Postmaster::Message::ButtonIndex::A;
 		PostPostmasterEvent(aInputMessage.myGamepadIndex, eventData);
 	}
 	if (aInputMessage.myGamePad == CU::GAMEPAD::X)
@@ -492,7 +494,7 @@ CU::eInputReturn CPlayState::RecieveInput(const CU::SInputMessage& aInputMessage
 		Postmaster::Message::InputEventData eventData;
 		eventData.eventType = Postmaster::Message::EventType::ButtonChanged;
 		eventData.data.boolValue = true;
-		eventData.buttonIndex = Postmaster::Message::ButtonIndex::B;
+		eventData.buttonIndex = Postmaster::Message::ButtonIndex::X;
 		PostPostmasterEvent(aInputMessage.myGamepadIndex, eventData);
 		
 	}
@@ -546,9 +548,10 @@ void CPlayState::CreateManagersAndFactories()
 	myBoostPadComponentManager = new CBoostPadComponentManager();
 	myItemBehaviourManager = new CItemWeaponBehaviourComponentManager();
 	myItemBehaviourManager->Init(myPhysicsScene);
+	myExplosionManager = new CExplosionComponentManager;
 	myRedShellManager = new CRedShellManager();
 	myRedShellManager->Init(myPhysicsScene, myKartControllerComponentManager,myKartObjects);
-	myBlueShellManager = new CBlueShellComponentManager(myKartObjects);
+	myBlueShellManager = new CBlueShellComponentManager(myKartObjects,myGameObjectManager,myExplosionManager,myColliderComponentManager);
 	myItemFactory = new CItemFactory();
 	myItemFactory->Init(*myGameObjectManager, *myItemBehaviourManager, myPhysicsScene, *myColliderComponentManager,*myRedShellManager,*myBlueShellManager);
 	myRespawnComponentManager = new CRespawnComponentManager();
@@ -607,6 +610,9 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	cameraComponent->SetCamera(aCamera);
 	cameraObject->AddComponent(cameraComponent);
 	myCameraComponents.Add(cameraComponent);
+
+	
+
 	//Create top player object
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
 	playerObject->AddComponent(cameraObject);
