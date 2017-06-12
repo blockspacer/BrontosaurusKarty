@@ -381,6 +381,7 @@
     <ClInclude Include="ComponentMessageTypeToLua.h" />
     <ClInclude Include="ConcaveMeshCollider.h" />
     <ClInclude Include="CurrentAction.h" />
+    <ClInclude Include="DecalComponent.h" />
     <ClInclude Include="Drifter.h" />
     <ClInclude Include="DriftTurner.h" />
     <ClInclude Include="GoalComponent.h" />
@@ -457,6 +458,7 @@
     <ClCompile Include="ComponentMessageTypeToLua.cpp" />
     <ClCompile Include="ConcaveMeshCollider.cpp" />
     <ClCompile Include="Controller.cpp" />
+    <ClCompile Include="DecalComponent.cpp" />
     <ClCompile Include="Drifter.cpp" />
     <ClCompile Include="DriftTurner.cpp" />
     <ClCompile Include="FireComponent.cpp" />

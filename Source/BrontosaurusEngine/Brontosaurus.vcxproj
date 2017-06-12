@@ -383,6 +383,7 @@
     <ClInclude Include="AnimationController.h" />
     <ClInclude Include="AnimationState.h" />
     <ClInclude Include="C2DGUIRenderer.h" />
+    <ClInclude Include="DecalInstance.h" />
     <ClInclude Include="ShadowBuffers.h" />
     <ClInclude Include="CascadeShadowMap.h" />
     <ClInclude Include="ColorGrader.h" />
@@ -474,6 +475,7 @@
     <ClCompile Include="CascadeShadowMap.cpp" />
     <ClCompile Include="ColorGrader.cpp" />
     <ClCompile Include="Cubemap.cpp" />
+    <ClCompile Include="DecalInstance.cpp" />
     <ClCompile Include="DeferredRenderer.cpp" />
     <ClCompile Include="EffectsFactory.cpp" />
     <ClCompile Include="EffectsManager.cpp" />

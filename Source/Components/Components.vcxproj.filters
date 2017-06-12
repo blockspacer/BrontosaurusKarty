@@ -69,6 +69,7 @@
     <ClCompile Include="BlueShellComponentManager.cpp" />
     <ClCompile Include="CharacterInfoComponent.cpp" />
     <ClCompile Include="AIMath.cpp" />
+    <ClCompile Include="DecalComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -147,5 +148,6 @@
     <ClInclude Include="BlueShellComponentManager.h" />
     <ClInclude Include="CharacterInfoComponent.h" />
     <ClInclude Include="AIMath.h" />
+    <ClInclude Include="DecalComponent.h" />
   </ItemGroup>
 </Project>
