@@ -17,7 +17,7 @@ void CTimeTrackerComponent::Receive(const eComponentMessageType aMessageType, co
 {
 	switch (aMessageType)
 	{
-	case  eComponentMessageType::eAITakeOver :
+	case  eComponentMessageType::eFinishedRace :
 	{
 		myShouldAddTime = false;
 		break;
@@ -32,4 +32,30 @@ void CTimeTrackerComponent::Update(float aDeltaTime)
 	{
 		myElapsedRaceTime += aDeltaTime;
 	}
+}
+
+bool CTimeTrackerComponent::Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData)
+{
+	switch (aQuestionType)
+	{
+	case eComponentQuestionType::eGetFinishTimeMinutes:
+	{
+		float minutesPassed = myElapsedRaceTime / 60.0f;
+		minutesPassed = floor(minutesPassed);
+		aQuestionData.myFloat = minutesPassed;
+		return true;
+	}
+	case eComponentQuestionType::eGetFinishTimeSeconds:
+	{
+		float minutesPassed = myElapsedRaceTime / 60.0f;
+		minutesPassed = floor(minutesPassed);
+		float secondsPassed = myElapsedRaceTime - minutesPassed * 60.0f;
+		aQuestionData.myFloat = secondsPassed;
+		return true;
+	}
+	break;
+	default:
+		break;
+	}
+	return false;
 }
