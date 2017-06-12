@@ -491,14 +491,12 @@ CU::eInputReturn CPlayState::RecieveInput(const CU::SInputMessage& aInputMessage
 	}
 	if (aInputMessage.myGamePad == CU::GAMEPAD::X)
 	{
-		if (aInputMessage.myGamePad == CU::GAMEPAD::B)
-		{
-			Postmaster::Message::InputEventData eventData;
-			eventData.eventType = Postmaster::Message::EventType::ButtonChanged;
-			eventData.data.boolValue = true;
-			eventData.buttonIndex = Postmaster::Message::ButtonIndex::B;
-			PostPostmasterEvent(aInputMessage.myGamepadIndex, eventData);
-		}
+		Postmaster::Message::InputEventData eventData;
+		eventData.eventType = Postmaster::Message::EventType::ButtonChanged;
+		eventData.data.boolValue = true;
+		eventData.buttonIndex = Postmaster::Message::ButtonIndex::B;
+		PostPostmasterEvent(aInputMessage.myGamepadIndex, eventData);
+		
 	}
 	break;
 

@@ -93,8 +93,6 @@ void CGlobalHUD::Render()
 	
 		SetGUIToAlphaBlend(L"minimap");
 		{
-			SParticipant::eInputDevice whoTheFuck = SParticipant::eInputDevice::eController1;
-	
 			myMinimapElement.mySprite->RenderToGUI(L"minimap");
 
 

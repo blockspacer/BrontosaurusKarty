@@ -56,6 +56,15 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myTargetSteering = 0.f;
 	myAngularAcceleration = Karts.at("AngulareAcceleration").GetFloat();
 	myDriftAngle = Karts.at("DriftAngle").GetFloat();
+	if(Karts.HasKey("TerrainResistance") == true)
+	{
+		myTerrainResistance = Karts.at("TerrainResistance").GetFloat();
+	}
+	else
+	{
+		myTerrainResistance = 1.f;
+		DL_PRINT("Kart does not define \"TerrainResistance\".");
+	}
 
 	myMaxSpeedModifier = 1.0f;
 	myAccelerationModifier = 1.0f;
