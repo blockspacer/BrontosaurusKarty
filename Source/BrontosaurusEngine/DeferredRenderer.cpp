@@ -314,6 +314,9 @@ void CDeferredRenderer::DoLightingPass(CFullScreenHelper& aFullscreenHelper, CRe
 	case ERenderMode::eHighlight:
 		aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopy, &myGbuffer->GetRenderPackage(CGeometryBuffer::eEmissive));
 		break;
+	case ERenderMode::eDepth:
+		aFullscreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopy, myGbuffer->GetRenderPackage(CGeometryBuffer::eDiffuse).GetDepthResource());
+		break;
 	case ERenderMode::eIntermediate:
 		changeStateMessage.myRasterizerState = eRasterizerState::eNoCulling;
 		changeStateMessage.myDepthStencilState = eDepthStencilState::eDisableDepth;
@@ -451,9 +454,10 @@ void CDeferredRenderer::RenderSpotLight(SRenderMessage* aRenderMessage)
 
 	spotLightTransformation.SetScale({ scaleXY, scaleXY, scaleZ });
 
-
+	float tempAngle = msg->spotLight.spotAngle;
 	msg->spotLight.spotAngle = std::cos(msg->spotLight.spotAngle / 2.0f);
 	BSR::UpdateCBuffer<Lights::SSpotLight>(mySpotLightBuffer, &msg->spotLight);
+	msg->spotLight.spotAngle = tempAngle;
 	myFramework->GetDeviceContext()->PSSetConstantBuffers(2, 1, &mySpotLightBuffer);
 
 
@@ -496,7 +500,7 @@ void CDeferredRenderer::HandleInput()
 	{
 		myRenderMode = ERenderMode::eIntermediate;
 	}
-	else if (myInputWrapper->IsKeyboardKeyDown(CU::eKeys::F1))
+	else if (myInputWrapper->IsKeyboardKeyDown(CU::eKeys::F9))
 	{
 		myRenderMode = ERenderMode::eDiffuse;
 	}
@@ -528,5 +532,10 @@ void CDeferredRenderer::HandleInput()
 	{
 		myRenderMode = ERenderMode::eRMAO;
 	}
+	else if(myInputWrapper->IsKeyboardKeyDown(CU::eKeys::F10))
+	{
+		myRenderMode = ERenderMode::eDepth;
+	}
+
 }
 #endif

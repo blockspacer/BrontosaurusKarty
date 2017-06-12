@@ -101,6 +101,7 @@ private:
 		eRMAO,
 		eSSAO,
 		eIntermediate,
+		eDepth,
 		eHighlight,
 		eEmissive
 	} myRenderMode;
