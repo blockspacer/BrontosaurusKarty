@@ -106,16 +106,17 @@ void Component::CDriftTurner::Destroy()
 }
 
 const float sleprVal = 10.f;
+const float lerpTimer = 0.075f;
 void Component::CDriftTurner::DoUpdate(const float aDeltaTime)
 {
 	myLerpTimer += aDeltaTime;
-	if (myLerpTimer / 0.1f >= 1.0f)
+	if (myLerpTimer / lerpTimer >= 1.0f)
 	{
 		shouldLerp = false;
 	}
 	if (shouldLerp)
 	{
-		float angle = fLerp(myStartAngle, myTargetAngle, CalcCurve(CLAMP(myLerpTimer / 0.1f, 0.0f, 1.0f), myCurve));
+		float angle = fLerp(myStartAngle, myTargetAngle, CalcCurve(CLAMP(myLerpTimer / lerpTimer, 0.0f, 1.0f), myCurve));
 		GetParent()->GetLocalTransform().SetRotation(CU::Matrix33f::CreateRotateAroundY(angle));
 	}
 
