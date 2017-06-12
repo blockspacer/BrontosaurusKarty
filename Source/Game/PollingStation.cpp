@@ -45,6 +45,11 @@ const CU::GrowingArray<CGameObject*>* CPollingStation::GetKartList()
 	return myKartList;
 }
 
+const unsigned short CPollingStation::GetAmmountOfPlayer()
+{
+	return myPlayers.Size();
+}
+
 CPollingStation::CPollingStation()
 {
 	myPlayers.Init(4);
