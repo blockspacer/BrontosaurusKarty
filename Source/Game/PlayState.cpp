@@ -569,6 +569,9 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	}
 
 	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent(*playerModel, aParticipant);
+	kartComponent->SetDecalInfo(0, myScene);
+
+
 	if (myPlayerCount < 2)
 	{
 		AddXboxController();
@@ -674,6 +677,7 @@ void CPlayState::CreateAI()
 	}
 
 	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent(*playerModel);
+	kartComponent->SetDecalInfo(0, myScene);
 
 	myPlayerControllerManager->CreateAIController(*kartComponent);
 
