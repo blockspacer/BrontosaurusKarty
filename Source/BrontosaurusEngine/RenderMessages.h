@@ -89,6 +89,7 @@ struct SRenderMessage
 		eRenderToGui,
 		eLUTFADECOLORGRADE,
 		eClearGui,
+		eRenderDecal
 	};
 
 	SRenderMessage(const eRenderMessageType aRenderMessageType);
@@ -115,6 +116,13 @@ struct SRenderSpotLight : SRenderMessage
 	SRenderSpotLight();
 	Lights::SSpotLight spotLight;
 	CU::Matrix33f rotation;
+};
+
+struct SRenderDecal : SRenderMessage
+{
+	SRenderDecal();
+	CU::Matrix44f myWorldSpace;
+	SDecalData myData;
 };
 
 struct SSetCubemapResource : SRenderMessage
