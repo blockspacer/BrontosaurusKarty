@@ -296,39 +296,45 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 	}
 	else if (aInputMessage.myType == CU::eInputType::eGamePadLeftJoyStickChanged)
 	{
-		if (aInputMessage.myJoyStickPosition.x > 0.0f)
+		float inbuiltdeadzone = 0.7f;
+		if ((myLastJoyX < inbuiltdeadzone && aInputMessage.myJoyStickPosition.x > inbuiltdeadzone) || (myLastJoyX > -inbuiltdeadzone && aInputMessage.myJoyStickPosition.x < -inbuiltdeadzone))
 		{
-			bool found = false;
-			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+			if (aInputMessage.myJoyStickPosition.x > inbuiltdeadzone)
 			{
-				if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
+				bool found = false;
+				for (unsigned int i = 0; i < myPlayers.Size(); ++i)
 				{
-					short u = static_cast<short>(myPlayers[i].mySelectedCharacter);
-					++u;
-					if (u >= static_cast<short>(SParticipant::eCharacter::eLength))
+					if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
 					{
-						u = 0;
+						short u = static_cast<short>(myPlayers[i].mySelectedCharacter);
+						++u;
+						if (u >= static_cast<short>(SParticipant::eCharacter::eLength))
+						{
+							u = 0;
+						}
+						myPlayers[i].mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
 					}
-					myPlayers[i].mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
+				}
+			}
+			else if (aInputMessage.myJoyStickPosition.x < -inbuiltdeadzone)
+			{
+				for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+				{
+					if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
+					{
+						short u = static_cast<short>(myPlayers[i].mySelectedCharacter);
+						--u;
+						if (u < 0)
+						{
+							u = static_cast<short>(SParticipant::eCharacter::eLength) - 1;
+						}
+						myPlayers[i].mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
+					}
 				}
 			}
 		}
-		else if (aInputMessage.myJoyStickPosition.x < 0.0f)
-		{
-			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
-			{
-				if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
-				{
-					short u = static_cast<short>(myPlayers[i].mySelectedCharacter);
-					--u;
-					if (u < 0)
-					{
-						u = static_cast<short>(SParticipant::eCharacter::eLength) - 1;
-					}
-					myPlayers[i].mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
-				}
-			}
-		}
+		myLastJoyX = aInputMessage.myJoyStickPosition.x;
+
 	}
 	else if (aInputMessage.myType == CU::eInputType::eKeyboardPressed)
 	{
