@@ -334,18 +334,24 @@ void CInputManager::UpdateGamePad(const CU::Time& aDeltaTime)
 		bool leftIsDead = myXInputWrapper->LeftStickIsInDeadzone(i);
 		if (!leftIsDead)
 		{
-			CU::SInputMessage padJoyStick;
-			padJoyStick.myType = CU::eInputType::eGamePadLeftJoyStickChanged;
-			padJoyStick.myJoyStickPosition = myXInputWrapper->GetLeftStickPosition(i);
-			padJoyStick.myGamepadIndex = i;
-
-			for (CU::CInputMessenger* messenger : myMessengers)
+			static CU::Vector2f lastStickPos = CU::Vector2f::Zero;
+			if (lastStickPos != myXInputWrapper->GetLeftStickPosition(i))
 			{
-				if (messenger->RecieveInput(padJoyStick) == CU::eInputReturn::eKeepSecret)
+				CU::SInputMessage padJoyStick;
+				padJoyStick.myType = CU::eInputType::eGamePadLeftJoyStickChanged;
+				padJoyStick.myJoyStickPosition = myXInputWrapper->GetLeftStickPosition(i);
+				padJoyStick.myGamepadIndex = i;
+
+				for (CU::CInputMessenger* messenger : myMessengers)
 				{
-					break;
+					if (messenger->RecieveInput(padJoyStick) == CU::eInputReturn::eKeepSecret)
+					{
+						break;
+					}
 				}
 			}
+			lastStickPos = myXInputWrapper->GetLeftStickPosition(i);
+
 		}
 		else if (!myXInputWrapper->LeftStickWasInDeadzone(i))
 		{

@@ -48,6 +48,10 @@ void CHazardComponent::Receive(const eComponentMessageType aMessageType, const S
 
 			if (data->myLayer == Physics::eKart)
 			{
+				SComponentMessageData collidedData;
+				collidedData.myComponent = collider;
+				GetParent()->NotifyOnlyComponents(eComponentMessageType::eHazzardCollide, collidedData);
+
 				aMessageData.myComponent->GetParent()->NotifyOnlyComponents(eComponentMessageType::eGotHit, SComponentMessageData());
 				if (myIsPermanent == false)
 				{
