@@ -31,6 +31,8 @@ CGlobalHUD::CGlobalHUD(): myNrOfPlayers(0)
 
 CGlobalHUD::~CGlobalHUD()
 {
+	POSTMASTER.Unsubscribe(this);
+
 	SAFE_DELETE(myScoreboardBGSprite);
 	SAFE_DELETE(myPortraitSprite);
 	SAFE_DELETE(myMinimapBGSprite);
