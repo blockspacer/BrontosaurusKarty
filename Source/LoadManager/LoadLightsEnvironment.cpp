@@ -9,6 +9,7 @@
 #include "GameObject.h"
 #include "Engine.h"
 #include "Renderer.h"
+#include "DecalComponent.h"
 
 int LoadPointLightComponent(KLoader::SLoadedComponentData someData)
 {
@@ -84,4 +85,10 @@ int LoadEnvironmentSettings(KLoader::SLoadedComponentData someData)
 	CLightComponentManager::GetInstance().SetShadowMapAABB(shadowAABBposition, shadowAABBhalfWidth);
 
 	return NULL_COMPONENT;
+}
+
+int LoadDecal(KLoader::SLoadedComponentData someData)
+{
+	CDecalComponent* component = CLightComponentManager::GetInstance().CreateAndRegisterDecalComponent();
+	return component->GetId();
 }
