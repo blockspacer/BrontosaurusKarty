@@ -88,10 +88,6 @@ private:
 	void CreatePlayer(CU::Camera& aCamera, const SParticipant& aIntputDevice, unsigned int aPlayerCount);
 	void CreateAI();
 
-	void InitiateRace();
-	void RenderCountdown();
-	void BroadcastRaceStart();
-
 private:
 	Physics::CPhysicsScene* myPhysicsScene;
 	Physics::CPhysics* myPhysics;
@@ -126,11 +122,11 @@ private:
 	//CU::TimerManager* myTimerManager;
 	TimerHandle myCountdownTimerHandle;
 
-	CSpriteInstance* myCountdownSprite;
+	//CSpriteInstance* myCountdownSprite;
 	SGUIElement* myCountdownElement;
 
 	float myPlacementLineScreenSpaceWidth;
-	bool myCountdownShouldRender;
+	//bool myCountdownShouldRender;
 	bool myIsCountingDown;
 
 	int myPlayerCount;
