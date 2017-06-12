@@ -78,6 +78,7 @@ public:
 	inline bool IsLoaded() const;
 
 	eMessageReturn DoEvent(const CLoadLevelMessage& aLoadLevelMessage) override;
+	eMessageReturn DoEvent(const Postmaster::Message::CControllerInputMessage& aControllerInputMessage);
 	CU::eInputReturn RecieveInput(const CU::SInputMessage& aInputMessage) override;
 	inline CBoostPadComponentManager* GetBoostPadComponentManager();
 

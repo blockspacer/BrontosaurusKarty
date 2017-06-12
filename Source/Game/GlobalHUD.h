@@ -15,7 +15,7 @@ public:
 public:
 	void LoadHUD() override;
 	void Render() override;
-	bool GetRaceOVer() const;
+	bool GetRaceOver() const { return myRaceOver; }
 
 	void StartCountDown();
 
@@ -28,9 +28,7 @@ private:
 
 	eMessageReturn DoEvent(const CRaceOverMessage& aMessage) override;
 	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
-	void ToMainMenu();
 	void ToMainMenu(const std::function<void(void)>& aCallback);
-	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
 
 public:
 	void Retry();

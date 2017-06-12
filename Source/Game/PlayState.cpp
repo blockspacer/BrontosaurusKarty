@@ -122,9 +122,6 @@ CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	, myTimeTrackerComponentManager(nullptr)
 	, myCameraComponents(4)
 	, myGlobalHUD(nullptr)
-	, myCountdownTimerHandle(0)
-	, myCountdownSprite(nullptr)
-	, myCountdownElement(nullptr)	
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
@@ -161,9 +158,6 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	, myTimeTrackerComponentManager(nullptr)
 	, myCameraComponents(4)
 	, myGlobalHUD(nullptr)
-	, myCountdownTimerHandle(0)
-	, myCountdownSprite(nullptr)
-	, myCountdownElement(nullptr)
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
@@ -837,116 +831,21 @@ void CPlayState::CreateAI()
 	myKartObjects.Add(playerObject);
 }
 
-void CPlayState::InitiateRace()
-{
-	auto countdownLambda = [this]() {
-
-		CU::TimerManager timerManager;
-		TimerHandle timer = timerManager.CreateTimer();
-		unsigned char startCountdownTime = 0;
-		float floatTime = 0.f;
-
-		myCountdownShouldRender = true;
-		myIsCountingDown = true;
-
-		Audio::CAudioInterface::GetInstance()->PostEvent("PlayStartCountDown");
-		Audio::CAudioInterface::GetInstance()->PostEvent("PlayEngineIdle");
-		for (int i = 0; i < myKartObjects.Size(); i++)
-		{
-			SComponentMessageData data; data.myString = "PlayEngineStart";
-			myKartObjects[i]->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
-		}
-
-		while (floatTime <= 4.5f)
-		{
-			timerManager.UpdateTimers();
-			floatTime = timerManager.GetTimer(timer).GetLifeTime().GetSeconds();
-
-			if ((unsigned char)floatTime > startCountdownTime)
-			{
-				startCountdownTime = std::floor(floatTime);
-				if (startCountdownTime == 0)		myCountdownSprite->SetAlpha(0);	
-				else if (startCountdownTime == 1) { myCountdownSprite->SetRect({ 0.f,0.75f,1.f,1.00f }); myCountdownSprite->SetAlpha(1); }
-				else if (startCountdownTime == 2) 	myCountdownSprite->SetRect({ 0.f,0.50f,1.f,0.75f });
-				else if (startCountdownTime == 3) 	myCountdownSprite->SetRect({ 0.f,0.25f,1.f,0.50f });
-				else if (startCountdownTime == 4)
-				{
-					myCountdownSprite->SetRect({ 0.f,0.00f,1.f,0.25f });
-					myKartControllerComponentManager->ShouldUpdate(true);
-					myTimeTrackerComponentManager->RaceStart();
-					POSTMASTER.Broadcast(new CRaceStartedMessage());
-					POSTMASTER.GetThreadOffice().HandleMessages();
-				}
-			}
-		}
-	};
-
-	CU::Work work(countdownLambda);
-	work.SetName("Countdown thread");
-
-	std::function<void(void)> callback = [this]() 
-	{ 
-		CU::TimerManager timerManager;
-		TimerHandle timer = timerManager.CreateTimer();
-
-		while (timerManager.GetTimer(timer).GetLifeTime().GetSeconds() < .05f)
-		{
-			timerManager.UpdateTimers(); // för att komma runt att trippelbuffringen slänger bort meddelanden.
-			myCountdownSprite->SetAlpha(0);
-		}
-
-		myIsCountingDown = false;
-		myCountdownShouldRender = false;
-
-
-		CU::CJsonValue levelsFile;
-		std::string errorString = levelsFile.Parse("Json/LevelList.json");
-		if (!errorString.empty()) DL_MESSAGE_BOX(errorString.c_str());
-
-		CU::CJsonValue levelsArray = levelsFile.at("levels");
-
-		const char* song = levelsArray.at(myLevelIndex).GetString().c_str();
-
-		Audio::CAudioInterface::GetInstance()->PostEvent(song);
-
-	};
-
-	work.SetFinishedCallback(callback);
-	CU::ThreadPool::GetInstance()->AddWork(work);
-}
-
-void CPlayState::RenderCountdown()
-{
-	SCreateOrClearGuiElement* createOrClear = new SCreateOrClearGuiElement(L"countdown", *myCountdownElement, WINDOW_SIZE);
-	RENDERER.AddRenderMessage(createOrClear);
-
-	SChangeStatesMessage* const changeStatesMessage = new SChangeStatesMessage();
-	changeStatesMessage->myBlendState = eBlendState::eAddBlend;
-	changeStatesMessage->myDepthStencilState = eDepthStencilState::eDisableDepth;
-	changeStatesMessage->myRasterizerState = eRasterizerState::eNoCulling;
-	changeStatesMessage->mySamplerState = eSamplerState::eClamp;
-
-	SRenderToGUI* const guiChangeState = new SRenderToGUI(L"countdown", changeStatesMessage);
-	RENDERER.AddRenderMessage(guiChangeState);
-
-	myCountdownSprite->RenderToGUI(L"countdown");
-}
-
 eMessageReturn CPlayState::DoEvent(const Postmaster::Message::CControllerInputMessage& aControllerInputMessage)
 {
 	const Postmaster::Message::InputEventData& data = aControllerInputMessage.GetData();
 
-	if (myGlobalHUD != nullptr && myGlobalHUD->GetRaceOVer() == true && data.eventType == Postmaster::Message::EventType::ButtonChanged &&
+	if (myGlobalHUD != nullptr && myGlobalHUD->GetRaceOver() == true && data.eventType == Postmaster::Message::EventType::ButtonChanged &&
 		data.data.boolValue == true && data.buttonIndex == Postmaster::Message::ButtonIndex::B)
 	{
 		myStateStack.Pop();
 	}
-	else if (myGlobalHUD != nullptr && myGlobalHUD->GetRaceOVer() == true && data.eventType == Postmaster::Message::EventType::ButtonChanged &&
+	else if (myGlobalHUD != nullptr && myGlobalHUD->GetRaceOver() == true && data.eventType == Postmaster::Message::EventType::ButtonChanged &&
 		data.data.boolValue == true && data.buttonIndex == Postmaster::Message::ButtonIndex::X)
 	{
 		myStateStack.SwapState(new CLoadState(myStateStack, myLevelIndex, myPlayers));
 	}
-	else if (myGlobalHUD != nullptr && myGlobalHUD->GetRaceOVer() == true && data.eventType == Postmaster::Message::EventType::ButtonChanged &&
+	else if (myGlobalHUD != nullptr && myGlobalHUD->GetRaceOver() == true && data.eventType == Postmaster::Message::EventType::ButtonChanged &&
 		data.data.boolValue == true && data.buttonIndex == Postmaster::Message::ButtonIndex::A)
 	{
 		myStateStack.SwapState(new CLoadState(myStateStack, (myLevelIndex + 1) % myLevelsCount, myPlayers));
