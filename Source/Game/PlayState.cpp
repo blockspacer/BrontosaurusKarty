@@ -647,7 +647,12 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	cameraObject->AddComponent(cameraComponent);
 	myCameraComponents.Add(cameraComponent);
 
-	
+	//Create player number object
+	CGameObject* playerNumber = myGameObjectManager->CreateGameObject();
+	CParticleEmitterComponent* emitterComponent = CParticleEmitterComponentManager::GetInstance().CreateComponent("Player1");
+	emitterComponent->Activate();
+	playerNumber->AddComponent(emitterComponent);
+	playerNumber->GetLocalTransform().SetPosition({ 0.f,5.f,0.f });
 
 	//Create top player object
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
