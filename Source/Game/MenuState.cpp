@@ -31,6 +31,9 @@ CMenuState::CMenuState(StateStack& aStateStack, std::string aFile) : State(aStat
 	myManager.AddAction("PushLevel", [this](std::string string)-> bool { return PushLevel(string); });
 	myManager.AddAction("SelectTextInput", [this](std::string string)-> bool { return SetCurrentTextInput(string); });
 	myManager.AddAction("PushSplitScreenSelection", [this](std::string string)-> bool { return PushSplitScreenSelection();});
+	myManager.AddAction("SelectNext", [this](std::string string)-> bool { return SelectNext(string); });
+	myManager.AddAction("SelectPrevious", [this](std::string string)-> bool { return SelectPrevious(string); });
+	myManager.AddAction("PushSelectedLevel", [this](std::string string)-> bool { return PushSelectedLevel(string); });
 	MenuLoad(aFile);
 }
 
@@ -194,7 +197,6 @@ eMessageReturn CMenuState::DoEvent(const CLoadLevelMessage& aLoadLevelMessage)
 {
 	myStateStack.PushState(new CLoadState(myStateStack, aLoadLevelMessage.myLevelIndex));
 	return eMessageReturn::eContinue;
-
 }
 
 eAlignment CMenuState::LoadAlignment(const CU::CJsonValue& aJsonValue)
@@ -217,6 +219,17 @@ void CMenuState::LoadElement(const CU::CJsonValue& aJsonValue, const std::string
 	const CU::Vector2f origin = aJsonValue.at("origin").GetVector2f("xy");
 
 	const int spriteID = myManager.CreateSprite(aFolderpath + "/" + name, position, origin, 1);
+
+	if (aJsonValue.HasKey("isSelector") && aJsonValue.at("isSelector").GetBool())
+	{
+		mySelectorNames.Add(name);
+
+		SSelector selector;
+		selector.myMax = myManager.GetSpriteAmount(spriteID);
+		selector.mySelection = 0;
+		selector.mySpriteIndex = spriteID;
+		mySelectors.Add(selector);
+	}
 
 	if (aJsonValue.at("isButton").GetBool())
 	{
@@ -366,5 +379,51 @@ bool CMenuState::SetCurrentTextInput(std::string aTexINputIndex)
 {
 	myCurrentTextInput = stoi(aTexINputIndex);
 	myTextInputs[myCurrentTextInput].myInputIsValid = true;
+	return true;
+}
+
+bool CMenuState::SelectNext(const std::string aSelectorName)
+{
+	const char selectorIndex = mySelectorNames.Find(aSelectorName);
+	if (selectorIndex != mySelectorNames.FoundNone)
+	{
+		SSelector& selector = mySelectors[selectorIndex];
+		selector.mySelection += 1;
+		if (selector.mySelection >= selector.myMax)
+		{
+			selector.mySelection = 0;
+		}
+
+		myManager.SetSpiteState(selector.mySpriteIndex, selector.mySelection);
+	}
+
+	return true;
+}
+
+bool CMenuState::SelectPrevious(const std::string aSelectorName)
+{
+	const char selectorIndex = mySelectorNames.Find(aSelectorName);
+	if (selectorIndex != mySelectorNames.FoundNone)
+	{
+		SSelector& selector = mySelectors[selectorIndex];
+		selector.mySelection -= 1;
+		if (selector.mySelection < 0)
+		{
+			selector.mySelection = selector.myMax - 1;
+		}
+
+		myManager.SetSpiteState(selector.mySpriteIndex, selector.mySelection);
+	}
+
+	return true;
+}
+
+bool CMenuState::PushSelectedLevel(const std::string aSelector)
+{
+	const char selectorIndex = mySelectorNames.Find(aSelector);
+	if (selectorIndex != mySelectorNames.FoundNone)
+	{
+		myStateStack.SwapState(new CLoadState(myStateStack, mySelectors[selectorIndex].mySelection, myManager.ourParticipants));
+	}
 	return true;
 }

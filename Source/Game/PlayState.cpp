@@ -486,7 +486,7 @@ CU::eInputReturn CPlayState::RecieveInput(const CU::SInputMessage& aInputMessage
 		Postmaster::Message::InputEventData eventData;
 		eventData.eventType = Postmaster::Message::EventType::ButtonChanged;
 		eventData.data.boolValue = true;
-		eventData.buttonIndex = Postmaster::Message::ButtonIndex::B;
+		eventData.buttonIndex = Postmaster::Message::ButtonIndex::A;
 		PostPostmasterEvent(aInputMessage.myGamepadIndex, eventData);
 	}
 	if (aInputMessage.myGamePad == CU::GAMEPAD::X)
@@ -494,7 +494,7 @@ CU::eInputReturn CPlayState::RecieveInput(const CU::SInputMessage& aInputMessage
 		Postmaster::Message::InputEventData eventData;
 		eventData.eventType = Postmaster::Message::EventType::ButtonChanged;
 		eventData.data.boolValue = true;
-		eventData.buttonIndex = Postmaster::Message::ButtonIndex::B;
+		eventData.buttonIndex = Postmaster::Message::ButtonIndex::X;
 		PostPostmasterEvent(aInputMessage.myGamepadIndex, eventData);
 		
 	}
@@ -610,6 +610,9 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	cameraComponent->SetCamera(aCamera);
 	cameraObject->AddComponent(cameraComponent);
 	myCameraComponents.Add(cameraComponent);
+
+	
+
 	//Create top player object
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
 	playerObject->AddComponent(cameraObject);
