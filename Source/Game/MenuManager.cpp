@@ -5,7 +5,7 @@
 #include "../BrontosaurusEngine/Engine.h"
 #include "../CommonUtilities/JsonValue.h"
 
-
+CU::GrowingArray<SParticipant> CMenuManager::ourParticipants = CU::GrowingArray<SParticipant>(4);
 CU::Vector2f CMenuManager::ourMousePosition(0.5f, 0.5f);
 
 bool CompareLayers(SLayerData aFirstData, SLayerData aSecondData)
@@ -175,7 +175,7 @@ void CMenuManager::Update(const CU::Time& aDeltaTime)
 		CU::Vector2f lowerRight;
 		CU::Vector2f upperLeft;
 
-		if (myClickAreas.At(i).mySpriteID >= 0)
+		/*if (myClickAreas.At(i).mySpriteID >= 0)
 		{
 			CSpriteInstance* currentSprite = mySpriteInstances[myClickAreas[i].mySpriteID].mySprites[0];
 			lowerRight = currentSprite->GetPosition() + currentSprite->GetSize() * myClickAreas[i].myRect.zw - currentSprite->GetPivot() * currentSprite->GetSize();
@@ -185,7 +185,7 @@ void CMenuManager::Update(const CU::Time& aDeltaTime)
 		{
 			upperLeft = myClickAreas[i].myRect.xy;
 			lowerRight = myClickAreas[i].myRect.zw;
-		}
+		}*/
 
 		if (ourMousePosition.x > upperLeft.x && ourMousePosition.y > upperLeft.y && ourMousePosition.x < lowerRight.x && ourMousePosition.y < lowerRight.y)
 		{

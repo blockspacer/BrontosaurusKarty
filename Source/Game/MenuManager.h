@@ -4,6 +4,7 @@
 #include "../CommonUtilities/GamepadButtons.h"
 #include "GUIElement.h"
 #include <functional>
+#include "SParticipant.h"
 
 
 enum class eMenuThingType
@@ -98,6 +99,8 @@ public:
 
 	void SetSpiteState(const unsigned aSpriteIndex, const char aState);
 	char GetSpriteAmount(const int aSpriteId) const;
+
+	static CU::GrowingArray<SParticipant> ourParticipants;
 private:
 	static CSpriteInstance* ChoseSpriteInstance(const SMenuSprite& aMenuSprite);
 

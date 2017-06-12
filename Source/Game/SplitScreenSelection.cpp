@@ -9,6 +9,7 @@
 #include "StateStack.h"
 #include "LoadState.h"
 #include "CommonUtilities.h"
+#include "MenuState.h"
 
 CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aStateStack,eInputMessengerType::eSplitScreenSelectionMenu, 1)
 {
@@ -142,7 +143,7 @@ void CSplitScreenSelection::LoadElement(const CU::CJsonValue & aJsonValue, const
 
 		eAlignment alignment = LoadAlignment(textValue.at("alignment"));
 
-		CU::Vector2f textPosition;
+		/*CU::Vector2f textPosition;
 		if (spriteID < 0)
 		{
 			textPosition = position + textValue.at("offset").GetVector2f();
@@ -151,9 +152,9 @@ void CSplitScreenSelection::LoadElement(const CU::CJsonValue & aJsonValue, const
 		{
 			const SMenuSprite& currentSprite = myMenuManager.GetSprite(spriteID);
 			textPosition = position + (textValue.at("offset").GetVector2f() - currentSprite.mySprites[0]->GetPivot()) * currentSprite.mySprites[0]->GetSize();
-		}
+		}*/
 
-		if (text.size() > 0 && text.at(0) == L'#')
+		/*if (text.size() > 0 && text.at(0) == L'#')
 		{
 			std::wstring::size_type underscore = text.find(L"_");
 			if (underscore == std::wstring::npos)
@@ -181,7 +182,7 @@ void CSplitScreenSelection::LoadElement(const CU::CJsonValue & aJsonValue, const
 		else
 		{
 			myMenuManager.CreateText(fontName, textPosition, text, 2, alignment);
-		}
+		}*/
 	}
 }
 
@@ -253,7 +254,8 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 		case CU::GAMEPAD::START:
 			if (myPlayers.Size() >= 1)
 			{
-				myStateStack.SwapState(new CLoadState(myStateStack,0, myPlayers));
+				myMenuManager.ourParticipants = myPlayers;
+				myStateStack.SwapState(new CMenuState(myStateStack, "Json/Menu/ControllerLevelSelect.json"));
 			}
 			break;
 		case CU::GAMEPAD::DPAD_RIGHT:
@@ -420,7 +422,8 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 		case CU::eKeys::RETURN:
 			if (myPlayers.Size() >= 1)
 			{
-				myStateStack.SwapState(new CLoadState(myStateStack, 0, myPlayers));
+				myMenuManager.ourParticipants = myPlayers;
+				myStateStack.SwapState(new CMenuState(myStateStack, "Json/Menu/ControllerLevelSelect.json"));
 			}
 				break;
 		default:
