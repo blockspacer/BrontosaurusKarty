@@ -35,10 +35,10 @@ CKartAnimator::CKartAnimator(CModelComponent& aModelComponent, const CU::CJsonVa
 	myModelComponent.SetAnimationLerpValue(0.f);
 
 	CModelComponent* wheelModels[4];
-	wheelModels[0] = CModelComponentManager::GetInstance().CreateComponent(/*"Models/Meshes/M_kart_01_wheel_left.fbx"*/aJsonValue["FrontLeft"].GetString());
-	wheelModels[1] = CModelComponentManager::GetInstance().CreateComponent(/*"Models/Meshes/M_kart_01_wheel_right.fbx"*/aJsonValue["FrontRight"].GetString());
-	wheelModels[2] = CModelComponentManager::GetInstance().CreateComponent(/*"Models/Meshes/M_kart_01_wheel_right.fbx"*/aJsonValue["BackLeft"].GetString());
-	wheelModels[3] = CModelComponentManager::GetInstance().CreateComponent(/*"Models/Meshes/M_kart_01_wheel_left.fbx"*/ aJsonValue["BackRight"].GetString());
+	wheelModels[0] = CModelComponentManager::GetInstance().CreateComponent(aJsonValue["FrontLeft"].GetString());
+	wheelModels[1] = CModelComponentManager::GetInstance().CreateComponent(aJsonValue["FrontRight"].GetString());
+	wheelModels[2] = CModelComponentManager::GetInstance().CreateComponent(aJsonValue["BackLeft"].GetString());
+	wheelModels[3] = CModelComponentManager::GetInstance().CreateComponent(aJsonValue["BackRight"].GetString());
 
 	for (int i = 0; i < myWheels.Size(); ++i)
 	{
@@ -62,7 +62,7 @@ CKartAnimator::CKartAnimator(CModelComponent& aModelComponent, const CU::CJsonVa
 		return;
 	}
 
-	const char* socketNames[4] = { "P_wheelFront_SOCKET_left", "P_wheelFront_SOCKET_right", "P_wheelBack_SOCKET_left", "P_wheelBack_SOCKET_right" };
+	const char* socketNames[4]  = { "P_wheelFront_SOCKET_left", "P_wheelFront_SOCKET_right", "P_wheelBack_SOCKET_right", "P_wheelBack_SOCKET_left" };
 	for (int i = 0; i < 4; ++i)
 	{
 		myWheels[i]->GetParent()->GetLocalTransform() = model->GetBoneTransform(0.f, eAnimationState::idle01, socketNames[i]);
@@ -112,9 +112,14 @@ void CKartAnimator::Update(const float aDeltaTime, const float aForwardVelocity,
 	myWheels[1]->GetParent()->GetLocalTransform().SetEulerRotation(eulerRotation);
 
 	float movement = aForwardVelocity * aDeltaTime;
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 2; ++i)
 	{
-		myWheels[i]->GetLocalTransform().RotateAroundAxis(i < 2 ? movement : -movement, CU::Axees::X);
+		myWheels[i]->GetLocalTransform().RotateAroundAxis(movement, CU::Axees::X);
+	}
+
+	for (int i = 2; i < 4; ++i)
+	{
+		myWheels[i]->GetLocalTransform().RotateAroundAxis(-movement, CU::Axees::X);
 	}
 }
 

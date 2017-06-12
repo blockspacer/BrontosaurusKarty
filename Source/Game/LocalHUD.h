@@ -2,7 +2,6 @@
 #include "../ThreadedPostmaster/Subscriber.h"
 #include "HUDBase.h"
 
-class CRaceOverMessage;
 class KeyCharPressed; //temp
 class CBlueShellWarningMessage;
 
@@ -24,7 +23,6 @@ private:
 
 	void DisableRedundantGUI();
 
-	//eMessageReturn DoEvent(const CRaceOverMessage& aMessage) override;
 	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
 	eMessageReturn DoEvent(const CBlueShellWarningMessage& aMessage) override;
 	eMessageReturn DoEvent(const CRedShellWarningMessage& aMessage) override;
@@ -35,7 +33,6 @@ private:
 	SHUDElement myFinishTextElement;
 	SHUDElement myItemGuiElement;
 	SHUDElement myDangerGuiElement;
-
 
 	CSpriteInstance* myMushroomSprite;
 	CSpriteInstance* myGreenShellSprite;

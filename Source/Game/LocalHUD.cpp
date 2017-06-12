@@ -15,7 +15,6 @@
 #include <ThreadPool.h>
 
 #include "..\ThreadedPostmaster\Postmaster.h"
-#include "..\ThreadedPostmaster\RaceOverMessage.h"
 
 //Debug
 #include "..\ThreadedPostmaster\KeyCharPressed.h"
