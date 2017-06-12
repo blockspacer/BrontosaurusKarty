@@ -99,6 +99,7 @@
 #include "BroadcastINputListener.h"
 #include "InputManager.h"
 #include "TimeTrackerComponent.h"
+#include "DecalComponent.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -618,6 +619,12 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent(playerJson.at("Model").GetString());
 	playerModel->SetIsShadowCasting(false);
 
+
+
+	// Lights
+	//
+
+
 	CComponent* headLight1 = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({ 1.f, 1.0f, 0.5f }, 5.f, 5.f, 3.141592f / 16.f);
 	CGameObject* headLightObject1 = myGameObjectManager->CreateGameObject();
 	headLightObject1->GetLocalTransform().myPosition.Set(-0.45f, 1.f, 1.f);
@@ -633,6 +640,19 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	headLightObject2->AddComponent(headLight2);
 
 	secondPlayerObject->AddComponent(headLightObject2);
+
+
+	//
+	// decal
+	CDecalComponent* decal = new CDecalComponent(*myScene);
+	decal->SetDecalIndex(0);
+
+	CGameObject* decalHolder = myGameObjectManager->CreateGameObject();
+	decalHolder->GetLocalTransform().myPosition.Set(0.0f, -0.88f, 0.3f);
+	decalHolder->GetLocalTransform().SetScale({ 2.0f, 2.f, 2.f });
+	decalHolder->AddComponent(decal);
+	secondPlayerObject->AddComponent(decalHolder);
+	//
 
 	secondPlayerObject->AddComponent(playerModel);
 	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
@@ -676,7 +696,6 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	}
 
 	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent(*playerModel, aParticipant);
-	kartComponent->SetDecalInfo(0, myScene);
 
 
 	if (myPlayerCount < 2)
@@ -757,7 +776,6 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 
 void CPlayState::CreateAI()
 {
-
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Animations/M_Kart_01.fbx");
 	playerModel->SetIsShadowCasting(false);
@@ -770,6 +788,19 @@ void CPlayState::CreateAI()
 
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
 	playerObject->AddComponent(intermediary);
+
+
+	//
+	// decal
+	CDecalComponent* decal = new CDecalComponent(*myScene);
+	decal->SetDecalIndex(0);
+
+	CGameObject* decalHolder = myGameObjectManager->CreateGameObject();
+	decalHolder->GetLocalTransform().myPosition.Set(0.0f, -0.88f, 0.3f);
+	decalHolder->GetLocalTransform().SetScale({ 2.0f, 2.f, 2.f });
+	decalHolder->AddComponent(decal);
+	secondPlayerObject->AddComponent(decalHolder);
+	//
 
 	CU::Matrix44f kartTransformation = CKartSpawnPointManager::GetInstance()->PopSpawnPoint().mySpawnTransformaion;
 	playerObject->SetWorldTransformation(kartTransformation);
@@ -787,7 +818,6 @@ void CPlayState::CreateAI()
 	}
 
 	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent(*playerModel);
-	kartComponent->SetDecalInfo(0, myScene);
 
 	myPlayerControllerManager->CreateAIController(*kartComponent);
 
