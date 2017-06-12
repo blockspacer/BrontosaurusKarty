@@ -415,6 +415,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 				}
 			}
 		}
+		break;
 		case CU::eKeys::RETURN:
 			if (myPlayers.Size() >= 1)
 			{
