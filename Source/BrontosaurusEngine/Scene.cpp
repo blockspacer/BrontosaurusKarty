@@ -15,6 +15,7 @@
 #include "../Components/ParticleEmitterComponentManager.h"
 #include "ParticleEmitterManager.h"
 #include "ShadowMap.h"
+#include "DecalInstance.h"
 
 #define Intify(A_ENUM_CLASS) static_cast<int>(A_ENUM_CLASS)
 #define PlayerOneCamera myRenderCameras[Intify(eCameraType::ePlayerOneCamera)]
@@ -35,7 +36,7 @@ CScene::CScene()
 	myModels.Init(4096);
 	myPointLights.Init(32);
 	mySpotLights.Init(512);
-	//myParticleEmitters.Init(8);
+	myDecals.Init(8);
 	myFireEmitters.Init(8);
 	mySkybox = nullptr;
 	myCubemap = nullptr;
@@ -263,6 +264,31 @@ void CScene::RenderToRect(const CU::Vector4f& aRect, CRenderCamera& aCamera)
 	statemsg.mySamplerState = eSamplerState::eDeferred;
 	aCamera.AddRenderMessage(new SChangeStatesMessage(statemsg));
 
+
+	for (CDecalInstance& decal : myDecals)
+	{
+		if (decal.GetIsActive() == false)
+		{
+			continue;
+		}
+
+		/*	CU::Sphere lightSphere;
+			lightSphere.myCenterPos = decal.GetTransformation().GetPosition();
+			lightSphere.myRadius = decal.Get;
+
+			if (aCamera.GetCamera().IsInside(lightSphere) == false)
+			{
+				continue;
+			}*/
+
+		SRenderDecal* decalMessage = new SRenderDecal();
+		decalMessage->myData = decal.GetData();
+		decalMessage->myWorldSpace = decal.GetTransformation();
+		aCamera.AddRenderMessage(decalMessage);
+	}
+
+
+
 	for (CPointLightInstance& pointLight : myPointLights)
 	{
 		if (pointLight.GetIsActive() == false)
@@ -412,20 +438,19 @@ InstanceID CScene::AddSpotLightInstance(const CSpotLightInstance& aSpotLight)
 	return id;
 }
 
-//InstanceID CScene::AddParticleEmitterInstance(CParticleEmitterInstance* aParticleEmitterInstance)
-//{
-//	if (myFreeParticleEmitters.Size() < 1)
-//	{
-//		InstanceID temp = myParticleEmitters.Size();
-//		myParticleEmitters.Add(aParticleEmitterInstance);
-//		return temp;
-//	}
-//
-//	InstanceID tempId = myFreeParticleEmitters.Pop();
-//	myParticleEmitters[tempId] = aParticleEmitterInstance;
-//
-//	return  tempId;
-//}
+InstanceID CScene::AddDecal()
+{
+	if (myFreeDecals.Size() > 0)
+	{
+		InstanceID id = myFreeDecals.Pop();
+		myDecals[id] = CDecalInstance();
+		return id;
+	}
+
+	InstanceID id = myDecals.Size();
+	myDecals.Add();
+	return id;
+}
 
 InstanceID CScene::AddFireEmitters(const CFireEmitterInstance& aFireEmitter)
 {
@@ -589,6 +614,12 @@ void CScene::RemovePointLightInstance(const InstanceID anID)
 
 }
 
+void CScene::RemoveDecal(const InstanceID anID)
+{
+	myDecals[anID].SetActive(false);
+	myFreeDecals.Push(anID);
+}
+
 void CScene::GenerateCubemap()
 {
 	//for now, not shure if we even need this
@@ -676,4 +707,9 @@ bool CScene::HasBakedShadowMap()
 CSpotLightInstance* CScene::GetSpotLightInstance(const InstanceID aID)
 {
 	return (mySpotLights.HasIndex(aID)) ? &mySpotLights[aID] : nullptr;
+}
+
+CDecalInstance* CScene::GetDecal(const InstanceID aID)
+{
+	return (myDecals.HasIndex(aID)) ? &myDecals[aID] : nullptr;
 }

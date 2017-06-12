@@ -13,6 +13,17 @@ enum class ePointLights
 };
 
 
+struct SDecalData
+{
+	CU::Matrix44f worldSpace;
+	CU::Matrix44f decalProjection;
+	CU::Vector4f decalGBufferBlends = CU::Vector4f::One;
+	unsigned int decalIndex = 1u;
+	unsigned int garbage[3];
+};
+
+
+
 namespace Lights
 {
 	struct SDirectionalLight

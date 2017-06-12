@@ -12,6 +12,7 @@ class CSkybox;
 class CModelInstance;
 class CPointLightInstance;
 class CSpotLightInstance;
+class CDecalInstance;
 class CParticleEmitterInstance;
 class CFireEmitterInstance;
 class CShadowMap;
@@ -51,6 +52,7 @@ public:
 	InstanceID AddDirectionalLight(const Lights::SDirectionalLight& aDirectionalLight);
 	InstanceID AddPointLightInstance(const CPointLightInstance& aPointLight);
 	InstanceID AddSpotLightInstance(const CSpotLightInstance & aPointLight);
+	InstanceID AddDecal();
 
 	//InstanceID AddParticleEmitterInstance(CParticleEmitterInstance* aParticleEmitterInstance);
 	InstanceID AddFireEmitters(const CFireEmitterInstance& aFireEmitter);
@@ -68,10 +70,14 @@ public:
 	//CParticleEmitterInstance* GetParticleEmitterInstance(const InstanceID aParticleEmitterID);
 	CPointLightInstance* GetPointLightInstance(const InstanceID aID);
 	CSpotLightInstance* GetSpotLightInstance(const InstanceID aID);
-	
+	CDecalInstance* GetDecal(const InstanceID aID);
+
 	//Delete Shiz here
 	void DeleteModelInstance(CModelInstance* anInstance);
 	void DeleteModelInstance(const InstanceID& anId);
+
+
+
 
 	inline unsigned int GetModelListSize()   {return myModels.Size();}
 	inline unsigned int GetLightListSize()   {return myPointLights.Size();}
@@ -80,6 +86,7 @@ public:
 
 	//void DeleteParticleEmitterInstance(const InstanceID anID);
 	void RemovePointLightInstance(const InstanceID anID);
+	void RemoveDecal(const InstanceID anID);
 
 
 	void GenerateCubemap();
@@ -98,9 +105,11 @@ private:
 	CU::GrowingArray<CPointLightInstance, InstanceID> myPointLights;
 	CU::Stack<InstanceID, InstanceID> myFreePointlights;
 
-
 	CU::GrowingArray<CSpotLightInstance, InstanceID> mySpotLights;
 	CU::Stack<InstanceID, InstanceID> myFreeSpotlights;
+
+	CU::GrowingArray<CDecalInstance, InstanceID> myDecals;
+	CU::Stack<InstanceID, InstanceID> myFreeDecals;
 
 	CU::GrowingArray<CFireEmitterInstance, InstanceID> myFireEmitters;
 
