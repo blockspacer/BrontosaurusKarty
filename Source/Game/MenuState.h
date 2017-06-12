@@ -77,6 +77,7 @@ private:
 	CMenuManager myManager;
 	bool myIsInFocus;
 	std::wstring myThisComputersIP;
+	bool myJoystickEngaged;
 	static char ourMenuesToPop;
 
 	bool myBlinkeyBool;
