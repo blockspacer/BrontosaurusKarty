@@ -19,6 +19,7 @@
 #include "ThreadedPostmaster/PushState.h"
 #include "ThreadedPostmaster/PostOffice.h"
 #include "ThreadedPostmaster/RaceStartedMessage.h"
+#include "ThreadedPostmaster/PlayerPassedGoalMessage.h"
 
 #include "..\Components\KartControllerComponentManager.h"
 #include "..\Components\TimeTrackerComponentManager.h"
@@ -417,4 +418,17 @@ void CGlobalHUD::Retry()
 void CGlobalHUD::LoadNext()
 {
 	ToMainMenu([this](){POSTMASTER.BroadcastLocal(new PushState(PushState::eState::ePlayState, myLevelIndex + 1)); });
+}
+
+eMessageReturn CGlobalHUD::DoEvent(const CPlayerPassedGoalMessage& aMessage)
+{
+	for (int i = 0; i < myKartObjects->Size(); ++i)
+	{
+		if(myKartObjects->At(i)->GetId() == aMessage.GetGameObject()->GetId())
+		{
+			myMinimapXPositions[i] = 0.05f;
+		}
+	}
+
+	return eMessageReturn::eContinue;
 }

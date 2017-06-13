@@ -395,6 +395,7 @@ void CPlayState::Init()
 	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::eCharPressed);
 	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::eRaceOver);
 	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::eControllerInput);
+	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::ePlayerPassedGoal);
 
 	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::ePlayerFinished);
 	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::eRaceStarted);

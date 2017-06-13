@@ -204,6 +204,7 @@
     <ClInclude Include="NetworkDebugInfo.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="PlayerFinishedMessage.h" />
+    <ClInclude Include="PlayerPassedGoalMessage.h" />
     <ClInclude Include="PopCurrentState.h" />
     <ClInclude Include="Postmaster.h" />
     <ClInclude Include="PostOffice.h" />
@@ -233,6 +234,7 @@
     <ClCompile Include="LoadLevelMessage.cpp" />
     <ClCompile Include="NetworkDebugInfo.cpp" />
     <ClCompile Include="PlayerFinishedMessage.cpp" />
+    <ClCompile Include="PlayerPassedGoalMessage.cpp" />
     <ClCompile Include="PopCurrentState.cpp" />
     <ClCompile Include="Postmaster.cpp" />
     <ClCompile Include="PostOffice.cpp" />
