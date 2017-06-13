@@ -24,9 +24,9 @@
 // Level of detail on Anti Aliasing on shadowmap.
 // higher the value, smoother the shadows
 // using Stratified Poisson Sampling
-#define PCF_PASSES 4
+#define PCF_PASSES 10
 // set quality 0 is lame 4 is neat
-#define SHADOW_QUALITY 3
+#define SHADOW_QUALITY 2
 
 //#define RENDER_SHADOWMAP
 constexpr unsigned int gShadowMapSize = 1024u << SHADOW_QUALITY;
@@ -53,6 +53,7 @@ CScene::~CScene()
 	{
 		SAFE_DELETE(mySkybox);
 	}
+	//SAFE_DELETE(myCubemap);
 	myModels.DeleteAll();
 	SAFE_DELETE(myShadowMap);
 	//myParticleEmitters.DeleteAll();

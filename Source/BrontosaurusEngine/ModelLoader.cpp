@@ -78,15 +78,15 @@ bool CModelLoader::LoadModel(const std::string& aPath, CModel& aNewModel) //TODO
 
 	D3D_PRIMITIVE_TOPOLOGY topology = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	//Put effects in a manager mebe?
-	CEffect* forwardEffect = new CEffect(vertexShader, forwardPixelShader, geometryShader, inputLayout, topology, vertexInstancedShader, instancedInputLayout, pixelInstancedShader);
-	CEffect* deferredEffect = new CEffect(vertexShader, deferredPixelShader, geometryShader, inputLayout, topology, vertexInstancedShader, instancedInputLayout, pixelInstancedShader);
+	//CEffect* forwardEffect = new CEffect(vertexShader, forwardPixelShader, geometryShader, inputLayout, topology, vertexInstancedShader, instancedInputLayout, pixelInstancedShader);
+	//CEffect* deferredEffect = new CEffect(vertexShader, deferredPixelShader, geometryShader, inputLayout, topology, vertexInstancedShader, instancedInputLayout, pixelInstancedShader);
 
 	CSurface* surface = new CSurface(MODEL_TEXTURE_DIRECTORY, scene.myTextures);
 	Render::SEffectData effectData;
 	effectData.vertexBlueprint = shaderType;
 	effectData.pixelBlueprint = shaderType;
 	aNewModel.SetEffectType(effectData);
-	aNewModel.Initialize(forwardEffect, surface, scene.myMeshes);
+	aNewModel.Initialize(/*forwardEffect*/nullptr, surface, scene.myMeshes);
 	//aNewModel.myDeferredEffect = deferredEffect;
 	aNewModel.SetScene(scene.myScene);
 

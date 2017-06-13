@@ -1,9 +1,10 @@
 #include "stdafx.h"
-
+#undef new
 #include "AnimationController.h"
 
 #include "../CommonUtilities/SerializerSaver.h"
 #include "../CommonUtilities/SerializerLoader.h"
+#define new CARL_NEW
 
 class CAnimationSerializerSaver : public CU::CSerilizerSaver
 {

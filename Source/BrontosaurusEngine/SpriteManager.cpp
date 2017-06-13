@@ -15,7 +15,7 @@ CSpriteManager::~CSpriteManager()
 	mySprites.DeleteAll();
 }
 
-CSprite* CSpriteManager::CreateSprite(const char* aSpritePath)
+CSprite* CSpriteManager::CreateSprite(const std::string& aSpritePath)
 {
 	std::lock_guard<std::mutex> mutexGuard(myLoadMutex);
 	//myLoadMutex.lock();
@@ -34,11 +34,3 @@ CSprite* CSpriteManager::CreateSprite(const char* aSpritePath)
 	return mySprites[spriteID];
 }
 
-void CSpriteManager::DestroySprite(CSprite* /*aSprite*/)
-{
-	//SpriteIndex index = mySprites.Find(aSprite);
-	//if (index != mySprites.FoundNone)
-	//{
-	//	mySprites.RemoveCyclicAtIndex(index);
-	//}
-}

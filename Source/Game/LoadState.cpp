@@ -36,6 +36,8 @@ CLoadState::CLoadState(StateStack& aStateStack, const int aLevelIndex, const CU:
 
 CLoadState::~CLoadState()
 {
+	SAFE_DELETE(myControlSchemeSprite);
+	SAFE_DELETE(myTDLogoSprite);
 }
 
 void CLoadState::Init()

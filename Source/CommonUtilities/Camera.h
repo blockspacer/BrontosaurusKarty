@@ -63,6 +63,7 @@ namespace CU
 		inline const CU::CFrustum& GetFrustum();
 		
 		bool IsInside(const CU::Sphere& aAABB);
+		const CU::Vector2f GetProjectionSize() const;
 
 	private:
 		// Describes the orientation of the camera in regard to world space (or 

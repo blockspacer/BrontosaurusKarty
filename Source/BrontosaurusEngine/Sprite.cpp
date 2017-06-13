@@ -78,7 +78,7 @@ CSprite& CSprite::operator=(CSprite&& aSprite)
 	return *this;
 }
 
-void CSprite::Init(const char* aTexturePath)
+void CSprite::Init(const std::string& aTexturePath)
 {
 	CreateEffect();
 	CreateSurface(aTexturePath);
@@ -183,10 +183,10 @@ void CSprite::CreateEffect()
 	myEffect = new CEffect(vertexShader, pixelShader, nullptr, inputLayout, D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void CSprite::CreateSurface(const char* aTexturePath)
+void CSprite::CreateSurface(const std::string& aTexturePath)
 {
 	CU::GrowingArray<const wchar_t*> texturePath(1);
 	wchar_t buffer[1024];
-	texturePath.Add(CU::CharToWChar(buffer, aTexturePath));
+	texturePath.Add(CU::CharToWChar(buffer, aTexturePath.c_str()));
 	mySurface = new CSurface(texturePath);
 }

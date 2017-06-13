@@ -395,6 +395,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommonUtilities\CommonUtilities.vcxproj">
+      <Project>{a854f9ca-5390-4ca1-be0c-ec400f972d27}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Components\Components.vcxproj">
       <Project>{acc2e4bb-bf6d-41f6-8f14-de1a07f97d69}</Project>
     </ProjectReference>

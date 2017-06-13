@@ -12,7 +12,10 @@ namespace CU
 
 struct SHUDElement
 {
-	SHUDElement() { mySprite = nullptr; myShouldRender = true; }
+	SHUDElement();
+	SHUDElement(const SHUDElement& aCopy);
+	SHUDElement& operator=(const SHUDElement& aCopy);
+	~SHUDElement();
 
 	CSpriteInstance* mySprite;
 	SGUIElement myGUIElement;

@@ -873,4 +873,4 @@ void SVertexCollection::PushVec4(const aiVector3D& aPos)
 	myData[myCurrentPointerPosition++] = 1.f;
 }
 
-CU::GrowingArray<const aiScene*> CFBXLoader::ourScenes(512);
+CU::GrowingArray<const aiScene*> CFBXLoader::ourScenes(64);

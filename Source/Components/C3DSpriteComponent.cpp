@@ -24,8 +24,6 @@ C3DSpriteComponent::C3DSpriteComponent(CScene& aScene, const std::string& aPath,
 
 C3DSpriteComponent::~C3DSpriteComponent()
 {
-	myScene.RemoveSprite(this);
-	SPRMGR.DestroySprite(mySprite);
 	mySprite = nullptr;
 }
 

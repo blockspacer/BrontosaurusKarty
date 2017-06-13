@@ -26,6 +26,7 @@
 #include "LapTrackerComponentManager.h"
 
 #include "CommonUtilities/JsonValue.h"
+#include "LightComponentManager.h"
 
 
 CItemFactory::CItemFactory()
@@ -101,7 +102,8 @@ void CItemFactory::CreateBananaBuffer()
 		model->FlipVisibility();
 		banana->AddComponent(model);
 
-		PointLightComponent* pointLight = new PointLightComponent(*myScene);
+		
+		PointLightComponent* pointLight = CLightComponentManager::GetInstance().CreateAndRegisterPointLightComponent();
 		pointLight->SetOffsetToParent(CU::Vector3f(0, 1, 0));
 		pointLight->SetColor(CU::Vector3f(1, 1, 0));
 		pointLight->SetIntensity(1.0f);
@@ -177,7 +179,7 @@ void CItemFactory::CreateShellBuffer()
 		model->FlipVisibility();
 		shell->AddComponent(model);
 
-		PointLightComponent* pointLight = new PointLightComponent(*myScene);
+		PointLightComponent* pointLight = CLightComponentManager::GetInstance().CreateAndRegisterPointLightComponent();
 		pointLight->SetOffsetToParent(CU::Vector3f(0, 1, 0));
 		pointLight->SetColor(CU::Vector3f(0, 1, 0));
 		pointLight->SetIntensity(1.0f);
@@ -255,7 +257,7 @@ void CItemFactory::CreateRedShellBuffer()
 		model->FlipVisibility();
 		shell->AddComponent(model);
 
-		PointLightComponent* pointLight = new PointLightComponent(*myScene);
+		PointLightComponent* pointLight = CLightComponentManager::GetInstance().CreateAndRegisterPointLightComponent();
 		pointLight->SetOffsetToParent(CU::Vector3f(0, 1, 0));
 		pointLight->SetColor(CU::Vector3f(1, 0, 0));
 		pointLight->SetIntensity(1.0f);

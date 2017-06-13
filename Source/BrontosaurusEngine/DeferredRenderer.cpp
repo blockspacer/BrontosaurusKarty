@@ -76,7 +76,11 @@ CDeferredRenderer::~CDeferredRenderer()
 	SAFE_RELEASE(mySpotLightBuffer);
 	SAFE_DELETE(myPointLightModel);
 	SAFE_DELETE(mySpotLightModel);
+	SAFE_DELETE(myDecalModel);
 
+#ifdef _ENABLE_RENDERMODES
+	SAFE_DELETE(myInputWrapper);
+#endif
 }
 
 void CDeferredRenderer::InitLightModels()
@@ -374,7 +378,7 @@ CRenderPackage& CDeferredRenderer::GetSecondPackage()
 	return myGbuffer->GetRenderPackage(CGeometryBuffer::eEmissive);
 }
 
-void CDeferredRenderer::Do3DSprites(const CU::Matrix44f& aMatrix44, const CU::Matrix44f& aProjection)
+void CDeferredRenderer::Do3DSprites(const CU::Matrix44f& aMatrix44, const CU::Matrix44f& aProjection, const CU::Vector2f& aViewportSize)
 {
 	for(int i = 0; i < my3DSprites.Size(); ++i)
 	{
@@ -384,9 +388,11 @@ void CDeferredRenderer::Do3DSprites(const CU::Matrix44f& aMatrix44, const CU::Ma
 		const CU::Vector4f screenizedPos = pos / pos.w;
 		CU::Vector2f screenPos = ((CU::Vector2f(screenizedPos.x, screenizedPos.y)) + CU::Vector2f::One) / 2;
 		screenPos.y = 1.f - screenPos.y;
+		const CU::Vector2f windowSize = WINDOW_SIZE_F;
+		const CU::Vector2f viewportscaling(aViewportSize.y / windowSize.y,aViewportSize.x / windowSize.x);
 		if(pos.z > 0.f)
 		{
-			spriteMessage->mySprite->Render(screenPos, spriteMessage->mySize * (1.f / pos.z), spriteMessage->myPivot, spriteMessage->myRotation, spriteMessage->myRect, spriteMessage->myColor);
+			spriteMessage->mySprite->Render(screenPos, spriteMessage->mySize * viewportscaling * (1.f / pos.z), spriteMessage->myPivot, spriteMessage->myRotation, spriteMessage->myRect, spriteMessage->myColor);
 		}
 	}
 	my3DSprites.RemoveAll();

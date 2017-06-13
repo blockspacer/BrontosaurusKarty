@@ -1,4 +1,7 @@
 #include "stdafx.h"
+
+#undef new
+
 #include "Model.h"
 #include "Engine.h"
 #include "DXFramework.h"
@@ -10,9 +13,13 @@
 #include "FBXLoader.h"
 #include "../CommonUtilities/Intersection.h"
 
+#include "AnimationController.h"
+
 #include "AnimationState.h"
 #include "EffectsManager.h"
 DECLARE_ANIMATION_ENUM_AND_STRINGS;
+
+#define new CARL_NEW
 
 CModel::CModel()
 	: myLODModels(4)
@@ -70,9 +77,7 @@ CModel::~CModel()
 	//SAFE_DELETE(myForwardEffect); //make sure this releases stuff
 
 	SAFE_DELETE(mySurface);
-
-	mySceneAnimator = nullptr;
-	//SAFE_DELETE(myBindposeSceneAnimator); MEMORY LEEK, but I cannot fix it right now
+	SAFE_DELETE(myBindposeSceneAnimator);
 }
 
 bool CModel::Initialize(CEffect* aEffect, CSurface* aSurface)

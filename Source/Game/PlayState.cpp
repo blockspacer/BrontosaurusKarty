@@ -101,7 +101,9 @@
 #include "InputManager.h"
 #include "TimeTrackerComponent.h"
 #include "DecalComponent.h"
+#include "MenuState.h"
 #include "C3DSpriteComponent.h"
+#include "CameraTilter.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -164,7 +166,7 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
-	,myIsCountingDown(false)
+	, myIsCountingDown(false)
 
 {
 	if (aPlayers.Size() > 0)
@@ -221,6 +223,11 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myRespawnComponentManager);
 	SAFE_DELETE(myItemBehaviourManager);
 	SAFE_DELETE(myTimeTrackerComponentManager);
+	SAFE_DELETE(myRedShellManager);
+	SAFE_DELETE(myBlueShellManager);
+	SAFE_DELETE(myExplosionManager);
+
+	SAFE_DELETE(myGlobalHUD);
 	CLapTrackerComponentManager::DestoyInstance();
 
 	CKartSpawnPointManager::GetInstance()->Destroy();
@@ -455,6 +462,9 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	CSailInCirclesManager::GetInstance().Update(aDeltaTime.GetSeconds());
 
 	CPickupComponentManager::GetInstance()->Update(aDeltaTime.GetSeconds());
+
+	myGlobalHUD->Update(aDeltaTime.GetSeconds());
+
 	return myStatus;
 }
 
@@ -507,7 +517,7 @@ CU::eInputReturn CPlayState::RecieveInput(const CU::SInputMessage& aInputMessage
 {
 	if (aInputMessage.myType == CU::eInputType::eKeyboardPressed && aInputMessage.myKey == CU::eKeys::ESCAPE)
 	{
-		//myStateStack.PushState(new CPauseMenuState(myStateStack));
+		myStateStack.PushState(new CMenuState(myStateStack, "Json/Menu/PauseMenu.json", this));
 		return CU::eInputReturn::eKeepSecret;
 	}
 	switch(aInputMessage.myType)
@@ -665,7 +675,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	//
 
 
-	CComponent* headLight1 = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({ 1.f, 1.0f, 0.5f }, 5.f, 5.f, 3.141592f / 16.f);
+	CComponent* headLight1 = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({ 1.f, 1.0f, 0.5f }, 2.f, 5.f, 3.141592f / 16.f);
 	CGameObject* headLightObject1 = myGameObjectManager->CreateGameObject();
 	headLightObject1->GetLocalTransform().myPosition.Set(-0.45f, 1.f, 1.f);
 	headLightObject1->GetLocalTransform().RotateAroundAxis(-3.141592f / 8.f, CU::Axees::X);
@@ -673,7 +683,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 
 	secondPlayerObject->AddComponent(headLightObject1);
 
-	CComponent* headLight2 = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({ 1.f, 1.0f, 0.5f }, 5.f, 5.f, 3.141592f / 16.f);
+	CComponent* headLight2 = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({ 1.f, 1.0f, 0.5f }, 2.f, 5.f, 3.141592f / 16.f);
 	CGameObject* headLightObject2 = myGameObjectManager->CreateGameObject();
 	headLightObject2->GetLocalTransform().myPosition.Set(0.45f, 1.f, 1.f);
 	headLightObject2->GetLocalTransform().RotateAroundAxis(-3.141592f / 8.f, CU::Axees::X);
@@ -685,6 +695,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	//
 	// decal
 	CDecalComponent* decal = new CDecalComponent(*myScene);
+	CComponentManager::GetInstance().RegisterComponent(decal);
 	decal->SetDecalIndex(0);
 
 	CGameObject* decalHolder = myGameObjectManager->CreateGameObject();
@@ -695,10 +706,14 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	//
 
 	secondPlayerObject->AddComponent(playerModel);
-	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
+	CComponent* kartModelComponent = new Component::CKartModelComponent(myPhysicsScene);
+	CComponentManager::GetInstance().RegisterComponent(kartModelComponent);
+	secondPlayerObject->AddComponent(kartModelComponent);
 	//Create sub player object
 	CGameObject* intermediary = myGameObjectManager->CreateGameObject();
-	intermediary->AddComponent(new Component::CDriftTurner);
+	CComponent* driftTurnerComponent = new Component::CDriftTurner();
+	CComponentManager::GetInstance().RegisterComponent(driftTurnerComponent);
+	intermediary->AddComponent(driftTurnerComponent);
 	intermediary->AddComponent(secondPlayerObject);
 	//Create camera object
 	CGameObject* cameraObject = myGameObjectManager->CreateGameObject();
@@ -708,17 +723,22 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	cameraObject->AddComponent(cameraComponent);
 	myCameraComponents.Add(cameraComponent);
 
+	CGameObject* cameraObjectSecond = myGameObjectManager->CreateGameObject();
+	CCameraTilter* cameraTilter = new CCameraTilter(myPhysicsScene);
+	cameraObjectSecond->AddComponent(cameraTilter);
+	cameraObjectSecond->AddComponent(cameraObject);
+
 	//Create player number object
 	CGameObject* playerNumber = myGameObjectManager->CreateGameObject();
-	C3DSpriteComponent* numberModel = new C3DSpriteComponent(*myScene, "Sprites/GUI/playerMarker.dds", CU::Vector2f::One, CU::Vector2f(0.5f,0.5f),
+	C3DSpriteComponent* numberModel = new C3DSpriteComponent(*myScene, "Sprites/GUI/playerMarker.dds", CU::Vector2f::One * 5.f, CU::Vector2f(0.5f,0.5f),
 		CU::Vector4f(0.f,0.f,1.f,1.f), GetPlayerColor(aParticipant.myInputDevice));
-
+	CComponentManager::GetInstance().RegisterComponent(numberModel);
 	playerNumber->AddComponent(numberModel);
-	playerNumber->GetLocalTransform().SetPosition({ 0.f,2.f,0.f });
+	playerNumber->GetLocalTransform().SetPosition({ 0.f,1.5f,0.f });
 
 	//Create top player object
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
-	playerObject->AddComponent(cameraObject);
+	playerObject->AddComponent(cameraObjectSecond);
 	playerObject->AddComponent(intermediary);
 	playerObject->AddComponent(playerNumber);
 
@@ -809,7 +829,9 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	//playerObject->AddComponent(playerColliderComponent);
 	playerObject->AddComponent(playerTriggerColliderComponent);
 	playerObject->AddComponent(rigidComponent);
-	playerObject->AddComponent(new CCharacterInfoComponent(aParticipant.mySelectedCharacter, false));
+	CComponent* characterInfoComponent = new CCharacterInfoComponent(aParticipant.mySelectedCharacter, false);
+	CComponentManager::GetInstance().RegisterComponent(characterInfoComponent);
+	playerObject->AddComponent(characterInfoComponent);
 
 	
 
@@ -839,17 +861,21 @@ void CPlayState::CreateAI()
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent(playerJson.at("Model").GetString());
 	playerModel->SetIsShadowCasting(false);
 	secondPlayerObject->AddComponent(playerModel);
-	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
+	CComponent* kartModelComponent = new Component::CKartModelComponent(myPhysicsScene);
+	CComponentManager::GetInstance().RegisterComponent(kartModelComponent);
+	secondPlayerObject->AddComponent(kartModelComponent);
 
 	CGameObject* intermediary = myGameObjectManager->CreateGameObject();
-	intermediary->AddComponent(new Component::CDriftTurner);
+	CComponent* driftTurnerComponent = new Component::CDriftTurner();
+	CComponentManager::GetInstance().RegisterComponent(driftTurnerComponent);
+	intermediary->AddComponent(driftTurnerComponent);
 	intermediary->AddComponent(secondPlayerObject);
 
 	//Create player number object
 	CGameObject* playerNumber = myGameObjectManager->CreateGameObject();
 	C3DSpriteComponent* numberModel = new C3DSpriteComponent(*myScene, "Sprites/GUI/playerMarker.dds", CU::Vector2f::One, CU::Vector2f(0.5f, 0.5f),
 		CU::Vector4f(0.f, 0.f, 1.f, 1.f), DEFAULT);
-
+	CComponentManager::GetInstance().RegisterComponent(numberModel);
 	playerNumber->AddComponent(numberModel);
 	playerNumber->GetLocalTransform().SetPosition({ 0.f,2.f,0.f });
 
@@ -861,6 +887,7 @@ void CPlayState::CreateAI()
 	//
 	// decal
 	CDecalComponent* decal = new CDecalComponent(*myScene);
+	CComponentManager::GetInstance().RegisterComponent(decal);
 	decal->SetDecalIndex(0);
 
 	CGameObject* decalHolder = myGameObjectManager->CreateGameObject();
@@ -934,7 +961,10 @@ void CPlayState::CreateAI()
 	playerObject->AddComponent(playerColliderComponent);
 	playerObject->AddComponent(playerTriggerColliderComponent);
 	playerObject->AddComponent(rigidComponent);
-	playerObject->AddComponent(new CCharacterInfoComponent(SParticipant::eCharacter::eVanBrat, true));
+
+	CComponent* characterInfoComnponent = new CCharacterInfoComponent(SParticipant::eCharacter::eVanBrat, true);
+	CComponentManager::GetInstance().RegisterComponent(characterInfoComnponent);
+	playerObject->AddComponent(characterInfoComnponent);
 
 	myKartObjects.Add(playerObject);
 }

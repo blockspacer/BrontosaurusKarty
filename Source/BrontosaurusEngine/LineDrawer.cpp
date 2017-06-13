@@ -44,6 +44,7 @@ CLineDrawer::CLineDrawer()
 CLineDrawer::~CLineDrawer()
 {
 	SAFE_DELETE(myEffect2D);
+	SAFE_DELETE(myEffect3D);
 }
 
 void CLineDrawer::Render()

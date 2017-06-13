@@ -15,13 +15,13 @@ class CTextInstance;
 class CGlobalHUD : public CHUDBase, public Postmaster::ISubscriber
 {
 public:
-
 	CGlobalHUD(int aLevelIndex);
 	~CGlobalHUD();
 
 public:
 	void LoadHUD() override;
 	void Render() override;
+	void Update(const float aDeltaTime);
 	bool GetRaceOver() const { return myRaceOver; }
 
 	void StartCountDown();
@@ -43,15 +43,17 @@ public:
 private:
 	const CU::GrowingArray<CGameObject*>* myKartObjects;
 	CU::StaticArray<SPlacementData, 8> myWinners;
+	CU::StaticArray<float, 8> myMinimapXPositions;
 
 	SHUDElement myScoreboardElement;
 	SHUDElement myMinimapElement;
 	SHUDElement myCountdownElement;
 
-	CSpriteInstance* myScoreboardBGSprite;
+	CU::Vector2f myTimeTextOffset;
+
+	//CSpriteInstance* myScoreboardBGSprite;
 	CSpriteInstance* myPortraitSprite;
 
-	CSpriteInstance* myMinimapBGSprite;
 	CSpriteInstance* myMinimapPosIndicator;
 
 	CSpriteInstance* myCountdownSprite;

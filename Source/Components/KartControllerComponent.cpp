@@ -666,7 +666,13 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new StopVibrationOnController(myControllerHandle));
 			myControllerHandle = -1;
 		}
+		break;
 		
+	}
+	case eComponentMessageType::eInflictZKill:
+	{
+		ZKill();
+		break;
 	}
 	}
 }

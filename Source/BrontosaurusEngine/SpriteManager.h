@@ -8,8 +8,7 @@ public:
 	using SpriteID = int;
 	friend class CEngine;
 
-	CSprite* CreateSprite(const char* aSpritePath);
-	void DestroySprite(CSprite* aSprite);
+	CSprite* CreateSprite(const std::string& aSpritePath);
 
 private:
 	CSpriteManager();

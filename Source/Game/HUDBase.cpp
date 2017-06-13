@@ -4,6 +4,7 @@
 #include "Renderer.h"
 #include "Engine.h"
 #include "JsonValue.h"
+#include "BrontosaurusEngine\SpriteInstance.h"
 
 CHUDBase::CHUDBase()
 {
@@ -14,6 +15,36 @@ CHUDBase::~CHUDBase()
 {
 }
 
+SHUDElement::SHUDElement()
+	: mySprite(nullptr)
+	, myShouldRender(true)
+{
+}
+
+SHUDElement::SHUDElement(const SHUDElement& aCopy)
+	: SHUDElement()
+{
+	*this = aCopy;
+}
+
+SHUDElement& SHUDElement::operator=(const SHUDElement& aCopy)
+{
+	SAFE_DELETE(mySprite);
+	if (aCopy.mySprite)
+	{
+		mySprite = new CSpriteInstance(*aCopy.mySprite);
+	}
+
+	myGUIElement = aCopy.myGUIElement;
+	myPixelSize = aCopy.myPixelSize;
+	myShouldRender = aCopy.myShouldRender;
+	return *this;
+}
+
+SHUDElement::~SHUDElement()
+{
+	SAFE_DELETE(mySprite);
+}
 
 void CHUDBase::SetGUIToAlphaBlend(std::wstring aStr)
 {
@@ -30,7 +61,6 @@ void CHUDBase::SetGUIToAlphaBlend(std::wstring aStr)
 void CHUDBase::SetGUIToEndBlend(std::wstring aStr)
 {
 	SChangeStatesMessage* changeStatesMessage = new SChangeStatesMessage();
-	changeStatesMessage = new SChangeStatesMessage();
 	changeStatesMessage->myBlendState = eBlendState::eEndBlend;
 	changeStatesMessage->myDepthStencilState = eDepthStencilState::eDisableDepth;
 	changeStatesMessage->myRasterizerState = eRasterizerState::eNoCulling;

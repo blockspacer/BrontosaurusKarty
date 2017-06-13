@@ -30,7 +30,7 @@ class CMenuState :public State, Postmaster::ISubscriber
 {
 public:
 
-	CMenuState(StateStack& aStateStack, std::string aFile);
+	CMenuState(StateStack& aStateStack, std::string aFile, State* aStateToMaybePop = nullptr);
 	~CMenuState();
 
 	void Init() override;
@@ -65,14 +65,21 @@ private:
 	bool SelectPrevious(const std::string aSelectorName);
 
 	bool PushSelectedLevel(const std::string aSelector);
+	bool PopPoppableState();
 
-	static std::map<CU::eKeys, CU::GAMEPAD> ourKeyboardToGamePadMap;
+	static const std::map<CU::eKeys, CU::GAMEPAD> ourKeyboardToGamePadMap;
+
+	CSpriteInstance* myLeftArrow;
+	CSpriteInstance* myRightArrow;
+	CU::Vector2f myLeftArrowOrigin;
+	CU::Vector2f myRightArrowOrigin;
 
 	CU::GrowingArray<STextInput> myTextInputs;
 	int myCurrentTextInput;
 
 	bool myShowStateBelow;
 	CSpriteInstance* myPointerSprite;
+	State* myStateToMaybePop;
 
 	CMenuManager myManager;
 	bool myIsInFocus;

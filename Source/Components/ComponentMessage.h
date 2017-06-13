@@ -98,6 +98,7 @@ enum class eComponentMessageType
 	eResetExplosion,
 	eHazzardCollide,
 	eFinishedRace,
+	eInflictZKill,
 	eLength,
 };
 

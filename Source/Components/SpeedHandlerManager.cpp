@@ -13,6 +13,7 @@ CSpeedHandlerManager::CSpeedHandlerManager()
 
 CSpeedHandlerManager::~CSpeedHandlerManager()
 {
+	myBoostDataList.DeleteAll();
 }
 
 void CSpeedHandlerManager::CreateInstance()

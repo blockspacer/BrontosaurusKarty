@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#undef new
 #include "Engine.h"
 #include "ModelManager.h"
 #include "ModelLoader.h"
@@ -6,11 +7,14 @@
 #include <ThreadPool.h>
 #include "FBXLoader.h"
 
+#include "AnimationController.h"
 #include "AnimationState.h"
 DECLARE_ANIMATION_ENUM_AND_STRINGS;
 
+#define new CARL_NEW
+
 CModelManager::CModelManager()
-	: myModelList(128)
+	: myModelList(64)
 {
 }
 
@@ -24,6 +28,10 @@ CModelManager::~CModelManager()
 			{
 				garbageNow.second.Release();
 			}
+		}
+		if (model.myBindposeSceneAnimator)
+		{
+			model.myBindposeSceneAnimator->Release();
 		}
 	}
 
@@ -58,7 +66,7 @@ const CModelManager::ModelId CModelManager::LoadModel(const std::string& aModelP
 
 		LoadAnimations(aModelPath, newModelID);
 	}
-
+	DL_PRINT("model count: %d", (int)myModelList.Size());
 	myModelList[myModels[aModelPath]].AddRef();
 	return myModels[aModelPath];
 }
