@@ -140,10 +140,12 @@ void CItemWeaponBehaviourComponent::Receive(const eComponentMessageType aMessage
 		myIsActive = false;
 		break;
 	}
-	case eComponentMessageType::eActivate:
+	case eComponentMessageType::eReInitItem:
 	{
+
 		myIsActive = true;
 		myVelocity = CU::Vector3f::UnitZ*Speed;
+
 		break;
 	}
 

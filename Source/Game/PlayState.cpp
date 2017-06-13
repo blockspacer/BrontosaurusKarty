@@ -450,6 +450,7 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	myRedShellManager->Update(aDeltaTime.GetSeconds());
 	myBlueShellManager->Update(aDeltaTime.GetSeconds());
 	myExplosionManager->Update(aDeltaTime.GetSeconds());
+	myItemFactory->Update();
 
 	CSailInCirclesManager::GetInstance().Update(aDeltaTime.GetSeconds());
 
