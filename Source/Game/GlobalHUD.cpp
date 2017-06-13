@@ -56,6 +56,23 @@ void CGlobalHUD::LoadHUD()
 	LoadCountDown(jsonDoc.at("countdown"));
 }
 
+void CGlobalHUD::Update(const float aDeltaTime)
+{
+	for (int i = 0; i < myKartObjects->Size(); ++i)
+	{
+		SComponentQuestionData percentDoneQuestion;
+
+		if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eGetLapTraversedPercentage, percentDoneQuestion) == true)
+		{
+			float distancePercent = percentDoneQuestion.myFloat;
+			float xPos = ((myMinimapElement.mySprite->GetPosition().x + distancePercent) * 0.87f) + 0.055f;
+			CLAMP(xPos, 0.1f, 0.8f);
+			myMinimapXPositions[i] = myMinimapXPositions[i] + 1 * aDeltaTime * (xPos - myMinimapXPositions[i]);
+
+		}
+	}
+}
+
 void CGlobalHUD::Render()
 {
 
@@ -154,17 +171,7 @@ void CGlobalHUD::Render()
 
 			for (int i = 0; i < myKartObjects->Size(); ++i)
 			{
-				SComponentQuestionData percentDoneQuestion;
-
-				if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eGetLapTraversedPercentage, percentDoneQuestion) == true)
-				{
-					float distancePercent = percentDoneQuestion.myFloat;
-					float xPos = ((myMinimapElement.mySprite->GetPosition().x + distancePercent) * 0.87f) + 0.055f;
-					CLAMP(xPos, 0.1f, 0.8f);
-					
-					myMinimapPosIndicator->SetPosition({ xPos, 0.43f });
-
-				}
+				myMinimapPosIndicator->SetPosition({ myMinimapXPositions[i], 0.43f });
 
 				myMinimapPosIndicator->SetColor(DEFAULT);
 				switch (i)
