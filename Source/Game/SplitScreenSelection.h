@@ -29,20 +29,6 @@ public:
 
 	struct GUIPart
 	{
-		bool operator == (const GUIPart& left)
-		{
-			if (left.hasJoined == hasJoined)
-			{
-				if (LeftArrowOriginPosition == left.LeftArrowOriginPosition)
-				{
-					if (RightArrowOriginPosition == left.RightArrowOriginPosition)
-					{
-						return true;
-					}
-				}
-			}
-			return false;
-		}
 		void Delete()
 		{
 			delete LeftArrow;
@@ -53,11 +39,14 @@ public:
 			NameTag = nullptr;
 			delete JoinSprite;
 			JoinSprite = nullptr;
+			delete ReadySprite;
+			ReadySprite = nullptr;
 		}
 		CSpriteInstance* LeftArrow;
 		CSpriteInstance* RightArrow;
 		CSpriteInstance* NameTag;
 		CSpriteInstance* JoinSprite;
+		CSpriteInstance* ReadySprite;
 		CU::Vector2f LeftArrowOriginPosition;
 		CU::Vector2f RightArrowOriginPosition;
 		bool hasJoined;

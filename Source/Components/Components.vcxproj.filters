@@ -74,6 +74,7 @@
     <ClCompile Include="TimeTrackerComponent.cpp" />
     <ClCompile Include="TimeTrackerComponentManager.cpp" />
     <ClCompile Include="DecalComponent.cpp" />
+    <ClCompile Include="C3DSpriteComponent.cpp" />
     <ClCompile Include="SailInCirclesComponent.cpp" />
     <ClCompile Include="SailInCirclesManager.cpp" />
   </ItemGroup>
@@ -159,6 +160,7 @@
     <ClInclude Include="TimeTrackerComponent.h" />
     <ClInclude Include="TimeTrackerComponentManager.h" />
     <ClInclude Include="DecalComponent.h" />
+    <ClInclude Include="C3DSpriteComponent.h" />
     <ClInclude Include="SailInCirclesComponent.h" />
     <ClInclude Include="SailInCirclesManager.h" />
   </ItemGroup>

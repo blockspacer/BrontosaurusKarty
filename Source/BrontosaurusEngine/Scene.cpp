@@ -33,6 +33,7 @@ constexpr unsigned int gShadowMapSize = 1024u << SHADOW_QUALITY;
 
 CScene::CScene()
 {
+	my3DSprites.Init(20);
 	myModels.Init(4096);
 	myPointLights.Init(32);
 	mySpotLights.Init(512);
@@ -346,6 +347,10 @@ void CScene::RenderToRect(const CU::Vector4f& aRect, CRenderCamera& aCamera)
 
 		model->RenderDeferred(aCamera);
 	}
+	for (int i = 0; i < my3DSprites.Size(); ++i)
+	{
+		my3DSprites[i]->Render();
+	}
 
 	aCamera.AddRenderMessage(new SRenderModelBatches());
 
@@ -374,6 +379,8 @@ void CScene::RenderToRect(const CU::Vector4f& aRect, CRenderCamera& aCamera)
 	interMSG->myRenderPackage = aCamera.GetRenderPackage();
 	//interMSG->myRenderPackage = myShadowMap->GetShadowBuffer();
 	RENDERER.AddRenderMessage(interMSG);
+
+	
 }
 
 void CScene::BakeShadowMap()
@@ -697,6 +704,16 @@ CRenderCamera& CScene::GetPlayerCamera(const int aPlayerIndex)
 void CScene::SetShadowMapAABB(const CU::Vector3f& aCenterPosition, const CU::Vector3f& aExtents)
 {
 	myShadowMap->SetBoundingBox(aCenterPosition, aExtents);
+}
+
+void CScene::AddSprite(C3DSpriteComponent* aC3DSpriteComponent)
+{
+	my3DSprites.Add(aC3DSpriteComponent);
+}
+
+void CScene::RemoveSprite(C3DSpriteComponent* aC3DSpriteComponent)
+{
+	my3DSprites.RemoveCyclic(aC3DSpriteComponent);
 }
 
 bool CScene::HasBakedShadowMap()

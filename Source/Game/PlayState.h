@@ -61,13 +61,10 @@ public:
 	void Init() override;
 	eStateStatus Update(const CU::Time& aDeltaTime) override;
 
-
 	void Render() override;
 	void OnEnter(const bool aLetThroughRender) override;
 	void OnExit(const bool aLetThroughRender) override;
 	void CreateManagersAndFactories();
-
-
 
 	CGameObjectManager* GetGameObjectManager();
 	inline CColliderComponentManager* GetColliderComponentManager();
@@ -86,6 +83,7 @@ public:
 private:
 
 	void PostPostmasterEvent(short aGamepadIndex, const Postmaster::Message::InputEventData& aEventData);
+	const CU::Vector4f GetPlayerColor(const SParticipant::eInputDevice aInputDevice);
 	void CreatePlayer(CU::Camera& aCamera, const SParticipant& aIntputDevice, unsigned int aPlayerCount);
 	void CreateAI();
 

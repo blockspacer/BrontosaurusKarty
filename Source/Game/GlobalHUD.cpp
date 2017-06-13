@@ -23,11 +23,7 @@
 #include "..\Components\KartControllerComponentManager.h"
 #include "..\Components\TimeTrackerComponentManager.h"
 
-#define DEFAULT	{0.3f, 0.3f, 0.3f, 1.0f}
-#define YELLOW	{1.0f, 1.0f, 0.0f, 1.0f}
-#define GREEN	{0.0f, 1.0f, 0.0f, 1.0f}
-#define PINK	{1.0f, 0.0f, 1.0f, 1.0f}
-#define BLUE	{0.0f, 0.0f, 1.0f, 1.0f}
+
 
 CGlobalHUD::CGlobalHUD(int aLevelIndex):myNrOfPlayers(0), myScoreboardBGSprite(nullptr), myPortraitSprite(nullptr), myMinimapBGSprite(nullptr), myMinimapPosIndicator(nullptr), myRaceOver(false), myTimeText(nullptr), myLevelIndex(aLevelIndex)
 {
