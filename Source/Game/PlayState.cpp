@@ -461,6 +461,9 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	CSailInCirclesManager::GetInstance().Update(aDeltaTime.GetSeconds());
 
 	CPickupComponentManager::GetInstance()->Update(aDeltaTime.GetSeconds());
+
+	myGlobalHUD->Update(aDeltaTime.GetSeconds());
+
 	return myStatus;
 }
 
