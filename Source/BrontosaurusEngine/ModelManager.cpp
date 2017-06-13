@@ -14,7 +14,7 @@ DECLARE_ANIMATION_ENUM_AND_STRINGS;
 #define new CARL_NEW
 
 CModelManager::CModelManager()
-	: myModelList(128)
+	: myModelList(64)
 {
 }
 
@@ -66,7 +66,7 @@ const CModelManager::ModelId CModelManager::LoadModel(const std::string& aModelP
 
 		LoadAnimations(aModelPath, newModelID);
 	}
-
+	DL_PRINT("model count: %d", (int)myModelList.Size());
 	myModelList[myModels[aModelPath]].AddRef();
 	return myModels[aModelPath];
 }

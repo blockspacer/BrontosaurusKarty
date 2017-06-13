@@ -37,6 +37,7 @@ CConsole::CConsole()
 CConsole::~CConsole()
 {
 	SAFE_DELETE(myCurrentText);
+	SAFE_DELETE(mySuggestedCommand);
 	//TODO: change how unsubscribe works?
 	//PostMaster::GetInstance().UnSubscribe(this, eMessageType::eCharPressed);
 }

@@ -40,7 +40,7 @@ CCubemap::~CCubemap()
 	{
 		SAFE_RELEASE(myRTV[i]);
 	}
-	SAFE_RELEASE(mySRV);
+	//SAFE_RELEASE(mySRV);
 	SAFE_RELEASE(myTexture);
 	SAFE_DELETE(myViewport);
 

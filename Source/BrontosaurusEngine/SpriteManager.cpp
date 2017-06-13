@@ -34,11 +34,3 @@ CSprite* CSpriteManager::CreateSprite(const std::string& aSpritePath)
 	return mySprites[spriteID];
 }
 
-void CSpriteManager::DestroySprite(CSprite* /*aSprite*/)
-{
-	//SpriteIndex index = mySprites.Find(aSprite);
-	//if (index != mySprites.FoundNone)
-	//{
-	//	mySprites.RemoveCyclicAtIndex(index);
-	//}
-}

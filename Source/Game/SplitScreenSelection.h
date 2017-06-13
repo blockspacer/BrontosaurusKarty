@@ -108,6 +108,7 @@ private:
 	CU::StaticArray<SParticipant::eInputDevice,4> myPlayerInputDevices;
 	bool myHasKeyboardResponded;
 	bool myShowStateBelow;
+	bool myIsInFocus;
 	bool myRenderAllReady;
 };
 

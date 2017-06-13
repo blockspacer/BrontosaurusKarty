@@ -13,7 +13,7 @@ const CU::Vector4f CTextInstance::White(1, 1, 1, 1);
 
 CTextInstance::CTextInstance()
 	: myText(nullptr)
-	  , myAlignemnt(eAlignment::eLeft), myColor(1, 1, 1, 1)
+	, myAlignemnt(eAlignment::eLeft), myColor(1, 1, 1, 1)
 {
 	myStrings.Init(2);
 }

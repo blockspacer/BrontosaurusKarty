@@ -11,7 +11,7 @@
 #include "CommonUtilities.h"
 #include "MenuState.h"
 
-CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aStateStack, eInputMessengerType::eSplitScreenSelectionMenu, 1)
+CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aStateStack, eInputMessengerType::eSplitScreenSelectionMenu, 1), myIsInFocus(false)
 {
 	myPlayers.Init(4);
 	myHasKeyboardResponded = false;
@@ -103,6 +103,12 @@ CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aS
 
 CSplitScreenSelection::~CSplitScreenSelection()
 {
+
+	myCharacterSprites.DeleteAll();
+	for (unsigned int i = 0; i < myGUIParts.Size(); ++i)
+	{
+		myGUIParts[i].Delete();
+	}
 }
 
 void CSplitScreenSelection::Init()
@@ -184,15 +190,13 @@ void CSplitScreenSelection::Render()
 void CSplitScreenSelection::OnEnter(const bool aLetThroughRender)
 {
 	myMenuManager.UpdateMousePosition(myMenuManager.GetMopusePosition());
+	myIsInFocus = true;
 }
 
 void CSplitScreenSelection::OnExit(const bool aLetThroughRender)
 {
-	for (unsigned int i = 0; i < myGUIParts.Size(); ++i)
-	{
-		myGUIParts[i].Delete();
-	}
-	myCharacterSprites.DeleteAll();
+	
+	myIsInFocus = false;
 }
 
 void CSplitScreenSelection::MenuLoad(const std::string & aFile)
@@ -366,6 +370,10 @@ bool CSplitScreenSelection::BackToMenu(const std::string & aString)
 
 CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & aInputMessage)
 {
+	if (myIsInFocus == false)
+	{
+		return CU::eInputReturn::ePassOn;
+	}
 	if (aInputMessage.myType == CU::eInputType::eGamePadButtonPressed)
 	{
 		switch (aInputMessage.myGamePad)
@@ -403,7 +411,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 			if (myRenderAllReady == true)
 			{
 				myMenuManager.ourParticipants = myPlayers;
-				myStateStack.SwapState(new CMenuState(myStateStack, "Json/Menu/ControllerLevelSelect.json"));
+				myStateStack.PushState(new CMenuState(myStateStack, "Json/Menu/ControllerLevelSelect.json"));
 			}
 			break;
 		case CU::GAMEPAD::DPAD_RIGHT:
