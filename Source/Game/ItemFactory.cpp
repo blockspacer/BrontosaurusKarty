@@ -446,6 +446,11 @@ eItemTypes CItemFactory::RandomizeItem(CComponent* aPlayerCollider)
 	unsigned char placement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(aPlayerCollider->GetParent()) - 1;
 	char itemrange = 1;
 
+	if (placement > 8 || placement < 0 )
+	{
+		return eItemTypes::eBanana;
+	}
+
 	char result = 0;
 	eItemTypes item = eItemTypes::eBanana;
 
