@@ -33,6 +33,10 @@ CMenuManager::CMenuManager() : myPointerSprite(nullptr), myShouldRender(true), m
 
 CMenuManager::~CMenuManager()
 {
+	for (SMenuSprite& menuSprite : mySpriteInstances)
+	{
+		menuSprite.mySprites.DeleteAll();
+	}
 	SAFE_DELETE(myPointerSprite);
 }
 

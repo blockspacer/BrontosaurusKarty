@@ -53,6 +53,7 @@ CScene::~CScene()
 	{
 		SAFE_DELETE(mySkybox);
 	}
+	//SAFE_DELETE(myCubemap);
 	myModels.DeleteAll();
 	SAFE_DELETE(myShadowMap);
 	//myParticleEmitters.DeleteAll();

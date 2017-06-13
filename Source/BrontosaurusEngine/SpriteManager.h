@@ -9,7 +9,6 @@ public:
 	friend class CEngine;
 
 	CSprite* CreateSprite(const std::string& aSpritePath);
-	void DestroySprite(CSprite* aSprite);
 
 private:
 	CSpriteManager();
