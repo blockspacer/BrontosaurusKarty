@@ -57,6 +57,19 @@ CMenuState::CMenuState(StateStack& aStateStack, std::string aFile, State* aState
 	myManager.AddAction("PushSelectedLevel", [this](std::string string)-> bool { return PushSelectedLevel(string); });
 	myManager.AddAction("PopPoppableState", [this](std::string /*string*/)-> bool { return PopPoppableState(); });
 	MenuLoad(aFile);
+
+	myLeftArrow = nullptr;
+	myRightArrow = nullptr;
+
+	for (unsigned int i = 0; i < mySelectors.Size(); ++i)
+	{
+		myLeftArrow = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player1_arrowLeft.dds");
+		myRightArrow = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player1_arrowRight.dds");
+		myLeftArrow->SetPosition(CU::Vector2f(0.075f,0.45f));
+		myRightArrow->SetPosition(CU::Vector2f(0.875f, 0.45f));
+		myLeftArrowOrigin = myLeftArrow->GetPosition();
+		myRightArrowOrigin = myRightArrow->GetPosition();
+	}
 }
 
 CMenuState::~CMenuState()
@@ -74,7 +87,18 @@ void CMenuState::Init()
 eStateStatus CMenuState::Update(const CU::Time& aDeltaTime)
 {
 	myManager.Update(aDeltaTime);
-
+	if (myLeftArrow != nullptr && myRightArrow != nullptr)
+	{
+		float speed = 0.33f;
+		if (myLeftArrow->GetPosition().x < myLeftArrowOrigin.x)
+		{
+			myLeftArrow->SetPosition(CU::Vector2f(myLeftArrow->GetPosition().x + speed * aDeltaTime.GetSeconds(), myLeftArrow->GetPosition().y));
+		}
+		if (myRightArrow->GetPosition().x > myRightArrowOrigin.x)
+		{
+			myRightArrow->SetPosition(CU::Vector2f(myRightArrow->GetPosition().x - speed * aDeltaTime.GetSeconds(), myRightArrow->GetPosition().y));
+		}
+	}
 	myBlinkeyTimer += aDeltaTime.GetSeconds();
 
 	if (myBlinkeyTimer >= 1)
@@ -128,6 +152,12 @@ void CMenuState::Render()
 	if (otherOldStringIndex > -1)
 	{
 		myTextInputs[otherOldStringIndex].myTextInstance->SetTextLine(0, otherOldString);
+	}
+
+	if (myRightArrow != nullptr && myLeftArrow != nullptr)
+	{
+		myLeftArrow->RenderToGUI(L"__Menu");
+		myRightArrow->RenderToGUI(L"__Menu");
 	}
 }
 
@@ -434,7 +464,10 @@ bool CMenuState::SelectNext(const std::string aSelectorName)
 		{
 			selector.mySelection = 0;
 		}
-
+		if (myLeftArrow != nullptr)
+		{
+			myLeftArrow->SetPosition(CU::Vector2f(myLeftArrowOrigin.x - 0.025f, myLeftArrowOrigin.y));
+		}
 		myManager.SetSpiteState(selector.mySpriteIndex, selector.mySelection);
 	}
 
@@ -452,7 +485,10 @@ bool CMenuState::SelectPrevious(const std::string aSelectorName)
 		{
 			selector.mySelection = selector.myMax - 1;
 		}
-
+		if (myRightArrow != nullptr)
+		{
+			myRightArrow->SetPosition(CU::Vector2f(myRightArrowOrigin.x + 0.025f, myRightArrowOrigin.y));
+		}
 		myManager.SetSpiteState(selector.mySpriteIndex, selector.mySelection);
 	}
 
