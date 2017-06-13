@@ -42,6 +42,7 @@
 #include "AudioSourceComponent.h"
 #include "AudioSourceComponentManager.h"
 #include "TimeTrackerComponentManager.h"
+#include "SailInCirclesManager.h"
 
 //Networking
 #include "ThreadedPostmaster/Postmaster.h"
@@ -226,6 +227,7 @@ CPlayState::~CPlayState()
 	myLocalHUDs.DeleteAll();
 
 	CPollingStation::Destroy();
+	CSailInCirclesManager::Destroy();
 }
 
 // Runs on its own thread.
@@ -447,6 +449,8 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	myBlueShellManager->Update(aDeltaTime.GetSeconds());
 	myExplosionManager->Update(aDeltaTime.GetSeconds());
 
+	CSailInCirclesManager::GetInstance().Update(aDeltaTime.GetSeconds());
+
 	CPickupComponentManager::GetInstance()->Update(aDeltaTime.GetSeconds());
 	return myStatus;
 }
@@ -593,6 +597,8 @@ void CPlayState::CreateManagersAndFactories()
 	CLapTrackerComponentManager::CreateInstance();
 	CKartSpawnPointManager::GetInstance()->Create();
 	CPickupComponentManager::Create();
+
+	CSailInCirclesManager::CreateInstance();
 }
 
 void CPlayState::LoadNavigationSpline(const CU::CJsonValue& splineData)
@@ -645,7 +651,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	decal->SetDecalIndex(0);
 
 	CGameObject* decalHolder = myGameObjectManager->CreateGameObject();
-	decalHolder->GetLocalTransform().myPosition.Set(0.0f, -0.88f, 0.3f);
+	decalHolder->GetLocalTransform().myPosition.Set(0.0f, -0.88f, 0.4f);
 	decalHolder->GetLocalTransform().SetScale({ 2.0f, 2.f, 2.f });
 	decalHolder->AddComponent(decal);
 	secondPlayerObject->AddComponent(decalHolder);
@@ -801,7 +807,7 @@ void CPlayState::CreateAI()
 	decal->SetDecalIndex(0);
 
 	CGameObject* decalHolder = myGameObjectManager->CreateGameObject();
-	decalHolder->GetLocalTransform().myPosition.Set(0.0f, -0.88f, 0.3f);
+	decalHolder->GetLocalTransform().myPosition.Set(0.0f, -0.88f, 0.4f);
 	decalHolder->GetLocalTransform().SetScale({ 2.0f, 2.f, 2.f });
 	decalHolder->AddComponent(decal);
 	secondPlayerObject->AddComponent(decalHolder);
