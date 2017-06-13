@@ -5,6 +5,8 @@ struct SPlacementData
 {
 	unsigned char placement;
 	SParticipant::eCharacter character;
-	float time;
+	int minutesPassed;
+	int secondsPassed;
+	int hundredthsSecondsPassed;
 	bool isPlayer;
 };

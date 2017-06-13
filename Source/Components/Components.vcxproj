@@ -413,6 +413,8 @@
     <ClInclude Include="RespawnComponentManager.h" />
     <ClInclude Include="RespawnerComponent.h" />
     <ClInclude Include="RigidBodyComponent.h" />
+    <ClInclude Include="SailInCirclesComponent.h" />
+    <ClInclude Include="SailInCirclesManager.h" />
     <ClInclude Include="SmoothRotater.h" />
     <ClInclude Include="SpeedHandlerManager.h" />
     <ClInclude Include="BoostData.h" />
@@ -495,6 +497,8 @@
     <ClCompile Include="RespawnComponentManager.cpp" />
     <ClCompile Include="RespawnerComponent.cpp" />
     <ClCompile Include="RigidBodyComponent.cpp" />
+    <ClCompile Include="SailInCirclesComponent.cpp" />
+    <ClCompile Include="SailInCirclesManager.cpp" />
     <ClCompile Include="ScriptComponent.cpp" />
     <ClCompile Include="ScriptComponentManager.cpp" />
     <ClCompile Include="Component.cpp" />

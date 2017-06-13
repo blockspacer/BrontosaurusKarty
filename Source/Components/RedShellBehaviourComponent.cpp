@@ -22,9 +22,12 @@ CRedShellBehaviourComponent::CRedShellBehaviourComponent()
 
 	myVelocity = CU::Vector3f::UnitZ*	Speed;
 
+	myLastTarget = nullptr;
+
 	myCurrentSplineIndex = 0;
 	myUserPlacement = 8;
 	myIsActive = false;
+	myPlayingWarning = false;
 }
 
 
@@ -111,6 +114,26 @@ void CRedShellBehaviourComponent::Update(const float aDeltaTime)
 					CRedShellWarningMessage* redWarningMessage = new CRedShellWarningMessage(myKartObjects->At(i));
 
 					Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(redWarningMessage);
+
+					if (myLastTarget != myKartObjects->At(i) && myLastTarget != nullptr)
+					{
+						SComponentMessageData sound;
+						sound.myString = "StopWarning";
+						myLastTarget->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
+						myPlayingWarning = false;
+					}
+
+					if (myPlayingWarning == false)
+					{
+						SComponentMessageData sound;
+						sound.myString = "PlayWarning";
+						myKartObjects->At(i)->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
+						myPlayingWarning = true;
+
+					}
+
+					myLastTarget = myKartObjects->At(i);
+
 				}
 			}
 		}
@@ -200,6 +223,17 @@ void CRedShellBehaviourComponent::Receive(const eComponentMessageType aMessageTy
 		myUserPlacement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myCurrentUser);
 		//myKartManager->GetNavigationSpline().GetNavigationPoints().Find(*myKartManager->GetNavigationPoint(myCurrentSplineIndex),index);
 		myCurrentSplineIndex = index;
+		myPlayingWarning = false;
+		break;
+	}
+
+	case eComponentMessageType::eHazzardCollide:
+	{
+		SComponentMessageData sound;
+		sound.myString = "StopWarning";
+		aMessageData.myComponent->GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
+		myPlayingWarning = false;
+
 		break;
 	}
 

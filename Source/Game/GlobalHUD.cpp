@@ -25,7 +25,7 @@
 
 
 
-CGlobalHUD::CGlobalHUD(int aLevelIndex):myNrOfPlayers(0), myScoreboardBGSprite(nullptr), myPortraitSprite(nullptr), myMinimapBGSprite(nullptr), myMinimapPosIndicator(nullptr), myRaceOver(false), myLevelIndex(aLevelIndex)
+CGlobalHUD::CGlobalHUD(int aLevelIndex):myNrOfPlayers(0), myScoreboardBGSprite(nullptr), myPortraitSprite(nullptr), myMinimapBGSprite(nullptr), myMinimapPosIndicator(nullptr), myRaceOver(false), myTimeText(nullptr), myLevelIndex(aLevelIndex)
 {
 	myKartObjects = CPollingStation::GetInstance()->GetKartList();
 }
@@ -39,6 +39,7 @@ CGlobalHUD::~CGlobalHUD()
 	SAFE_DELETE(myMinimapBGSprite);
 	SAFE_DELETE(myMinimapPosIndicator);
 	SAFE_DELETE(myCountdownSprite);
+	SAFE_DELETE(myTimeText);
 }
 
 void CGlobalHUD::LoadHUD()
@@ -88,6 +89,17 @@ void CGlobalHUD::Render()
 
 				myPortraitSprite->RenderToGUI(L"scoreboard");
 				myPortraitSprite->SetPosition(newPortraitPos);
+				myTimeText->SetPosition(newPortraitPos);
+				int timePassedSum = myWinners[i].minutesPassed + myWinners[i].secondsPassed + myWinners[i].hundredthsSecondsPassed;
+				if(timePassedSum > 0)
+				{
+					myTimeText->SetText(std::to_wstring(myWinners[i].minutesPassed) + L"." + std::to_wstring(myWinners[i].secondsPassed) + L"." + std::to_wstring(myWinners[i].hundredthsSecondsPassed));
+				}
+				else
+				{
+					myTimeText->SetText(L"--.--.---");
+				}
+				myTimeText->RenderToGUI(L"scoreboard");
 			}
 
 			myPortraitSprite->SetPosition(initialPortraitPos);
@@ -255,6 +267,13 @@ void CGlobalHUD::LoadScoreboard(const CU::CJsonValue& aJsonValue)
 
 	myScoreboardElement.mySprite = myScoreboardBGSprite;
 	myScoreboardElement.myShouldRender = false;
+
+	myTimeText = new CTextInstance();
+	myTimeText->Init();
+	myTimeText->SetAlignment(eAlignment::eLeft);
+	myTimeText->SetColor(myTimeText->Black);
+	myTimeText->SetPosition(CU::Vector2f(0.1f, 0.1f));
+	myTimeText->SetText(L"");
 }
 
 void CGlobalHUD::LoadMiniMap(const CU::CJsonValue& aJsonValue)
@@ -309,9 +328,17 @@ void CGlobalHUD::DisableRedundantGUI()
 }
 
 eMessageReturn CGlobalHUD::DoEvent(const CRaceOverMessage & aMessage)
-{
-	myWinners = aMessage.GetWinners();
-	
+{	
+	for (unsigned short i = 0; i <  aMessage.GetWinners().Size(); i++)
+	{
+		myWinners[i].character = aMessage.GetWinners()[i].character;
+		myWinners[i].isPlayer = aMessage.GetWinners()[i].isPlayer;
+		myWinners[i].placement = aMessage.GetWinners()[i].placement;
+		myWinners[i].minutesPassed = aMessage.GetWinners()[i].minutesPassed;
+		myWinners[i].secondsPassed = aMessage.GetWinners()[i].secondsPassed;
+		myWinners[i].hundredthsSecondsPassed = aMessage.GetWinners()[i].hundredthsSecondsPassed;
+	}
+
 	PresentScoreboard();
 	return eMessageReturn::eContinue;
 }

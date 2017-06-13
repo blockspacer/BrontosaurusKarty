@@ -10,6 +10,7 @@
 #define BLUE	{0.0f, 0.0f, 1.0f, 1.0f}
 
 class CRaceOverMessage;
+class CTextInstance;
 
 class CGlobalHUD : public CHUDBase, public Postmaster::ISubscriber
 {
@@ -54,6 +55,8 @@ private:
 	CSpriteInstance* myMinimapPosIndicator;
 
 	CSpriteInstance* myCountdownSprite;
+
+	CTextInstance* myTimeText;
 
 	const unsigned char myNrOfPlayers;
 	bool myRaceOver;

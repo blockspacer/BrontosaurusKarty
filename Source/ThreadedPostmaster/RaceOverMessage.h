@@ -1,7 +1,6 @@
 #pragma once
 #include "../ThreadedPostmaster/Message.h"
-
-struct SPlacementData;
+#include "..\game\PlacementData.h"
 
 class CGameObject;
 class CRaceOverMessage : public Postmaster::Message::IMessage
@@ -14,7 +13,7 @@ public:
 	eMessageReturn DoEvent(Postmaster::ISubscriber & aSubscriber) const override;
 	inline const CU::StaticArray<SPlacementData, 8>& GetWinners() const;
 private:
-	CU::StaticArray<SPlacementData, 8>& myWinners;
+	CU::StaticArray<SPlacementData, 8> myWinners;
 };
 
 inline const CU::StaticArray<SPlacementData, 8>& CRaceOverMessage::GetWinners() const
