@@ -1,5 +1,6 @@
 #pragma once
 #include "ModelComponent.h"
+#include "C3DSpriteComponent.h"
 
 #define MODELCOMP_MGR CModelComponentManager::GetInstance()
 
@@ -15,6 +16,7 @@ public:
 
 	CModelComponent* CreateComponent(const std::string& aModelPath);
 	void DeleteModelComponent(CModelComponent* aComponent);
+	C3DSpriteComponent* CreateSprite(const std::string& aCs);
 
 private:
 	static CModelComponentManager* ourInstance;

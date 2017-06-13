@@ -43,6 +43,10 @@ SRenderSpriteMessage::SRenderSpriteMessage()
 {
 }
 
+SRender3DSpriteMessage::SRender3DSpriteMessage() : SRenderMessage(eRenderMessageType::e3DSprite)
+{
+}
+
 SRenderSkyboxMessage::SRenderSkyboxMessage()
 	: SRenderMessage(eRenderMessageType::eRenderSkybox)
 	, mySkybox(nullptr)

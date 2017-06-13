@@ -101,6 +101,7 @@
 #include "InputManager.h"
 #include "TimeTrackerComponent.h"
 #include "DecalComponent.h"
+#include "C3DSpriteComponent.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -612,6 +613,40 @@ void CPlayState::PostPostmasterEvent(short aGamepadIndex,const Postmaster::Messa
 	POSTMASTER.Broadcast(new Postmaster::Message::CControllerInputMessage(aGamepadIndex,aEventData));
 }
 
+const CU::Vector4f CPlayState::GetPlayerColor(const SParticipant::eInputDevice aInputDevice)
+{
+	CU::Vector4f color;
+	switch (aInputDevice)
+	{
+	case SParticipant::eInputDevice::eController1:
+
+		color = YELLOW;
+		
+		break;
+	case SParticipant::eInputDevice::eController2:
+
+		color = GREEN;
+		
+		break;
+	case SParticipant::eInputDevice::eController3:
+
+		color = PINK;
+		
+		break;
+	case SParticipant::eInputDevice::eController4:
+
+		color = BLUE;
+		
+		break;
+	default:
+		color = DEFAULT;
+		// Also make mark a bit smaller.
+		break;
+	}
+
+	return color;
+}
+
 void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticipant, unsigned int aPlayerCount)
 {
 	//Create sub sub player object
@@ -674,9 +709,8 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 
 	//Create player number object
 	CGameObject* playerNumber = myGameObjectManager->CreateGameObject();
-	CModelComponent* numberModel = myModelComponentManager->CreateComponent(std::string("Models/Meshes/M_PlayerN") + std::to_string(static_cast<int>(aParticipant.myInputDevice)) + ".fbx");
-
-	numberModel->SetIsBillboard(true);
+	C3DSpriteComponent* numberModel = new C3DSpriteComponent(*myScene, "Sprites/GUI/playerMarker.dds", CU::Vector2f::One, CU::Vector2f(0.5f,0.5f),
+		CU::Vector4f(0.f,0.f,1.f,1.f), GetPlayerColor(aParticipant.myInputDevice));
 
 	playerNumber->AddComponent(numberModel);
 	playerNumber->GetLocalTransform().SetPosition({ 0.f,2.f,0.f });
@@ -810,9 +844,18 @@ void CPlayState::CreateAI()
 	intermediary->AddComponent(new Component::CDriftTurner);
 	intermediary->AddComponent(secondPlayerObject);
 
+	//Create player number object
+	CGameObject* playerNumber = myGameObjectManager->CreateGameObject();
+	C3DSpriteComponent* numberModel = new C3DSpriteComponent(*myScene, "Sprites/GUI/playerMarker.dds", CU::Vector2f::One, CU::Vector2f(0.5f, 0.5f),
+		CU::Vector4f(0.f, 0.f, 1.f, 1.f), DEFAULT);
+
+	playerNumber->AddComponent(numberModel);
+	playerNumber->GetLocalTransform().SetPosition({ 0.f,2.f,0.f });
+
+
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
 	playerObject->AddComponent(intermediary);
-
+	playerObject->AddComponent(playerNumber);
 
 	//
 	// decal

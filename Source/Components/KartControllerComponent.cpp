@@ -661,6 +661,12 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 	case eComponentMessageType::eAITakeOver:
 	{
 		myIsAIControlled = true;
+		if(myControllerHandle >=0 && myControllerHandle < 3)
+		{
+			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new StopVibrationOnController(myControllerHandle));
+			myControllerHandle = -1;
+		}
+		
 	}
 	}
 }

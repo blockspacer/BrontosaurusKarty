@@ -986,6 +986,9 @@ bool CRenderer::HandleRenderMessage(SRenderMessage * aRenderMesage, int & aDrawC
 		//++aDrawCallCount;
 		break;
 	}
+	case SRenderMessage::eRenderMessageType::e3DSprite:
+		myDeferredRenderer.AddRenderMessage(aRenderMesage);
+		break;
 	case SRenderMessage::eRenderMessageType::eSetCubemapResource:
 	{
 		SSetCubemapResource* msg = static_cast<SSetCubemapResource*>(aRenderMesage);
@@ -1329,8 +1332,7 @@ void CRenderer::RenderCameraQueue(SRenderCameraQueueMessage* msg, int & aDrawCal
 		myDeferredRenderer.UpdateCameraBuffer(myCamera.GetTransformation(), myCamera.GetProjectionInverse());
 		//myParticleRenderer.CombineDepthStencils(myDeferredRenderer.GetFirstPackage(), myDeferredRenderer.GetSecondPackage());
 		UpdateShadowBuffer();
-		myDeferredRenderer.DoLightingPass(myFullScreenHelper, *this);
-		
+		myDeferredRenderer.DoLightingPass(myFullScreenHelper, *this, myCamera.GetTransformation().GetInverted(), myCamera.GetProjection());
 	}
 
 	changeStateMessage.myRasterizerState = eRasterizerState::eNoCulling;
@@ -1359,7 +1361,16 @@ void CRenderer::RenderCameraQueue(SRenderCameraQueueMessage* msg, int & aDrawCal
 			myDeferredRenderer.myGbuffer->GetRenderPackage(CGeometryBuffer::eDiffuse).GetDepthResource(), 
 			&msg->myRenderCamera.GetRenderPackage());
 
+		SChangeStatesMessage noCullStates;
+		noCullStates.myRasterizerState = eRasterizerState::eNoCulling;
+		noCullStates.myDepthStencilState = eDepthStencilState::eReadOnly;
+		noCullStates.myBlendState = eBlendState::eAlphaBlend;
+		noCullStates.mySamplerState = eSamplerState::eClamp;
 
+		SetStates(&noCullStates);
+
+
+		myDeferredRenderer.Do3DSprites(myCamera.GetTransformation().GetInverted(), myCamera.GetProjection());
 		//myFullScreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopy, &myParticleRenderer.GetIntermediatePackage());
 	}
 	else
