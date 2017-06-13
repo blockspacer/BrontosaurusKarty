@@ -15,6 +15,7 @@ CAIController::CAIController(CKartControllerComponent& aKartComponent)
 	myState = eStates::eStop;
 	myIsDrifting = 0;
 	myHasItem = false;
+	myCollisionCheckCountdown = 5.0f;
 }
 
 CAIController::~CAIController()
@@ -25,6 +26,7 @@ void CAIController::Update(const float aDeltaTime)
 {
 	UpdateItemUsage(aDeltaTime);
 	UpdateMovement(aDeltaTime, 1.f);
+	UpdateUnstuck(aDeltaTime);
 }
 
 void CAIController::UpdateWithoutItems(const float aDeltaTime)
@@ -135,4 +137,22 @@ void CAIController::UpdateMovement(const float aDeltaTime, const float aMaxSpeed
 const CNavigationSpline& CAIController::GetNavigationSpline()
 {
 	return myControllerComponent.GetNavigationSpline();
+}
+
+void CAIController::UpdateUnstuck(const float aDeltaTime)
+{
+	if(myCollisionCheckCountdown > 0.0f)
+	{
+		myCollisionCheckCountdown -= aDeltaTime;
+		if (myCollisionCheckCountdown <= 0.0f)
+		{
+			myCollisionCheckCountdown = 5.0f;
+			float distance = CU::Vector3f(myCollisionPosition - myControllerComponent.GetParent()->GetWorldPosition()).Length2();
+			if(distance < 10.0f * 10.0f)
+			{
+				myControllerComponent.GetParent()->NotifyOnlyComponents(eComponentMessageType::eInflictZKill, SComponentMessageData());
+			}
+			myCollisionPosition = myControllerComponent.GetParent()->GetWorldPosition();
+		}
+	}
 }
