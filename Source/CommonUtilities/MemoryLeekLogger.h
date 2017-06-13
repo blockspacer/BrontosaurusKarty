@@ -2,7 +2,7 @@
 
 void DumpMemoryLeeks();
 
-#define WATCH_THE_MEMORY_MKAY
+//#define WATCH_THE_MEMORY_MKAY
 
 #ifdef WATCH_THE_MEMORY_MKAY
 #ifndef _RETAIL_BUILD
