@@ -17,6 +17,7 @@ CBlueShellBehaviourComponent::CBlueShellBehaviourComponent(CU::GrowingArray<CGam
 	myKartObjects = &aListOfKartObjects;
 
 	myIsActive = false;
+	myPlayingWarning = false;
 	myTeleportDelay = 2.0f;
 	myElapsedTime = 0;
 	mySpeed = 30;
@@ -25,6 +26,7 @@ CBlueShellBehaviourComponent::CBlueShellBehaviourComponent(CU::GrowingArray<CGam
 	myAboveHeight = 10;
 	myDropSpeed = CU::Vector3f::UnitY * myAboveHeight;
 
+	myLastTarget = nullptr;
 
 	//create explosion object
 	myExplosion = aGameObjectManager->CreateGameObject();
@@ -108,8 +110,7 @@ void CBlueShellBehaviourComponent::Update(const float aDeltaTime)
 		return;
 	}
 
-
-
+	
 
 	for (int i = 0; i < myKartObjects->Size(); i++)
 	{
@@ -119,6 +120,22 @@ void CBlueShellBehaviourComponent::Update(const float aDeltaTime)
 			target = myKartObjects->At(i)->GetToWorldTransform();
 			CBlueShellWarningMessage* blue = new CBlueShellWarningMessage(myKartObjects->At(i));
 
+			if (myLastTarget != myKartObjects->At(i) && myLastTarget != nullptr)
+			{
+				SComponentMessageData data;
+				data.myString = "StopWarning";
+				myLastTarget->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
+				myPlayingWarning = false;
+			}
+
+			if (myPlayingWarning == false)
+			{
+				SComponentMessageData data;
+				data.myString = "PlayWarning";
+				myKartObjects->At(i)->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
+				myPlayingWarning = true;
+			}
+			myLastTarget = myKartObjects->At(i);
 			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(blue);
 			break;
 		}
@@ -155,6 +172,12 @@ void CBlueShellBehaviourComponent::Receive(const eComponentMessageType aMessageT
 		SComponentMessageData data;
 		data.myVector3f = aMessageData.myComponent->GetParent()->GetWorldPosition();
 		myExplosion->NotifyOnlyComponents(eComponentMessageType::eResetExplosion, data);
+
+		SComponentMessageData sound;
+		sound.myString = "StopWarning";
+		aMessageData.myComponent->GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
+		myPlayingWarning = false;
+
 	}
 	case (eComponentMessageType::eDeactivate):
 		myIsActive = false;

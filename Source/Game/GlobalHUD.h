@@ -4,6 +4,7 @@
 #include "PlacementData.h"
 
 class CRaceOverMessage;
+class CTextInstance;
 
 class CGlobalHUD : public CHUDBase, public Postmaster::ISubscriber
 {
@@ -48,6 +49,8 @@ private:
 	CSpriteInstance* myMinimapPosIndicator;
 
 	CSpriteInstance* myCountdownSprite;
+
+	CTextInstance* myTimeText;
 
 	const unsigned char myNrOfPlayers;
 	bool myRaceOver;

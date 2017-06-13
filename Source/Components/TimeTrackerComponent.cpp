@@ -40,17 +40,50 @@ bool CTimeTrackerComponent::Answer(const eComponentQuestionType aQuestionType, S
 	{
 	case eComponentQuestionType::eGetFinishTimeMinutes:
 	{
-		float minutesPassed = myElapsedRaceTime / 60.0f;
-		minutesPassed = floor(minutesPassed);
-		aQuestionData.myFloat = minutesPassed;
+		if(myShouldAddTime == true)
+		{
+			aQuestionData.myInt = 0;
+		}
+		else
+		{
+			float minutesPassed = myElapsedRaceTime / 60.0f;
+			minutesPassed = floor(minutesPassed);
+			aQuestionData.myInt = minutesPassed;
+		}
 		return true;
 	}
 	case eComponentQuestionType::eGetFinishTimeSeconds:
 	{
-		float minutesPassed = myElapsedRaceTime / 60.0f;
-		minutesPassed = floor(minutesPassed);
-		float secondsPassed = myElapsedRaceTime - minutesPassed * 60.0f;
-		aQuestionData.myFloat = secondsPassed;
+		if (myShouldAddTime == true)
+		{
+			aQuestionData.myInt = 0;
+		}
+		else
+		{
+			float minutesPassed = myElapsedRaceTime / 60.0f;
+			minutesPassed = floor(minutesPassed);
+			float secondsPassed = myElapsedRaceTime - minutesPassed * 60.0f;
+			secondsPassed = floor(secondsPassed);
+			aQuestionData.myInt = secondsPassed;
+		}
+		return true;
+	}
+	case eComponentQuestionType::eGetFinishTimeHundredthsSeconds:
+	{
+		if (myShouldAddTime == true)
+		{
+			aQuestionData.myInt = 0;
+		}
+		else
+		{
+			float minutesPassed = myElapsedRaceTime / 60.0f;
+			minutesPassed = floor(minutesPassed);
+			float secondsPassed = myElapsedRaceTime - minutesPassed * 60.0f;
+			float hundrethsSecondsPassed = secondsPassed - floor(secondsPassed);
+			hundrethsSecondsPassed *= 100.0f;
+			hundrethsSecondsPassed = floor(hundrethsSecondsPassed);
+			aQuestionData.myInt = hundrethsSecondsPassed;
+		}
 		return true;
 	}
 	break;

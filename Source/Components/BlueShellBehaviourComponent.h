@@ -21,6 +21,8 @@ private:
 
 	CGameObject* myUser;
 
+	CGameObject* myLastTarget;
+
 	CU::Vector3f myVelocity;
 	CU::Vector3f myDropSpeed;
 	float myAboveHeight;
@@ -29,6 +31,7 @@ private:
 	float mySpeed;
 	float myDecendSpeed;
 
+	bool myPlayingWarning;
 	bool myIsActive;
 };
 
