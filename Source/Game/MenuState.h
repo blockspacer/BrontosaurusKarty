@@ -68,6 +68,11 @@ private:
 
 	static std::map<CU::eKeys, CU::GAMEPAD> ourKeyboardToGamePadMap;
 
+	CSpriteInstance* myLeftArrow;
+	CSpriteInstance* myRightArrow;
+	CU::Vector2f myLeftArrowOrigin;
+	CU::Vector2f myRightArrowOrigin;
+
 	CU::GrowingArray<STextInput> myTextInputs;
 	int myCurrentTextInput;
 
