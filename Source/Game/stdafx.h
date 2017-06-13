@@ -17,12 +17,10 @@
 #include "../Components/ComponentMessage.h"
 #include "../Components/ComponentAnswer.h"
 
+#include "../CommonUtilities/MemoryLeekLogger.h"
+
 #ifndef SAFE_DELETE
 #define SAFE_DELETE(ptr) delete ptr; ptr = nullptr
 #endif  //!SAFE_DELETE
 
 ; // ifrågasätt inte
-
-
-//#include "../CommonUtilities/MemoryLeekLogger.h"
-

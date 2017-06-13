@@ -10,7 +10,6 @@ void DumpMemoryLeeks();
 void* operator new(size_t aSize, const char* aFileName, const int aLine);
 void operator delete(void* aPtr);
 
-
 #define CARL_NEW new(__FILE__, __LINE__)
 #undef new
 #define new CARL_NEW
@@ -18,3 +17,7 @@ void operator delete(void* aPtr);
 #endif // !_RETAIL_BUILD
 
 #endif // WATCH_THE_MEMORY_MKAY
+
+#ifndef CARL_NEW
+#define CARL_NEW new
+#endif // !CARL_NEW

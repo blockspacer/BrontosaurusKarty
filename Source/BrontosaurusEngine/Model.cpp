@@ -1,4 +1,7 @@
 #include "stdafx.h"
+
+#undef new
+
 #include "Model.h"
 #include "Engine.h"
 #include "DXFramework.h"
@@ -10,9 +13,13 @@
 #include "FBXLoader.h"
 #include "../CommonUtilities/Intersection.h"
 
+#include "AnimationController.h"
+
 #include "AnimationState.h"
 #include "EffectsManager.h"
 DECLARE_ANIMATION_ENUM_AND_STRINGS;
+
+#define new CARL_NEW
 
 CModel::CModel()
 	: myLODModels(4)

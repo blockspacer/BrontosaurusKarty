@@ -23,9 +23,14 @@
 #include "..\Components\KartControllerComponentManager.h"
 #include "..\Components\TimeTrackerComponentManager.h"
 
+#define DEFAULT	{0.3f, 0.3f, 0.3f, 1.0f}
+#define YELLOW	{1.0f, 1.0f, 0.0f, 1.0f}
+#define GREEN	{0.0f, 1.0f, 0.0f, 1.0f}
+#define PINK	{1.0f, 0.0f, 1.0f, 1.0f}
+#define BLUE	{0.0f, 0.0f, 1.0f, 1.0f}
 
 
-CGlobalHUD::CGlobalHUD(int aLevelIndex):myNrOfPlayers(0), myScoreboardBGSprite(nullptr), myPortraitSprite(nullptr), myMinimapBGSprite(nullptr), myMinimapPosIndicator(nullptr), myRaceOver(false), myTimeText(nullptr), myLevelIndex(aLevelIndex)
+CGlobalHUD::CGlobalHUD(int aLevelIndex):myNrOfPlayers(0), myPortraitSprite(nullptr), myMinimapPosIndicator(nullptr), myRaceOver(false), myTimeText(nullptr), myLevelIndex(aLevelIndex)
 {
 	myKartObjects = CPollingStation::GetInstance()->GetKartList();
 }
@@ -34,11 +39,9 @@ CGlobalHUD::~CGlobalHUD()
 {
 	POSTMASTER.Unsubscribe(this);
 
-	SAFE_DELETE(myScoreboardBGSprite);
 	SAFE_DELETE(myPortraitSprite);
-	SAFE_DELETE(myMinimapBGSprite);
 	SAFE_DELETE(myMinimapPosIndicator);
-	SAFE_DELETE(myCountdownSprite);
+	//SAFE_DELETE(myCountdownSprite);
 	SAFE_DELETE(myTimeText);
 }
 
@@ -89,15 +92,46 @@ void CGlobalHUD::Render()
 
 				myPortraitSprite->RenderToGUI(L"scoreboard");
 				myPortraitSprite->SetPosition(newPortraitPos);
-				myTimeText->SetPosition(newPortraitPos);
+				myTimeText->SetPosition(newPortraitPos + myTimeTextOffset);
 				int timePassedSum = myWinners[i].minutesPassed + myWinners[i].secondsPassed + myWinners[i].hundredthsSecondsPassed;
 				if(timePassedSum > 0)
 				{
-					myTimeText->SetText(std::to_wstring(myWinners[i].minutesPassed) + L"." + std::to_wstring(myWinners[i].secondsPassed) + L"." + std::to_wstring(myWinners[i].hundredthsSecondsPassed));
+					std::wstring minutesPassedString = L"";
+					int minutesPassed = myWinners[i].minutesPassed;
+
+					if(minutesPassed < 10)
+					{
+						minutesPassedString += L"0";
+					}
+					minutesPassedString += std::to_wstring(minutesPassed);
+
+					std::wstring secondsPassedString = L"";
+					int secondsPassed = myWinners[i].secondsPassed;
+
+					if (secondsPassed < 10)
+					{
+						secondsPassedString += L"0";
+					}
+					secondsPassedString += std::to_wstring(secondsPassed);
+
+					std::wstring hundredthsSecondsPassedString = L"";
+					int hundredthsSecondsPassed = myWinners[i].hundredthsSecondsPassed;
+
+					if (hundredthsSecondsPassed < 100)
+					{
+						hundredthsSecondsPassedString += L"0";
+					}
+					if (hundredthsSecondsPassed < 10)
+					{
+						hundredthsSecondsPassedString += L"0";
+					}
+					hundredthsSecondsPassedString += std::to_wstring(hundredthsSecondsPassed);
+
+					myTimeText->SetText(minutesPassedString + L":" + secondsPassedString + L":" + hundredthsSecondsPassedString);
 				}
 				else
 				{
-					myTimeText->SetText(L"--.--.---");
+					myTimeText->SetText(L"--:--:---");
 				}
 				myTimeText->RenderToGUI(L"scoreboard");
 			}
@@ -256,23 +290,30 @@ void CGlobalHUD::LoadScoreboard(const CU::CJsonValue& aJsonValue)
 {
 	CU::CJsonValue jsonElementData = aJsonValue.at("elementData");
 	CU::CJsonValue jsonSprites = aJsonValue.at("sprites");
+	CU::CJsonValue jsonTimeText = aJsonValue.at("timeText");
+	CU::CJsonValue jsonTimeTextPosition = jsonTimeText.at("position");
+	CU::CJsonValue jsonTimeTextColor = jsonTimeText.at("color");
 
 	myScoreboardElement = LoadHUDElement(jsonElementData);
 
 	const std::string scoreboardBGSpritePath = jsonSprites.at("background").GetString();
 	const std::string portraitSpritePath = jsonSprites.at("characterPortrait").GetString();
 
-	myScoreboardBGSprite = new CSpriteInstance(scoreboardBGSpritePath.c_str(), { 1.0f, 1.0f });
 	myPortraitSprite = new CSpriteInstance(portraitSpritePath.c_str(), { 0.5f, 0.125f }, { 0.196f, -0.004f });
 
-	myScoreboardElement.mySprite = myScoreboardBGSprite;
+	myScoreboardElement.mySprite = new CSpriteInstance(scoreboardBGSpritePath.c_str(), { 1.0f, 1.0f });
 	myScoreboardElement.myShouldRender = false;
 
+	myTimeTextOffset.x = jsonTimeTextPosition.at("x").GetFloat();
+	myTimeTextOffset.y = jsonTimeTextPosition.at("y").GetFloat();
+
+	CU::Vector4f color(jsonTimeTextColor.at("r").GetFloat(), jsonTimeTextColor.at("g").GetFloat(), jsonTimeTextColor.at("b").GetFloat(), jsonTimeTextColor.at("a").GetFloat());
+
 	myTimeText = new CTextInstance();
-	myTimeText->Init();
+	myTimeText->Init("FinishTime");
 	myTimeText->SetAlignment(eAlignment::eLeft);
-	myTimeText->SetColor(myTimeText->Black);
-	myTimeText->SetPosition(CU::Vector2f(0.1f, 0.1f));
+	myTimeText->SetColor(color);
+	myTimeText->SetPosition(CU::Vector2f(myTimeTextOffset));
 	myTimeText->SetText(L"");
 }
 

@@ -1,6 +1,5 @@
 #pragma once
 #include "BufferStructs.h"
-#include "AnimationController.h"
 
 #include "../CommonUtilities/AABB.h"
 #include "EffectsManager.h"
@@ -90,7 +89,7 @@ public:
 	float GetRadius() const;
 
 	CU::Matrix44f GetBoneTransform(const float aTime, const eAnimationState aAnimationState, const std::string& aBoneName);
-	std::vector<mat4>& GetBones(float aTime, const eAnimationState aAnimationState, const bool aAnimationLooping);
+	std::vector<CU::Matrix44f>& GetBones(float aTime, const eAnimationState aAnimationState, const bool aAnimationLooping);
 	inline bool HasBones() const;
 	inline bool HasAnimations() const;
 
@@ -118,7 +117,7 @@ private:
 
 	void UpdateInstanceBuffer(const unsigned int aStartIndex);
 
-	static void BlendBones(const std::vector<mat4>& aBlendFrom, const std::vector<mat4>& aBlendTo, const float aLerpValue, std::vector<mat4>& aBlendOut);
+	static void BlendBones(const std::vector<CU::Matrix44f>& aBlendFrom, const std::vector<CU::Matrix44f>& aBlendTo, const float aLerpValue, std::vector<CU::Matrix44f>& aBlendOut);
 
 private:
 #ifdef _DEBUG

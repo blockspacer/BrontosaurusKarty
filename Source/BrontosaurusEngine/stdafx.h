@@ -12,7 +12,6 @@
 #include "../CommonUtilities/CommonSTL.h"
 #include "../CommonUtilities/CommonCU.h"
 
-#include "../CommonUtilities/MemoryLeekLogger.h"
 #include "../CommonUtilities/TimerManager.h"
 
 #ifndef SAFE_DELETE
@@ -35,3 +34,4 @@
 #include "Engine.h"
 #include "DXFramework.h"
 
+#include "../CommonUtilities/MemoryLeekLogger.h"

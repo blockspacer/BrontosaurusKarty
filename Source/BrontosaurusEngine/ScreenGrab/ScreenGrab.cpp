@@ -25,6 +25,7 @@
 
 // For 2D array textures and cubemaps, it captures only the first image in the array
 #include "stdafx.h"
+#undef new
 #include "ScreenGrab.h"
 
 #include <dxgiformat.h>

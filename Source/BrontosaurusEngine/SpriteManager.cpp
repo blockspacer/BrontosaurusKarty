@@ -15,7 +15,7 @@ CSpriteManager::~CSpriteManager()
 	mySprites.DeleteAll();
 }
 
-CSprite* CSpriteManager::CreateSprite(const char* aSpritePath)
+CSprite* CSpriteManager::CreateSprite(const std::string& aSpritePath)
 {
 	std::lock_guard<std::mutex> mutexGuard(myLoadMutex);
 	//myLoadMutex.lock();

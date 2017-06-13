@@ -10,7 +10,6 @@
 
 #include "../CommonUtilities/CommonSTL.h"
 #include "../CommonUtilities/CommonCU.h"
-#include "../CommonUtilities/MemoryLeekLogger.h"
 
 #include "GameObject.h"
 #include "ComponentMessage.h"
@@ -21,5 +20,4 @@
 #define SAFE_DELETE(ptr) delete ptr; ptr = nullptr
 #endif // !SAFE_DELETE
 
-// TODO: reference additional headers your program requires here
-
+#include "../CommonUtilities/MemoryLeekLogger.h"

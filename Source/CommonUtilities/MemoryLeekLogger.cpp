@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "MemoryLeekLogger.h"
 
 #ifdef new
 #undef new
@@ -78,7 +79,6 @@ void operator delete(void* aPtr)
 	free(aPtr);
 }
 
-#include <cstring>
 MemoryLeekData::MemoryLeekData()
 	: myCreatedObject(nullptr)
 	, myLine(0)
@@ -171,15 +171,16 @@ void DumpMemoryLeeks()
 #ifndef _RETAIL_BUILD
 
 	std::ofstream memoryLeekLoggo("memory_leeks.loggo");
+	memoryLeekLoggo << locMemoryLeeks.Size() << " objects are not deleted" << std::endl << std::endl;
 	for (long long i = 0; i < locMemoryLeeks.Size(); ++i)
 	{
-		std::cout
-			<< "[" << locMemoryLeeks[i].myCreatedObject << "]" << " not destroyed" << std::endl
-			//<< "File: " << locMemoryLeeks[i].myFileName << std::endl
-			<< "File: " << locMemoryLeeks[i].myFileName3 << std::endl
-			//<< "File: " << locMemoryLeeks[i].myFileName2.myString << std::endl
-			<< "Line: " << locMemoryLeeks[i].myLine << std::endl
-			<< std::endl;
+		//std::cout
+		//	<< "[" << locMemoryLeeks[i].myCreatedObject << "]" << " not destroyed" << std::endl
+		//	//<< "File: " << locMemoryLeeks[i].myFileName << std::endl
+		//	<< "File: " << locMemoryLeeks[i].myFileName3 << std::endl
+		//	//<< "File: " << locMemoryLeeks[i].myFileName2.myString << std::endl
+		//	<< "Line: " << locMemoryLeeks[i].myLine << std::endl
+		//	<< std::endl;
 
 		memoryLeekLoggo
 			<< "[" << locMemoryLeeks[i].myCreatedObject << "]" << " not destroyed" << std::endl

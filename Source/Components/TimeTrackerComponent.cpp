@@ -80,7 +80,7 @@ bool CTimeTrackerComponent::Answer(const eComponentQuestionType aQuestionType, S
 			minutesPassed = floor(minutesPassed);
 			float secondsPassed = myElapsedRaceTime - minutesPassed * 60.0f;
 			float hundrethsSecondsPassed = secondsPassed - floor(secondsPassed);
-			hundrethsSecondsPassed *= 100.0f;
+			hundrethsSecondsPassed *= 1000.0f;
 			hundrethsSecondsPassed = floor(hundrethsSecondsPassed);
 			aQuestionData.myInt = hundrethsSecondsPassed;
 		}

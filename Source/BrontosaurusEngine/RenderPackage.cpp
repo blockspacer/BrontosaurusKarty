@@ -3,10 +3,11 @@
 #include "Engine.h"
 #include "DXFramework.h"
 #include "ScreenGrab/ScreenGrab.h"
-#include <vector2.h>
 #include <minwinbase.h>
 
-CRenderPackage::CRenderPackage(): myDepthTexture(nullptr), myDepthTarget(nullptr)
+CRenderPackage::CRenderPackage()
+	: myDepthTexture(nullptr)
+	, myDepthTarget(nullptr)
 {
 	myTexture = nullptr;
 	myResource = nullptr;
@@ -24,6 +25,7 @@ CRenderPackage::~CRenderPackage()
 	SAFE_RELEASE(myDepthTarget);
 	SAFE_RELEASE(myDepth);
 	SAFE_RELEASE(myDepthResource);
+	SAFE_RELEASE(myDepthTexture);
 	SAFE_DELETE(myViewport);
 }
 
@@ -52,7 +54,6 @@ void CRenderPackage::Init(const CU::Vector2ui & aSize, ID3D11Texture2D * aTextur
 	CHECK_RESULT(result, "Couldn't create render target view for the RenderPackage");
 
 	FRAMEWORK->CreateDepthStencil(static_cast<unsigned int>(myViewport->Width), static_cast<unsigned int>(myViewport->Height), myDepth, myDepthResource);
-
 }
 
 void CRenderPackage::ReInit(const CU::Vector2ui& aSize, ID3D11Texture2D* aTexture, DXGI_FORMAT aFormat)
@@ -72,7 +73,10 @@ void CRenderPackage::Clear(const float aDepthValue)
 	ID3D11DeviceContext* context = DEVICE_CONTEXT;
 	float clearColour[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	context->ClearRenderTargetView(myTarget, clearColour);
-	context->ClearDepthStencilView(myDepth, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, aDepthValue, 0);
+	if (myDepth)
+	{
+		context->ClearDepthStencilView(myDepth, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, aDepthValue, 0);
+	}
 }
 
 void CRenderPackage::Activate()
@@ -143,21 +147,6 @@ void CRenderPackage::SetViewport(const CU::Vector4f& aRect)
 	myViewport->Height	 = mySize.y * aRect.w;
 }
 
-void CRenderPackage::UpdateTexture(ID3D11Texture2D * aTexture)
-{
-	SAFE_RELEASE(myTexture);
-	SAFE_RELEASE(myTarget);
-	SAFE_RELEASE(myDepth);
-	SAFE_RELEASE(myDepthResource);
-	SAFE_RELEASE(myResource);
-
-	HRESULT result;
-	myTexture = aTexture;
-	result = DEVICE->CreateRenderTargetView(myTexture, NULL, &myTarget);
-	CHECK_RESULT(result, "Couldn't create render target view for the RenderPackage");
-	FRAMEWORK->CreateDepthStencil(static_cast<unsigned int>(myViewport->Width), static_cast<unsigned int>(myViewport->Height), myDepth, myDepthResource);
-}
-
 CU::Vector2f CRenderPackage::GetSize()
 {
 	return CU::Vector2f(myViewport->Width, myViewport->Height);
@@ -169,7 +158,12 @@ void CRenderPackage::SaveToFile(const char* aPath)
 	DirectX::SaveDDSTextureToFile(DEVICE_CONTEXT, myTexture, path.c_str());
 }
 
-void CRenderPackage::operator=(const CRenderPackage& aRight)
+CRenderPackage::CRenderPackage(const CRenderPackage& aCopy)
+{
+	*this = aCopy;
+}
+
+CRenderPackage& CRenderPackage::operator=(const CRenderPackage& aRight)
 {
 	SAFE_RELEASE(myTexture);
 	myTexture = aRight.myTexture;
@@ -187,17 +181,28 @@ void CRenderPackage::operator=(const CRenderPackage& aRight)
 	myTarget = aRight.myTarget;
 	SAFE_ADD_REF(myTarget);
 
+	SAFE_RELEASE(myDepthTexture);
+	myDepthTexture = aRight.myDepthTexture;
+	SAFE_ADD_REF(myDepthTexture);
+
+	SAFE_RELEASE(myDepthTarget);
+	myDepthTarget = aRight.myDepthTarget;
+	SAFE_ADD_REF(myDepthTarget);
+
 	SAFE_RELEASE(myDepth);
 	myDepth = aRight.myDepth;
 	SAFE_ADD_REF(myDepth);
 
 	SAFE_DELETE(myViewport);
 	if (aRight.myViewport != nullptr)
+	{
 		myViewport = new D3D11_VIEWPORT(*aRight.myViewport);
+	}
+
+	mySize = aRight.mySize;
+
+	return *this;
 }
-
-
-
 
 void CRenderPackage::CreateTexture2D(const int aWidth, const int aHeight, DXGI_FORMAT aFormat)
 {

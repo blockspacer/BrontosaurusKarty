@@ -15,7 +15,6 @@ class CTextInstance;
 class CGlobalHUD : public CHUDBase, public Postmaster::ISubscriber
 {
 public:
-
 	CGlobalHUD(int aLevelIndex);
 	~CGlobalHUD();
 
@@ -48,10 +47,11 @@ private:
 	SHUDElement myMinimapElement;
 	SHUDElement myCountdownElement;
 
-	CSpriteInstance* myScoreboardBGSprite;
+	CU::Vector2f myTimeTextOffset;
+
+	//CSpriteInstance* myScoreboardBGSprite;
 	CSpriteInstance* myPortraitSprite;
 
-	CSpriteInstance* myMinimapBGSprite;
 	CSpriteInstance* myMinimapPosIndicator;
 
 	CSpriteInstance* myCountdownSprite;

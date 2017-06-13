@@ -22,10 +22,49 @@ CRenderCamera::CRenderCamera(const bool aDeferred /*= true*/)
 	}
 }
 
+CRenderCamera::CRenderCamera(const CRenderCamera& aCopy)
+{
+	*this = aCopy;
+}
+
+CRenderCamera& CRenderCamera::operator=(const CRenderCamera& aCopy)
+{
+	if (myGbuffer)
+	{
+		if (myGbuffer->DecRef() <= 0)
+		{
+			SAFE_DELETE(myGbuffer);
+		}
+	}
+	myGbuffer = aCopy.myGbuffer;
+	if (myGbuffer)
+	{
+		myGbuffer->AddRef();
+	}
+
+	myCamera = aCopy.myCamera;
+	myRenderPackage = aCopy.myRenderPackage;
+
+	myRenderQueue.DeleteAll();
+	myRenderQueue = aCopy.myRenderQueue;
+	//SAFE_RELEASE(myShadowPS);
+	myShadowPS = aCopy.myShadowPS;
+	//SAFE_ADD_REF(myShadowPS);
+	//SAFE_RELEASE(myShadowPSInstanced);
+	myShadowPSInstanced = aCopy.myShadowPSInstanced;
+	//SAFE_ADD_REF(myShadowPSInstanced);
+
+	myIsShadowCamera = aCopy.myIsShadowCamera;
+	return *this;
+}
+
 CRenderCamera::~CRenderCamera()
 {
 	myRenderQueue.DeleteAll();
-	//SAFE_DELETE(myGbuffer);
+	if (myGbuffer->DecRef() <= 0)
+	{
+		SAFE_DELETE(myGbuffer);
+	}
 	//SAFE_RELEASE(myShadowPS);
 	//SAFE_RELEASE(myShadowPSInstanced);
 }

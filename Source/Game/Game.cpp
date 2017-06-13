@@ -12,6 +12,7 @@
 
 #include "LoadState.h"
 #include "../Game/PollingStation.h"
+#include "AnimationEventFactory.h"
 
 CGame::CGame()
 {
@@ -22,6 +23,7 @@ CGame::~CGame()
 	KLoader::CKevinLoader::DestroyInstance();
 	CBackgroundLoadingManager::DestroyInstance();
 	SSlua::LuaWrapper::DestroyIfCreated();
+	delete CAnimationEventFactory::GetInstance();
 }
 
 

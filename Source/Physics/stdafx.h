@@ -13,8 +13,6 @@
 #include "../CommonUtilities/CommonSTL.h"
 #include "../CommonUtilities/CommonCU.h"
 
-#include "../CommonUtilities/MemoryLeekLogger.h"
-
 #ifndef SAFE_RELEASE
 #define SAFE_RELEASE(comptr) if (comptr != nullptr) { comptr->release(); comptr = nullptr; }
 #endif
