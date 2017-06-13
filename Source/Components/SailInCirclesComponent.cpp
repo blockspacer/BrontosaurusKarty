@@ -16,9 +16,8 @@ void CSailInCirclesComponent::Update(const float aPastTime)
 {
 	CU::Vector3f offset;
 	offset.x = cosf(aPastTime * myRPS) * myRadius;
-	offset.y = sinf(aPastTime) * 0.25f;
+	offset.y = sinf(aPastTime) * -0.25f;
 	offset.z = sinf(aPastTime * myRPS) * myRadius;
-
 	CU::Vector3f forward;
 	forward.x = -sinf(aPastTime * myRPS);
 	forward.z = cosf(aPastTime * myRPS);
