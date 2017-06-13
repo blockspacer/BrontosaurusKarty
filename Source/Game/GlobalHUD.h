@@ -42,6 +42,8 @@ private:
 	SHUDElement myMinimapElement;
 	SHUDElement myCountdownElement;
 
+	CU::Vector2f myTimeTextOffset;
+
 	CSpriteInstance* myScoreboardBGSprite;
 	CSpriteInstance* myPortraitSprite;
 

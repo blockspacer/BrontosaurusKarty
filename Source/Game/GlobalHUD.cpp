@@ -93,15 +93,15 @@ void CGlobalHUD::Render()
 
 				myPortraitSprite->RenderToGUI(L"scoreboard");
 				myPortraitSprite->SetPosition(newPortraitPos);
-				myTimeText->SetPosition(newPortraitPos);
+				myTimeText->SetPosition(newPortraitPos + myTimeTextOffset);
 				int timePassedSum = myWinners[i].minutesPassed + myWinners[i].secondsPassed + myWinners[i].hundredthsSecondsPassed;
 				if(timePassedSum > 0)
 				{
-					myTimeText->SetText(std::to_wstring(myWinners[i].minutesPassed) + L"." + std::to_wstring(myWinners[i].secondsPassed) + L"." + std::to_wstring(myWinners[i].hundredthsSecondsPassed));
+					myTimeText->SetText(L"Time: " + std::to_wstring(myWinners[i].minutesPassed) + L"." + std::to_wstring(myWinners[i].secondsPassed) + L"." + std::to_wstring(myWinners[i].hundredthsSecondsPassed));
 				}
 				else
 				{
-					myTimeText->SetText(L"--.--.---");
+					myTimeText->SetText(L"Time: --.--.---");
 				}
 				myTimeText->RenderToGUI(L"scoreboard");
 			}
@@ -260,6 +260,9 @@ void CGlobalHUD::LoadScoreboard(const CU::CJsonValue& aJsonValue)
 {
 	CU::CJsonValue jsonElementData = aJsonValue.at("elementData");
 	CU::CJsonValue jsonSprites = aJsonValue.at("sprites");
+	CU::CJsonValue jsonTimeText = aJsonValue.at("timeText");
+	CU::CJsonValue jsonTimeTextPosition = jsonTimeText.at("position");
+	CU::CJsonValue jsonTimeTextColor = jsonTimeText.at("color");
 
 	myScoreboardElement = LoadHUDElement(jsonElementData);
 
@@ -272,11 +275,16 @@ void CGlobalHUD::LoadScoreboard(const CU::CJsonValue& aJsonValue)
 	myScoreboardElement.mySprite = myScoreboardBGSprite;
 	myScoreboardElement.myShouldRender = false;
 
+	myTimeTextOffset.x = jsonTimeTextPosition.at("x").GetFloat();
+	myTimeTextOffset.y = jsonTimeTextPosition.at("y").GetFloat();
+
+	CU::Vector4f color(jsonTimeTextColor.at("r").GetFloat(), jsonTimeTextColor.at("g").GetFloat(), jsonTimeTextColor.at("b").GetFloat(), jsonTimeTextColor.at("a").GetFloat());
+
 	myTimeText = new CTextInstance();
-	myTimeText->Init();
+	myTimeText->Init("FinishTime");
 	myTimeText->SetAlignment(eAlignment::eLeft);
-	myTimeText->SetColor(myTimeText->Black);
-	myTimeText->SetPosition(CU::Vector2f(0.1f, 0.1f));
+	myTimeText->SetColor(color);
+	myTimeText->SetPosition(CU::Vector2f(myTimeTextOffset));
 	myTimeText->SetText(L"");
 }
 
