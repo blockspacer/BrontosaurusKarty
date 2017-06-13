@@ -356,7 +356,10 @@ void CDXFramework::Shutdown()
 void CDXFramework::CreateDepthStencil(const int aWidth, const int aHeight, ID3D11DepthStencilView*& aDepthStencilView, ID3D11ShaderResourceView*& aDepthStencilResource, ID3D11Texture2D * aTexture, DXGI_FORMAT aFormat)
 {	
 	if (aDepthStencilView != nullptr)
+	{
 		aDepthStencilView->Release();
+		aDepthStencilView = nullptr;
+	}
 
 	ID3D11Texture2D* depthStencilBuffer = nullptr;
 

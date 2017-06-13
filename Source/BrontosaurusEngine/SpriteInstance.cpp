@@ -5,7 +5,7 @@
 #include "Renderer.h"
 #include "SpriteManager.h"
 
-CSpriteInstance::CSpriteInstance(const char* aTexturePath)
+CSpriteInstance::CSpriteInstance(const std::string& aTexturePath)
 	: mySprite(nullptr)
 	, myRect(0.f, 0.f, 1.f, 1.f)
 	, myColor(1.f, 1.f, 1.f, 1.f)
@@ -37,8 +37,6 @@ CSpriteInstance::CSpriteInstance(const char* aTexturePath, const CU::Vector2f& a
 
 CSpriteInstance::~CSpriteInstance()
 {
-	//SAFE_DELETE(mySprite);
-	SPRMGR.DestroySprite(mySprite);
 	mySprite = nullptr;
 }
 

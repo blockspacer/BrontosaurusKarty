@@ -23,9 +23,14 @@
 #include "..\Components\KartControllerComponentManager.h"
 #include "..\Components\TimeTrackerComponentManager.h"
 
+#define DEFAULT	{0.3f, 0.3f, 0.3f, 1.0f}
+#define YELLOW	{1.0f, 1.0f, 0.0f, 1.0f}
+#define GREEN	{0.0f, 1.0f, 0.0f, 1.0f}
+#define PINK	{1.0f, 0.0f, 1.0f, 1.0f}
+#define BLUE	{0.0f, 0.0f, 1.0f, 1.0f}
 
 
-CGlobalHUD::CGlobalHUD(int aLevelIndex):myNrOfPlayers(0), myScoreboardBGSprite(nullptr), myPortraitSprite(nullptr), myMinimapBGSprite(nullptr), myMinimapPosIndicator(nullptr), myRaceOver(false), myTimeText(nullptr), myLevelIndex(aLevelIndex)
+CGlobalHUD::CGlobalHUD(int aLevelIndex):myNrOfPlayers(0), myPortraitSprite(nullptr), myMinimapPosIndicator(nullptr), myRaceOver(false), myTimeText(nullptr), myLevelIndex(aLevelIndex)
 {
 	myKartObjects = CPollingStation::GetInstance()->GetKartList();
 }
@@ -34,11 +39,9 @@ CGlobalHUD::~CGlobalHUD()
 {
 	POSTMASTER.Unsubscribe(this);
 
-	SAFE_DELETE(myScoreboardBGSprite);
 	SAFE_DELETE(myPortraitSprite);
-	SAFE_DELETE(myMinimapBGSprite);
 	SAFE_DELETE(myMinimapPosIndicator);
-	SAFE_DELETE(myCountdownSprite);
+	//SAFE_DELETE(myCountdownSprite);
 	SAFE_DELETE(myTimeText);
 }
 
@@ -296,10 +299,9 @@ void CGlobalHUD::LoadScoreboard(const CU::CJsonValue& aJsonValue)
 	const std::string scoreboardBGSpritePath = jsonSprites.at("background").GetString();
 	const std::string portraitSpritePath = jsonSprites.at("characterPortrait").GetString();
 
-	myScoreboardBGSprite = new CSpriteInstance(scoreboardBGSpritePath.c_str(), { 1.0f, 1.0f });
 	myPortraitSprite = new CSpriteInstance(portraitSpritePath.c_str(), { 0.5f, 0.125f }, { 0.196f, -0.004f });
 
-	myScoreboardElement.mySprite = myScoreboardBGSprite;
+	myScoreboardElement.mySprite = new CSpriteInstance(scoreboardBGSpritePath.c_str(), { 1.0f, 1.0f });
 	myScoreboardElement.myShouldRender = false;
 
 	myTimeTextOffset.x = jsonTimeTextPosition.at("x").GetFloat();

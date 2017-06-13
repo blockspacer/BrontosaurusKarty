@@ -25,6 +25,10 @@ public:
 
 	CRenderPackage();
 	~CRenderPackage();
+
+	CRenderPackage(const CRenderPackage& aCopy);
+	CRenderPackage& operator=(const CRenderPackage& aLeft);
+
 	void Init(const CU::Vector2ui& aSize, ID3D11Texture2D* aTexture = nullptr, DXGI_FORMAT aFormat = DXGI_FORMAT_R8G8B8A8_UNORM);
 	void ReInit(const CU::Vector2ui& aSize, ID3D11Texture2D* aTexture = nullptr, DXGI_FORMAT aFormat = DXGI_FORMAT_R8G8B8A8_UNORM);
 
@@ -39,12 +43,10 @@ public:
 
 	ID3D11Texture2D*& GetTexture();
 	void SetViewport(const CU::Vector4f& aRect);
-	void UpdateTexture(ID3D11Texture2D* aTexture);
 	
 	CU::Vector2f GetSize();
 	void SaveToFile(const char* aPath);
 	inline bool IsInit();
-	void operator= (const CRenderPackage& aLeft);
 	
 private:
 	void CreateTexture2D(const int aWidth, const int aHeight, DXGI_FORMAT aFormat);

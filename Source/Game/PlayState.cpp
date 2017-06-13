@@ -101,6 +101,7 @@
 #include "InputManager.h"
 #include "TimeTrackerComponent.h"
 #include "DecalComponent.h"
+#include "MenuState.h"
 #include "C3DSpriteComponent.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
@@ -164,7 +165,7 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
-	,myIsCountingDown(false)
+	, myIsCountingDown(false)
 
 {
 	if (aPlayers.Size() > 0)
@@ -221,6 +222,11 @@ CPlayState::~CPlayState()
 	SAFE_DELETE(myRespawnComponentManager);
 	SAFE_DELETE(myItemBehaviourManager);
 	SAFE_DELETE(myTimeTrackerComponentManager);
+	SAFE_DELETE(myRedShellManager);
+	SAFE_DELETE(myBlueShellManager);
+	SAFE_DELETE(myExplosionManager);
+
+	SAFE_DELETE(myGlobalHUD);
 	CLapTrackerComponentManager::DestoyInstance();
 
 	CKartSpawnPointManager::GetInstance()->Destroy();
@@ -506,7 +512,7 @@ CU::eInputReturn CPlayState::RecieveInput(const CU::SInputMessage& aInputMessage
 {
 	if (aInputMessage.myType == CU::eInputType::eKeyboardPressed && aInputMessage.myKey == CU::eKeys::ESCAPE)
 	{
-		//myStateStack.PushState(new CPauseMenuState(myStateStack));
+		myStateStack.PushState(new CMenuState(myStateStack, "Json/Menu/PauseMenu.json", this));
 		return CU::eInputReturn::eKeepSecret;
 	}
 	switch(aInputMessage.myType)
@@ -838,10 +844,14 @@ void CPlayState::CreateAI()
 	CModelComponent* playerModel = myModelComponentManager->CreateComponent(playerJson.at("Model").GetString());
 	playerModel->SetIsShadowCasting(false);
 	secondPlayerObject->AddComponent(playerModel);
-	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
+	CComponent* kartModelComponent = new Component::CKartModelComponent(myPhysicsScene);
+	CComponentManager::GetInstance().RegisterComponent(kartModelComponent);
+	secondPlayerObject->AddComponent(kartModelComponent);
 
 	CGameObject* intermediary = myGameObjectManager->CreateGameObject();
-	intermediary->AddComponent(new Component::CDriftTurner);
+	CComponent* driftTurnerComponent = new Component::CDriftTurner();
+	CComponentManager::GetInstance().RegisterComponent(driftTurnerComponent);
+	intermediary->AddComponent(driftTurnerComponent);
 	intermediary->AddComponent(secondPlayerObject);
 
 	//Create player number object
@@ -860,6 +870,7 @@ void CPlayState::CreateAI()
 	//
 	// decal
 	CDecalComponent* decal = new CDecalComponent(*myScene);
+	CComponentManager::GetInstance().RegisterComponent(decal);
 	decal->SetDecalIndex(0);
 
 	CGameObject* decalHolder = myGameObjectManager->CreateGameObject();
@@ -933,7 +944,10 @@ void CPlayState::CreateAI()
 	playerObject->AddComponent(playerColliderComponent);
 	playerObject->AddComponent(playerTriggerColliderComponent);
 	playerObject->AddComponent(rigidComponent);
-	playerObject->AddComponent(new CCharacterInfoComponent(SParticipant::eCharacter::eVanBrat, true));
+
+	CComponent* characterInfoComnponent = new CCharacterInfoComponent(SParticipant::eCharacter::eVanBrat, true);
+	CComponentManager::GetInstance().RegisterComponent(characterInfoComnponent);
+	playerObject->AddComponent(characterInfoComnponent);
 
 	myKartObjects.Add(playerObject);
 }

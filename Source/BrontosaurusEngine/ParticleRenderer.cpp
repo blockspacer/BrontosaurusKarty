@@ -49,6 +49,7 @@ CParticleRenderer::CParticleRenderer(CRenderer& aRenderer, CFullScreenHelper& aH
 
 CParticleRenderer::~CParticleRenderer()
 {
+	SAFE_DELETE(myLightModel);
 }
 
 void CParticleRenderer::AddRenderMessage(SRenderMessage* aMessage)

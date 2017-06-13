@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#undef new
 #include "Engine.h"
 #include "ModelManager.h"
 #include "ModelLoader.h"
@@ -6,8 +7,11 @@
 #include <ThreadPool.h>
 #include "FBXLoader.h"
 
+#include "AnimationController.h"
 #include "AnimationState.h"
 DECLARE_ANIMATION_ENUM_AND_STRINGS;
+
+#define new CARL_NEW
 
 CModelManager::CModelManager()
 	: myModelList(128)
@@ -24,6 +28,10 @@ CModelManager::~CModelManager()
 			{
 				garbageNow.second.Release();
 			}
+		}
+		if (model.myBindposeSceneAnimator)
+		{
+			model.myBindposeSceneAnimator->Release();
 		}
 	}
 

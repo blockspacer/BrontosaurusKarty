@@ -919,10 +919,8 @@ void CRenderer::DoRenderQueue()
 			{
 				break;
 			}
-			if (!HandleRenderMessage(renderMessage, drawCalls))
-			{
-				SAFE_DELETE(renderMessage);
-			}
+			HandleRenderMessage(renderMessage, drawCalls);
+			SAFE_DELETE(renderMessage);
 		}
 		myCheckImortantQueue = false;
 	}

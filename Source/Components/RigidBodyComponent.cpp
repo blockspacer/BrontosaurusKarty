@@ -26,6 +26,10 @@ void CRigidBodyComponent::Receive(const eComponentMessageType aMessageType, cons
 		SComponentQuestionData data;
 		if (GetParent()->AskComponents(eComponentQuestionType::eGetCollisionShape, data))
 		{
+			if (myShape)
+			{
+				delete myShape;
+			}
 			myShape = new Physics::CShape(*data.myCollider->GetShape());
 			reinterpret_cast<Physics::CPhysicsActorDynamic*>(myActor)->SetMass(myData.mass);
 			myActor->SetShape(myShape);
