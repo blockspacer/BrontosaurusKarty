@@ -9,7 +9,7 @@ public:
 	static void Destroy();
 	static CSailInCirclesManager& GetInstance();
 
-	CSailInCirclesComponent* CreateComponent(const float aRPM, const float aRadius);
+	CSailInCirclesComponent* CreateComponent(const float aRPM, const float aVerticalRPM, const float aRadius, const float aVerticalAmplitude);
 	void Update(const float aDeltaTime);
 
 private:

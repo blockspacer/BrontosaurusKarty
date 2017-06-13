@@ -3,7 +3,7 @@
 class CSailInCirclesComponent :	public CComponent
 {
 public:
-	CSailInCirclesComponent(const float aRPM, const float aRadius);
+	CSailInCirclesComponent(const float aRPM, const float aVerticalRPM, const float aRadius, const float aVerticalAmplitude);
 	~CSailInCirclesComponent();
 
 
@@ -14,7 +14,10 @@ public:
 
 private:
 	float myRPS;
+	float myRPSVert;
 	float myRadius;
+	float myVerticalAmplitude;
+
 
 	CU::Vector3f myInitialPosition;
 };
