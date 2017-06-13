@@ -195,7 +195,10 @@ void CSplitScreenSelection::OnEnter(const bool aLetThroughRender)
 
 void CSplitScreenSelection::OnExit(const bool aLetThroughRender)
 {
-	
+	for (int i = 0; i < myPlayers.Size();++i)
+	{
+		myPlayers[i].myIsReady = false;
+	}
 	myIsInFocus = false;
 }
 
@@ -387,6 +390,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 				{
 					found = true;
 					myPlayers[i].myIsReady = true;
+					break;;
 				}
 			}
 			if (found == false)
@@ -405,7 +409,22 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 		}
 			break;
 		case CU::GAMEPAD::B:
-			myStateStack.Pop();
+			//myStateStack.Pop();
+			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+			{
+				if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
+				{
+					if(myPlayers[i].myIsReady == true)
+					{
+						myPlayers[i].myIsReady = false;
+					}
+					else
+					{
+						myPlayers.RemoveCyclicAtIndex(i);
+					}
+					break;
+				}
+			}
 			break;
 		case CU::GAMEPAD::START:
 			if (myRenderAllReady == true)
