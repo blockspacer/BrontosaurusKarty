@@ -49,18 +49,18 @@ void InitAudio();
 void Init(int argc, char* argv[])
 {
 
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE);
-	HANDLE hLogFile;
-	hLogFile = CreateFile(L"C:\\log.txt", GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	//_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE);
+	//HANDLE hLogFile;
+	//hLogFile = CreateFile(L"C:\\log.txt", GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
-	_CrtSetReportFile(_CRT_WARN, hLogFile);
+	//_CrtSetReportFile(_CRT_WARN, hLogFile);
 
-	_RPT0(_CRT_WARN, "file message\n");
+	//_RPT0(_CRT_WARN, "file message\n");
 
-	_CrtDumpMemoryLeaks();
+	//_CrtDumpMemoryLeaks();
 
-	CloseHandle(hLogFile);
+	//CloseHandle(hLogFile);
 
 
 	DL_Debug::Debug::CreateInstance();
