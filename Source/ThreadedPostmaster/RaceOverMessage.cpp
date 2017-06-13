@@ -1,12 +1,19 @@
 #include "stdafx.h"
 #include "RaceOverMessage.h"
-#include "..\game\PlacementData.h"
 
 
 CRaceOverMessage::CRaceOverMessage(CU::StaticArray<SPlacementData, 8>& aWinnerPlacementList)
 	: IMessage(eMessageType::eRaceOver)
-	, myWinners(aWinnerPlacementList)
 {
+	for(unsigned short i = 0; i < aWinnerPlacementList.Size(); i++)
+	{
+		myWinners[i].character = aWinnerPlacementList[i].character;
+		myWinners[i].isPlayer = aWinnerPlacementList[i].isPlayer;
+		myWinners[i].placement = aWinnerPlacementList[i].placement;
+		myWinners[i].minutesPassed = aWinnerPlacementList[i].minutesPassed;
+		myWinners[i].secondsPassed = aWinnerPlacementList[i].secondsPassed;
+		myWinners[i].hundredthsSecondsPassed = aWinnerPlacementList[i].hundredthsSecondsPassed;
+	}
 }
 
 
