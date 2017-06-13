@@ -63,7 +63,7 @@ BOOL CWindowsWindow::InitInstance(const SInitWindowParams& aInitWindowParams)
 
 	MyRegisterClass(myHInst, aInitWindowParams.Name.c_str());
 	
-	myHWnd = CreateWindowExW(WS_EX_ACCEPTFILES, aInitWindowParams.Name.c_str(), aInitWindowParams.Title.c_str(), WS_OVERLAPPEDWINDOW,
+	myHWnd = CreateWindowExW(WS_EX_ACCEPTFILES, aInitWindowParams.Name.c_str(), aInitWindowParams.Title.c_str(), WS_POPUP,
 		CW_USEDEFAULT, 0, aInitWindowParams.Width, aInitWindowParams.Height, nullptr, nullptr, myHInst, nullptr);
 
 	if (!myHWnd)
