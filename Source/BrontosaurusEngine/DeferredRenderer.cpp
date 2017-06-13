@@ -387,7 +387,6 @@ void CDeferredRenderer::Do3DSprites(const CU::Matrix44f& aMatrix44, const CU::Ma
 		if(pos.z > 0.f)
 		{
 			spriteMessage->mySprite->Render(screenPos, spriteMessage->mySize * (1.f / pos.z), spriteMessage->myPivot, spriteMessage->myRotation, spriteMessage->myRect, spriteMessage->myColor);
-
 		}
 	}
 	my3DSprites.RemoveAll();
