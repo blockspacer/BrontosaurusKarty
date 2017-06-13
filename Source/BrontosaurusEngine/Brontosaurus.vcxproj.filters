@@ -299,6 +299,7 @@
     </ClInclude>
     <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="ShadowBuffers.h" />
+    <ClInclude Include="DecalInstance.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -464,6 +465,7 @@
       <Filter>Light</Filter>
     </ClCompile>
     <ClCompile Include="ShadowMap.cpp" />
+    <ClCompile Include="DecalInstance.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">

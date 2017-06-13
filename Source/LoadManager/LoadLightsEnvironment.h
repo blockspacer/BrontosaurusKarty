@@ -7,3 +7,5 @@ namespace KLoader
 
 int LoadPointLightComponent(KLoader::SLoadedComponentData someData);
 int LoadEnvironmentSettings(KLoader::SLoadedComponentData someData);
+int LoadDecal(KLoader::SLoadedComponentData someData);
+

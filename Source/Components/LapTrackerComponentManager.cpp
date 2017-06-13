@@ -201,7 +201,7 @@ bool CLapTrackerComponentManager::HaveAllPlayersFinished()
 	
 	for (unsigned int i = 0; i < myComponents.Size(); i++)
 	{
-		if (CheckIfAlreadyInVictoryList(myRacerPlacements[i]) == true)
+		if (CheckIfAlreadyInVictoryList(myComponents[i]->GetParent()) == true)
 		{
 			continue;
 		}

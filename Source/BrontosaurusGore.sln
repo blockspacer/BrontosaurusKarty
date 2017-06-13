@@ -89,6 +89,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deferred", "Deferred", "{B6224D03-7AF6-4A48-8A12-FD98FFD3BB42}"
 	ProjectSection(SolutionItems) = preProject
 		..\Bin\Shaders\Deferred\deferred_ambient.fx = ..\Bin\Shaders\Deferred\deferred_ambient.fx
+		..\Bin\Shaders\Deferred\deferred_decal.fx = ..\Bin\Shaders\Deferred\deferred_decal.fx
 		..\Bin\Shaders\Deferred\deferred_directional.fx = ..\Bin\Shaders\Deferred\deferred_directional.fx
 		..\Bin\Shaders\Deferred\deferred_emissive.fx = ..\Bin\Shaders\Deferred\deferred_emissive.fx
 		..\Bin\Shaders\Deferred\deferred_pixel.fx = ..\Bin\Shaders\Deferred\deferred_pixel.fx

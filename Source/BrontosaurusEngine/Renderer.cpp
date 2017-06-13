@@ -1284,6 +1284,9 @@ bool CRenderer::HandleRenderMessage(SRenderMessage * aRenderMesage, int & aDrawC
 		msg->myFunction();
 		break;
 	}
+	case SRenderMessage::eRenderMessageType::eRenderDecal:
+		myDeferredRenderer.AddRenderMessage(aRenderMesage);
+		break;
 	default: break;
 	}
 

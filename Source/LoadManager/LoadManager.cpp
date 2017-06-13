@@ -78,6 +78,7 @@ void LoadManager::RegisterFunctions()
 	loader.RegisterComponentLoadFunction("BezierCurve", LoadBezierCurve);
 	loader.RegisterComponentLoadFunction("GoalComponent", LoadGoal);
 	loader.RegisterComponentLoadFunction("EnvironmentSettings", LoadEnvironmentSettings);
+	loader.RegisterComponentLoadFunction("Decal", LoadDecal);
 	//loader.RegisterComponentLoadFunction("CircleCollider", LoadCircleCollider);
 	//loader.RegisterComponentLoadFunction("SoundComponent", LoadSoundComponent);
 	//loader.RegisterComponentLoadFunction("FireComponent", LoadFireComponent);

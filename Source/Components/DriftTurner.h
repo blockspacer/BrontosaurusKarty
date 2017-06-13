@@ -1,4 +1,9 @@
 #pragma once
+
+
+enum class eLerpCurve : char;
+
+
 namespace Component
 {
 	class CDriftTurner : public CComponent
@@ -12,6 +17,14 @@ namespace Component
 	protected:
 		void DoUpdate(const float aDeltaTime);
 		CU::Matrix33f myTargetTurn;
+
+		float myTargetAngle;
+		float myStartAngle;
+		
+		float myLerpTimer;
+		bool shouldLerp;
+
+		eLerpCurve myCurve;
 	private:
 		bool myHasBeenHit;
 		float myHasBeenHitTotalTime;

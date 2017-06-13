@@ -234,3 +234,8 @@ SLutFadeColorGrade::SLutFadeColorGrade()
 	myFadeTo = myFadeFrom = ELUTType::eDefault;
 	myFadeTime = 1.f;
 }
+
+SRenderDecal::SRenderDecal()
+	: SRenderMessage(eRenderMessageType::eRenderDecal)
+{
+}

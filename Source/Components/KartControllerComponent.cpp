@@ -22,6 +22,8 @@
 #include "ColliderComponent.h"
 
 #include "../Audio/AudioInterface.h"
+#include "../BrontosaurusEngine/Scene.h"
+#include "../BrontosaurusEngine/DecalInstance.h"
 
 
 CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent, const short aControllerIndex, const short aCharacterIndex)
@@ -110,6 +112,7 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	myAirControl = Karts.at("AirControl").GetFloat();
 
 	myCurrentAction = eCurrentAction::eDefault;
+
 }
 
 CKartControllerComponent::~CKartControllerComponent()
@@ -564,6 +567,7 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	}
 
 	GetParent()->NotifyComponents(eComponentMessageType::eMoving, messageData);
+
 	myAnimator->Update(aDeltaTime, myVelocity.z, mySteering);
 }
 
@@ -598,6 +602,8 @@ void CKartControllerComponent::LookBack(bool aLookBack)
 		GetParent()->NotifyComponents(eComponentMessageType::eSetCameraRotation, data);
 	}
 }
+
+
 
 void CKartControllerComponent::Receive(const eComponentMessageType aMessageType, const SComponentMessageData& aMessageData)
 {
@@ -985,6 +991,7 @@ bool CKartControllerComponent::Answer(const eComponentQuestionType aQuestionType
 {
 	switch (aQuestionType)
 	{
+
 	case eComponentQuestionType::eGetIsGrounded:
 		if(myIsOnGround == true)
 		{
@@ -1031,3 +1038,4 @@ bool CKartControllerComponent::Answer(const eComponentQuestionType aQuestionType
 	}
 	return false;
 }
+
