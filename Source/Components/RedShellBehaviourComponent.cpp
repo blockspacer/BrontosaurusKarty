@@ -211,12 +211,12 @@ void CRedShellBehaviourComponent::Receive(const eComponentMessageType aMessageTy
 	}
 	case eComponentMessageType::eActivate:
 	{
-		myVelocity = CU::Vector3f::UnitZ*Speed;
-		myIsActive = true;
 		break;
 	}
 	case eComponentMessageType::eReInitRedShell:
 	{
+		myVelocity = CU::Vector3f::UnitZ*Speed;
+		myIsActive = true;
 		short index = 0;
 		index = myKartManager->GetClosestSpinesIndex(GetParent()->GetWorldPosition());
 		myCurrentUser = aMessageData.myComponent->GetParent();
