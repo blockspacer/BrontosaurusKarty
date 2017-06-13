@@ -93,11 +93,42 @@ void CGlobalHUD::Render()
 				int timePassedSum = myWinners[i].minutesPassed + myWinners[i].secondsPassed + myWinners[i].hundredthsSecondsPassed;
 				if(timePassedSum > 0)
 				{
-					myTimeText->SetText(L"Time: " + std::to_wstring(myWinners[i].minutesPassed) + L"." + std::to_wstring(myWinners[i].secondsPassed) + L"." + std::to_wstring(myWinners[i].hundredthsSecondsPassed));
+					std::wstring minutesPassedString = L"";
+					int minutesPassed = myWinners[i].minutesPassed;
+
+					if(minutesPassed < 10)
+					{
+						minutesPassedString += L"0";
+					}
+					minutesPassedString += std::to_wstring(minutesPassed);
+
+					std::wstring secondsPassedString = L"";
+					int secondsPassed = myWinners[i].secondsPassed;
+
+					if (secondsPassed < 10)
+					{
+						secondsPassedString += L"0";
+					}
+					secondsPassedString += std::to_wstring(secondsPassed);
+
+					std::wstring hundredthsSecondsPassedString = L"";
+					int hundredthsSecondsPassed = myWinners[i].hundredthsSecondsPassed;
+
+					if (hundredthsSecondsPassed < 100)
+					{
+						hundredthsSecondsPassedString += L"0";
+					}
+					if (hundredthsSecondsPassed < 10)
+					{
+						hundredthsSecondsPassedString += L"0";
+					}
+					hundredthsSecondsPassedString += std::to_wstring(hundredthsSecondsPassed);
+
+					myTimeText->SetText(minutesPassedString + L":" + secondsPassedString + L":" + hundredthsSecondsPassedString);
 				}
 				else
 				{
-					myTimeText->SetText(L"Time: --.--.---");
+					myTimeText->SetText(L"--:--:---");
 				}
 				myTimeText->RenderToGUI(L"scoreboard");
 			}
