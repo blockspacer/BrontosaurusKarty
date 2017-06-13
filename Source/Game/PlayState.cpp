@@ -42,6 +42,7 @@
 #include "AudioSourceComponent.h"
 #include "AudioSourceComponentManager.h"
 #include "TimeTrackerComponentManager.h"
+#include "SailInCirclesManager.h"
 
 //Networking
 #include "ThreadedPostmaster/Postmaster.h"
@@ -101,6 +102,7 @@
 #include "TimeTrackerComponent.h"
 #include "DecalComponent.h"
 #include "MenuState.h"
+#include "C3DSpriteComponent.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -163,6 +165,7 @@ CPlayState::CPlayState(StateStack& aStateStack, const int aLevelIndex, const CU:
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
+	, myIsCountingDown(false)
 
 {
 	if (aPlayers.Size() > 0)
@@ -232,6 +235,7 @@ CPlayState::~CPlayState()
 	myLocalHUDs.DeleteAll();
 
 	CPollingStation::Destroy();
+	CSailInCirclesManager::Destroy();
 }
 
 // Runs on its own thread.
@@ -453,6 +457,8 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	myBlueShellManager->Update(aDeltaTime.GetSeconds());
 	myExplosionManager->Update(aDeltaTime.GetSeconds());
 
+	CSailInCirclesManager::GetInstance().Update(aDeltaTime.GetSeconds());
+
 	CPickupComponentManager::GetInstance()->Update(aDeltaTime.GetSeconds());
 	return myStatus;
 }
@@ -479,18 +485,18 @@ void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
 	Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eNetworkMessage);
 
 
-	//if (myIsCountingDown == false)
-	//{
-	//	CU::CJsonValue levelsFile;
-	//	std::string errorString = levelsFile.Parse("Json/LevelList.json");
-	//	if (!errorString.empty()) DL_MESSAGE_BOX(errorString.c_str());
-	//
-	//	CU::CJsonValue levelsArray = levelsFile.at("levels");
-	//
-	//	const char* song = levelsArray.at(myLevelIndex).GetString().c_str();
-	//
-	//	Audio::CAudioInterface::GetInstance()->PostEvent(song);
-	//}
+	if (myIsCountingDown == false)
+	{
+		CU::CJsonValue levelsFile;
+		std::string errorString = levelsFile.Parse("Json/LevelList.json");
+		if (!errorString.empty()) DL_MESSAGE_BOX(errorString.c_str());
+
+		CU::CJsonValue levelsArray = levelsFile.at("levels");
+
+		const char* song = levelsArray.at(myLevelIndex).GetString().c_str();
+
+		Audio::CAudioInterface::GetInstance()->PostEvent(song);
+	}
 	myGlobalHUD->StartCountDown();
 	//InitiateRace();
 
@@ -599,6 +605,8 @@ void CPlayState::CreateManagersAndFactories()
 	CLapTrackerComponentManager::CreateInstance();
 	CKartSpawnPointManager::GetInstance()->Create();
 	CPickupComponentManager::Create();
+
+	CSailInCirclesManager::CreateInstance();
 }
 
 void CPlayState::LoadNavigationSpline(const CU::CJsonValue& splineData)
@@ -609,6 +617,40 @@ void CPlayState::LoadNavigationSpline(const CU::CJsonValue& splineData)
 void CPlayState::PostPostmasterEvent(short aGamepadIndex,const Postmaster::Message::InputEventData& aEventData)
 {
 	POSTMASTER.Broadcast(new Postmaster::Message::CControllerInputMessage(aGamepadIndex,aEventData));
+}
+
+const CU::Vector4f CPlayState::GetPlayerColor(const SParticipant::eInputDevice aInputDevice)
+{
+	CU::Vector4f color;
+	switch (aInputDevice)
+	{
+	case SParticipant::eInputDevice::eController1:
+
+		color = YELLOW;
+		
+		break;
+	case SParticipant::eInputDevice::eController2:
+
+		color = GREEN;
+		
+		break;
+	case SParticipant::eInputDevice::eController3:
+
+		color = PINK;
+		
+		break;
+	case SParticipant::eInputDevice::eController4:
+
+		color = BLUE;
+		
+		break;
+	default:
+		color = DEFAULT;
+		// Also make mark a bit smaller.
+		break;
+	}
+
+	return color;
 }
 
 void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticipant, unsigned int aPlayerCount)
@@ -651,7 +693,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	decal->SetDecalIndex(0);
 
 	CGameObject* decalHolder = myGameObjectManager->CreateGameObject();
-	decalHolder->GetLocalTransform().myPosition.Set(0.0f, -0.88f, 0.3f);
+	decalHolder->GetLocalTransform().myPosition.Set(0.0f, -0.88f, 0.4f);
 	decalHolder->GetLocalTransform().SetScale({ 2.0f, 2.f, 2.f });
 	decalHolder->AddComponent(decal);
 	secondPlayerObject->AddComponent(decalHolder);
@@ -673,9 +715,8 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 
 	//Create player number object
 	CGameObject* playerNumber = myGameObjectManager->CreateGameObject();
-	CModelComponent* numberModel = myModelComponentManager->CreateComponent(std::string("Models/Meshes/M_PlayerN") + std::to_string(static_cast<int>(aParticipant.myInputDevice)) + ".fbx");
-
-	numberModel->SetIsBillboard(true);
+	C3DSpriteComponent* numberModel = new C3DSpriteComponent(*myScene, "Sprites/GUI/playerMarker.dds", CU::Vector2f::One, CU::Vector2f(0.5f,0.5f),
+		CU::Vector4f(0.f,0.f,1.f,1.f), GetPlayerColor(aParticipant.myInputDevice));
 
 	playerNumber->AddComponent(numberModel);
 	playerNumber->GetLocalTransform().SetPosition({ 0.f,2.f,0.f });
@@ -787,8 +828,20 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 
 void CPlayState::CreateAI()
 {
+	static short i = 0;
+	SParticipant::eCharacter character;
+	character = static_cast<SParticipant::eCharacter>(i);
+	++i;
+	if (i >= static_cast<short>(SParticipant::eCharacter::eLength))
+	{
+		i = rand() % (static_cast<short>(SParticipant::eCharacter::eLength) - 1);
+	}
+	CU::CJsonValue playerJson;
+	std::string errorString = playerJson.Parse("Json/KartStats.json");
+	playerJson = playerJson.at("Karts")[static_cast<short>(character)];
+
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
-	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Animations/M_Kart_01.fbx");
+	CModelComponent* playerModel = myModelComponentManager->CreateComponent(playerJson.at("Model").GetString());
 	playerModel->SetIsShadowCasting(false);
 	secondPlayerObject->AddComponent(playerModel);
 	CComponent* kartModelComponent = new Component::CKartModelComponent(myPhysicsScene);
@@ -801,9 +854,18 @@ void CPlayState::CreateAI()
 	intermediary->AddComponent(driftTurnerComponent);
 	intermediary->AddComponent(secondPlayerObject);
 
+	//Create player number object
+	CGameObject* playerNumber = myGameObjectManager->CreateGameObject();
+	C3DSpriteComponent* numberModel = new C3DSpriteComponent(*myScene, "Sprites/GUI/playerMarker.dds", CU::Vector2f::One, CU::Vector2f(0.5f, 0.5f),
+		CU::Vector4f(0.f, 0.f, 1.f, 1.f), DEFAULT);
+
+	playerNumber->AddComponent(numberModel);
+	playerNumber->GetLocalTransform().SetPosition({ 0.f,2.f,0.f });
+
+
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
 	playerObject->AddComponent(intermediary);
-
+	playerObject->AddComponent(playerNumber);
 
 	//
 	// decal
@@ -812,7 +874,7 @@ void CPlayState::CreateAI()
 	decal->SetDecalIndex(0);
 
 	CGameObject* decalHolder = myGameObjectManager->CreateGameObject();
-	decalHolder->GetLocalTransform().myPosition.Set(0.0f, -0.88f, 0.3f);
+	decalHolder->GetLocalTransform().myPosition.Set(0.0f, -0.88f, 0.4f);
 	decalHolder->GetLocalTransform().SetScale({ 2.0f, 2.f, 2.f });
 	decalHolder->AddComponent(decal);
 	secondPlayerObject->AddComponent(decalHolder);
@@ -832,8 +894,11 @@ void CPlayState::CreateAI()
 		CLapTrackerComponent* lapTrackerComponent = CLapTrackerComponentManager::GetInstance()->CreateAndRegisterComponent();
 		playerObject->AddComponent(lapTrackerComponent);
 	}
+	SParticipant participant;
+	participant.mySelectedCharacter = character;
+	participant.myInputDevice = static_cast<SParticipant::eInputDevice>(-1);
 
-	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent(*playerModel);
+	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent(*playerModel,participant);
 
 	myPlayerControllerManager->CreateAIController(*kartComponent);
 

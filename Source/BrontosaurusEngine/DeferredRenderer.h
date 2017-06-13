@@ -42,11 +42,13 @@ public:
 
 	void DoDecals(CRenderer& aRenderer);
 
-	void DoLightingPass(CFullScreenHelper& aFullscreenHelper, CRenderer& aRenderer);
+	void DoLightingPass(CFullScreenHelper& aFullscreenHelper, CRenderer& aRenderer, const CU::Matrix44f& aCameraTransform, const CU::Matrix44f& aProjection);
 	ID3D11DepthStencilView* GetDepthStencil();
 	ID3D11ShaderResourceView* GetDepthResource();
 	CRenderPackage& GetFirstPackage();
 	CRenderPackage& GetSecondPackage();
+	void Do3DSprites(const CU::Matrix44f& aMatrix44, const CU::Matrix44f& aProjection);
+
 private:
 	
 	void DoAmbientLighting(CFullScreenHelper& aFullscreenHelper);
@@ -109,6 +111,7 @@ private:
 		eEmissive
 	} myRenderMode;
 	CU::InputWrapper* myInputWrapper;
+	CU::GrowingArray<SRender3DSpriteMessage*> my3DSprites;
 	void HandleInput();
 #endif 
 };

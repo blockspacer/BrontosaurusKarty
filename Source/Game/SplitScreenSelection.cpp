@@ -11,13 +11,12 @@
 #include "CommonUtilities.h"
 #include "MenuState.h"
 
-CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aStateStack,eInputMessengerType::eSplitScreenSelectionMenu, 1)
+CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aStateStack, eInputMessengerType::eSplitScreenSelectionMenu, 1)
 {
 	myPlayers.Init(4);
 	myHasKeyboardResponded = false;
 	myMenuManager.AddAction("PushLevel", [this](std::string string)-> bool { return PushLevel(string); });
 	myMenuManager.AddAction("BackToMenu", [this](std::string string)-> bool { return BackToMenu(string); });
-	//MenuLoad("Json/Menu/SplitScreenSelection.json");
 	for (int i = 0; i < 4; ++i)
 	{
 		AddXboxController();
@@ -32,7 +31,7 @@ CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aS
 		path += std::to_string(i + 1);
 		path += ".dds";
 		CSpriteInstance* sprite = new CSpriteInstance(path.c_str());
-		sprite->SetPosition(CU::Vector2f(CU::Vector2f(0,0)));
+		sprite->SetPosition(CU::Vector2f(CU::Vector2f(0, 0)));
 		myCharacterSprites.Add(sprite);
 	}
 
@@ -50,10 +49,12 @@ CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aS
 	myGUIParts[0].NameTag = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player1.dds");
 	myGUIParts[0].LeftArrow = new  CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player1_arrowLeft.dds");
 	myGUIParts[0].RightArrow = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player1_arrowRight.dds");
+	myGUIParts[0].ReadySprite = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/IsPlayerReady.dds");
+	myGUIParts[0].ReadySprite->SetPosition(CU::Vector2f::Zero);
 	myGUIParts[0].JoinSprite->SetPosition(CU::Vector2f::Zero);
 	myGUIParts[0].LeftArrow->SetPosition(CU::Vector2f(0.025f, 0.2f));
 	myGUIParts[0].RightArrow->SetPosition(CU::Vector2f(0.45f, 0.2f));
-	myGUIParts[0].NameTag->SetPosition(CU::Vector2f(0.2f, 0.4f));
+	myGUIParts[0].NameTag->SetPosition(CU::Vector2f(0.14f, 0.4f));
 	myGUIParts[0].LeftArrowOriginPosition = myGUIParts[0].LeftArrow->GetPosition();
 	myGUIParts[0].RightArrowOriginPosition = myGUIParts[0].RightArrow->GetPosition();
 
@@ -61,30 +62,36 @@ CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aS
 	myGUIParts[1].LeftArrow = new  CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player2_arrowLeft.dds");
 	myGUIParts[1].RightArrow = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player2_arrowRight.dds");
 	myGUIParts[1].NameTag = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player2.dds");
+	myGUIParts[1].ReadySprite = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/IsPlayerReady.dds");
+	myGUIParts[1].ReadySprite->SetPosition(CU::Vector2f(0.5f, 0.0f));
 	myGUIParts[1].JoinSprite->SetPosition(CU::Vector2f(0.5f, 0.0f));
 	myGUIParts[1].LeftArrow->SetPosition(CU::Vector2f(0.525f, 0.2f));
 	myGUIParts[1].RightArrow->SetPosition(CU::Vector2f(0.95f, 0.2f));
-	myGUIParts[1].NameTag->SetPosition(CU::Vector2f(0.5f, 0));
+	myGUIParts[1].NameTag->SetPosition(CU::Vector2f(0.64f, 0.4f));
 	myGUIParts[1].LeftArrowOriginPosition = myGUIParts[1].LeftArrow->GetPosition();
 	myGUIParts[1].RightArrowOriginPosition = myGUIParts[1].RightArrow->GetPosition();
 
 	myGUIParts[2].LeftArrow = new  CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player3_arrowLeft.dds");
 	myGUIParts[2].RightArrow = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player3_arrowRight.dds");
 	myGUIParts[2].NameTag = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player3.dds");
+	myGUIParts[2].ReadySprite = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/IsPlayerReady.dds");
+	myGUIParts[2].ReadySprite->SetPosition(CU::Vector2f(0, 0.5f));
 	myGUIParts[2].JoinSprite->SetPosition(CU::Vector2f(0, 0.5f));
 	myGUIParts[2].LeftArrow->SetPosition(CU::Vector2f(0.025f, 0.7f));
 	myGUIParts[2].RightArrow->SetPosition(CU::Vector2f(0.45f, 0.7f));
-	myGUIParts[2].NameTag->SetPosition(CU::Vector2f(0, 0.5f));
+	myGUIParts[2].NameTag->SetPosition(CU::Vector2f(0.14f, 0.9f));
 	myGUIParts[2].LeftArrowOriginPosition = myGUIParts[2].LeftArrow->GetPosition();
 	myGUIParts[2].RightArrowOriginPosition = myGUIParts[2].RightArrow->GetPosition();
 
 	myGUIParts[3].LeftArrow = new  CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player4_arrowLeft.dds");
 	myGUIParts[3].RightArrow = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player4_arrowRight.dds");
 	myGUIParts[3].NameTag = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player4.dds");
+	myGUIParts[3].ReadySprite = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/IsPlayerReady.dds");
+	myGUIParts[3].ReadySprite->SetPosition(CU::Vector2f(0.5f, 0.5f));
 	myGUIParts[3].JoinSprite->SetPosition(CU::Vector2f(0.5f, 0.5f));
 	myGUIParts[3].LeftArrow->SetPosition(CU::Vector2f(0.525f, 0.7f));
 	myGUIParts[3].RightArrow->SetPosition(CU::Vector2f(0.95f, 0.7f));
-	myGUIParts[3].NameTag->SetPosition(CU::Vector2f(0.5f, 0.5f));
+	myGUIParts[3].NameTag->SetPosition(CU::Vector2f(0.64f, 0.9f));
 	myGUIParts[3].LeftArrowOriginPosition = myGUIParts[3].LeftArrow->GetPosition();
 	myGUIParts[3].RightArrowOriginPosition = myGUIParts[3].RightArrow->GetPosition();
 }
@@ -134,6 +141,13 @@ void CSplitScreenSelection::Render()
 	for (unsigned int i = 0; i < myGUIParts.Size(); ++i)
 	{
 		myGUIParts[i].Redner();
+	}
+	for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+	{
+		if (myPlayers[i].myIsReady == true)
+		{
+			myGUIParts[i].ReadySprite->RenderToGUI(L"__Menu");
+		}
 	}
 }
 
@@ -338,6 +352,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 					SParticipant participant;
 					participant.myInputDevice = static_cast<SParticipant::eInputDevice>(aInputMessage.myGamepadIndex);
 					participant.mySelectedCharacter = SParticipant::eCharacter::eVanBrat;
+					participant.myIsReady = false;
 					myPlayers.Add(participant);
 					myPlayerInputDevices[myPlayers.Size() - 1] = static_cast<SParticipant::eInputDevice>(aInputMessage.myGamepadIndex);
 					myGUIParts[myPlayers.Size() - 1].hasJoined = true;
@@ -423,6 +438,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 					SParticipant participant;
 					participant.mySelectedCharacter = SParticipant::eCharacter::eVanBrat;
 					participant.myInputDevice = SParticipant::eInputDevice::eKeyboard;
+					participant.myIsReady = false;
 					myPlayers.Add(participant);
 					myPlayerInputDevices[myPlayers.Size() - 1] = static_cast<SParticipant::eInputDevice>(aInputMessage.myGamepadIndex);
 					myGUIParts[myPlayers.Size() - 1].hasJoined = true;
@@ -462,6 +478,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 			}
 		}
 		break;
+		case CU::eKeys::D:
 		case CU::eKeys::RIGHT:
 		{
 			bool found = false;
@@ -474,6 +491,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 			}
 		}
 		break;
+		case CU::eKeys::A:
 		case CU::eKeys::LEFT:
 		{
 			for (unsigned int i = 0; i < myPlayers.Size(); ++i)

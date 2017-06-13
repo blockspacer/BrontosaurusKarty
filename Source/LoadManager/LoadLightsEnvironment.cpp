@@ -10,6 +10,8 @@
 #include "Engine.h"
 #include "Renderer.h"
 #include "DecalComponent.h"
+#include "SailInCirclesComponent.h"
+#include "SailInCirclesManager.h"
 
 int LoadPointLightComponent(KLoader::SLoadedComponentData someData)
 {
@@ -92,4 +94,13 @@ int LoadDecal(KLoader::SLoadedComponentData someData)
 	CDecalComponent* component = CLightComponentManager::GetInstance().CreateAndRegisterDecalComponent();
 	component->SetDecalIndex(someData.myData.at("decalIndex").GetUInt());
 	return component->GetId();
+}
+
+int LoadSailInCircles(KLoader::SLoadedComponentData someData)
+{
+	float rpm = someData.myData.at("RPM").GetFloat();
+	float radius = someData.myData.at("radius").GetFloat();
+
+	CComponent* comp = CSailInCirclesManager::GetInstance().CreateComponent(rpm, radius);
+	return comp->GetId();
 }

@@ -25,14 +25,19 @@ public:
 private:
 	CU::Vector3f myVelocity;
 	CGameObject* myCurrentUser;
+	CGameObject* myLastTarget;
+
 	Physics::CPhysicsScene* myPhysicsScene;
 	CKartControllerComponentManager* myKartManager;
 	CU::GrowingArray<CGameObject*>* myKartObjects;
+
+
 
 	int myCurrentSplineIndex;
 	int myUserPlacement;
 	float Speed;
 
+	bool myPlayingWarning;
 	bool myIsActive;
 };
 

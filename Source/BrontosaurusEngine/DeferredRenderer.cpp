@@ -17,6 +17,7 @@
 #include "Texture.h"
 #include "TextureManager.h"
 #include "Engine.h"
+#include "Sprite.h"
 
 #ifdef _ENABLE_RENDERMODES
 #include <../CommonUtilities/InputWrapper.h>
@@ -57,6 +58,8 @@ CDeferredRenderer::CDeferredRenderer() : myGbuffer(nullptr)
 	InitLightModels();
 	InitDecalModel();
 
+	
+	my3DSprites.Init(20);
 
 #ifdef _ENABLE_RENDERMODES
 	myInputWrapper = new CU::InputWrapper();
@@ -208,6 +211,7 @@ void CDeferredRenderer::DoRenderQueue(CRenderer& aRenderer)
 		}
 	}
 
+	
 	myRenderMessages.RemoveAll();
 	myGbuffer->UnbindInput();
 	myGbuffer->UnbindOutput();
@@ -225,6 +229,13 @@ void CDeferredRenderer::AddRenderMessage(SRenderMessage* aRenderMessage)
 	case SRenderMessage::eRenderMessageType::eRenderDecal:
 		myDecalMessages.Add(aRenderMessage);
 		break;
+	case SRenderMessage::eRenderMessageType::e3DSprite:
+		{
+			SRender3DSpriteMessage* message = static_cast<SRender3DSpriteMessage*>(aRenderMessage);
+			my3DSprites.Add(message);
+		}
+		
+		break;
 	default:
 		myRenderMessages.Add(aRenderMessage);
 		break;
@@ -240,7 +251,7 @@ void CDeferredRenderer::UpdateCameraBuffer(const CU::Matrix44f & aCameraSpace, c
 	BSR::UpdateCBuffer<SCameraStruct>(myProjectionInverseBuffer, &updatedMatrices);
 }
 
-void CDeferredRenderer::DoLightingPass(CFullScreenHelper& aFullscreenHelper, CRenderer& aRenderer)
+void CDeferredRenderer::DoLightingPass(CFullScreenHelper& aFullscreenHelper, CRenderer& aRenderer, const CU::Matrix44f& aCameraTransform, const CU::Matrix44f& aProjection)
 {
 	if (myGbuffer->IsInited() == false) return;
 	SetCBuffer();
@@ -284,7 +295,7 @@ void CDeferredRenderer::DoLightingPass(CFullScreenHelper& aFullscreenHelper, CRe
 	DEVICE_CONTEXT->PSSetShaderResources(1, 1, myDecalDiffuse->GetShaderResourceViewPointer());
 
 	DoDecals(aRenderer);
-
+	
 	myGbuffer->UnbindOutput();
 	ActivateIntermediate();
 	myGbuffer->BindInput();
@@ -365,6 +376,24 @@ CRenderPackage& CDeferredRenderer::GetFirstPackage()
 CRenderPackage& CDeferredRenderer::GetSecondPackage()
 {
 	return myGbuffer->GetRenderPackage(CGeometryBuffer::eEmissive);
+}
+
+void CDeferredRenderer::Do3DSprites(const CU::Matrix44f& aMatrix44, const CU::Matrix44f& aProjection)
+{
+	for(int i = 0; i < my3DSprites.Size(); ++i)
+	{
+		SRender3DSpriteMessage* spriteMessage = my3DSprites[i];
+		const CU::Vector4f pos =spriteMessage->myPosition * aMatrix44 * aProjection;
+
+		const CU::Vector4f screenizedPos = pos / pos.w;
+		CU::Vector2f screenPos = ((CU::Vector2f(screenizedPos.x, screenizedPos.y)) + CU::Vector2f::One) / 2;
+		screenPos.y = 1.f - screenPos.y;
+		if(pos.z > 0.f)
+		{
+			spriteMessage->mySprite->Render(screenPos, spriteMessage->mySize * (1.f / pos.z), spriteMessage->myPivot, spriteMessage->myRotation, spriteMessage->myRect, spriteMessage->myColor);
+		}
+	}
+	my3DSprites.RemoveAll();
 }
 
 void CDeferredRenderer::ActivateIntermediate()

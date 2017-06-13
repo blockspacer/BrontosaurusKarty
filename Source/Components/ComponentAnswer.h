@@ -55,6 +55,7 @@ enum class eComponentQuestionType
 	eCheckIfShouldCheckAbove,
 	eGetFinishTimeMinutes,
 	eGetFinishTimeSeconds,
+	eGetFinishTimeHundredthsSeconds,
 	eLength,
 };
 struct SComponentQuestionData

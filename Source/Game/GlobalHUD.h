@@ -3,7 +3,14 @@
 #include "HUDBase.h"
 #include "PlacementData.h"
 
+#define DEFAULT	{0.3f, 0.3f, 0.3f, 1.0f}
+#define YELLOW	{1.0f, 1.0f, 0.0f, 1.0f}
+#define GREEN	{0.0f, 1.0f, 0.0f, 1.0f}
+#define PINK	{1.0f, 0.0f, 1.0f, 1.0f}
+#define BLUE	{0.0f, 0.0f, 1.0f, 1.0f}
+
 class CRaceOverMessage;
+class CTextInstance;
 
 class CGlobalHUD : public CHUDBase, public Postmaster::ISubscriber
 {
@@ -40,12 +47,16 @@ private:
 	SHUDElement myMinimapElement;
 	SHUDElement myCountdownElement;
 
+	CU::Vector2f myTimeTextOffset;
+
 	//CSpriteInstance* myScoreboardBGSprite;
 	CSpriteInstance* myPortraitSprite;
 
 	CSpriteInstance* myMinimapPosIndicator;
 
 	CSpriteInstance* myCountdownSprite;
+
+	CTextInstance* myTimeText;
 
 	const unsigned char myNrOfPlayers;
 	bool myRaceOver;

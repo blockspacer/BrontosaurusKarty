@@ -102,6 +102,7 @@ void CLoadState::Render()
 
 void CLoadState::OnEnter(const bool /*aLetThroughRender*/)
 {
+	Audio::CAudioInterface::GetInstance()->PostEvent("StopAll");
 }
 
 void CLoadState::OnExit(const bool /*aLetThroughRender*/)
