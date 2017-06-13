@@ -370,6 +370,7 @@
     <ClInclude Include="BoostPadComponent.h" />
     <ClInclude Include="BoostPadComponentManager.h" />
     <ClInclude Include="BoxColliderComponent.h" />
+    <ClInclude Include="C3DSpriteComponent.h" />
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="CapsuleColliderComponent.h" />
     <ClInclude Include="CharacterControllerComponent.h" />
@@ -453,6 +454,7 @@
     <ClCompile Include="BoostPadComponent.cpp" />
     <ClCompile Include="BoostPadComponentManager.cpp" />
     <ClCompile Include="BoxColliderComponent.cpp" />
+    <ClCompile Include="C3DSpriteComponent.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="CapsuleColliderComponent.cpp" />
     <ClCompile Include="CharacterControllerComponent.cpp" />

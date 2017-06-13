@@ -73,6 +73,8 @@
     <ClCompile Include="ExplosionComponentManager.cpp" />
     <ClCompile Include="TimeTrackerComponent.cpp" />
     <ClCompile Include="TimeTrackerComponentManager.cpp" />
+    <ClCompile Include="DecalComponent.cpp" />
+    <ClCompile Include="C3DSpriteComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -155,5 +157,7 @@
     <ClInclude Include="ExplosionComponentManager.h" />
     <ClInclude Include="TimeTrackerComponent.h" />
     <ClInclude Include="TimeTrackerComponentManager.h" />
+    <ClInclude Include="DecalComponent.h" />
+    <ClInclude Include="C3DSpriteComponent.h" />
   </ItemGroup>
 </Project>

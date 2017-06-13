@@ -6,6 +6,7 @@
 #include "InstanceID.h"
 #include "Camera.h"
 #include "RenderCamera.h"
+#include "../Components/C3DSpriteComponent.h"
 
 class CCubemap;
 class CSkybox;
@@ -95,6 +96,8 @@ public:
 	
 	CRenderCamera& GetPlayerCamera(const int aPlayerIndex);
 	void SetShadowMapAABB(const CU::Vector3f& aCenterPosition, const CU::Vector3f& aExtents);
+	void AddSprite(C3DSpriteComponent* aC3DSpriteComponent);
+	void RemoveSprite(C3DSpriteComponent* aC3DSpriteComponent);
 
 private:
 	CShadowMap* myShadowMap;
@@ -111,6 +114,8 @@ private:
 	CU::GrowingArray<CDecalInstance, InstanceID> myDecals;
 	CU::Stack<InstanceID, InstanceID> myFreeDecals;
 
+	CU::GrowingArray<C3DSpriteComponent*> my3DSprites;
+
 	CU::GrowingArray<CFireEmitterInstance, InstanceID> myFireEmitters;
 
 	CU::StaticArray<CRenderCamera, static_cast<int>(eCameraType::eLength)> myRenderCameras;
@@ -122,6 +127,7 @@ private:
 
 	float myFogStart;
 	float myFogEnd;
+	
 };
 
 inline CSkybox& CScene::GetSkybox()

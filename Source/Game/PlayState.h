@@ -86,6 +86,7 @@ public:
 private:
 
 	void PostPostmasterEvent(short aGamepadIndex, const Postmaster::Message::InputEventData& aEventData);
+	const CU::Vector4f GetPlayerColor(const SParticipant::eInputDevice aInputDevice);
 	void CreatePlayer(CU::Camera& aCamera, const SParticipant& aIntputDevice, unsigned int aPlayerCount);
 	void CreateAI();
 
