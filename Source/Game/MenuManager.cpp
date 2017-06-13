@@ -290,7 +290,7 @@ void CMenuManager::Render()
 
 		if (myPointerSprite != nullptr)
 		{
-			myPointerSprite->RenderToGUI(L"__Menu");
+			//myPointerSprite->RenderToGUI(L"__Menu");
 		}
 	}
 
