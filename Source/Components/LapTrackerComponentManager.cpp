@@ -175,21 +175,24 @@ eMessageReturn CLapTrackerComponentManager::DoEvent(const CPlayerFinishedMessage
 
 eMessageReturn CLapTrackerComponentManager::DoEvent(const CAIFinishedMessage& aAIFinishedMessage)
 {
-	for (unsigned int i = 0; i < myComponents.Size(); i++)
+	if (myIsRaceOver == false)
 	{
-		if (myComponents[i]->GetParent() == aAIFinishedMessage.GetGameObject())
+		for (unsigned int i = 0; i < myComponents.Size(); i++)
 		{
-			if (CheckIfAlreadyInVictoryList(myComponents[i]->GetParent()) == true)
+			if (myComponents[i]->GetParent() == aAIFinishedMessage.GetGameObject())
 			{
-				continue;
+				if (CheckIfAlreadyInVictoryList(myComponents[i]->GetParent()) == true)
+				{
+					continue;
+				}
+				myWinnerPlacements.Add((myComponents[i]->GetParent()));
 			}
-			myWinnerPlacements.Add((myComponents[i]->GetParent()));
 		}
-	}
 
-	if (myWinnerPlacements.Size() >= myComponents.Size() - 1)
-	{
-		SendRaceOverMessage();
+		if (myWinnerPlacements.Size() >= myComponents.Size() - 1)
+		{
+			SendRaceOverMessage();
+		}
 	}
 
 	return eMessageReturn::eContinue;
@@ -270,10 +273,19 @@ void CLapTrackerComponentManager::AddEveryoneToVictoryList()
 		data.isPlayer = !qData.myCharacterInfo->isAI;
 		data.placement = i+1;
 
-		data.time = 1337; //how to fix time?
+		SComponentQuestionData timeQuestionData;
+		
+		myWinnerPlacements[i]->AskComponents(eComponentQuestionType::eGetFinishTimeMinutes, timeQuestionData);
+		data.minutesPassed = timeQuestionData.myInt; //how to fix time?
+		myWinnerPlacements[i]->AskComponents(eComponentQuestionType::eGetFinishTimeSeconds, timeQuestionData);
+		data.secondsPassed =  timeQuestionData.myInt; //how to fix time?
+		myWinnerPlacements[i]->AskComponents(eComponentQuestionType::eGetFinishTimeHundredthsSeconds, timeQuestionData);
+		data.hundredthsSecondsPassed = timeQuestionData.myInt; //how to fix time?
+
 
 		myPlacementData[i] = data;
 	}
+
 }
 
 bool CLapTrackerComponentManager::CheckIfAlreadyInVictoryList(CGameObject* aGameObject)
