@@ -31,9 +31,9 @@ CSailInCirclesManager& CSailInCirclesManager::GetInstance()
 	return *ourInstance;
 }
 
-CSailInCirclesComponent* CSailInCirclesManager::CreateComponent(const float aRPM, const float aRadius)
+CSailInCirclesComponent* CSailInCirclesManager::CreateComponent(const float aRPM, const float aVerticalRPM, const float aRadius, const float aVerticalAmplitude)
 {
-	mySailInCirclesComponent.Add(new CSailInCirclesComponent(aRPM, aRadius));
+	mySailInCirclesComponent.Add(new CSailInCirclesComponent(aRPM, aVerticalRPM, aRadius, aVerticalAmplitude));
 	CComponentManager::GetInstance().RegisterComponent(mySailInCirclesComponent.GetLast());
 	return mySailInCirclesComponent.GetLast();
 }

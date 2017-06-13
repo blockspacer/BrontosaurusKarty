@@ -2,10 +2,13 @@
 #include "SailInCirclesComponent.h"
 
 
-CSailInCirclesComponent::CSailInCirclesComponent(const float aRPM, const float aRadius)
+CSailInCirclesComponent::CSailInCirclesComponent(const float aRPM, const float aVerticalRPM, const float aRadius, const float aVerticalAmplitude)
 {
-	myRadius = aRadius;
 	myRPS = aRPM / 60.f;
+	myRPSVert = aVerticalRPM / 60.f;
+
+	myRadius = aRadius;
+	myVerticalAmplitude = aVerticalAmplitude;
 }
 
 CSailInCirclesComponent::~CSailInCirclesComponent()
@@ -16,12 +19,12 @@ void CSailInCirclesComponent::Update(const float aPastTime)
 {
 	CU::Vector3f offset;
 	offset.x = cosf(aPastTime * myRPS) * myRadius;
-	offset.y = sinf(aPastTime) * -0.25f;
+	offset.y = sinf(aPastTime * myRPSVert) * myVerticalAmplitude;
 	offset.z = sinf(aPastTime * myRPS) * myRadius;
 
 	CU::Vector3f forward;
-	forward.x = -sinf(aPastTime * myRPS)	* myRPS < 0.0f ? -1.0f : 1.0f;
-	forward.z = cosf(aPastTime * myRPS)		* myRPS < 0.0f ? -1.0f : 1.0f;
+	forward.x = myRPS >= 0.0f		? -sinf(aPastTime * myRPS)		: sinf(aPastTime * myRPS);//	* myRPS < 0.0f ? -1.0f : 1.0f;
+	forward.z = myRPS >= 0.0f		? cosf(aPastTime * myRPS)		: -cosf(aPastTime * myRPS);//	* myRPS < 0.0f ? -1.0f : 1.0f;
 
 	GetParent()->GetLocalTransform().LookAt(GetParent()->GetLocalTransform().GetPosition() + forward);
 	GetParent()->GetLocalTransform().myPosition = myInitialPosition + offset;
