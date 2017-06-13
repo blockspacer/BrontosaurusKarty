@@ -96,6 +96,9 @@ private:
 
 	float myLastJoyX;
 
+
+	CSpriteInstance* myAllReadySprite;
+
 	CMenuManager myMenuManager;
 	CU::GrowingArray<STextInput> myTextInputs;
 	CU::GrowingArray<SParticipant> myPlayers;
@@ -106,5 +109,6 @@ private:
 	bool myHasKeyboardResponded;
 	bool myShowStateBelow;
 	bool myIsInFocus;
+	bool myRenderAllReady;
 };
 

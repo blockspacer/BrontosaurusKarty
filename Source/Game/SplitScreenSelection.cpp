@@ -46,6 +46,8 @@ CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aS
 		part.NameTag = nullptr;
 		myGUIParts.Add(part);
 	}
+	myAllReadySprite = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/StartToCOntinue.dds");
+
 	myGUIParts[0].NameTag = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player1.dds");
 	myGUIParts[0].LeftArrow = new  CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player1_arrowLeft.dds");
 	myGUIParts[0].RightArrow = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player1_arrowRight.dds");
@@ -94,6 +96,8 @@ CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aS
 	myGUIParts[3].NameTag->SetPosition(CU::Vector2f(0.64f, 0.9f));
 	myGUIParts[3].LeftArrowOriginPosition = myGUIParts[3].LeftArrow->GetPosition();
 	myGUIParts[3].RightArrowOriginPosition = myGUIParts[3].RightArrow->GetPosition();
+
+	myRenderAllReady = false;
 }
 
 
@@ -118,6 +122,28 @@ eStateStatus CSplitScreenSelection::Update(const CU::Time & aDeltaTime)
 	{
 		myGUIParts[i].Update(aDeltaTime.GetSeconds());
 	}
+	bool allReady = true;
+	for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+	{
+		if (myPlayers[i].myIsReady == false)
+		{
+			allReady = false;
+			break;
+		}
+	}
+	if (myPlayers.Size() >= 1)
+	{
+		if (allReady == true)
+		{
+			myRenderAllReady = true;
+		}
+		else
+		{
+			myRenderAllReady = false;
+		}
+	}
+
+
 	return eStateStatus::eKeep;
 }
 
@@ -154,6 +180,10 @@ void CSplitScreenSelection::Render()
 		{
 			myGUIParts[i].ReadySprite->RenderToGUI(L"__Menu");
 		}
+	}
+	if (myRenderAllReady == true)
+	{
+		myAllReadySprite->RenderToGUI(L"__Menu");
 	}
 }
 
@@ -283,43 +313,48 @@ eAlignment CSplitScreenSelection::LoadAlignment(const CU::CJsonValue & aJsonValu
 
 void CSplitScreenSelection::RightChar(SParticipant& aParticipant)
 {
-	for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+	if (aParticipant.myIsReady == false)
 	{
-		if (myPlayers[i] == aParticipant)
+		for (unsigned int i = 0; i < myPlayers.Size(); ++i)
 		{
-			int index = i;
-			myGUIParts[index].RightArrow->SetPosition(CU::Vector2f(myGUIParts[index].RightArrowOriginPosition.x + 0.025f, myGUIParts[index].RightArrow->GetPosition().y));
-			break;
+			if (myPlayers[i] == aParticipant)
+			{
+				int index = i;
+				myGUIParts[index].RightArrow->SetPosition(CU::Vector2f(myGUIParts[index].RightArrowOriginPosition.x + 0.025f, myGUIParts[index].RightArrow->GetPosition().y));
+				break;
+			}
 		}
+		short u = static_cast<short>(aParticipant.mySelectedCharacter);
+		++u;
+		if (u >= static_cast<short>(SParticipant::eCharacter::eLength))
+		{
+			u = 0;
+		}
+		aParticipant.mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
 	}
-	short u = static_cast<short>(aParticipant.mySelectedCharacter);
-	++u;
-	if (u >= static_cast<short>(SParticipant::eCharacter::eLength))
-	{
-		u = 0;
-	}
-	aParticipant.mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
-
 }
 
 void CSplitScreenSelection::LeftChar(SParticipant& aParticipant)
 {
-	for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+	if (aParticipant.myIsReady == false)
 	{
-		if (myPlayers[i] == aParticipant)
+		for (unsigned int i = 0; i < myPlayers.Size(); ++i)
 		{
-			int index = i;
-			myGUIParts[index].LeftArrow->SetPosition(CU::Vector2f(myGUIParts[index].LeftArrowOriginPosition.x - 0.025f, myGUIParts[index].LeftArrow->GetPosition().y));
-			break;
+			if (myPlayers[i] == aParticipant)
+			{
+				int index = i;
+				myGUIParts[index].LeftArrow->SetPosition(CU::Vector2f(myGUIParts[index].LeftArrowOriginPosition.x - 0.025f, myGUIParts[index].LeftArrow->GetPosition().y));
+				break;
+			}
 		}
+		short u = static_cast<short>(aParticipant.mySelectedCharacter);
+		--u;
+		if (u < 0)
+		{
+			u = static_cast<short>(SParticipant::eCharacter::eLength) - 1;
+		}
+		aParticipant.mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
 	}
-	short u = static_cast<short>(aParticipant.mySelectedCharacter);
-	--u;
-	if (u < 0)
-	{
-		u = static_cast<short>(SParticipant::eCharacter::eLength) - 1;
-	}
-	aParticipant.mySelectedCharacter = static_cast<SParticipant::eCharacter>(u);
 }
 
 bool CSplitScreenSelection::PushLevel(const std::string & aString)
@@ -351,6 +386,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 				if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
 				{
 					found = true;
+					myPlayers[i].myIsReady = true;
 				}
 			}
 			if (found == false)
@@ -372,7 +408,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 			myStateStack.Pop();
 			break;
 		case CU::GAMEPAD::START:
-			if (myPlayers.Size() >= 1)
+			if (myRenderAllReady == true)
 			{
 				myMenuManager.ourParticipants = myPlayers;
 				myStateStack.PushState(new CMenuState(myStateStack, "Json/Menu/ControllerLevelSelect.json"));
@@ -450,6 +486,16 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 					myPlayers.Add(participant);
 					myPlayerInputDevices[myPlayers.Size() - 1] = static_cast<SParticipant::eInputDevice>(aInputMessage.myGamepadIndex);
 					myGUIParts[myPlayers.Size() - 1].hasJoined = true;
+				}
+			}
+			else
+			{
+				for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+				{
+					if (myPlayers[i].myInputDevice == SParticipant::eInputDevice::eKeyboard)
+					{
+						myPlayers[i].myIsReady = true;
+					}
 				}
 			}
 			break;		

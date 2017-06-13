@@ -34,45 +34,46 @@ CColliderComponentManager::~CColliderComponentManager()
 
 CColliderComponent* CColliderComponentManager::CreateComponent(SColliderData* aColliderData, ComponentId anId)
 {
+	CColliderComponent* newComponent = nullptr;
 	switch (aColliderData->myType)
 	{
 	case SColliderData::eColliderType::eBox:
-		myColliderComponents.Add(CreateBoxCollider(*reinterpret_cast<SBoxColliderData*>(aColliderData),anId));
+		newComponent = (CreateBoxCollider(*reinterpret_cast<SBoxColliderData*>(aColliderData),anId));
 		break;
 	case SColliderData::eColliderType::eSphere:
-		myColliderComponents.Add(CreateSphereCollider(*reinterpret_cast<SSphereColliderData*>(aColliderData),anId));
+		newComponent = (CreateSphereCollider(*reinterpret_cast<SSphereColliderData*>(aColliderData),anId));
 		break;
 	case SColliderData::eColliderType::eCapsule:
-		myColliderComponents.Add(CreateCapsuleCollider(*reinterpret_cast<SCapsuleColliderData*>(aColliderData),anId));
+		newComponent = (CreateCapsuleCollider(*reinterpret_cast<SCapsuleColliderData*>(aColliderData),anId));
 		break;
 	case SColliderData::eColliderType::eMesh:
 		{
-			CColliderComponent* collider = CreateMeshCollider(*reinterpret_cast<SMeshColliderData*>(aColliderData),anId);
-			if(collider == nullptr)
-			{
-				return nullptr;
-			}
-			myColliderComponents.Add(collider);
+			newComponent = CreateMeshCollider(*reinterpret_cast<SMeshColliderData*>(aColliderData), anId);
 		}
 		break;
 	case SColliderData::eColliderType::eConcaveMesh:
-		myColliderComponents.Add(CreateConcaveMeshCollider(*static_cast<SConcaveMeshColliderData*>(aColliderData), anId));
+		newComponent = (CreateConcaveMeshCollider(*static_cast<SConcaveMeshColliderData*>(aColliderData), anId));
 		break;
 	case SColliderData::eColliderType::eRigidbody:
-		myColliderComponents.Add(CreateRigidbody(*reinterpret_cast<SRigidBodyData*>(aColliderData),anId));
+		newComponent = (CreateRigidbody(*reinterpret_cast<SRigidBodyData*>(aColliderData),anId));
 		break;
 	default:
 		break;
+	}
+	if (!newComponent)
+	{
+		return nullptr;
 	}
 
 	if (aColliderData->myType != SColliderData::eColliderType::eRigidbody &&
 		aColliderData->myType != SColliderData::eColliderType::eConcaveMesh)
 	{
-		myColliderComponents.GetLast()->GetShape()->SetCollisionLayers(aColliderData->myLayer, aColliderData->myCollideAgainst);
+		newComponent->GetShape()->SetCollisionLayers(aColliderData->myLayer, aColliderData->myCollideAgainst);
 	}
 
-	CComponentManager::GetInstance().RegisterComponent(myColliderComponents.GetLast());
-	return myColliderComponents.GetLast();
+	myColliderComponents.Add(newComponent);
+	CComponentManager::GetInstance().RegisterComponent(newComponent);
+	return newComponent;
 }
 
 void CColliderComponentManager::Update()
@@ -202,7 +203,7 @@ CColliderComponent* CColliderComponentManager::CreateConcaveMeshCollider(const S
 {
 	if (!std::ifstream(aMeshColliderData.myPath).good())
 	{
-		DL_MESSAGE_BOX("Mesh collider not found %s", aMeshColliderData.myPath);
+		//DL_MESSAGE_BOX("Mesh collider not found %s", aMeshColliderData.myPath);
 		return nopeptr;
 	}
 	

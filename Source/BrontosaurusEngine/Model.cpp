@@ -77,9 +77,7 @@ CModel::~CModel()
 	//SAFE_DELETE(myForwardEffect); //make sure this releases stuff
 
 	SAFE_DELETE(mySurface);
-
-	mySceneAnimator = nullptr;
-	//SAFE_DELETE(myBindposeSceneAnimator); MEMORY LEEK, but I cannot fix it right now
+	SAFE_DELETE(myBindposeSceneAnimator);
 }
 
 bool CModel::Initialize(CEffect* aEffect, CSurface* aSurface)
