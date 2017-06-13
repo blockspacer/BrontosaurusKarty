@@ -759,9 +759,20 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 
 void CPlayState::CreateAI()
 {
+	static short i = 0;
+	SParticipant::eCharacter character;
+	character = static_cast<SParticipant::eCharacter>(i);
+	++i;
+	if (i >= static_cast<short>(SParticipant::eCharacter::eLength))
+	{
+		i = rand() % (static_cast<short>(SParticipant::eCharacter::eLength) - 1);
+	}
+	CU::CJsonValue playerJson;
+	std::string errorString = playerJson.Parse("Json/KartStats.json");
+	playerJson = playerJson.at("Karts")[static_cast<short>(character)];
 
 	CGameObject* secondPlayerObject = myGameObjectManager->CreateGameObject();
-	CModelComponent* playerModel = myModelComponentManager->CreateComponent("Models/Animations/M_Kart_01.fbx");
+	CModelComponent* playerModel = myModelComponentManager->CreateComponent(playerJson.at("Model").GetString());
 	playerModel->SetIsShadowCasting(false);
 	secondPlayerObject->AddComponent(playerModel);
 	secondPlayerObject->AddComponent(new Component::CKartModelComponent(myPhysicsScene));
@@ -787,8 +798,11 @@ void CPlayState::CreateAI()
 		CLapTrackerComponent* lapTrackerComponent = CLapTrackerComponentManager::GetInstance()->CreateAndRegisterComponent();
 		playerObject->AddComponent(lapTrackerComponent);
 	}
+	SParticipant participant;
+	participant.mySelectedCharacter = character;
+	participant.myInputDevice = static_cast<SParticipant::eInputDevice>(-1);
 
-	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent(*playerModel);
+	CKartControllerComponent* kartComponent = myKartControllerComponentManager->CreateAndRegisterComponent(*playerModel,participant);
 
 	myPlayerControllerManager->CreateAIController(*kartComponent);
 
