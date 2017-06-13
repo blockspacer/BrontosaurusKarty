@@ -12,6 +12,7 @@ CController::CController(CKartControllerComponent& aKartComponent)
 
 CController::~CController()
 {
+	SAFE_DELETE(myAIController);
 }
 
 void CController::Update(const float aDeltaTime)

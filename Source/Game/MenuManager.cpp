@@ -33,6 +33,7 @@ CMenuManager::CMenuManager() : myPointerSprite(nullptr), myShouldRender(true), m
 
 CMenuManager::~CMenuManager()
 {
+	SAFE_DELETE(myPointerSprite);
 }
 
 void CMenuManager::CreateClickArea(CU::GrowingArray<std::string> someActions, CU::GrowingArray<std::string> someArguments, const int aSpriteID, CU::Vector4f aRect, const unsigned char aLayer)
@@ -77,7 +78,7 @@ int CMenuManager::CreateSprite(const std::string& aFolder, const CU::Vector2f aP
 	int index = 0;
 	while (CU::CJsonValue::FileExists(aFolder + "/" + std::to_string(index) + ".dds"))
 	{
-		menuSprite.mySprites.Add(new CSpriteInstance((aFolder + "/" + std::to_string(index) + ".dds").c_str()));
+		menuSprite.mySprites.Add(new CSpriteInstance(aFolder + "/" + std::to_string(index) + ".dds"));
 		menuSprite.mySprites[index]->SetPosition(aPosition);
 		menuSprite.mySprites[index]->SetPivot(anOrigin);
 		++index;
@@ -89,14 +90,14 @@ int CMenuManager::CreateSprite(const std::string& aFolder, const CU::Vector2f aP
 
 		if (CU::CJsonValue::FileExists(aFolder + "/" + "default.dds"))
 		{
-			menuSprite.mySprites[0] = new CSpriteInstance((aFolder + "/" + "default.dds").c_str());
+			menuSprite.mySprites[0] = new CSpriteInstance(aFolder + "/" + "default.dds");
 			menuSprite.mySprites[0]->SetPosition(aPosition);
 			menuSprite.mySprites[0]->SetPivot(anOrigin);
 		}
 
 		if (CU::CJsonValue::FileExists(aFolder + "/" + "onHover.dds"))
 		{
-			menuSprite.mySprites[1] = new CSpriteInstance((aFolder + "/" + "onHover.dds").c_str());
+			menuSprite.mySprites[1] = new CSpriteInstance(aFolder + "/" + "onHover.dds");
 			menuSprite.mySprites[1]->SetPosition(aPosition);
 			menuSprite.mySprites[1]->SetPivot(anOrigin);
 		}
@@ -107,7 +108,7 @@ int CMenuManager::CreateSprite(const std::string& aFolder, const CU::Vector2f aP
 
 		if (CU::CJsonValue::FileExists(aFolder + "/" + "onClick.dds"))
 		{
-			menuSprite.mySprites[2] = new CSpriteInstance((aFolder + "/" + "onClick.dds").c_str());
+			menuSprite.mySprites[2] = new CSpriteInstance(aFolder + "/" + "onClick.dds");
 			menuSprite.mySprites[2]->SetPosition(aPosition);
 			menuSprite.mySprites[2]->SetPivot(anOrigin);
 		}
@@ -118,7 +119,7 @@ int CMenuManager::CreateSprite(const std::string& aFolder, const CU::Vector2f aP
 
 		if (CU::CJsonValue::FileExists(aFolder + "/" + "inactive.dds"))
 		{
-			menuSprite.mySprites[3] = new CSpriteInstance((aFolder + "/" + "inactive.dds").c_str());
+			menuSprite.mySprites[3] = new CSpriteInstance(aFolder + "/" + "inactive.dds");
 			menuSprite.mySprites[3]->SetPosition(aPosition);
 			menuSprite.mySprites[3]->SetPivot(anOrigin);
 		}
@@ -157,12 +158,7 @@ unsigned CMenuManager::CreateText(const std::string& aFontName, const CU::Vector
 
 void CMenuManager::SetMousePointer(CSpriteInstance* aMousePointer)
 {
-	if (aMousePointer != nullptr)
-	{
-		delete myPointerSprite;
-		myPointerSprite = nullptr;
-	}
-
+	delete myPointerSprite;
 	myPointerSprite = aMousePointer;
 	myPointerSprite->SetPosition(ourMousePosition);
 }

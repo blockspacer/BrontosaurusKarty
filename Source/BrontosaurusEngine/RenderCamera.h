@@ -14,6 +14,9 @@ public:
 	CRenderCamera(const bool deferred = true);
 	~CRenderCamera();
 
+	CRenderCamera(const CRenderCamera& aCopy);
+	CRenderCamera& operator=(const CRenderCamera& aCopy);
+
 	void InitPerspective(const float aFov, const float aWidth, const float aHeight, const float aFar, const float aNear, ID3D11Texture2D * aTexture = nullptr, DXGI_FORMAT aFormat = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM);
 	void InitOrthographic(const float aWidth, const float aHeight, const float aFar, const float aNear, const unsigned int aTextureWidth, const unsigned int aTextureHeight, ID3D11Texture2D * aTexture = nullptr, DXGI_FORMAT aFormat = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM);
 	void ShadowInit();

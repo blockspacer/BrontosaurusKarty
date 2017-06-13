@@ -79,7 +79,7 @@ CLocalHUD::~CLocalHUD()
 
 	SAFE_DELETE(myBlueShellDangerSprite);
 	SAFE_DELETE(myRedShellDangerSprite);
-
+	myItemGuiElement.mySprite = nullptr;
 }
 
 void CLocalHUD::LoadHUD()

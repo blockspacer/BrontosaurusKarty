@@ -27,12 +27,12 @@ public:
 	CSprite& operator=(const CSprite& aSprite);
 	CSprite& operator=(CSprite&& aSprite);
 	
-	void Init(const char* aTexturePath);
+	void Init(const std::string& aTexturePath);
 	void Render(const CU::Vector2f& aPosition, const CU::Vector2f& aSize, const CU::Vector2f& aPivot, float aRotation, const CU::Vector4f& aRect, const CU::Vector4f& aColor);
 	CU::Vector2f GetTextureSizeFloat() const;
 private:
 	void CreateEffect();
-	void CreateSurface(const char* aTexturePath);
+	void CreateSurface(const std::string& aTexturePath);
 	bool InitBuffers();
 
 	void UpdateAndSetVertexConstantBuffer(const CU::Vector2f& aPosition, const CU::Vector2f& aSize, const CU::Vector2f& aPivot, float aRotiation, const CU::Vector4f& aRectconst, const CU::Vector4f& aColor);

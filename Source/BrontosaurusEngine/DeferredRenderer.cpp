@@ -73,7 +73,11 @@ CDeferredRenderer::~CDeferredRenderer()
 	SAFE_RELEASE(mySpotLightBuffer);
 	SAFE_DELETE(myPointLightModel);
 	SAFE_DELETE(mySpotLightModel);
+	SAFE_DELETE(myDecalModel);
 
+#ifdef _ENABLE_RENDERMODES
+	SAFE_DELETE(myInputWrapper);
+#endif
 }
 
 void CDeferredRenderer::InitLightModels()

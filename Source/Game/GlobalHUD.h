@@ -8,7 +8,6 @@ class CRaceOverMessage;
 class CGlobalHUD : public CHUDBase, public Postmaster::ISubscriber
 {
 public:
-
 	CGlobalHUD(int aLevelIndex);
 	~CGlobalHUD();
 
@@ -41,10 +40,9 @@ private:
 	SHUDElement myMinimapElement;
 	SHUDElement myCountdownElement;
 
-	CSpriteInstance* myScoreboardBGSprite;
+	//CSpriteInstance* myScoreboardBGSprite;
 	CSpriteInstance* myPortraitSprite;
 
-	CSpriteInstance* myMinimapBGSprite;
 	CSpriteInstance* myMinimapPosIndicator;
 
 	CSpriteInstance* myCountdownSprite;

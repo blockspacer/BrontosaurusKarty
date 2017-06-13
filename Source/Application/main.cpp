@@ -2,6 +2,7 @@
 #include "../ThreadedPostmaster/Postmaster.h"
 #include "ParticleEmitterManager.h"
 
+#include "MemoryLeekLogger.h"
 
 void Init(int argc, char* argv[]);
 unsigned int DebugDrawerFlags();
@@ -23,6 +24,7 @@ unsigned int DebugDrawerFlags();
 int main(int argc, char* argv[])
 {
 	Init(argc, argv);
+	DumpMemoryLeeks();
 	return 0;
 }
 #else
@@ -97,11 +99,9 @@ void Init(int argc, char* argv[])
 			engineParams.myThreadRender = false;
 		}
 
-
-
-		engineParams.myInitCallbackFunction = std::bind(&CGame::Init, &game);
-		engineParams.myUpdateCallbackFunction = std::bind(&CGame::Update, &game, std::placeholders::_1);
-		engineParams.myRenderCallbackFunction = std::bind(&CGame::Render, &game);
+		engineParams.myInitCallbackFunction = [&game]() { game.Init(); };
+		engineParams.myUpdateCallbackFunction = [&game](const CU::Time& aDeltaTime) -> bool { return game.Update(aDeltaTime); };
+		engineParams.myRenderCallbackFunction = [&game]() { game.Render(); };
 		engineParams.myDebugFlags = DebugDrawerFlags();
 
 		CEngine::GetInstance()->Init(engineParams);
