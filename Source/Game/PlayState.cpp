@@ -105,7 +105,6 @@
 #include "C3DSpriteComponent.h"
 #include "CameraTilter.h"
 #include "SplitScreenSelection.h"
-#include "PointLightComponent.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -640,7 +639,7 @@ const CU::Vector4f CPlayState::GetPlayerColor(const int aInputDevice)
 		break;
 	case 1:
 
-		color = BLUE;
+		color = GREEN;
 		
 		break;
 	case 2:
@@ -650,7 +649,7 @@ const CU::Vector4f CPlayState::GetPlayerColor(const int aInputDevice)
 		break;
 	case 3:
 
-		color = GREEN;
+		color = BLUE;
 		
 		break;
 	default:
@@ -694,17 +693,6 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	headLightObject2->AddComponent(headLight2);
 
 	secondPlayerObject->AddComponent(headLightObject2);
-
-
-	PointLightComponent* pointLight = CLightComponentManager::GetInstance().CreateAndRegisterPointLightComponent();
-
-	CU::Vector4f color = GetPlayerColor(aCurrentPlayer);
-	pointLight->SetColor({color.x, color.y, color.z});
-	pointLight->SetRange(5.0f);
-	pointLight->SetIntensity(1.0f);
-	pointLight->SetOffsetToParent({ 0.0f, 1.25f, 0.0f });
-	secondPlayerObject->AddComponent(pointLight);
-
 
 
 	//
