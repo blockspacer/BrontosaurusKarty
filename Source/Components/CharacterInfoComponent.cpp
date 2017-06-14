@@ -2,10 +2,11 @@
 #include "CharacterInfoComponent.h"
 
 
-CCharacterInfoComponent::CCharacterInfoComponent(SParticipant::eCharacter aCharacterType, bool aIsAI)
+CCharacterInfoComponent::CCharacterInfoComponent(SParticipant::eCharacter aCharacterType, bool aIsAI, unsigned char aInputDevice)
 {
 	myCharacterInfo.characterType = aCharacterType;
 	myCharacterInfo.isAI = aIsAI;
+	myCharacterInfo.inputDevice = aInputDevice;
 }
 
 CCharacterInfoComponent::~CCharacterInfoComponent()
