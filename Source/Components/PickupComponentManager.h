@@ -16,8 +16,8 @@ public:
 	CItemPickupComponent* CreateWeaponCratePickupComponent(const float aRespawnTime, CItemFactory& aItemFactory);
 	CItemPickupComponent* GetWeaponCratePickupComponent(const int aId);
 	void DeactivateWeaponCratePickup(const int aId);
-
 	void Update(const float aDeltaTime);
+	void AddDecalsToItemsboxes(CScene& aScene, CGameObjectManager* gameObjectManager);
 private:
 	std::map<int, CItemPickupComponent*> myWeaponCrates;
 
