@@ -105,7 +105,7 @@ void CRedShellBehaviourComponent::Update(const float aDeltaTime)
 	{
 		if (myCurrentUser != myKartObjects->At(i))
 		{
-			if (CU::Vector3f(myKartObjects->At(i)->GetWorldPosition() - newRotation.GetPosition()).Length2() < 40*40 && myUserPlacement > CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myKartObjects->At(i)))
+			if (CU::Vector3f(myKartObjects->At(i)->GetWorldPosition() - newRotation.GetPosition()).Length2() < 20*20 && myUserPlacement > CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myKartObjects->At(i)))
 			{
 				newRotation.LookAt(myKartObjects->At(i)->GetWorldPosition());
 
