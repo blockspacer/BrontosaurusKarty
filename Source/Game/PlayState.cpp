@@ -716,11 +716,14 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	// decal
 	CDecalComponent* decal = new CDecalComponent(*myScene);
 	CComponentManager::GetInstance().RegisterComponent(decal);
-	decal->SetDecalIndex(0);
+	unsigned int decalIndex = playerJson.at("DropShadowDecalIndex").GetUInt();
+	decal->SetDecalIndex(decalIndex);
 
 	CGameObject* decalHolder = myGameObjectManager->CreateGameObject();
-	decalHolder->GetLocalTransform().myPosition.Set(0.0f, -0.88f, 0.4f);
+	decalHolder->GetLocalTransform().myPosition.Set(0.0f, -0.9f, 0.4f);
 	decalHolder->GetLocalTransform().SetScale({ 2.0f, 2.f, 2.f });
+	decalHolder->GetLocalTransform().RotateAroundAxis(3.141592f, CU::Axees::Y);
+
 	decalHolder->AddComponent(decal);
 	secondPlayerObject->AddComponent(decalHolder);
 	//
@@ -854,7 +857,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	//playerObject->AddComponent(playerColliderComponent);
 	playerObject->AddComponent(playerTriggerColliderComponent);
 	playerObject->AddComponent(rigidComponent);
-	CComponent* characterInfoComponent = new CCharacterInfoComponent(aParticipant.mySelectedCharacter, false);
+	CComponent* characterInfoComponent = new CCharacterInfoComponent(aParticipant.mySelectedCharacter, false, aCurrentPlayer);
 	CComponentManager::GetInstance().RegisterComponent(characterInfoComponent);
 	playerObject->AddComponent(characterInfoComponent);
 
@@ -913,12 +916,15 @@ void CPlayState::CreateAI()
 	// decal
 	CDecalComponent* decal = new CDecalComponent(*myScene);
 	CComponentManager::GetInstance().RegisterComponent(decal);
-	decal->SetDecalIndex(0);
+	unsigned int decalIndex = playerJson.at("DropShadowDecalIndex").GetUInt();
+	decal->SetDecalIndex(decalIndex);
 
 	CGameObject* decalHolder = myGameObjectManager->CreateGameObject();
 	decalHolder->GetLocalTransform().myPosition.Set(0.0f, -0.88f, 0.4f);
 	decalHolder->GetLocalTransform().SetScale({ 2.0f, 2.f, 2.f });
 	decalHolder->AddComponent(decal);
+
+
 	secondPlayerObject->AddComponent(decalHolder);
 	//
 
@@ -987,7 +993,7 @@ void CPlayState::CreateAI()
 	playerObject->AddComponent(playerTriggerColliderComponent);
 	playerObject->AddComponent(rigidComponent);
 
-	CComponent* characterInfoComnponent = new CCharacterInfoComponent(SParticipant::eCharacter::eVanBrat, true);
+	CComponent* characterInfoComnponent = new CCharacterInfoComponent(static_cast<SParticipant::eCharacter>(i), true, 200);
 	CComponentManager::GetInstance().RegisterComponent(characterInfoComnponent);
 	playerObject->AddComponent(characterInfoComnponent);
 
