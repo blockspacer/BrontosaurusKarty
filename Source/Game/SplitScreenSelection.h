@@ -94,7 +94,7 @@ private:
 	bool PushLevel(const std::string& aString);
 	bool BackToMenu(const std::string& aString);
 
-	float myLastJoyX;
+	float myLastJoyX[4];
 
 
 	CSpriteInstance* myAllReadySprite;
