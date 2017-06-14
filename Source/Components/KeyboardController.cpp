@@ -142,7 +142,7 @@ void CKeyboardController::PressedKey(const CU::SInputMessage & aInputMessage)
 		break;
 
 	case CU::eKeys::RETURN:
-		myControllerComponent.GetHit();
+		//myControllerComponent.GetHit();
 		break;
 	}
 }
