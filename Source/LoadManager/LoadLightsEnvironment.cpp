@@ -107,3 +107,10 @@ int LoadSailInCircles(KLoader::SLoadedComponentData someData)
 	CComponent* comp = CSailInCirclesManager::GetInstance().CreateComponent(rpm, rpmVert, radius, verticalAmplitude);
 	return comp->GetId();
 }
+
+int LoadSnurr(KLoader::SLoadedComponentData someData)
+{
+	CU::Vector3f rotationVector = someData.myData.at("speeds").GetVector3f("xyz");
+	CComponent* comp = CSailInCirclesManager::GetInstance().CreateSnurrComponent(rotationVector);
+	return comp->GetId();
+}
