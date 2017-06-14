@@ -16,12 +16,10 @@ void CParticleEmitterManager::ClearActiveEmitters()
 	for (int i = myInstances.Size() - 1; i >= 0 ; --i)
 	{
 		Deactivate(myInstances[i]->GetInstanceID());
-		while(myInstances[i]->IsDone() == false)
-		{
-			
-		}
+		
 		Release(myInstances[i]->GetInstanceID());
 		
+
 	}
 }
 
@@ -143,8 +141,9 @@ void CParticleEmitterManager::Release(Particles::ParticleEmitterID anInstanceId)
 	{
 		if(myInstances[i]->GetInstanceID() == anInstanceId)
 		{
-			CU::GrowingArray<CParticleEmitterInstance*>& freeInstances = GetFreeInstances(myInstances[i]->GetEmitterId());
+			
 			myInstances[i]->Release();
+			
 			break;
 		}
 	}
