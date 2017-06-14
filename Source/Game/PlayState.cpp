@@ -636,24 +636,44 @@ const CU::Vector4f CPlayState::GetPlayerColor(const int aInputDevice)
 	switch (aInputDevice)
 	{
 	case 0:
-
-		color = YELLOW;
-		
+		if(myGlobalHUD != nullptr)
+		{
+			color = myGlobalHUD->GetPlayer1Color();
+		}
+		else
+		{
+			color = CU::Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
+		}
 		break;
 	case 1:
-
-		color = BLUE;
-		
+		if (myGlobalHUD != nullptr)
+		{
+			color = myGlobalHUD->GetPlayer2Color();
+		}
+		else
+		{
+			color = CU::Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
+		}
 		break;
 	case 2:
-
-		color = GREEN;
-		
+		if (myGlobalHUD != nullptr)
+		{
+			color = myGlobalHUD->GetPlayer3Color();
+		}
+		else
+		{
+			color = CU::Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
+		}
 		break;
 	case 3:
-
-		color = PINK;
-		
+		if (myGlobalHUD != nullptr)
+		{
+			color = myGlobalHUD->GetPlayer4Color();
+		}
+		else
+		{
+			color = CU::Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
+		}
 		break;
 	default:
 		color = DEFAULT;
