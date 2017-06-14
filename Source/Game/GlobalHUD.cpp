@@ -133,7 +133,7 @@ void CGlobalHUD::Render()
 					break;
 				}
 				
-				// TODO fixa detta
+
 				myPortraitSprite->SetColor(FULL_COL);
 				if (myWinners[i].isPlayer == true)
 				{
