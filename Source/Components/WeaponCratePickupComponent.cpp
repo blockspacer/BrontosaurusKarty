@@ -53,6 +53,8 @@ void CItemPickupComponent::Update(const float aDeltaTime)
 			myScale = 1.0f;
 			GetParent()->GetLocalTransform().SetScale(CU::Vector3f(myScale, myScale, myScale));
 		}
+		GetParent()->NotifyComponents(eComponentMessageType::eMoving, SComponentMessageData());
+
 	}
 }
 
@@ -64,6 +66,12 @@ void CItemPickupComponent::DoMyEffect(CComponent* theCollider)
 	theCollider->GetParent()->NotifyComponents(eComponentMessageType::eGiveItem, data);
 	SComponentMessageData sound; sound.myString = "PlayPickup";
 	theCollider->GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
+
+
+	SComponentMessageData data2;
+	data2.myBool = false;
+	GetParent()->NotifyComponents(eComponentMessageType::eSetVisibility, data2);
+
 	myScale = 0.001f;
 	myTimer = 0.0f;
 	myFlippedVisibility = false;

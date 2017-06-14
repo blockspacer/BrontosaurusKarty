@@ -381,6 +381,9 @@ void CPlayState::Load()
 
 	//--------------------------------------------------------------
 
+	CPickupComponentManager::GetInstance()->AddDecalsToItemsboxes(*myScene, myGameObjectManager);
+
+	//--------------------------------------------------------------
 
 	myIsLoaded = true;
 
