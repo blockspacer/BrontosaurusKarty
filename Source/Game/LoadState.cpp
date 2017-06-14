@@ -48,7 +48,7 @@ void CLoadState::Init()
 	myControlSchemeSprite->SetPivot({ 0.5f, 0.5f });
 	myControlSchemeSprite->SetPosition({ 0.5f, 0.5f });
 
-	myTDLogoSprite = new CSpriteInstance("Sprites/Loading/birdy.dds");
+	myTDLogoSprite = new CSpriteInstance("Sprites/Loading/rotationIcon.dds");
 	myTDLogoSprite->SetPivot({ 0.5f, -0.5f });
 	myTDLogoSprite->SetPosition({ 0.76f, 0.68f });
 
