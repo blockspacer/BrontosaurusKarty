@@ -42,6 +42,7 @@ public:
 	void AddRef();
 	void Release();
 	bool ShouldKeep() const;
+	bool HasReferences() const;
 private:
 	void Init();
 	void EmitParticle();

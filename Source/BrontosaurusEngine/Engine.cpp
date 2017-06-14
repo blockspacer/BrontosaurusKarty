@@ -96,8 +96,7 @@ void CEngine::Init(SInitEngineParams& aInitEngineParams)
 	float time = timerMgr.GetTimer(handle).GetLifeTime().GetMilliseconds();
 	ENGINE_LOG("Engine Inited in %f ms", time);
 
-	CParticleEmitterManager::Create();
-	CParticleEmitterManager::GetInstance().LoadParticleLibrary("Json/Particles.json");
+	
 }
 
 void CEngine::Render()

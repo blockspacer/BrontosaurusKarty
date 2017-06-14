@@ -147,6 +147,11 @@ bool CParticleEmitterInstance::ShouldKeep() const
 	return myRefs > 0 || myIsActive == true || IsDone() == false;
 }
 
+bool CParticleEmitterInstance::HasReferences() const
+{
+	return myRefs > 0;
+}
+
 void CParticleEmitterInstance::Init()
 {
 	SetVisibility(true);
