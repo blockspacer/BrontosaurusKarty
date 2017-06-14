@@ -59,6 +59,12 @@ void CGlobalHUD::LoadHUD()
 
 void CGlobalHUD::Update(const float aDeltaTime)
 {
+	float cappedDeltaTime = aDeltaTime;
+	if(cappedDeltaTime > 1.0f / 30.0f)
+	{
+		cappedDeltaTime = 1.0f / 30.0f;
+	}
+
 	for (int i = 0; i < myKartObjects->Size(); ++i)
 	{
 		SComponentQuestionData percentDoneQuestion;
@@ -68,7 +74,7 @@ void CGlobalHUD::Update(const float aDeltaTime)
 			float distancePercent = percentDoneQuestion.myFloat;
 			float xPos = ((myMinimapElement.mySprite->GetPosition().x + distancePercent) * 0.87f) + 0.055f;
 			CLAMP(xPos, 0.1f, 0.8f);
-			myMinimapXPositions[i] = myMinimapXPositions[i] + 1 * aDeltaTime * (xPos - myMinimapXPositions[i]);
+			myMinimapXPositions[i] = myMinimapXPositions[i] + 1 * cappedDeltaTime * (xPos - myMinimapXPositions[i]);
 
 		}
 	}
@@ -255,6 +261,11 @@ void CGlobalHUD::StartCountdown()
 					myCountdownSprite->SetRect({ 0.f,0.00f,1.f,0.25f });
 					POSTMASTER.Broadcast(new CRaceStartedMessage());
 					POSTMASTER.GetThreadOffice().HandleMessages();
+
+					for (unsigned int i = 0; i < myMinimapXPositions.Size(); i++)
+					{
+						myMinimapXPositions[i] = 0.0f;
+					}
 				}
 			}
 		}

@@ -62,6 +62,7 @@ public:
 
 	inline float GetMaxSpeed() const;
 	inline float GetMaxSpeed2() const;
+	inline float GetMaxSpeedWithModifiers() const;
 	inline float GetMaxAcceleration() const;
 	inline float GetAcceleratiot();
 	inline bool GetIsControlledByAI() const;
@@ -198,6 +199,10 @@ float CKartControllerComponent::GetMaxSpeed2() const
 	return maxSpeed * maxSpeed;
 }
 
+inline float CKartControllerComponent::GetMaxSpeedWithModifiers() const
+{
+	return GetMaxSpeed() * myMaxSpeedModifier;
+}
 float CKartControllerComponent::GetMaxAcceleration() const
 {
 	return myMaxAcceleration;
