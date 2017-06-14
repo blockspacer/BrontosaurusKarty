@@ -857,7 +857,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	//playerObject->AddComponent(playerColliderComponent);
 	playerObject->AddComponent(playerTriggerColliderComponent);
 	playerObject->AddComponent(rigidComponent);
-	CComponent* characterInfoComponent = new CCharacterInfoComponent(aParticipant.mySelectedCharacter, false, aCurrentPlayer);
+	CComponent* characterInfoComponent = new CCharacterInfoComponent(aParticipant.mySelectedCharacter, true, aCurrentPlayer);
 	CComponentManager::GetInstance().RegisterComponent(characterInfoComponent);
 	playerObject->AddComponent(characterInfoComponent);
 
@@ -993,7 +993,7 @@ void CPlayState::CreateAI()
 	playerObject->AddComponent(playerTriggerColliderComponent);
 	playerObject->AddComponent(rigidComponent);
 
-	CComponent* characterInfoComnponent = new CCharacterInfoComponent(static_cast<SParticipant::eCharacter>(i), true, 200);
+	CComponent* characterInfoComnponent = new CCharacterInfoComponent(static_cast<SParticipant::eCharacter>(i), false, 200);
 	CComponentManager::GetInstance().RegisterComponent(characterInfoComnponent);
 	playerObject->AddComponent(characterInfoComnponent);
 

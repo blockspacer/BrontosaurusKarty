@@ -163,7 +163,7 @@ void CLapTrackerComponent::Receive(const eComponentMessageType aMessageType, con
 				GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, data);
 			}
 
-			if (myLapIndex == 4)
+			if (myLapIndex == 2)
 			{
 				GetParent()->NotifyOnlyComponents(eComponentMessageType::eFinishedRace, SComponentMessageData());
 				if (GetParent()->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
