@@ -116,8 +116,22 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 
 }
 
+void CKartControllerComponent::ReleaseParticleSystem(int aBoostEmmiterhandle)
+{
+	CParticleEmitterManager::GetInstance().Deactivate(aBoostEmmiterhandle);
+	CParticleEmitterManager::GetInstance().Release(aBoostEmmiterhandle);
+}
+
 CKartControllerComponent::~CKartControllerComponent()
 {
+	ReleaseParticleSystem(myBoostEmmiterhandle);
+	ReleaseParticleSystem(myGotHitEmmiterhandle);
+	ReleaseParticleSystem(myStarEmmiterhandle1);
+	ReleaseParticleSystem(myStarEmmiterhandle2);
+	ReleaseParticleSystem(mySlowMovment);
+	ReleaseParticleSystem(myGrassEmmiter1);
+	ReleaseParticleSystem(myGrassEmmiter2);
+
 }
 
 void CKartControllerComponent::Turn(float aDirectionX)
