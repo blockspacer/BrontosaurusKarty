@@ -26,6 +26,11 @@ public:
 
 	void StartCountdown();
 
+	inline const CU::Vector4f& GetPlayer1Color() const;
+	inline const CU::Vector4f& GetPlayer2Color() const;
+	inline const CU::Vector4f& GetPlayer3Color() const;
+	inline const CU::Vector4f& GetPlayer4Color() const;
+
 private:
 	void LoadCountdown(const CU::CJsonValue& aJsonValue);
 	void LoadScoreboard(const CU::CJsonValue& aJsonValue);
@@ -70,4 +75,24 @@ private:
 	bool myRaceOver;
 	int myLevelIndex;
 };
+
+inline const CU::Vector4f& CGlobalHUD::GetPlayer1Color() const
+{
+	return myPlayer1Color;
+}
+
+inline const CU::Vector4f& CGlobalHUD::GetPlayer2Color() const
+{
+	return myPlayer2Color;
+}
+
+inline const CU::Vector4f& CGlobalHUD::GetPlayer3Color() const
+{
+	return myPlayer3Color;
+}
+
+inline const CU::Vector4f& CGlobalHUD::GetPlayer4Color() const
+{
+	return myPlayer4Color;
+}
 
