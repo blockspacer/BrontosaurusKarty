@@ -409,6 +409,9 @@ void CLocalHUD::DisableRedundantGUI()
 // Debuging
 eMessageReturn CLocalHUD::DoEvent(const KeyCharPressed& aMessage)
 {
+
+#ifdef DEBUG
+
 	if (aMessage.GetKey() == 'p')
 		myLapAdjusterCheat += 1;
 
@@ -417,6 +420,7 @@ eMessageReturn CLocalHUD::DoEvent(const KeyCharPressed& aMessage)
 
 
 	unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer) + myLapAdjusterCheat;
+#endif // DEBUG
 
 	return eMessageReturn::eContinue;
 }

@@ -86,6 +86,7 @@ void CXboxController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 
 	switch (aInputMessage.myGamePad)
 	{
+#ifdef DEBUG
 	case CU::GAMEPAD::DPAD_DOWN:
 	{
 		SComponentMessageData data;
@@ -110,17 +111,19 @@ void CXboxController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 	case CU::GAMEPAD::DPAD_UP:
 	{
 		SComponentMessageData data;
-		data.myInt = 4; //Star
+		data.myInt = 3; //Star
 		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveItem, data);
 		break;
 	}
+#endif
 	case CU::GAMEPAD::X:
 	{
 		break;
 	}
 	case CU::GAMEPAD::Y:
 	{
-
+		SComponentMessageData sound; sound.myString = "PlayGetHit";
+		myControllerComponent.GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
 		break;
 	}
 	case CU::GAMEPAD::A:
@@ -139,9 +142,8 @@ void CXboxController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 		
 	case CU::GAMEPAD::LEFT_THUMB:
 	{
-		/*SComponentMessageData boostMessageData;
-		boostMessageData.myBoostData = CSpeedHandlerManager::GetInstance()->GetData(std::hash<std::string>()("BoostPowerUp"));
-		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveBoost, boostMessageData);*/
+		SComponentMessageData sound; sound.myString = "PlayGetHit";
+		myControllerComponent.GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
 		break;
 	}
 	case CU::GAMEPAD::LEFT_SHOULDER:

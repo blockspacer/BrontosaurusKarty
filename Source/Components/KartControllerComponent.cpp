@@ -605,7 +605,7 @@ void CKartControllerComponent::LookBack(bool aLookBack)
 {
 	if(myLookingBack != aLookBack)
 	{
-		myLookingBack = aLookBack;;
+		myLookingBack = aLookBack;
 
 		SComponentMessageData data;
 
@@ -682,6 +682,7 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new StopVibrationOnController(myControllerHandle));
 			myControllerHandle = -1;
 		}
+		LookBack(true);
 		break;
 		
 	}

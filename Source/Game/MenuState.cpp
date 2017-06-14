@@ -17,6 +17,7 @@
 #include "../Audio/AudioInterface.h"
 #include "GamepadButtons.h"
 #include "CommonUtilities.h"
+#include "CreditsState.h"
 
 char CMenuState::ourMenuesToPop = 0;
 
@@ -59,6 +60,7 @@ CMenuState::CMenuState(StateStack& aStateStack, std::string aFile, State* aState
 	myManager.AddAction("PushSelectedLevel", [this](std::string string)-> bool { return PushSelectedLevel(string); });
 	myManager.AddAction("PopPoppableState", [this](std::string /*string*/)-> bool { return PopPoppableState(); });
 	myManager.AddAction("RestartLevel", [this](std::string /*string*/)-> bool { return RestartLevel(); });
+	myManager.AddAction("PushCredits", [this](std::string /*string*/)-> bool { return PushCredits(); });
 	MenuLoad(aFile);
 
 	myLeftArrow = nullptr;
@@ -444,7 +446,7 @@ bool CMenuState::PopMenues(std::string aNumberOfMenues)
 
 bool CMenuState::PushLevel(std::string aLevelIndexString)
 {
-	myStateStack.PushState(new CLoadState(myStateStack, std::stoi(aLevelIndexString)));
+	myStateStack.PushState(new CLoadState(myStateStack, std::atoi(aLevelIndexString.c_str())));
 	RENDERER.ClearGui();
 	return true;
 }
@@ -515,6 +517,8 @@ bool CMenuState::PopPoppableState()
 		myStateToMaybePop->SetStateStatus(eStateStatus::ePop);
 	}
 
+	SetStateStatus(eStateStatus::ePop);
+
 	return true;
 }
 
@@ -523,5 +527,11 @@ bool CMenuState::RestartLevel()
 	ourMenuesToPop = 1;
 	myStateStack.SwapState(new CLoadState(myStateStack, myLevelIndex, myManager.ourParticipants));
 
-	return false;
+	return true;
+}
+
+bool CMenuState::PushCredits()
+{
+	myStateStack.PushState(new CCreditsState(myStateStack));
+	return true;
 }

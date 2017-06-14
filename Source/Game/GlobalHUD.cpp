@@ -293,8 +293,8 @@ void CGlobalHUD::Render()
 void CGlobalHUD::StartCountdown()
 {
 
-	auto countdownLambda = [this]() {
-
+	auto countdownLambda = [this]()
+	{
 		CU::TimerManager timerManager;
 		TimerHandle timer = timerManager.CreateTimer();
 		unsigned char startCountdownTime = 0;
@@ -486,10 +486,13 @@ void CGlobalHUD::ToMainMenu(const std::function<void(void)>& aCallback)
 // debugging
 eMessageReturn CGlobalHUD::DoEvent(const KeyCharPressed & aMessage)
 {
+#ifdef DEBUG
 	if (aMessage.GetKey() == 'p')
 		PresentScoreboard();
 	if (aMessage.GetKey() == 'c' && myRaceOver == true)
 		ToMainMenu([](){});
+
+#endif // DEBUG
 
 	return eMessageReturn::eContinue;
 }

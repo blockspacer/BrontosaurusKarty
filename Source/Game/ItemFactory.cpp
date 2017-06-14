@@ -27,12 +27,13 @@
 
 #include "CommonUtilities/JsonValue.h"
 #include "LightComponentManager.h"
+#include "DecalComponent.h"
 
 
 CItemFactory::CItemFactory()
 {
-	myActiveShells.Init(25);
-	myShells.Init(25);
+	myActiveShells.Init(300);
+	myShells.Init(300);
 
 	myBananas.Init(50);
 	myActiveBananas.Init(50);
@@ -113,6 +114,18 @@ void CItemFactory::CreateBananaBuffer()
 		banana->AddComponent(pointLight);
 		banana->NotifyOnlyComponents(eComponentMessageType::eTurnOffThePointLight, SComponentMessageData());
 
+		CDecalComponent* decal = new CDecalComponent(*myScene);
+		CComponentManager::GetInstance().RegisterComponent(decal);
+		decal->SetDecalIndex(4);
+
+		CGameObject* decalHolder = myGameObjectManager->CreateGameObject();
+		decalHolder->GetLocalTransform().myPosition.Set(0.0f, -1.2f, 0.0f);
+		decalHolder->GetLocalTransform().SetScale({ 2.0f, 2.f, 2.f });
+		decalHolder->GetLocalTransform().Rotate(3.141592f, CU::Axees::Y);
+		decalHolder->AddComponent(decal);
+		banana->AddComponent(decalHolder);
+
+
 		CItemWeaponBehaviourComponent* physics = myItemBeheviourComponentManager->CreateAndRegisterComponent();
 		physics->SetToNoSpeed();
 		banana->AddComponent(physics);
@@ -168,7 +181,7 @@ void CItemFactory::CreateBananaBuffer()
 
 void CItemFactory::CreateShellBuffer()
 {
-	for (int i = 0; i < 25; i++)
+	for (int i = 0; i < 50; i++)
 	{
 		CGameObject* shell = myGameObjectManager->CreateGameObject();
 		std::string name = "shell ";
@@ -191,6 +204,17 @@ void CItemFactory::CreateShellBuffer()
 		CParticleEmitterComponent* particle = CParticleEmitterComponentManager::GetInstance().CreateComponent("ShellTrail");
 		particle->Deactivate();
 		shell->AddComponent(particle);
+
+		CDecalComponent* decal = new CDecalComponent(*myScene);
+		CComponentManager::GetInstance().RegisterComponent(decal);
+		decal->SetDecalIndex(5);
+
+		CGameObject* decalHolder = myGameObjectManager->CreateGameObject();
+		decalHolder->GetLocalTransform().myPosition.Set(0.0f, -1.2f, 0.0f);
+		decalHolder->GetLocalTransform().SetScale({ 2.0f, 2.f, 2.f });
+		decalHolder->GetLocalTransform().Rotate(3.141592f, CU::Axees::Y);
+		decalHolder->AddComponent(decal);
+		shell->AddComponent(decalHolder);
 
 		CItemWeaponBehaviourComponent* beheviour = myItemBeheviourComponentManager->CreateAndRegisterComponent();
 		shell->AddComponent(beheviour);
@@ -270,6 +294,17 @@ void CItemFactory::CreateRedShellBuffer()
 		particle->Deactivate();
 		shell->AddComponent(particle);
 
+		CDecalComponent* decal = new CDecalComponent(*myScene);
+		CComponentManager::GetInstance().RegisterComponent(decal);
+		decal->SetDecalIndex(5);
+
+		CGameObject* decalHolder = myGameObjectManager->CreateGameObject();
+		decalHolder->GetLocalTransform().myPosition.Set(0.0f, -1.2f, 0.0f);
+		decalHolder->GetLocalTransform().SetScale({ 2.0f, 2.f, 2.f });
+		decalHolder->GetLocalTransform().Rotate(3.141592f, CU::Axees::Y);
+		decalHolder->AddComponent(decal);
+		shell->AddComponent(decalHolder);
+
 		CRedShellBehaviourComponent* behaviour = myRedShellManager->CreateAndRegisterComponent();
 		shell->AddComponent(behaviour);
 
@@ -335,6 +370,18 @@ void CItemFactory::CreateBlueShellBuffer()
 		CModelComponent* model = CModelComponentManager::GetInstance().CreateComponent("Models/Meshes/M_Shell_Blue_01.fbx");
 		model->FlipVisibility();
 		shell->AddComponent(model);
+
+		CDecalComponent* decal = new CDecalComponent(*myScene);
+		CComponentManager::GetInstance().RegisterComponent(decal);
+		decal->SetDecalIndex(5);
+
+		CGameObject* decalHolder = myGameObjectManager->CreateGameObject();
+		decalHolder->GetLocalTransform().myPosition.Set(0.0f, -2.0f, 0.0f);
+		decalHolder->GetLocalTransform().SetScale({ 5.f, 3.f, 5.f });
+		decalHolder->GetLocalTransform().Rotate(3.141592f, CU::Axees::Y);
+		decalHolder->AddComponent(decal);
+		shell->AddComponent(decalHolder);
+
 
 		CBlueShellBehaviourComponent* behaviour = myBlueShellManager->CreateAndRegisterComponent();
 		shell->AddComponent(behaviour);
@@ -804,7 +851,7 @@ void CItemFactory::ReleaseItem(CComponent * userComponent, CU::Vector2f aInput)
 			{
 				myHeldGreenShells[i].item->GetLocalTransform().RotateAroundAxis(3.14f, CU::Axees::Y);
 			}
-				myHeldGreenShells[i].item->Move(CU::Vector3f(0, -0.5f, 3));
+				myHeldGreenShells[i].item->Move(CU::Vector3f(0, 1.0f, 3));
 
 			SComponentMessageData data; data.myComponent = userComponent;
 			myHeldGreenShells[i].item->NotifyOnlyComponents(eComponentMessageType::eReInitItem, data);
@@ -824,7 +871,7 @@ void CItemFactory::ReleaseItem(CComponent * userComponent, CU::Vector2f aInput)
 			myHeldRedShells[i].item->SetWorldPosition(position);
 			//CU::Vector3f forward = userComponent->GetParent()->GetToWorldTransform().myForwardVector;
 			//forward  *=3;
-			myHeldRedShells[i].item->Move(CU::Vector3f(0, -0.5f, 3));
+			myHeldRedShells[i].item->Move(CU::Vector3f(0, 1.0f, 3));
 			SComponentMessageData data; data.myComponent = userComponent;
 			myHeldRedShells[i].item->NotifyOnlyComponents(eComponentMessageType::eReInitRedShell, data);
 

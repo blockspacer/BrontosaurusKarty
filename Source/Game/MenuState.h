@@ -67,6 +67,7 @@ private:
 	bool PushSelectedLevel(const std::string aSelector);
 	bool PopPoppableState();
 	bool RestartLevel();
+	bool PushCredits();
 
 	static const std::map<CU::eKeys, CU::GAMEPAD> ourKeyboardToGamePadMap;
 

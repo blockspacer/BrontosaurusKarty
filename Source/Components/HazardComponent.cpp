@@ -49,7 +49,7 @@ void CHazardComponent::Receive(const eComponentMessageType aMessageType, const S
 			{
 				return;
 			}
-			if (data->myLayer == Physics::eKart || data->myLayer == Physics::eHazzard)
+			if (data->myLayer == Physics::eKart || data->myLayer == Physics::eHazzard || data->myLayer == Physics::eKill)
 			{
 				SComponentMessageData collidedData;
 				collidedData.myComponent = collider;
@@ -58,9 +58,10 @@ void CHazardComponent::Receive(const eComponentMessageType aMessageType, const S
 				aMessageData.myComponent->GetParent()->NotifyOnlyComponents(eComponentMessageType::eGotHit, SComponentMessageData());
 				if (myIsPermanent == false)
 				{
-					GetParent()->NotifyOnlyComponents(eComponentMessageType::eDeactivate, SComponentMessageData()); //can be a problem with unity parenting...
+					GetParent()->NotifyComponents(eComponentMessageType::eDeactivate, SComponentMessageData()); //can be a problem with unity parenting...
 					GetParent()->NotifyOnlyComponents(eComponentMessageType::eDeactivateEmitter, SComponentMessageData());
 					GetParent()->NotifyOnlyComponents(eComponentMessageType::eTurnOffThePointLight, SComponentMessageData());
+					//GetParent()->Move(CU::Vector3f(9999, 9999, 9999));
 				}
 			}
 		}
