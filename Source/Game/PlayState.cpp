@@ -900,17 +900,9 @@ void CPlayState::CreateAI()
 	intermediary->AddComponent(secondPlayerObject);
 
 	//Create player number object
-	CGameObject* playerNumber = myGameObjectManager->CreateGameObject();
-	C3DSpriteComponent* numberModel = new C3DSpriteComponent(*myScene, "Sprites/GUI/playerMarker.dds", CU::Vector2f::One, CU::Vector2f(0.5f, 0.5f),
-		CU::Vector4f(0.f, 0.f, 1.f, 1.f), DEFAULT);
-	CComponentManager::GetInstance().RegisterComponent(numberModel);
-	playerNumber->AddComponent(numberModel);
-	playerNumber->GetLocalTransform().SetPosition({ 0.f,2.f,0.f });
-
-
+	
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
 	playerObject->AddComponent(intermediary);
-	playerObject->AddComponent(playerNumber);
 
 	//
 	// decal
