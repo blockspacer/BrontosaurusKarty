@@ -116,6 +116,18 @@ void CGlobalHUD::Render()
 				case SParticipant::eCharacter::eGrandMa:
 					myPortraitSprite->SetRect({ 0.f, 0.750f, 1.f, 0.875f });
 					break;
+				case SParticipant::eCharacter::eVanBrat2:
+					myPortraitSprite->SetRect({ 0.f, 0.625f, 1.f, 0.750f });
+					break;
+				case SParticipant::eCharacter::eGrandMa2:
+					myPortraitSprite->SetRect({ 0.f, 0.500f, 1.f, 0.625f });
+					break;
+				case SParticipant::eCharacter::eCat:
+					myPortraitSprite->SetRect({ 0.f, 0.375f, 1.f, 0.500f });
+					break;
+				case SParticipant::eCharacter::eCat2:
+					myPortraitSprite->SetRect({ 0.f, 0.250f, 1.f, 0.375f });
+					break;
 				default:
 					myPortraitSprite->SetRect({ 0.f, 0.750f, 1.f, 0.875f });
 					break;

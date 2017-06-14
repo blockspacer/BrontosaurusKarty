@@ -8,7 +8,9 @@
 #include "BackgroundLoadingManager.h"
 #include "ThreadedPostmaster/Postmaster.h"
 #include "ThreadedPostmaster/PostOffice.h"
+
 #include "MenuState.h"
+#include "SplashScreenState.h"
 
 #include "LoadState.h"
 #include "../Game/PollingStation.h"
@@ -34,9 +36,8 @@ void CGame::Init()
 	SSlua::LuaWrapper::GetInstance().RegisterFunctions(&ScriptLoader::RegisterLuaFunctions);
 	
 	myGameEventMessenger.Init({ 0.5f, 0.1f });
-	//myClient.StartClient();
-	//myClient.Connect("127.0.0.1", "temp.cccp");
 	myStateStack.PushState(new CMenuState(myStateStack,"Json/Menu/MainMenu.json"));
+	myStateStack.PushState(new CSplashScreenState(myStateStack));
 }
 
 bool CGame::Update(const CU::Time& aDeltaTime)

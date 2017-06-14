@@ -324,6 +324,7 @@
     <ClCompile Include="PollingStation.cpp" />
     <ClCompile Include="ScriptHelperFunctions.cpp" />
     <ClCompile Include="ScriptLoader.cpp" />
+    <ClCompile Include="SplashScreenState.cpp" />
     <ClCompile Include="SplitScreenSelection.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="StateStack.cpp" />
@@ -358,6 +359,7 @@
     <ClInclude Include="ScriptHelperFunctions.h" />
     <ClInclude Include="ScriptLoader.h" />
     <ClInclude Include="SParticipant.h" />
+    <ClInclude Include="SplashScreenState.h" />
     <ClInclude Include="SplitScreenSelection.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="StateStack.h" />
