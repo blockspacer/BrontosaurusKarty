@@ -533,10 +533,19 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 				{
 					if (myPlayers[i].myInputDevice == SParticipant::eInputDevice::eKeyboard)
 					{
-						myHasKeyboardResponded = false;
-						myPlayerInputDevices[i] = SParticipant::eInputDevice::eNone;
-						myPlayers.RemoveAtIndex(i);
+						if (myPlayers[i].myIsReady == false)
+						{
+							myStateStack.Pop();
+						}
+						else
+						{
+							myPlayers[i].myIsReady = false;
+						}
+						//myHasKeyboardResponded = false;
+						//myPlayerInputDevices[i] = SParticipant::eInputDevice::eNone;
+						//myPlayers.RemoveAtIndex(i);
 					}
+					break;
 				}
 			}
 			break;
