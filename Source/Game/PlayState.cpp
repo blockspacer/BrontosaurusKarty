@@ -396,6 +396,7 @@ void CPlayState::Init()
 		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eBlueShellWarning);
 		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eRedShellWarning);
 		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eCharPressed);
+		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eRaceOver);
 	}
 
 	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::eCharPressed);
