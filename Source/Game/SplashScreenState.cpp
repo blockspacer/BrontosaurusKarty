@@ -9,6 +9,7 @@ const float StayTime = 1.5f;
 
 CSplashScreenState::CSplashScreenState(StateStack& aStateStack)
 	: State(aStateStack, eInputMessengerType::eSplashScreen, 1)
+	, myTimer(0.f)
 	, myCurrentSprite(0)
 {
 }
@@ -47,7 +48,7 @@ eStateStatus CSplashScreenState::Update(const CU::Time& aDeltaTime)
 
 void CSplashScreenState::Render()
 {
-	if (myCurrentSprite < SPRITE_COUNT)
+	if (myCurrentSprite < mySprites.Size())
 	{
 		mySprites[myCurrentSprite]->Render();
 	}

@@ -50,7 +50,7 @@ void CLoadState::Init()
 
 	myTDLogoSprite = new CSpriteInstance("Sprites/Loading/rotationIcon.dds");
 	myTDLogoSprite->SetPivot({ 0.5f, -0.5f });
-	myTDLogoSprite->SetPosition({ 0.76f, 0.68f });
+	myTDLogoSprite->SetPosition({ /*0.76f*/0.5f, 0.68f });
 
 	if (bLM.GetIfActive() == true)
 	{
