@@ -105,6 +105,7 @@
 #include "C3DSpriteComponent.h"
 #include "CameraTilter.h"
 #include "SplitScreenSelection.h"
+#include "BrontosaurusEngine/ModelManager.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -350,6 +351,7 @@ void CPlayState::Load()
 	myGlobalHUD = new CGlobalHUD(myLevelIndex);
 	myGlobalHUD->LoadHUD();
 
+	MODELMGR->Optimize();
 
 	//myCountdownSprite->Render();
 
@@ -363,12 +365,13 @@ void CPlayState::Load()
 	RENDERER.DoImportantQueue();
 	{
 		std::string progress = ".";
-		while (!myScene->HasBakedShadowMap())
+		myScene->WaitForShadow();
+		/*while (!myScene->HasBakedShadowMap())
 		{
 			DL_PRINT(progress.c_str());
 			progress += ".";
 			std::this_thread::sleep_for(std::chrono::microseconds(7500));
-		}
+		}*/
 	}
 	DL_PRINT("Done!");
 
@@ -505,7 +508,7 @@ void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
 
 		Audio::CAudioInterface::GetInstance()->PostEvent(song);
 	}
-	myGlobalHUD->StartCountDown();
+	myGlobalHUD->StartCountdown();
 	//InitiateRace();
 
 }
@@ -639,17 +642,17 @@ const CU::Vector4f CPlayState::GetPlayerColor(const int aInputDevice)
 		break;
 	case 1:
 
-		color = GREEN;
+		color = BLUE;
 		
 		break;
 	case 2:
 
-		color = PINK;
+		color = GREEN;
 		
 		break;
 	case 3:
 
-		color = BLUE;
+		color = PINK;
 		
 		break;
 	default:
@@ -673,26 +676,24 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	playerModel->SetIsShadowCasting(false);
 
 
-
+	//
 	// Lights
 	//
 
-
-	CComponent* headLight1 = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({ 1.f, 1.0f, 0.5f }, 2.f, 5.f, 3.141592f / 16.f);
+	CComponent* headLight1 = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({ 1.f, 1.0f, 0.7f }, 3.f, 10.f, 3.141592f / 16.f);
 	CGameObject* headLightObject1 = myGameObjectManager->CreateGameObject();
-	headLightObject1->GetLocalTransform().myPosition.Set(-0.45f, 1.f, 1.f);
-	headLightObject1->GetLocalTransform().RotateAroundAxis(-3.141592f / 8.f, CU::Axees::X);
+	headLightObject1->GetLocalTransform().myPosition.Set(-0.35f, 0.7f, 0.75f);
+	headLightObject1->GetLocalTransform().RotateAroundAxis(-3.141592f / 32.f, CU::Axees::X);
 	headLightObject1->AddComponent(headLight1);
 
-	secondPlayerObject->AddComponent(headLightObject1);
 
-	CComponent* headLight2 = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({ 1.f, 1.0f, 0.5f }, 2.f, 5.f, 3.141592f / 16.f);
+	CComponent* headLight2 = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({ 1.f, 1.0f, 0.7f }, 3.f, 10.f, 3.141592f / 16.f);
 	CGameObject* headLightObject2 = myGameObjectManager->CreateGameObject();
-	headLightObject2->GetLocalTransform().myPosition.Set(0.45f, 1.f, 1.f);
-	headLightObject2->GetLocalTransform().RotateAroundAxis(-3.141592f / 8.f, CU::Axees::X);
+	headLightObject2->GetLocalTransform().myPosition.Set(0.35f, 0.7f, 0.75f);
+	headLightObject2->GetLocalTransform().RotateAroundAxis(-3.141592f / 32.f, CU::Axees::X);
 	headLightObject2->AddComponent(headLight2);
 
-	secondPlayerObject->AddComponent(headLightObject2);
+	
 
 
 	//
@@ -712,12 +713,17 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	CComponent* kartModelComponent = new Component::CKartModelComponent(myPhysicsScene);
 	CComponentManager::GetInstance().RegisterComponent(kartModelComponent);
 	secondPlayerObject->AddComponent(kartModelComponent);
+
+	secondPlayerObject->AddComponent(headLightObject1);
+	secondPlayerObject->AddComponent(headLightObject2);
 	//Create sub player object
 	CGameObject* intermediary = myGameObjectManager->CreateGameObject();
 	CComponent* driftTurnerComponent = new Component::CDriftTurner();
 	CComponentManager::GetInstance().RegisterComponent(driftTurnerComponent);
 	intermediary->AddComponent(driftTurnerComponent);
 	intermediary->AddComponent(secondPlayerObject);
+
+
 	//Create camera object
 	CGameObject* cameraObject = myGameObjectManager->CreateGameObject();
 	CCameraComponent* cameraComponent = new CCameraComponent(aPlayerCount);

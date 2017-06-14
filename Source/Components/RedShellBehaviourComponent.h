@@ -35,7 +35,7 @@ private:
 
 	int myCurrentSplineIndex;
 	int myUserPlacement;
-	float Speed;
+	float mySpeed;
 
 	bool myPlayingWarning;
 	bool myIsActive;

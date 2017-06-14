@@ -24,12 +24,12 @@ public:
 	void Update(const float aDeltaTime);
 	bool GetRaceOver() const { return myRaceOver; }
 
-	void StartCountDown();
+	void StartCountdown();
 
 private:
-	void LoadCountDown(const CU::CJsonValue& aJsonValue);
+	void LoadCountdown(const CU::CJsonValue& aJsonValue);
 	void LoadScoreboard(const CU::CJsonValue& aJsonValue);
-	void LoadMiniMap(const CU::CJsonValue& aJsonValue);
+	void LoadMinimap(const CU::CJsonValue& aJsonValue);
 	void PresentScoreboard();
 	void DisableRedundantGUI();
 
@@ -49,6 +49,11 @@ private:
 	SHUDElement myScoreboardElement;
 	SHUDElement myMinimapElement;
 	SHUDElement myCountdownElement;
+
+	CU::Vector4f myPlayer1Color;
+	CU::Vector4f myPlayer2Color;
+	CU::Vector4f myPlayer3Color;
+	CU::Vector4f myPlayer4Color;
 
 	CU::Vector2f myTimeTextOffset;
 

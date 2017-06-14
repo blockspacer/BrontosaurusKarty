@@ -28,6 +28,8 @@ public:
 	int GetModelRefCount(const ModelId aModelID) const;
 	const std::string& GetFilePath(const ModelId aModelID) const;
 
+	void Optimize();
+
 private:
 	void LoadAnimations(const std::string& aPath, const ModelId aModelId);
 	bool CreateModel(const std::string& aModelPath, ModelId aNewModel);

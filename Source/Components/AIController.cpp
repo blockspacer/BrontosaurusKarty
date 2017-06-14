@@ -42,6 +42,7 @@ void CAIController::UpdateItemUsage(const float aDeltaTime)
 		{
 			myHasItem = true;
 			myUseItemTimer = 2.f;
+			myControllerComponent.GetParent()->NotifyOnlyComponents(eComponentMessageType::eUseItem, SComponentMessageData());
 		}
 	}
 	else
@@ -49,7 +50,8 @@ void CAIController::UpdateItemUsage(const float aDeltaTime)
 		myUseItemTimer -= aDeltaTime;
 		if (myUseItemTimer <= 0.f)
 		{
-			myControllerComponent.GetParent()->NotifyOnlyComponents(eComponentMessageType::eUseItem, SComponentMessageData());
+			myHasItem = false;
+			myControllerComponent.GetParent()->NotifyOnlyComponents(eComponentMessageType::eReleaseItem, SComponentMessageData());
 		}
 	}
 }

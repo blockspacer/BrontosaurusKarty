@@ -673,6 +673,7 @@ CModel& CModel::operator=(CModel&& aModel)
 	//	myBindposeSceneAnimator = new CSceneAnimator(*aModel.myBindposeSceneAnimator);
 	//}
 	myBindposeSceneAnimator = aModel.myBindposeSceneAnimator;
+	aModel.myBindposeSceneAnimator = nullptr;
 
 	myEffectData = aModel.myEffectData;
 
@@ -764,7 +765,11 @@ CModel& CModel::operator=(const CModel& aModel)
 	SAFE_ADD_REF(myBoneBuffer);
 
 	mySceneAnimator = aModel.mySceneAnimator;
-	myBindposeSceneAnimator = aModel.myBindposeSceneAnimator;
+	SAFE_DELETE(mySceneAnimator);
+	if (aModel.mySceneAnimator)
+	{
+		myBindposeSceneAnimator = new CSceneAnimator(*aModel.myBindposeSceneAnimator);
+	}
 
 	/*SAFE_DELETE(myDeferredEffect);
 	if (aModel.myDeferredEffect != nullptr)

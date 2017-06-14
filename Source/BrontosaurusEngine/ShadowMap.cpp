@@ -89,6 +89,12 @@ CRenderPackage & CShadowMap::GetShadowBuffer()
 	return myRenderCamera.GetRenderPackage();
 }
 
+void CShadowMap::WaitForShadow()
+{
+	std::unique_lock<std::mutex> lk(myShadowMutex);
+	myShadowWait.wait(lk, [this]() {return GetIfFinishedBake(); });
+}
+
 void CShadowMap::CalculateFrustum()
 {
 	CU::Matrix44f lightSpace;

@@ -55,6 +55,7 @@ CRenderCamera& CRenderCamera::operator=(const CRenderCamera& aCopy)
 	//SAFE_ADD_REF(myShadowPSInstanced);
 
 	myIsShadowCamera = aCopy.myIsShadowCamera;
+	myPlayerIndex = aCopy.myPlayerIndex;
 	return *this;
 }
 

@@ -79,7 +79,12 @@ CLocalHUD::~CLocalHUD()
 
 	SAFE_DELETE(myBlueShellDangerSprite);
 	SAFE_DELETE(myRedShellDangerSprite);
+
 	myItemGuiElement.mySprite = nullptr;
+	myLapCounterElement.mySprite = nullptr;
+	myPlacementElement.mySprite = nullptr;
+	myFinishTextElement.mySprite = nullptr;
+	myDangerGuiElement.mySprite = nullptr;
 }
 
 void CLocalHUD::LoadHUD()

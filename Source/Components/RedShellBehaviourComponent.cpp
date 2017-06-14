@@ -18,9 +18,9 @@ CRedShellBehaviourComponent::CRedShellBehaviourComponent()
 	CU::CJsonValue levelsArray = boostList.at("Items");
 	CU::CJsonValue Item = levelsArray.at("RedShell");
 
-	Speed = Item.at("MaxSpeed").GetFloat();
+	mySpeed = Item.at("MaxSpeed").GetFloat();
 
-	myVelocity = CU::Vector3f::UnitZ*	Speed;
+	myVelocity = CU::Vector3f::UnitZ * mySpeed;
 
 	myLastTarget = nullptr;
 
@@ -215,7 +215,16 @@ void CRedShellBehaviourComponent::Receive(const eComponentMessageType aMessageTy
 	}
 	case eComponentMessageType::eReInitRedShell:
 	{
-		myVelocity = CU::Vector3f::UnitZ*Speed;
+		float velocitiesSpeed = mySpeed;
+		SComponentQuestionData speedQuestionData;
+		if(aMessageData.myComponent->GetParent()->AskComponents(eComponentQuestionType::eGetMaxSpeed, speedQuestionData) == true)
+		{
+			if(velocitiesSpeed < speedQuestionData.myFloat)
+			{
+				velocitiesSpeed = speedQuestionData.myFloat + 5;
+			}
+		}
+		myVelocity = CU::Vector3f::UnitZ*velocitiesSpeed;
 		myIsActive = true;
 		short index = 0;
 		index = myKartManager->GetClosestSpinesIndex(GetParent()->GetWorldPosition());

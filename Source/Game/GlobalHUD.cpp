@@ -52,13 +52,19 @@ void CGlobalHUD::LoadHUD()
 	CU::CJsonValue jsonDoc;
 	jsonDoc.Parse("Json/HUD/HUDGlobal.json");
 
-	LoadMiniMap(jsonDoc.at("minimap"));
+	LoadMinimap(jsonDoc.at("minimap"));
 	LoadScoreboard(jsonDoc.at("scoreboard"));
-	LoadCountDown(jsonDoc.at("countdown"));
+	LoadCountdown(jsonDoc.at("countdown"));
 }
 
 void CGlobalHUD::Update(const float aDeltaTime)
 {
+	float cappedDeltaTime = aDeltaTime;
+	if(cappedDeltaTime > 1.0f / 30.0f)
+	{
+		cappedDeltaTime = 1.0f / 30.0f;
+	}
+
 	for (int i = 0; i < myKartObjects->Size(); ++i)
 	{
 		SComponentQuestionData percentDoneQuestion;
@@ -68,7 +74,7 @@ void CGlobalHUD::Update(const float aDeltaTime)
 			float distancePercent = percentDoneQuestion.myFloat;
 			float xPos = ((myMinimapElement.mySprite->GetPosition().x + distancePercent) * 0.87f) + 0.055f;
 			CLAMP(xPos, 0.1f, 0.8f);
-			myMinimapXPositions[i] = myMinimapXPositions[i] + 1 * aDeltaTime * (xPos - myMinimapXPositions[i]);
+			myMinimapXPositions[i] = myMinimapXPositions[i] + 1 * cappedDeltaTime * (xPos - myMinimapXPositions[i]);
 
 		}
 	}
@@ -180,25 +186,25 @@ void CGlobalHUD::Render()
 				case (int)SParticipant::eInputDevice::eController1:
 					if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
 					{
-						myMinimapPosIndicator->SetColor(YELLOW);
+						myMinimapPosIndicator->SetColor(myPlayer1Color);
 					}
 					break;
 				case (int)SParticipant::eInputDevice::eController2:
 					if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
 					{
-						myMinimapPosIndicator->SetColor(GREEN);
+						myMinimapPosIndicator->SetColor(myPlayer2Color);
 					}
 					break;
 				case (int)SParticipant::eInputDevice::eController3:
 					if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
 					{
-						myMinimapPosIndicator->SetColor(PINK);
+						myMinimapPosIndicator->SetColor(myPlayer3Color);
 					}
 					break;
 				case (int)SParticipant::eInputDevice::eController4:
 					if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
 					{
-						myMinimapPosIndicator->SetColor(BLUE);
+						myMinimapPosIndicator->SetColor(myPlayer4Color);
 					}
 					break;
 				default:
@@ -227,7 +233,7 @@ void CGlobalHUD::Render()
 	}
 }
 
-void CGlobalHUD::StartCountDown()
+void CGlobalHUD::StartCountdown()
 {
 
 	auto countdownLambda = [this]() {
@@ -237,8 +243,9 @@ void CGlobalHUD::StartCountDown()
 		unsigned char startCountdownTime = 0;
 		float floatTime = 0.f;
 
+		myCountdownSprite->SetAlpha(0);
 
-		while (floatTime <= 4.5f)
+		while (floatTime <= 4.8f)
 		{
 			timerManager.UpdateTimers();
 			floatTime = timerManager.GetTimer(timer).GetLifeTime().GetSeconds();
@@ -246,8 +253,7 @@ void CGlobalHUD::StartCountDown()
 			if ((unsigned char)floatTime > startCountdownTime)
 			{
 				startCountdownTime = std::floor(floatTime);
-				if (startCountdownTime == 0)		myCountdownSprite->SetAlpha(0);
-				else if (startCountdownTime == 1) { myCountdownSprite->SetRect({ 0.f,0.75f,1.f,1.00f }); myCountdownSprite->SetAlpha(1); }
+				if (startCountdownTime == 1) { myCountdownSprite->SetRect({ 0.f,0.75f,1.f,1.00f }); myCountdownSprite->SetAlpha(1); }
 				else if (startCountdownTime == 2) 	myCountdownSprite->SetRect({ 0.f,0.50f,1.f,0.75f });
 				else if (startCountdownTime == 3) 	myCountdownSprite->SetRect({ 0.f,0.25f,1.f,0.50f });
 				else if (startCountdownTime == 4)
@@ -255,6 +261,11 @@ void CGlobalHUD::StartCountDown()
 					myCountdownSprite->SetRect({ 0.f,0.00f,1.f,0.25f });
 					POSTMASTER.Broadcast(new CRaceStartedMessage());
 					POSTMASTER.GetThreadOffice().HandleMessages();
+
+					for (unsigned int i = 0; i < myMinimapXPositions.Size(); i++)
+					{
+						myMinimapXPositions[i] = 0.0f;
+					}
 				}
 			}
 		}
@@ -267,8 +278,8 @@ void CGlobalHUD::StartCountDown()
 	{
 		CU::TimerManager timerManager;
 		TimerHandle timer = timerManager.CreateTimer();
-
-		while (timerManager.GetTimer(timer).GetLifeTime().GetSeconds() < .05f)
+		
+		while (timerManager.GetTimer(timer).GetLifeTime().GetSeconds() < .08f)
 		{
 			timerManager.UpdateTimers(); // för att komma runt att trippelbuffringen slänger bort meddelanden.
 			myCountdownSprite->SetAlpha(0);
@@ -276,13 +287,18 @@ void CGlobalHUD::StartCountDown()
 
 		myCountdownElement.myShouldRender = false;
 		myMinimapElement.myShouldRender = true;
+
+		//SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"countdown", myCountdownElement.myGUIElement, myCountdownElement.myPixelSize);
+		//myCountdownSprite->SetAlpha(0);
+		//RENDERER.AddRenderMessage(guiElement, true);
+
 	};
 
 	work.SetFinishedCallback(callback);
 	CU::ThreadPool::GetInstance()->AddWork(work);
 }
 
-void CGlobalHUD::LoadCountDown(const CU::CJsonValue & aJsonValue)
+void CGlobalHUD::LoadCountdown(const CU::CJsonValue & aJsonValue)
 {
 	CU::CJsonValue jsonElementData = aJsonValue.at("elementData");
 	myCountdownElement = LoadHUDElement(jsonElementData);
@@ -325,9 +341,10 @@ void CGlobalHUD::LoadScoreboard(const CU::CJsonValue& aJsonValue)
 	myTimeText->SetText(L"");
 }
 
-void CGlobalHUD::LoadMiniMap(const CU::CJsonValue& aJsonValue)
+void CGlobalHUD::LoadMinimap(const CU::CJsonValue& aJsonValue)
 {
 	CU::CJsonValue jsonElementData;
+	
 
 	if (myNrOfPlayers == 1)
 		jsonElementData = aJsonValue.at("elementDataSP");
@@ -343,6 +360,16 @@ void CGlobalHUD::LoadMiniMap(const CU::CJsonValue& aJsonValue)
 
 	myMinimapElement.mySprite = new CSpriteInstance(backgroundSpritePath.c_str(), { 1.0f, 1.0f });
 	myMinimapPosIndicator = new CSpriteInstance(posIndicatorSpritePath.c_str(), { 0.016f, 0.29f });
+
+	CU::CJsonValue jsonTimeTextColor1 = aJsonValue.at("player1Color");
+	CU::CJsonValue jsonTimeTextColor2 = aJsonValue.at("player2Color");
+	CU::CJsonValue jsonTimeTextColor3 = aJsonValue.at("player3Color");
+	CU::CJsonValue jsonTimeTextColor4 = aJsonValue.at("player4Color");
+
+	myPlayer1Color = CU::Vector4f(jsonTimeTextColor1.at("r").GetFloat(), jsonTimeTextColor1.at("g").GetFloat(), jsonTimeTextColor1.at("b").GetFloat(), jsonTimeTextColor1.at("a").GetFloat());
+	myPlayer2Color = CU::Vector4f(jsonTimeTextColor2.at("r").GetFloat(), jsonTimeTextColor2.at("g").GetFloat(), jsonTimeTextColor2.at("b").GetFloat(), jsonTimeTextColor2.at("a").GetFloat());
+	myPlayer3Color = CU::Vector4f(jsonTimeTextColor3.at("r").GetFloat(), jsonTimeTextColor3.at("g").GetFloat(), jsonTimeTextColor3.at("b").GetFloat(), jsonTimeTextColor3.at("a").GetFloat());
+	myPlayer4Color = CU::Vector4f(jsonTimeTextColor4.at("r").GetFloat(), jsonTimeTextColor4.at("g").GetFloat(), jsonTimeTextColor4.at("b").GetFloat(), jsonTimeTextColor4.at("a").GetFloat());
 
 	myMinimapElement.myShouldRender = false;
 }
@@ -360,14 +387,13 @@ void CGlobalHUD::DisableRedundantGUI()
 	{
 		CU::TimerManager timerManager;
 		TimerHandle timer = timerManager.CreateTimer();
-
+		
 		while (timerManager.GetTimer(timer).GetLifeTime().GetSeconds() < .05f)
 		{
 			timerManager.UpdateTimers();
 			//myLapCounterElement.mySprite->SetAlpha(0);
 			
 		}
-
 		//myLapCounterElement.myShouldRender = false;
 	};
 

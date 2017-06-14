@@ -435,3 +435,5 @@ Bin/KartMultiplayer.bat
 Bin/Json/Animation/types.txt
 *.diagsession
 /Bin/Json/Menu/GamePadButtons.txt
+Bin/HighDoom.lib
+Bin/Motor Maniacs.lib
