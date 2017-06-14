@@ -5,6 +5,7 @@
 CDecalInstance::CDecalInstance()
 {
 	SetSize(1.f, 1.f, 1.f);
+	myIsActive = true;
 }
 
 CDecalInstance::~CDecalInstance()
