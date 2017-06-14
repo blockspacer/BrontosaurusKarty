@@ -1045,6 +1045,11 @@ bool CKartControllerComponent::Answer(const eComponentQuestionType aQuestionType
 		}
 		break;
 	}
+	case eComponentQuestionType::eGetMaxSpeed:
+	{
+		aQuestionData.myFloat = GetMaxSpeedWithModifiers();
+		break;
+	}
 	default:
 		break;
 	}
