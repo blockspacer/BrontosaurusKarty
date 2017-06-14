@@ -98,6 +98,7 @@ public:
 	void SetShadowMapAABB(const CU::Vector3f& aCenterPosition, const CU::Vector3f& aExtents);
 	void AddSprite(C3DSpriteComponent* aC3DSpriteComponent);
 	void RemoveSprite(C3DSpriteComponent* aC3DSpriteComponent);
+	void WaitForShadow();
 
 private:
 	CShadowMap* myShadowMap;
@@ -121,6 +122,8 @@ private:
 	CU::StaticArray<CRenderCamera, static_cast<int>(eCameraType::eLength)> myRenderCameras;
 	CU::VectorOnStack<CRenderCamera, 4> myPlayerCameras;
 	Lights::SDirectionalLight myDirectionalLight; //make array
+
+
 
 	CSkybox* mySkybox;
 	CCubemap* myCubemap;

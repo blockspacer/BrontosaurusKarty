@@ -363,12 +363,13 @@ void CPlayState::Load()
 	RENDERER.DoImportantQueue();
 	{
 		std::string progress = ".";
-		while (!myScene->HasBakedShadowMap())
+		myScene->WaitForShadow();
+		/*while (!myScene->HasBakedShadowMap())
 		{
 			DL_PRINT(progress.c_str());
 			progress += ".";
 			std::this_thread::sleep_for(std::chrono::microseconds(7500));
-		}
+		}*/
 	}
 	DL_PRINT("Done!");
 
@@ -639,17 +640,17 @@ const CU::Vector4f CPlayState::GetPlayerColor(const int aInputDevice)
 		break;
 	case 1:
 
-		color = GREEN;
+		color = BLUE;
 		
 		break;
 	case 2:
 
-		color = PINK;
+		color = GREEN;
 		
 		break;
 	case 3:
 
-		color = BLUE;
+		color = PINK;
 		
 		break;
 	default:

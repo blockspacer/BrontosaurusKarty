@@ -164,7 +164,7 @@ private:
 	CU::TimerHandle myOncePerFrameBufferTimer;
 	CU::TimerHandle myFireTimer;
 	bool myIsRunning;
-	volatile bool myCheckImortantQueue;
+	std::atomic_bool myCheckImortantQueue;
 
 	C2DGUIRenderer myGUIRenderer;
 };

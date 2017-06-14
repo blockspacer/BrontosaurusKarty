@@ -717,6 +717,11 @@ void CScene::RemoveSprite(C3DSpriteComponent* aC3DSpriteComponent)
 	my3DSprites.RemoveCyclic(aC3DSpriteComponent);
 }
 
+void CScene::WaitForShadow()
+{
+	myShadowMap->WaitForShadow();
+}
+
 bool CScene::HasBakedShadowMap()
 {
 	return myShadowMap->GetIfFinishedBake();
