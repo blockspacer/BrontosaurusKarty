@@ -186,25 +186,25 @@ void CGlobalHUD::Render()
 				case (int)SParticipant::eInputDevice::eController1:
 					if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
 					{
-						myMinimapPosIndicator->SetColor(YELLOW);
+						myMinimapPosIndicator->SetColor(myPlayer1Color);
 					}
 					break;
 				case (int)SParticipant::eInputDevice::eController2:
 					if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
 					{
-						myMinimapPosIndicator->SetColor(GREEN);
+						myMinimapPosIndicator->SetColor(myPlayer2Color);
 					}
 					break;
 				case (int)SParticipant::eInputDevice::eController3:
 					if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
 					{
-						myMinimapPosIndicator->SetColor(PINK);
+						myMinimapPosIndicator->SetColor(myPlayer3Color);
 					}
 					break;
 				case (int)SParticipant::eInputDevice::eController4:
 					if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eHasCameraComponent, SComponentQuestionData()) == true)
 					{
-						myMinimapPosIndicator->SetColor(BLUE);
+						myMinimapPosIndicator->SetColor(myPlayer4Color);
 					}
 					break;
 				default:
@@ -344,6 +344,7 @@ void CGlobalHUD::LoadScoreboard(const CU::CJsonValue& aJsonValue)
 void CGlobalHUD::LoadMinimap(const CU::CJsonValue& aJsonValue)
 {
 	CU::CJsonValue jsonElementData;
+	
 
 	if (myNrOfPlayers == 1)
 		jsonElementData = aJsonValue.at("elementDataSP");
@@ -359,6 +360,16 @@ void CGlobalHUD::LoadMinimap(const CU::CJsonValue& aJsonValue)
 
 	myMinimapElement.mySprite = new CSpriteInstance(backgroundSpritePath.c_str(), { 1.0f, 1.0f });
 	myMinimapPosIndicator = new CSpriteInstance(posIndicatorSpritePath.c_str(), { 0.016f, 0.29f });
+
+	CU::CJsonValue jsonTimeTextColor1 = aJsonValue.at("player1Color");
+	CU::CJsonValue jsonTimeTextColor2 = aJsonValue.at("player2Color");
+	CU::CJsonValue jsonTimeTextColor3 = aJsonValue.at("player3Color");
+	CU::CJsonValue jsonTimeTextColor4 = aJsonValue.at("player4Color");
+
+	myPlayer1Color = CU::Vector4f(jsonTimeTextColor1.at("r").GetFloat(), jsonTimeTextColor1.at("g").GetFloat(), jsonTimeTextColor1.at("b").GetFloat(), jsonTimeTextColor1.at("a").GetFloat());
+	myPlayer2Color = CU::Vector4f(jsonTimeTextColor2.at("r").GetFloat(), jsonTimeTextColor2.at("g").GetFloat(), jsonTimeTextColor2.at("b").GetFloat(), jsonTimeTextColor2.at("a").GetFloat());
+	myPlayer3Color = CU::Vector4f(jsonTimeTextColor3.at("r").GetFloat(), jsonTimeTextColor3.at("g").GetFloat(), jsonTimeTextColor3.at("b").GetFloat(), jsonTimeTextColor3.at("a").GetFloat());
+	myPlayer4Color = CU::Vector4f(jsonTimeTextColor4.at("r").GetFloat(), jsonTimeTextColor4.at("g").GetFloat(), jsonTimeTextColor4.at("b").GetFloat(), jsonTimeTextColor4.at("a").GetFloat());
 
 	myMinimapElement.myShouldRender = false;
 }
