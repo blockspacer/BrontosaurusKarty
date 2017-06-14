@@ -50,6 +50,11 @@ private:
 	SHUDElement myMinimapElement;
 	SHUDElement myCountdownElement;
 
+	CU::Vector4f myPlayer1Color;
+	CU::Vector4f myPlayer2Color;
+	CU::Vector4f myPlayer3Color;
+	CU::Vector4f myPlayer4Color;
+
 	CU::Vector2f myTimeTextOffset;
 
 	//CSpriteInstance* myScoreboardBGSprite;
