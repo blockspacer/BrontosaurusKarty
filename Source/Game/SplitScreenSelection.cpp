@@ -46,7 +46,8 @@ CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aS
 		part.NameTag = nullptr;
 		myGUIParts.Add(part);
 	}
-	myAllReadySprite = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/StartToCOntinue.dds");
+	myAllReadySprite = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Start2Continue.dds");
+	myAllReadySprite->SetPosition(CU::Vector2f(0.36f,0.46f));
 
 	myGUIParts[0].NameTag = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player1.dds");
 	myGUIParts[0].LeftArrow = new  CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player1_arrowLeft.dds");
@@ -81,7 +82,7 @@ CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aS
 	myGUIParts[2].RightArrow = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player3_arrowRight.dds");
 	myGUIParts[2].NameTag = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player3.dds");
 	myGUIParts[2].ReadySprite = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/IsPlayerReady.dds");
-	myGUIParts[2].ReadySprite->SetPosition(CU::Vector2f(0.125f, 0.5f));
+	myGUIParts[2].ReadySprite->SetPosition(CU::Vector2f(0.125f, 0.69f));
 	myGUIParts[2].JoinSprite->SetPosition(CU::Vector2f(0, 0.5f));
 
 	myGUIParts[2].LeftArrow->SetPosition(CU::Vector2f(0.04f, 0.7f));
@@ -95,7 +96,7 @@ CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aS
 	myGUIParts[3].RightArrow = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player4_arrowRight.dds");
 	myGUIParts[3].NameTag = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/Player4.dds");
 	myGUIParts[3].ReadySprite = new CSpriteInstance("Sprites/GUI/CharacterSelectImages/IsPlayerReady.dds");
-	myGUIParts[3].ReadySprite->SetPosition(CU::Vector2f(0.625f, 0.5f));
+	myGUIParts[3].ReadySprite->SetPosition(CU::Vector2f(0.625f, 0.69f));
 	myGUIParts[3].JoinSprite->SetPosition(CU::Vector2f(0.5f, 0.5f));
 
 	myGUIParts[3].LeftArrow->SetPosition(CU::Vector2f(0.54f, 0.7f));
@@ -417,7 +418,6 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 		}
 			break;
 		case CU::GAMEPAD::B:
-			//myStateStack.Pop();
 			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
 			{
 				if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
@@ -428,7 +428,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 					}
 					else
 					{
-						myPlayers.RemoveCyclicAtIndex(i);
+						myStateStack.Pop();
 					}
 					break;
 				}
