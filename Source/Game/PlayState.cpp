@@ -106,6 +106,7 @@
 #include "CameraTilter.h"
 #include "SplitScreenSelection.h"
 #include "BrontosaurusEngine/ModelManager.h"
+#include "PointLightComponent.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -632,29 +633,36 @@ void CPlayState::PostPostmasterEvent(short aGamepadIndex,const Postmaster::Messa
 
 const CU::Vector4f CPlayState::GetPlayerColor(const int aInputDevice)
 {
+	CU::CJsonValue jsonDoc;
+	jsonDoc.Parse("Json/HUD/HUDGlobal.json");
+	CU::CJsonValue minimapValue = jsonDoc.at("minimap");
 	CU::Vector4f color;
 	switch (aInputDevice)
 	{
 	case 0:
-
-		color = YELLOW;
-		
+	{
+		CU::CJsonValue jsonTimeTextColor = minimapValue.at("player1Color");
+		color = CU::Vector4f(jsonTimeTextColor.at("r").GetFloat(), jsonTimeTextColor.at("g").GetFloat(), jsonTimeTextColor.at("b").GetFloat(), jsonTimeTextColor.at("a").GetFloat());
 		break;
+	}
 	case 1:
-
-		color = BLUE;
-		
+	{
+		CU::CJsonValue jsonTimeTextColor = minimapValue.at("player2Color");
+		color = CU::Vector4f(jsonTimeTextColor.at("r").GetFloat(), jsonTimeTextColor.at("g").GetFloat(), jsonTimeTextColor.at("b").GetFloat(), jsonTimeTextColor.at("a").GetFloat());
 		break;
+	}
 	case 2:
-
-		color = GREEN;
-		
+	{
+		CU::CJsonValue jsonTimeTextColor = minimapValue.at("player3Color");
+		color = CU::Vector4f(jsonTimeTextColor.at("r").GetFloat(), jsonTimeTextColor.at("g").GetFloat(), jsonTimeTextColor.at("b").GetFloat(), jsonTimeTextColor.at("a").GetFloat());
 		break;
+	}
 	case 3:
-
-		color = PINK;
-		
+	{
+		CU::CJsonValue jsonTimeTextColor = minimapValue.at("player4Color");
+		color = CU::Vector4f(jsonTimeTextColor.at("r").GetFloat(), jsonTimeTextColor.at("g").GetFloat(), jsonTimeTextColor.at("b").GetFloat(), jsonTimeTextColor.at("a").GetFloat());
 		break;
+	}
 	default:
 		color = DEFAULT;
 		// Also make mark a bit smaller.
@@ -679,6 +687,14 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	//
 	// Lights
 	//
+	PointLightComponent* pointLight = CLightComponentManager::GetInstance().CreateAndRegisterPointLightComponent();
+
+	CU::Vector4f color = GetPlayerColor(aCurrentPlayer);
+	pointLight->SetColor({ color.x, color.y, color.z });
+	pointLight->SetRange(5.0f);
+	pointLight->SetIntensity(1.0f);
+	pointLight->SetOffsetToParent({ 0.0f, 1.25f, 0.0f });
+	secondPlayerObject->AddComponent(pointLight);
 
 	CComponent* headLight1 = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({ 1.f, 1.0f, 0.7f }, 3.f, 10.f, 3.141592f / 16.f);
 	CGameObject* headLightObject1 = myGameObjectManager->CreateGameObject();
