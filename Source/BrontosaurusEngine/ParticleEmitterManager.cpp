@@ -15,7 +15,13 @@ void CParticleEmitterManager::ClearActiveEmitters()
 {
 	for (int i = myInstances.Size() - 1; i >= 0 ; --i)
 	{
+		Deactivate(myInstances[i]->GetInstanceID());
+		while(myInstances[i]->IsDone() == false)
+		{
+			
+		}
 		Release(myInstances[i]->GetInstanceID());
+		
 	}
 }
 
