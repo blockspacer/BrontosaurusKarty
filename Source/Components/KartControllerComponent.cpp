@@ -36,6 +36,7 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	, myLastGroundComponent(nullptr)
 	, myLookingBack(false)
 {
+	myType = eComponentType::eKartController;
 	CU::CJsonValue levelsFile;
 	std::string errorString = levelsFile.Parse("Json/KartStats.json");
 	if (!errorString.empty()) DL_MESSAGE_BOX(errorString.c_str());
@@ -698,6 +699,11 @@ const CU::Vector3f& CKartControllerComponent::GetVelocity() const
 	return myVelocity;
 }
 
+float CKartControllerComponent::GetWeight() const
+{
+	return myWeight;
+}
+
 void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 {
 	if (GetHitGround() == true)
@@ -841,6 +847,13 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 	parentTransform.RotateAroundAxis(steerAngle * (abs(speed2) < 0.001f ? 0.f : 1.f) * aDeltaTime, CU::Axees::Y);
 }
 
+void CKartControllerComponent::DoRepulsion(float aBounceProportion, const float aBounceEffect, const CU::Vector3f& aDir)
+{
+	myVelocity *= 0.75f;
+	const float repulsion = CLAMP(aBounceEffect * aBounceProportion, 0.f, GetMaxSpeed() * 2.f * aBounceProportion);
+	myVelocity += repulsion * aDir;
+}
+
 static const unsigned int numberOfCorners = 4;
 static const unsigned int testsPerCorner = 2;
 
@@ -881,14 +894,42 @@ void CKartControllerComponent::DoCornerTest(unsigned aCornerIndex, const CU::Mat
 			}
 			else if(raycastHitData.collisionLayer == Physics::eKart && reinterpret_cast<CComponent*>(raycastHitData.actor->GetCallbackData()->GetUserData())->GetParent() != GetParent())
 			{
+				CComponent*const colliderComponent = reinterpret_cast<CComponent*>(raycastHitData.actor->GetCallbackData()->GetUserData());
 				if (myIsInvurnable == true)
 				{
-					reinterpret_cast<CComponent*>(raycastHitData.actor->GetCallbackData()->GetUserData())->GetParent()->NotifyOnlyComponents(eComponentMessageType::eGotHit, SComponentMessageData());
+					colliderComponent->GetParent()->NotifyOnlyComponents(eComponentMessageType::eGotHit, SComponentMessageData());
 				}
-				GetParent()->Move(dir * (raycastHitData.distance - testDist) * -2.f);
-				myVelocity *= 0.75f;
-				const float repulsion = CLAMP(bounceEffect, 0.f, GetMaxSpeed() * 2.f);
-				myVelocity += repulsion * dir;
+				else
+				{
+					GetParent()->Move(dir * (raycastHitData.distance - testDist) * -1.f);
+					colliderComponent->GetParent()->Move(dir * (raycastHitData.distance - testDist) * 1.f);
+					CKartControllerComponent* enemyKartController = nullptr;
+					for(int i = 0; i < colliderComponent->GetParent()->GetComponents().Size(); ++i)
+					{
+						if(colliderComponent->GetParent()->GetComponents()[i]->GetType() == eComponentType::eKartController)
+						{
+							enemyKartController = static_cast<CKartControllerComponent*>(colliderComponent->GetParent()->GetComponents()[i]);
+							break;
+						}
+					}
+
+					if(enemyKartController != nullptr)
+					{
+						const float enemyWeight = enemyKartController->GetWeight();
+
+						
+
+						
+						const float ownProportion = enemyWeight / GetWeight();
+						const float enemyProportion = GetWeight() / enemyWeight;
+						
+
+						DoRepulsion(ownProportion, bounceEffect, dir);
+						enemyKartController->DoRepulsion(enemyProportion, bounceEffect, -dir);
+					}
+					
+					
+				}
 			}
 		}
 	}
@@ -1048,8 +1089,13 @@ bool CKartControllerComponent::Answer(const eComponentQuestionType aQuestionType
 	case eComponentQuestionType::eGetMaxSpeed:
 	{
 		aQuestionData.myFloat = GetMaxSpeedWithModifiers();
+		return true;
 		break;
 	}
+	case eComponentQuestionType::eGetKartWeight:
+		aQuestionData.myFloat = GetWeight();
+		return true;
+		break;
 	default:
 		break;
 	}
