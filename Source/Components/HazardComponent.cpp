@@ -29,7 +29,7 @@ void CHazardComponent::Receive(const eComponentMessageType aMessageType, const S
 		myIsActive = false;
 		break;
 	}
-	case eComponentMessageType::eActivate:
+	case eComponentMessageType::eTurnOnHazard:
 	{
 		myIsActive = true;
 		break;
@@ -45,8 +45,11 @@ void CHazardComponent::Receive(const eComponentMessageType aMessageType, const S
 		{
 			CColliderComponent* collider = reinterpret_cast<CColliderComponent*>(aMessageData.myComponent);
 			const SColliderData* data = collider->GetData();
-
-			if (data->myLayer == Physics::eKart)
+			if (collider->GetParent() == GetParent())
+			{
+				return;
+			}
+			if (data->myLayer == Physics::eKart || data->myLayer == Physics::eHazzard)
 			{
 				SComponentMessageData collidedData;
 				collidedData.myComponent = collider;

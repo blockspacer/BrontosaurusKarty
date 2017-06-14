@@ -8,11 +8,12 @@
 #include "Scene.h"
 
 
-C3DSpriteComponent::C3DSpriteComponent(CScene& aScene, const std::string& aPath, const CU::Vector2f& aSize, const CU::Vector2f& aPivot, const CU::Vector4f& aRect, const CU::Vector4f& aColor) :
+C3DSpriteComponent::C3DSpriteComponent(CScene& aScene, const std::string& aPath, const CU::Vector2f& aSize, const CU::Vector2f& aPivot, const CU::Vector4f& aRect, const CU::Vector4f& aColor, int aOwnerIndex) :
 	myPivot(aPivot),
 	myRect(aRect),
 	myColor(aColor),
-	myScene(aScene)
+	myScene(aScene),
+	myOwnerIndex(aOwnerIndex)
 {
 	mySprite = SPRMGR.CreateSprite(aPath.c_str());
 	CU::Vector2f windowSize(WINDOW_SIZE);
@@ -43,6 +44,7 @@ void C3DSpriteComponent::Render()
 	renderMessage->myColor = myColor;
 	renderMessage->mySprite = mySprite;
 	renderMessage->myRotation = 0.f;
+	renderMessage->myOwnerIndex = myOwnerIndex;
 
 	RENDERER.AddRenderMessage(renderMessage);
 }

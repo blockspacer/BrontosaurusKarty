@@ -19,6 +19,7 @@
 #include "ThreadedPostmaster/PushState.h"
 #include "ThreadedPostmaster/PostOffice.h"
 #include "ThreadedPostmaster/RaceStartedMessage.h"
+#include "ThreadedPostmaster/PlayerPassedGoalMessage.h"
 
 #include "..\Components\KartControllerComponentManager.h"
 #include "..\Components\TimeTrackerComponentManager.h"
@@ -54,6 +55,23 @@ void CGlobalHUD::LoadHUD()
 	LoadMiniMap(jsonDoc.at("minimap"));
 	LoadScoreboard(jsonDoc.at("scoreboard"));
 	LoadCountDown(jsonDoc.at("countdown"));
+}
+
+void CGlobalHUD::Update(const float aDeltaTime)
+{
+	for (int i = 0; i < myKartObjects->Size(); ++i)
+	{
+		SComponentQuestionData percentDoneQuestion;
+
+		if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eGetLapTraversedPercentage, percentDoneQuestion) == true)
+		{
+			float distancePercent = percentDoneQuestion.myFloat;
+			float xPos = ((myMinimapElement.mySprite->GetPosition().x + distancePercent) * 0.87f) + 0.055f;
+			CLAMP(xPos, 0.1f, 0.8f);
+			myMinimapXPositions[i] = myMinimapXPositions[i] + 1 * aDeltaTime * (xPos - myMinimapXPositions[i]);
+
+		}
+	}
 }
 
 void CGlobalHUD::Render()
@@ -154,17 +172,7 @@ void CGlobalHUD::Render()
 
 			for (int i = 0; i < myKartObjects->Size(); ++i)
 			{
-				SComponentQuestionData percentDoneQuestion;
-
-				if (myKartObjects->At(i)->AskComponents(eComponentQuestionType::eGetLapTraversedPercentage, percentDoneQuestion) == true)
-				{
-					float distancePercent = percentDoneQuestion.myFloat;
-					float xPos = ((myMinimapElement.mySprite->GetPosition().x + distancePercent) * 0.87f) + 0.055f;
-					CLAMP(xPos, 0.1f, 0.8f);
-					
-					myMinimapPosIndicator->SetPosition({ xPos, 0.43f });
-
-				}
+				myMinimapPosIndicator->SetPosition({ myMinimapXPositions[i], 0.43f });
 
 				myMinimapPosIndicator->SetColor(DEFAULT);
 				switch (i)
@@ -410,4 +418,17 @@ void CGlobalHUD::Retry()
 void CGlobalHUD::LoadNext()
 {
 	ToMainMenu([this](){POSTMASTER.BroadcastLocal(new PushState(PushState::eState::ePlayState, myLevelIndex + 1)); });
+}
+
+eMessageReturn CGlobalHUD::DoEvent(const CPlayerPassedGoalMessage& aMessage)
+{
+	for (int i = 0; i < myKartObjects->Size(); ++i)
+	{
+		if(myKartObjects->At(i)->GetId() == aMessage.GetGameObject()->GetId())
+		{
+			myMinimapXPositions[i] = 0.05f;
+		}
+	}
+
+	return eMessageReturn::eContinue;
 }

@@ -372,6 +372,7 @@
     <ClInclude Include="BoxColliderComponent.h" />
     <ClInclude Include="C3DSpriteComponent.h" />
     <ClInclude Include="CameraComponent.h" />
+    <ClInclude Include="CameraTilter.h" />
     <ClInclude Include="CapsuleColliderComponent.h" />
     <ClInclude Include="CharacterControllerComponent.h" />
     <ClInclude Include="CharacterInfoComponent.h" />
@@ -458,6 +459,7 @@
     <ClCompile Include="BoxColliderComponent.cpp" />
     <ClCompile Include="C3DSpriteComponent.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
+    <ClCompile Include="CameraTilter.cpp" />
     <ClCompile Include="CapsuleColliderComponent.cpp" />
     <ClCompile Include="CharacterControllerComponent.cpp" />
     <ClCompile Include="CharacterInfoComponent.cpp" />

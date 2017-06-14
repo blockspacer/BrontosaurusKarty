@@ -378,20 +378,26 @@ CRenderPackage& CDeferredRenderer::GetSecondPackage()
 	return myGbuffer->GetRenderPackage(CGeometryBuffer::eEmissive);
 }
 
-void CDeferredRenderer::Do3DSprites(const CU::Matrix44f& aMatrix44, const CU::Matrix44f& aProjection)
+void CDeferredRenderer::Do3DSprites(const CU::Matrix44f& aMatrix44, const CU::Matrix44f& aProjection, const CU::Vector2f& aViewportSize, int aPlayerIndex)
 {
 	for(int i = 0; i < my3DSprites.Size(); ++i)
 	{
 		SRender3DSpriteMessage* spriteMessage = my3DSprites[i];
-		const CU::Vector4f pos =spriteMessage->myPosition * aMatrix44 * aProjection;
-
-		const CU::Vector4f screenizedPos = pos / pos.w;
-		CU::Vector2f screenPos = ((CU::Vector2f(screenizedPos.x, screenizedPos.y)) + CU::Vector2f::One) / 2;
-		screenPos.y = 1.f - screenPos.y;
-		if(pos.z > 0.f)
+		if (aPlayerIndex != spriteMessage->myOwnerIndex)
 		{
-			spriteMessage->mySprite->Render(screenPos, spriteMessage->mySize * (1.f / pos.z), spriteMessage->myPivot, spriteMessage->myRotation, spriteMessage->myRect, spriteMessage->myColor);
+			const CU::Vector4f pos = spriteMessage->myPosition * aMatrix44 * aProjection;
+
+			const CU::Vector4f screenizedPos = pos / pos.w;
+			CU::Vector2f screenPos = ((CU::Vector2f(screenizedPos.x, screenizedPos.y)) + CU::Vector2f::One) / 2;
+			screenPos.y = 1.f - screenPos.y;
+			const CU::Vector2f windowSize = WINDOW_SIZE_F;
+			const CU::Vector2f viewportscaling(aViewportSize.y / windowSize.y, aViewportSize.x / windowSize.x);
+			if (pos.z > 0.f)
+			{
+				spriteMessage->mySprite->Render(screenPos, spriteMessage->mySize * viewportscaling * (1.f / pos.z), spriteMessage->myPivot, spriteMessage->myRotation, spriteMessage->myRect, spriteMessage->myColor);
+			}
 		}
+		
 	}
 	my3DSprites.RemoveAll();
 }

@@ -35,6 +35,7 @@ enum class eMessageType
 	eBlueShellWarning,
 	eControllerInput,
 	eRedShellWarning,
+	ePlayerPassedGoal,
 	eLength,
 	
 };

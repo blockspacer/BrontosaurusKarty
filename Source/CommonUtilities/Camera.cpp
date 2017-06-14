@@ -205,6 +205,11 @@ namespace CU
 		return myFrustum.IsInside(sphere);
 	}
 
+	const CU::Vector2f Camera::GetProjectionSize() const
+	{
+		return CU::Vector2f(myWidth, myHeight);
+	}
+
 	void Camera::SetPosition(const CU::Vector3f& aPosition)
 	{
 		myTransformation.SetPosition(aPosition);

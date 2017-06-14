@@ -47,7 +47,7 @@ public:
 	ID3D11ShaderResourceView* GetDepthResource();
 	CRenderPackage& GetFirstPackage();
 	CRenderPackage& GetSecondPackage();
-	void Do3DSprites(const CU::Matrix44f& aMatrix44, const CU::Matrix44f& aProjection);
+	void Do3DSprites(const CU::Matrix44f& aMatrix44, const CU::Matrix44f& aProjection, const CU::Vector2f& aViewportSize, int aPlayerIndex);
 
 private:
 	

@@ -76,6 +76,7 @@ enum class eComponentMessageType
 	eSetBoost,
 	eGiveItem,
 	eUseItem,
+	eReleaseItem,
 	eRotateTowards,
 	eUpdate,
 	eKill,
@@ -87,8 +88,10 @@ enum class eComponentMessageType
 	eSpinKart,
 	eEnteredGoal,
 	eTurnOffHazard,
+	eTurnOnHazard,
 	eReInitRedShell,
 	eReInitBlueShell,
+	eReInitItem,
 	ePassedASpline,
 	eAITakeOver,
 	eSetCameraRotation,
@@ -97,6 +100,12 @@ enum class eComponentMessageType
 	eFinishedRace,
 	eInflictZKill,
 	eLength,
+};
+
+struct SReleaseItemData
+{
+	CComponent* userComponent;
+	CU::Vector2f direction;
 };
 
 struct SComponentMessageData
@@ -131,6 +140,7 @@ struct SComponentMessageData
 
 		ICollider* myCollider;
 		const SBoostData* myBoostData;
+		const SReleaseItemData* myReleaseItemData;
 
 		const std::function<void(void)>* myVoidFunction;
 	};

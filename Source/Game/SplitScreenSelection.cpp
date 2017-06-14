@@ -11,7 +11,7 @@
 #include "CommonUtilities.h"
 #include "MenuState.h"
 
-CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aStateStack, eInputMessengerType::eSplitScreenSelectionMenu, 1)
+CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aStateStack, eInputMessengerType::eSplitScreenSelectionMenu, 1), myIsInFocus(false)
 {
 	myPlayers.Init(4);
 	myHasKeyboardResponded = false;
@@ -111,6 +111,12 @@ CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aS
 
 CSplitScreenSelection::~CSplitScreenSelection()
 {
+
+	myCharacterSprites.DeleteAll();
+	for (unsigned int i = 0; i < myGUIParts.Size(); ++i)
+	{
+		myGUIParts[i].Delete();
+	}
 }
 
 void CSplitScreenSelection::Init()
@@ -192,15 +198,16 @@ void CSplitScreenSelection::Render()
 void CSplitScreenSelection::OnEnter(const bool aLetThroughRender)
 {
 	myMenuManager.UpdateMousePosition(myMenuManager.GetMopusePosition());
+	myIsInFocus = true;
 }
 
 void CSplitScreenSelection::OnExit(const bool aLetThroughRender)
 {
-	for (unsigned int i = 0; i < myGUIParts.Size(); ++i)
+	for (int i = 0; i < myPlayers.Size();++i)
 	{
-		myGUIParts[i].Delete();
+		myPlayers[i].myIsReady = false;
 	}
-	myCharacterSprites.DeleteAll();
+	myIsInFocus = false;
 }
 
 void CSplitScreenSelection::MenuLoad(const std::string & aFile)
@@ -374,6 +381,10 @@ bool CSplitScreenSelection::BackToMenu(const std::string & aString)
 
 CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & aInputMessage)
 {
+	if (myIsInFocus == false)
+	{
+		return CU::eInputReturn::ePassOn;
+	}
 	if (aInputMessage.myType == CU::eInputType::eGamePadButtonPressed)
 	{
 		switch (aInputMessage.myGamePad)
@@ -387,6 +398,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 				{
 					found = true;
 					myPlayers[i].myIsReady = true;
+					break;;
 				}
 			}
 			if (found == false)
@@ -405,13 +417,28 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 		}
 			break;
 		case CU::GAMEPAD::B:
-			myStateStack.Pop();
+			//myStateStack.Pop();
+			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
+			{
+				if (static_cast<short>(myPlayers[i].myInputDevice) == aInputMessage.myGamepadIndex)
+				{
+					if(myPlayers[i].myIsReady == true)
+					{
+						myPlayers[i].myIsReady = false;
+					}
+					else
+					{
+						myPlayers.RemoveCyclicAtIndex(i);
+					}
+					break;
+				}
+			}
 			break;
 		case CU::GAMEPAD::START:
 			if (myRenderAllReady == true)
 			{
 				myMenuManager.ourParticipants = myPlayers;
-				myStateStack.SwapState(new CMenuState(myStateStack, "Json/Menu/ControllerLevelSelect.json"));
+				myStateStack.PushState(new CMenuState(myStateStack, "Json/Menu/ControllerLevelSelect.json"));
 			}
 			break;
 		case CU::GAMEPAD::DPAD_RIGHT:
