@@ -113,29 +113,30 @@ void CGlobalHUD::Render()
 				switch (myWinners[i].character)
 				{
 				case SParticipant::eCharacter::eVanBrat:
-					myPortraitSprite->SetRect({ 0.f, 0.875f, 1.f, 1.f });
+					myPortraitSprite->SetRect({ 0.f, 0.375f, 1.f, 0.500f });
+					
 					break;
 				case SParticipant::eCharacter::eGrandMa:
 					myPortraitSprite->SetRect({ 0.f, 0.750f, 1.f, 0.875f });
 					break;
 				case SParticipant::eCharacter::eVanBrat2:
-					myPortraitSprite->SetRect({ 0.f, 0.625f, 1.f, 0.750f });
+					myPortraitSprite->SetRect({ 0.f, 0.875f, 1.f, 1.f });
 					break;
 				case SParticipant::eCharacter::eGrandMa2:
-					myPortraitSprite->SetRect({ 0.f, 0.500f, 1.f, 0.625f });
+					myPortraitSprite->SetRect({ 0.f, 0.250f, 1.f, 0.375f });
 					break;
 				case SParticipant::eCharacter::eCat:
-					myPortraitSprite->SetRect({ 0.f, 0.375f, 1.f, 0.500f });
+					myPortraitSprite->SetRect({ 0.f, 0.625f, 1.f, 0.750f });
 					break;
 				case SParticipant::eCharacter::eCat2:
-					myPortraitSprite->SetRect({ 0.f, 0.250f, 1.f, 0.375f });
+					myPortraitSprite->SetRect({ 0.f, 0.500f, 1.f, 0.625f });
 					break;
 				default:
 					myPortraitSprite->SetRect({ 0.f, 0.750f, 1.f, 0.875f });
 					break;
 				}
 				
-				// TODO fixa detta
+
 				myPortraitSprite->SetColor(FULL_COL);
 				if (myWinners[i].isPlayer == true)
 				{
@@ -294,6 +295,12 @@ void CGlobalHUD::Render()
 
 void CGlobalHUD::StartCountdown()
 {
+	SComponentMessageData msg;
+	msg.myString = "PlayEngineStart";
+	for (int i = 0; i < myKartObjects->Size(); ++i)
+	{
+		myKartObjects->At(i)->NotifyOnlyComponents(eComponentMessageType::ePlaySound, msg);
+	}
 
 	auto countdownLambda = [this]()
 	{
@@ -304,7 +311,7 @@ void CGlobalHUD::StartCountdown()
 
 		myCountdownSprite->SetAlpha(0);
 
-		Audio::CAudioInterface::GetInstance()->PostEvent("PlayStartCountDown");
+
 
 		while (floatTime <= 4.8f)
 		{
@@ -314,7 +321,12 @@ void CGlobalHUD::StartCountdown()
 			if ((unsigned char)floatTime > startCountdownTime)
 			{
 				startCountdownTime = std::floor(floatTime);
-				if (startCountdownTime == 1) { myCountdownSprite->SetRect({ 0.f,0.75f,1.f,1.00f }); myCountdownSprite->SetAlpha(1); }
+				if (startCountdownTime == 1)
+				{
+					myCountdownSprite->SetRect({ 0.f,0.75f,1.f,1.00f });
+					myCountdownSprite->SetAlpha(1);
+					Audio::CAudioInterface::GetInstance()->PostEvent("PlayStartCountDown");
+				}
 				else if (startCountdownTime == 2) 	myCountdownSprite->SetRect({ 0.f,0.50f,1.f,0.75f });
 				else if (startCountdownTime == 3) 	myCountdownSprite->SetRect({ 0.f,0.25f,1.f,0.50f });
 				else if (startCountdownTime == 4)
@@ -349,9 +361,6 @@ void CGlobalHUD::StartCountdown()
 		myCountdownElement.myShouldRender = false;
 		myMinimapElement.myShouldRender = true;
 
-		//SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"countdown", myCountdownElement.myGUIElement, myCountdownElement.myPixelSize);
-		//myCountdownSprite->SetAlpha(0);
-		//RENDERER.AddRenderMessage(guiElement, true);
 
 	};
 
