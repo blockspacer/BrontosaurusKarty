@@ -78,6 +78,7 @@
     <ClCompile Include="SailInCirclesComponent.cpp" />
     <ClCompile Include="SailInCirclesManager.cpp" />
     <ClCompile Include="CameraTilter.cpp" />
+    <ClCompile Include="SnurrComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSourceComponent.h" />
@@ -165,5 +166,6 @@
     <ClInclude Include="SailInCirclesComponent.h" />
     <ClInclude Include="SailInCirclesManager.h" />
     <ClInclude Include="CameraTilter.h" />
+    <ClInclude Include="SnurrComponent.h" />
   </ItemGroup>
 </Project>

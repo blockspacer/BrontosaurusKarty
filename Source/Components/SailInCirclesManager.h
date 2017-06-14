@@ -1,4 +1,5 @@
 #pragma once
+#include "SnurrComponent.h"
 
 class CSailInCirclesComponent;
 
@@ -10,6 +11,8 @@ public:
 	static CSailInCirclesManager& GetInstance();
 
 	CSailInCirclesComponent* CreateComponent(const float aRPM, const float aVerticalRPM, const float aRadius, const float aVerticalAmplitude);
+	CSnurrComponent* CreateSnurrComponent(const CU::Vector3f & aRotationsVector);
+
 	void Update(const float aDeltaTime);
 
 private:
@@ -18,6 +21,8 @@ private:
 
 private:
 	CU::GrowingArray<CSailInCirclesComponent*> mySailInCirclesComponent;
+	CU::GrowingArray<CSnurrComponent*> mySnurrComponent;
+
 	static CSailInCirclesManager* ourInstance;
 	float myTimer;
 };
