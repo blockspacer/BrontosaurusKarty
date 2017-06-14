@@ -260,8 +260,17 @@ void CGlobalHUD::Render()
 					break;
 				}
 
-				myMinimapPosIndicator->RenderToGUI(L"minimap");
+				SChangeStatesMessage* changeState = new SChangeStatesMessage();
+				changeState->myBlendState = eBlendState::eAlphaBlend;
+				changeState->myDepthStencilState = eDepthStencilState::eDisableDepth;
+				changeState->myRasterizerState = eRasterizerState::eNoCulling;
+				changeState->mySamplerState = eSamplerState::eClamp;
 
+				SRenderToGUI* rendertoGui = new SRenderToGUI(L"minimap",changeState);
+
+				RENDERER.AddRenderMessage(rendertoGui);
+
+				myMinimapPosIndicator->RenderToGUI(L"minimap");
 			}
 		}	
 		SetGUIToEndBlend(L"minimap");
