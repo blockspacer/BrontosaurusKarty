@@ -653,7 +653,6 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 	}
 	case eComponentMessageType::eSetBoost:
 	{
-		DL_PRINT("boost %f", aMessageData.myBoostData->maxSpeedBoost);
 		if (aMessageData.myBoostData->maxSpeedBoost > 0)
 		{
 			myIsBoosting = true;
