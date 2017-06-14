@@ -24,6 +24,8 @@
 #include "..\Components\KartControllerComponentManager.h"
 #include "..\Components\TimeTrackerComponentManager.h"
 
+#include "../Audio/AudioInterface.h"
+
 #include "ComponentAnswer.h"
 #include "CharacterInfoComponent.h"
 
@@ -133,7 +135,7 @@ void CGlobalHUD::Render()
 					break;
 				}
 				
-				// TODO fixa detta
+
 				myPortraitSprite->SetColor(FULL_COL);
 				if (myWinners[i].isPlayer == true)
 				{
@@ -292,6 +294,12 @@ void CGlobalHUD::Render()
 
 void CGlobalHUD::StartCountdown()
 {
+	SComponentMessageData msg;
+	msg.myString = "PlayEngineStart";
+	for (int i = 0; i < myKartObjects->Size(); ++i)
+	{
+		myKartObjects->At(i)->NotifyOnlyComponents(eComponentMessageType::ePlaySound, msg);
+	}
 
 	auto countdownLambda = [this]()
 	{
@@ -302,6 +310,8 @@ void CGlobalHUD::StartCountdown()
 
 		myCountdownSprite->SetAlpha(0);
 
+
+
 		while (floatTime <= 4.8f)
 		{
 			timerManager.UpdateTimers();
@@ -310,7 +320,12 @@ void CGlobalHUD::StartCountdown()
 			if ((unsigned char)floatTime > startCountdownTime)
 			{
 				startCountdownTime = std::floor(floatTime);
-				if (startCountdownTime == 1) { myCountdownSprite->SetRect({ 0.f,0.75f,1.f,1.00f }); myCountdownSprite->SetAlpha(1); }
+				if (startCountdownTime == 1)
+				{
+					myCountdownSprite->SetRect({ 0.f,0.75f,1.f,1.00f });
+					myCountdownSprite->SetAlpha(1);
+					Audio::CAudioInterface::GetInstance()->PostEvent("PlayStartCountDown");
+				}
 				else if (startCountdownTime == 2) 	myCountdownSprite->SetRect({ 0.f,0.50f,1.f,0.75f });
 				else if (startCountdownTime == 3) 	myCountdownSprite->SetRect({ 0.f,0.25f,1.f,0.50f });
 				else if (startCountdownTime == 4)
@@ -345,9 +360,6 @@ void CGlobalHUD::StartCountdown()
 		myCountdownElement.myShouldRender = false;
 		myMinimapElement.myShouldRender = true;
 
-		//SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"countdown", myCountdownElement.myGUIElement, myCountdownElement.myPixelSize);
-		//myCountdownSprite->SetAlpha(0);
-		//RENDERER.AddRenderMessage(guiElement, true);
 
 	};
 

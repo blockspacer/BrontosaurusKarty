@@ -521,10 +521,11 @@ int CItemFactory::CreateItem(const eItemTypes aItemType, CComponent* userCompone
 	{
 	case eItemTypes::eGreenShell:
 	{
-		if (myShells.Size() <= 0)
+		if (myShells.Size() <= 1)
 		{
 			myShells.Add(myActiveShells.GetFirst());
 			myActiveShells.Remove(myActiveShells.GetFirst());
+			
 		}
 
 		CGameObject* shell = myShells.GetLast();
