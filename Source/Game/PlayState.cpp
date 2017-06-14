@@ -106,6 +106,7 @@
 #include "CameraTilter.h"
 #include "SplitScreenSelection.h"
 #include "BrontosaurusEngine/ModelManager.h"
+#include "PointLightComponent.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -699,6 +700,14 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	//
 	// Lights
 	//
+	PointLightComponent* pointLight = CLightComponentManager::GetInstance().CreateAndRegisterPointLightComponent();
+
+	CU::Vector4f color = GetPlayerColor(aCurrentPlayer);
+	pointLight->SetColor({ color.x, color.y, color.z });
+	pointLight->SetRange(5.0f);
+	pointLight->SetIntensity(1.0f);
+	pointLight->SetOffsetToParent({ 0.0f, 1.25f, 0.0f });
+	secondPlayerObject->AddComponent(pointLight);
 
 	CComponent* headLight1 = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({ 1.f, 1.0f, 0.7f }, 3.f, 10.f, 3.141592f / 16.f);
 	CGameObject* headLightObject1 = myGameObjectManager->CreateGameObject();
