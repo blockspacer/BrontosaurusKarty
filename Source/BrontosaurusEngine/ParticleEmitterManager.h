@@ -81,5 +81,7 @@ private:
 	static CParticleEmitterManager* ourInstance;
 
 	volatile bool myThreadFinished;
+public:
+	void ClearActiveEmitters();
 };
 

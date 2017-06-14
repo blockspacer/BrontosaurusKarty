@@ -11,6 +11,14 @@
 
 CParticleEmitterManager* CParticleEmitterManager::ourInstance = nullptr;
 
+void CParticleEmitterManager::ClearActiveEmitters()
+{
+	for (int i = myInstances.Size() - 1; i >= 0 ; --i)
+	{
+		Release(myInstances[i]->GetInstanceID());
+	}
+}
+
 CParticleEmitterManager::CParticleEmitterManager(): myIsActive(true), myThreadFinished(true)
 {
 	myParticleEmitterComp.Init(16);

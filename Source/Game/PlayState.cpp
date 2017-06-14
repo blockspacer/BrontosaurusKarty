@@ -240,6 +240,9 @@ CPlayState::~CPlayState()
 
 	CPollingStation::Destroy();
 	CSailInCirclesManager::Destroy();
+
+	CParticleEmitterManager::GetInstance().ClearActiveEmitters();
+
 }
 
 // Runs on its own thread.
