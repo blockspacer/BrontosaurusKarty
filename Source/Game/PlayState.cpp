@@ -105,6 +105,7 @@
 #include "C3DSpriteComponent.h"
 #include "CameraTilter.h"
 #include "SplitScreenSelection.h"
+#include "BrontosaurusEngine/ModelManager.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -350,6 +351,7 @@ void CPlayState::Load()
 	myGlobalHUD = new CGlobalHUD(myLevelIndex);
 	myGlobalHUD->LoadHUD();
 
+	MODELMGR->Optimize();
 
 	//myCountdownSprite->Render();
 
