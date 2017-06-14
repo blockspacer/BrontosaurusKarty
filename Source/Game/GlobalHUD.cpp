@@ -24,12 +24,22 @@
 #include "..\Components\KartControllerComponentManager.h"
 #include "..\Components\TimeTrackerComponentManager.h"
 
-#define DEFAULT	{0.3f, 0.3f, 0.3f, 1.0f}
-#define YELLOW	{1.0f, 1.0f, 0.0f, 1.0f}
-#define GREEN	{0.0f, 1.0f, 0.0f, 1.0f}
-#define PINK	{1.0f, 0.0f, 1.0f, 1.0f}
-#define BLUE	{0.0f, 0.0f, 1.0f, 1.0f}
+#include "ComponentAnswer.h"
+#include "CharacterInfoComponent.h"
 
+#define ZERO_COL		{0.0f, 0.0f, 0.0f, 1.0f}
+#define FULL_COL		{1.0f, 1.0f, 1.0f, 1.0f}
+#define DEFAULT			{0.3f, 0.3f, 0.3f, 1.0f}
+
+#define YELLOW			{1.0f, 1.0f, 0.0f, 1.0f}
+#define GREEN			{0.0f, 1.0f, 0.0f, 1.0f}
+#define PINK			{1.0f, 0.0f, 1.0f, 1.0f}
+#define BLUE			{0.0f, 0.0f, 1.0f, 1.0f}
+
+#define PALE_YELLOW		{9.0f, 9.0f, 4.0f, 1.0f}
+#define PALE_GREEN		{0.0f, 8.0f, 0.0f, 1.0f}
+#define PALE_PINK		{8.0f, 0.0f, 8.0f, 1.0f}
+#define PALE_BLUE		{0.0f, 0.0f, 8.0f, 1.0f}
 
 CGlobalHUD::CGlobalHUD(int aLevelIndex):myNrOfPlayers(0), myPortraitSprite(nullptr), myMinimapPosIndicator(nullptr), myRaceOver(false), myTimeText(nullptr), myLevelIndex(aLevelIndex)
 {
@@ -104,12 +114,31 @@ void CGlobalHUD::Render()
 					myPortraitSprite->SetRect({ 0.f, 0.750f, 1.f, 0.875f });
 					break;
 				}
+				
+				myPortraitSprite->SetColor(FULL_COL);
+				if (myWinners[i].isPlayer == true)
+				{
+					if (myWinners[i].inputDevice = 0)
+						myPortraitSprite->SetColor(PALE_YELLOW);
+					
+					if (myWinners[i].inputDevice = 1)
+						myPortraitSprite->SetColor(PALE_GREEN);
+					
+					if (myWinners[i].inputDevice = 2)
+						myPortraitSprite->SetColor(PALE_PINK);
+					
+					if (myWinners[i].inputDevice = 3)
+						myPortraitSprite->SetColor(PALE_BLUE);
+
+				}
+
 
 				CU::Vector2f lastPortraitPos = myPortraitSprite->GetPosition();
 				CU::Vector2f newPortraitPos = { lastPortraitPos.x, lastPortraitPos.y + yOffset };
 
 				myPortraitSprite->RenderToGUI(L"scoreboard");
 				myPortraitSprite->SetPosition(newPortraitPos);
+
 				myTimeText->SetPosition(newPortraitPos + myTimeTextOffset);
 				int timePassedSum = myWinners[i].minutesPassed + myWinners[i].secondsPassed + myWinners[i].hundredthsSecondsPassed;
 				if(timePassedSum > 0)
