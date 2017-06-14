@@ -16,12 +16,12 @@ void CParticleEmitterManager::ClearActiveEmitters()
 	for (int i = myInstances.Size() - 1; i >= 0 ; --i)
 	{
 		Deactivate(myInstances[i]->GetInstanceID());
-		while(myInstances[i]->IsDone() == false)
+		while (myInstances[i]->HasReferences())
 		{
-			
+			Release(myInstances[i]->GetInstanceID());
 		}
-		Release(myInstances[i]->GetInstanceID());
 		
+		ReleaseInternal(myInstances[i]->GetInstanceID());
 	}
 }
 
@@ -53,6 +53,10 @@ CParticleEmitterManager& CParticleEmitterManager::GetInstance()
 
 void CParticleEmitterManager::Create()
 {
+	if (ourInstance != nullptr)
+	{
+		DL_ASSERT("Particle emitter manager has already been created");
+	}
 	ourInstance = new CParticleEmitterManager;
 }
 
@@ -143,8 +147,9 @@ void CParticleEmitterManager::Release(Particles::ParticleEmitterID anInstanceId)
 	{
 		if(myInstances[i]->GetInstanceID() == anInstanceId)
 		{
-			CU::GrowingArray<CParticleEmitterInstance*>& freeInstances = GetFreeInstances(myInstances[i]->GetEmitterId());
+			
 			myInstances[i]->Release();
+			
 			break;
 		}
 	}
@@ -213,7 +218,6 @@ void CParticleEmitterManager::Update(const CU::Time aDeltaTime)
 			{
 				CParticleEmitterInstance& instance = *myInstances[i];
 				emitter->UpdateInstance(aDeltaTime, instance);
-				int i = 0;
 			}
 		}
 		else

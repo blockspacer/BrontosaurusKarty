@@ -241,7 +241,7 @@ CPlayState::~CPlayState()
 	CPollingStation::Destroy();
 	CSailInCirclesManager::Destroy();
 
-	CParticleEmitterManager::GetInstance().ClearActiveEmitters();
+	CParticleEmitterManager::Destroy();
 
 }
 
@@ -595,6 +595,9 @@ eMessageReturn CPlayState::DoEvent(const CLoadLevelMessage& aLoadLevelMessage)
 
 void CPlayState::CreateManagersAndFactories()
 {
+	CParticleEmitterManager::Create();
+	CParticleEmitterManager::GetInstance().LoadParticleLibrary("Json/Particles.json");
+
 	CComponentManager::CreateInstance();
 
 	CParticleEmitterComponentManager::Create();
@@ -635,6 +638,8 @@ void CPlayState::CreateManagersAndFactories()
 	CPickupComponentManager::Create();
 
 	CSailInCirclesManager::CreateInstance();
+
+	
 }
 
 void CPlayState::LoadNavigationSpline(const CU::CJsonValue& splineData)
