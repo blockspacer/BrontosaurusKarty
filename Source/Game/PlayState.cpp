@@ -503,7 +503,7 @@ void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
 
 		Audio::CAudioInterface::GetInstance()->PostEvent(song);
 	}
-	myGlobalHUD->StartCountDown();
+	myGlobalHUD->StartCountdown();
 	//InitiateRace();
 
 }
