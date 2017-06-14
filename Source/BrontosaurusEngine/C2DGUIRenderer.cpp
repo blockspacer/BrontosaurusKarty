@@ -337,5 +337,5 @@ void C2DGUIRenderer::Clear()
 
 void C2DGUIRenderer::QueuClear()
 {
-	myShouldClear = 10;
+	myShouldClear = 100;
 }

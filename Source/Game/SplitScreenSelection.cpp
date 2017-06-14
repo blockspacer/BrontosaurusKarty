@@ -107,6 +107,11 @@ CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aS
 	myGUIParts[3].RightArrowOriginPosition = myGUIParts[3].RightArrow->GetPosition();
 
 	myRenderAllReady = false;
+
+	for(int i = 0; i < 4; ++i)
+	{
+		myLastJoyX[i] = 0.f;
+	}
 }
 
 
@@ -469,8 +474,9 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 	}
 	else if (aInputMessage.myType == CU::eInputType::eGamePadLeftJoyStickChanged)
 	{
+		const int controllerIndex = static_cast<int>(aInputMessage.myGamepadIndex);
 		float inbuiltdeadzone = 0.7f;
-		if ((myLastJoyX < inbuiltdeadzone && aInputMessage.myJoyStickPosition.x > inbuiltdeadzone) || (myLastJoyX > -inbuiltdeadzone && aInputMessage.myJoyStickPosition.x < -inbuiltdeadzone))
+		if ((myLastJoyX[controllerIndex] < inbuiltdeadzone && aInputMessage.myJoyStickPosition.x > inbuiltdeadzone) || (myLastJoyX[controllerIndex] > -inbuiltdeadzone && aInputMessage.myJoyStickPosition.x < -inbuiltdeadzone))
 		{
 			if (aInputMessage.myJoyStickPosition.x > inbuiltdeadzone)
 			{
@@ -493,7 +499,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 				}
 			}
 		}
-		myLastJoyX = aInputMessage.myJoyStickPosition.x;
+		myLastJoyX[controllerIndex] = aInputMessage.myJoyStickPosition.x;
 
 	}
 	else if (aInputMessage.myType == CU::eInputType::eKeyboardPressed)
