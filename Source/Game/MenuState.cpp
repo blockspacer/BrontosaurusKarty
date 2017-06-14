@@ -25,6 +25,7 @@ const std::map<CU::eKeys, CU::GAMEPAD> CMenuState::ourKeyboardToGamePadMap = {
 	{ CU::eKeys::ESCAPE, CU::GAMEPAD::BACK },
 	{ CU::eKeys::SPACE, CU::GAMEPAD::A },
 	{ CU::eKeys::BACK, CU::GAMEPAD::B },
+	{ CU::eKeys::X, CU::GAMEPAD::X },
 	{ CU::eKeys::LEFT, CU::GAMEPAD::DPAD_LEFT },
 	{ CU::eKeys::RIGHT , CU::GAMEPAD::DPAD_RIGHT },
 	{ CU::eKeys::A, CU::GAMEPAD::DPAD_LEFT },
@@ -32,7 +33,7 @@ const std::map<CU::eKeys, CU::GAMEPAD> CMenuState::ourKeyboardToGamePadMap = {
 };
 
 
-CMenuState::CMenuState(StateStack& aStateStack, std::string aFile, State* aStateToMaybePop/* = nullptr*/)
+CMenuState::CMenuState(StateStack& aStateStack, std::string aFile, State* aStateToMaybePop/* = nullptr*/, const int aLevelIndex/* = 0*/)
 	: State(aStateStack, eInputMessengerType::eMainMenu, 10)
 	, myTextInputs(2)
 	, myCurrentTextInput(-1)
@@ -45,6 +46,7 @@ CMenuState::CMenuState(StateStack& aStateStack, std::string aFile, State* aState
 	, myBlinkeyTimer(0)
 	, mySelectorNames(1)
 	, mySelectors(1)
+	, myLevelIndex(aLevelIndex)
 {
 	myManager.AddAction("ExitGame", bind(&CMenuState::ExitGame, std::placeholders::_1));
 	myManager.AddAction("PushMenu", [this](std::string string)-> bool { return PushMenu(string); });
@@ -56,6 +58,7 @@ CMenuState::CMenuState(StateStack& aStateStack, std::string aFile, State* aState
 	myManager.AddAction("SelectPrevious", [this](std::string string)-> bool { return SelectPrevious(string); });
 	myManager.AddAction("PushSelectedLevel", [this](std::string string)-> bool { return PushSelectedLevel(string); });
 	myManager.AddAction("PopPoppableState", [this](std::string /*string*/)-> bool { return PopPoppableState(); });
+	myManager.AddAction("RestartLevel", [this](std::string /*string*/)-> bool { return RestartLevel(); });
 	MenuLoad(aFile);
 
 	myLeftArrow = nullptr;
@@ -513,4 +516,12 @@ bool CMenuState::PopPoppableState()
 	}
 
 	return true;
+}
+
+bool CMenuState::RestartLevel()
+{
+	ourMenuesToPop = 1;
+	myStateStack.SwapState(new CLoadState(myStateStack, myLevelIndex, myManager.ourParticipants));
+
+	return false;
 }
