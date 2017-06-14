@@ -17,7 +17,7 @@ CCreditsState::~CCreditsState()
 
 void CCreditsState::Init()
 {
-	myCreditsSprite = std::make_unique<CSpriteInstance>("Sprites/Credits/credits.dds");
+	myCreditsSprite = std::make_unique<CSpriteInstance>("Sprites/GUI/Buttons/CreditsBackground/default.dds");
 	myCreditsSprite->SetPivot({ 0.5f, 0.5f });
 	myCreditsSprite->SetPosition({ 0.5f, 0.5f });
 }
