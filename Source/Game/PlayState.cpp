@@ -397,6 +397,7 @@ void CPlayState::Init()
 	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::eCharPressed);
 	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::eRaceOver);
 	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::eControllerInput);
+	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::ePlayerPassedGoal);
 
 	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::ePlayerFinished);
 	POSTMASTER.Subscribe(myPlayerControllerManager, eMessageType::eRaceStarted);
@@ -459,10 +460,14 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 	myRedShellManager->Update(aDeltaTime.GetSeconds());
 	myBlueShellManager->Update(aDeltaTime.GetSeconds());
 	myExplosionManager->Update(aDeltaTime.GetSeconds());
+	myItemFactory->Update();
 
 	CSailInCirclesManager::GetInstance().Update(aDeltaTime.GetSeconds());
 
 	CPickupComponentManager::GetInstance()->Update(aDeltaTime.GetSeconds());
+
+	myGlobalHUD->Update(aDeltaTime.GetSeconds());
+
 	return myStatus;
 }
 

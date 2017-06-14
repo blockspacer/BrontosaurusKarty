@@ -99,8 +99,11 @@ int LoadDecal(KLoader::SLoadedComponentData someData)
 int LoadSailInCircles(KLoader::SLoadedComponentData someData)
 {
 	float rpm = someData.myData.at("RPM").GetFloat();
-	float radius = someData.myData.at("radius").GetFloat();
+	float rpmVert = someData.myData.at("verticalRPM").GetFloat();
 
-	CComponent* comp = CSailInCirclesManager::GetInstance().CreateComponent(rpm, radius);
+	float radius = someData.myData.at("radius").GetFloat();
+	float verticalAmplitude = someData.myData.at("verticalAmplitude").GetFloat();
+
+	CComponent* comp = CSailInCirclesManager::GetInstance().CreateComponent(rpm, rpmVert, radius, verticalAmplitude);
 	return comp->GetId();
 }

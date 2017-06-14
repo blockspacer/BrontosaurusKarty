@@ -29,6 +29,18 @@ void CItemHolderComponent::Receive(const eComponentMessageType aMessageType, con
 		myItemFactory.CreateItem(myItem,this);
 		myItem = eItemTypes::eNone;
 		break;
+	case eComponentMessageType::eReleaseItem:
+
+		if (aMessageData.myVector2f != CU::Vector2f::Zero)
+		{
+			myItemFactory.ReleaseItem(this, aMessageData.myVector2f);
+			break;
+		}
+
+		myItemFactory.ReleaseItem(this);
+
+
+		break;
 	default:
 		break;
 	}

@@ -21,6 +21,7 @@ public:
 public:
 	void LoadHUD() override;
 	void Render() override;
+	void Update(const float aDeltaTime);
 	bool GetRaceOver() const { return myRaceOver; }
 
 	void StartCountDown();
@@ -33,6 +34,7 @@ private:
 	void DisableRedundantGUI();
 
 	eMessageReturn DoEvent(const CRaceOverMessage& aMessage) override;
+	eMessageReturn DoEvent(const CPlayerPassedGoalMessage& aMessage) override;
 	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
 	void ToMainMenu(const std::function<void(void)>& aCallback);
 
@@ -42,6 +44,7 @@ public:
 private:
 	const CU::GrowingArray<CGameObject*>* myKartObjects;
 	CU::StaticArray<SPlacementData, 8> myWinners;
+	CU::StaticArray<float, 8> myMinimapXPositions;
 
 	SHUDElement myScoreboardElement;
 	SHUDElement myMinimapElement;

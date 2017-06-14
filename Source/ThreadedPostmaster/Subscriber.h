@@ -26,6 +26,7 @@ class CRaceOverMessage;
 class CRaceStartedMessage;
 class CBlueShellWarningMessage;
 class CRedShellWarningMessage;
+class CPlayerPassedGoalMessage;
 
 namespace Postmaster
 {
@@ -66,6 +67,7 @@ namespace Postmaster
 		virtual eMessageReturn DoEvent(const CBlueShellWarningMessage& aBlueShellWarningMessage);
 		virtual eMessageReturn DoEvent(const Message::CControllerInputMessage& aControllerInputMessage);
 		virtual eMessageReturn DoEvent(const CRedShellWarningMessage& aRedShellWarningMessage);
+		virtual eMessageReturn DoEvent(const CPlayerPassedGoalMessage& aRedShellWarningMessage);
 
 		void SetSubscribedThread(const std::thread::id& aId);
 		const std::thread::id& GetSubscribedId() const;

@@ -85,8 +85,11 @@
     <Filter Include="Message\ControllerInputMessage">
       <UniqueIdentifier>{be09a65f-65fb-4b01-97a8-69bdc9ec5dbe}</UniqueIdentifier>
     </Filter>
-<Filter Include="Message\RedShellWarning">
+    <Filter Include="Message\RedShellWarning">
       <UniqueIdentifier>{4f399304-bbd1-468c-b884-93fe96629448}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Message\PlayerPassedGoal">
+      <UniqueIdentifier>{ec67127c-17d6-4769-bd3a-629bcecf2c1e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -163,9 +166,12 @@
     </ClCompile>
     <ClCompile Include="ControllerInputMessage.cpp">
       <Filter>Message\ControllerInputMessage</Filter>
-</ClCompile>
+    </ClCompile>
     <ClCompile Include="RedShellWarningMessage.cpp">
       <Filter>Message\RedShellWarning</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerPassedGoalMessage.cpp">
+      <Filter>Message\PlayerPassedGoal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -257,9 +263,12 @@
     </ClInclude>
     <ClInclude Include="ControllerInputMessage.h">
       <Filter>Message\ControllerInputMessage</Filter>
-</ClInclude>
+    </ClInclude>
     <ClInclude Include="RedShellWarningMessage.h">
       <Filter>Message\RedShellWarning</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerPassedGoalMessage.h">
+      <Filter>Message\PlayerPassedGoal</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
