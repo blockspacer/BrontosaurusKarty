@@ -11,6 +11,7 @@
 #include "Colour.h"
 #include "RenderCamera.h"
 #include "GUIElement.h"
+#include "../Components/C3DSpriteComponent.h"
 
 struct ID3D11RenderTargetView;
 
@@ -219,6 +220,7 @@ struct SRenderCameraQueueMessage : SRenderMessage
 	SRenderCameraQueueMessage();
 	CRenderCamera myRenderCamera;
 	bool RenderDepth;
+	int myOwnerIndex;
 };
 
 struct SRenderModelMessage : SRenderMessage
@@ -316,6 +318,7 @@ struct SRender3DSpriteMessage : SRenderMessage
 	CU::Vector4f myColor;
 	CSprite* mySprite;
 	float myRotation;
+	int myOwnerIndex;
 };
 
 struct SRenderSkyboxMessage : SRenderMessage

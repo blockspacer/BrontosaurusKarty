@@ -34,6 +34,7 @@ private:
 	void DisableRedundantGUI();
 
 	eMessageReturn DoEvent(const CRaceOverMessage& aMessage) override;
+	eMessageReturn DoEvent(const CPlayerPassedGoalMessage& aMessage) override;
 	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
 	void ToMainMenu(const std::function<void(void)>& aCallback);
 

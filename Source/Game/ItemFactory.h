@@ -14,6 +14,12 @@ class CRedShellManager;
 class CBlueShellComponentManager;
 class CScene;
 
+struct SHeldItem
+{
+	CGameObject* item;
+	CGameObject* holder;
+};
+
 struct SItemDrop
 {
 	eItemTypes myType;
@@ -32,6 +38,10 @@ public:
 	eItemTypes RandomizeItem(CComponent* aPlayerCollider);
 
 	int CreateItem(const eItemTypes aItemType, CComponent* userComponent);
+
+	void ReleaseItem(CComponent* userComponent, CU::Vector2f aInput = CU::Vector2f::Zero);
+
+	void Update();
 
 private:
 	void CreateBananaBuffer();
@@ -68,5 +78,10 @@ private:
 
 	CU::GrowingArray<SBoostData> myLightningBoostBuffer;
 	CU::GrowingArray<CU::GrowingArray<SItemDrop>> myPlacementDrops;
+
+
+	CU::GrowingArray<SHeldItem> myHeldBananas;
+	CU::GrowingArray<SHeldItem> myHeldGreenShells;
+	CU::GrowingArray<SHeldItem> myHeldRedShells;
 };
 

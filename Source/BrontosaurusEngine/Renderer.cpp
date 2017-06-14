@@ -1368,7 +1368,7 @@ void CRenderer::RenderCameraQueue(SRenderCameraQueueMessage* msg, int & aDrawCal
 		SetStates(&noCullStates);
 
 
-		myDeferredRenderer.Do3DSprites(myCamera.GetTransformation().GetInverted(), myCamera.GetProjection(), myCamera.GetProjectionSize());
+		myDeferredRenderer.Do3DSprites(myCamera.GetTransformation().GetInverted(), myCamera.GetProjection(), myCamera.GetProjectionSize(), msg->myOwnerIndex);
 		//myFullScreenHelper.DoEffect(CFullScreenHelper::eEffectType::eCopy, &myParticleRenderer.GetIntermediatePackage());
 	}
 	else

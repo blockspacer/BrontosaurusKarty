@@ -11,7 +11,7 @@ class CRenderCamera
 public:
 	friend class CScene;
 	friend class CRenderer;
-	CRenderCamera(const bool deferred = true);
+	CRenderCamera(int aPlayerIndex = -1, const bool deferred = true);
 	~CRenderCamera();
 
 	CRenderCamera(const CRenderCamera& aCopy);
@@ -44,6 +44,7 @@ private:
 	ID3D11PixelShader* myShadowPSInstanced;
 
 	bool myIsShadowCamera;
+	int myPlayerIndex;
 };
 
 inline CRenderPackage & CRenderCamera::GetRenderPackage() 

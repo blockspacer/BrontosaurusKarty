@@ -24,9 +24,13 @@ private:
 	void JoystickDeadzone();
 
 private:
+	CU::Vector2f myJoyStickInput;
+
 	short myControllerIndex;
 	
 	bool myIsMovingFoward;
 	bool myIsMovingBackwards;
 	bool myIsDrifting;
+
+	bool myLeftTrigger;
 };

@@ -23,6 +23,7 @@ CXboxController::CXboxController(CKartControllerComponent& aKartComponent)
 	, myIsMovingFoward(false)
 	, myIsMovingBackwards(false)
 	, myIsDrifting(false)
+	, myLeftTrigger(false)
 {
 	myAIController = new CAIController(aKartComponent);
 }
@@ -87,10 +88,16 @@ void CXboxController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 	{
 	case CU::GAMEPAD::DPAD_DOWN:
 	{
+		SComponentMessageData data;
+		data.myInt = 0; //Star
+		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveItem, data);
 		break;
 	}
 	case CU::GAMEPAD::DPAD_LEFT:
 	{
+		SComponentMessageData data;
+		data.myInt = 1; //Star
+		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveItem, data);
 		break;
 	}
 	case CU::GAMEPAD::DPAD_RIGHT:
@@ -102,6 +109,9 @@ void CXboxController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 	}
 	case CU::GAMEPAD::DPAD_UP:
 	{
+		SComponentMessageData data;
+		data.myInt = 3; //Star
+		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eGiveItem, data);
 		break;
 	}
 	case CU::GAMEPAD::X:
@@ -189,12 +199,18 @@ void CXboxController::MovedJoystick(const CU::SInputMessage& aInputMessage)
 	{
 		myControllerComponent.Turn(aInputMessage.myJoyStickPosition.x);
 	}
+
+	myJoyStickInput = aInputMessage.myJoyStickPosition;
 	
 }
 
 void CXboxController::GamePadLeftTrigger(const CU::SInputMessage& aInputMessage)
 {
-	myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eUseItem, SComponentMessageData());
+	if (myLeftTrigger == false)
+	{
+		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eUseItem, SComponentMessageData());
+		myLeftTrigger = true;
+	}
 }
 
 void CXboxController::GamePadRightTrigger(const CU::SInputMessage& aInputMessage)
@@ -208,6 +224,16 @@ void CXboxController::GamePadRightTrigger(const CU::SInputMessage& aInputMessage
 
 void CXboxController::GamePadLeftTriggerReleased(const CU::SInputMessage& aInputMessage)
 {
+	if (myLeftTrigger == true)
+	{
+	/*	SReleaseItemData data;
+		data.userComponent = &myControllerComponent;
+		data.direction = myJoyStickInput;*/
+		SComponentMessageData input;
+		input.myVector2f = myJoyStickInput;
+		myControllerComponent.GetParent()->NotifyComponents(eComponentMessageType::eReleaseItem, input);
+		myLeftTrigger = false;
+	}
 }
 
 void CXboxController::GamePadRightTriggerReleased(const CU::SInputMessage& aInputMessage)

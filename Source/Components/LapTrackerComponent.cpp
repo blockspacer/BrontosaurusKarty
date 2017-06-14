@@ -4,6 +4,7 @@
 #include "../ThreadedPostmaster/Postmaster.h"
 #include "../ThreadedPostmaster/PlayerFinishedMessage.h"
 #include "../ThreadedPostmaster/AIFinishedMessage.h"
+#include "../ThreadedPostmaster/PlayerPassedGoalMessage.h"
 
 CLapTrackerComponent::CLapTrackerComponent()
 {
@@ -141,7 +142,7 @@ void CLapTrackerComponent::Receive(const eComponentMessageType aMessageType, con
 			myLapIndex++;
 			myPlacementValue++;
 			myIsReadyToEnterGoal = false;
-
+			Postmaster::Threaded::CPostmaster::GetInstance().Broadcast(new CPlayerPassedGoalMessage(GetParent()));
 
 			if (myLapIndex > 3)
 			{
