@@ -910,8 +910,7 @@ void CRenderer::DoRenderQueue()
 	mySynchronizer.SwapRead();
 	int drawCalls = 0;
 
-	if (myCheckImortantQueue)
-	{
+	
 		while (!myImportandRenderQueue.IsEmpty())
 		{
 			SRenderMessage* renderMessage = myImportandRenderQueue.Pop();
@@ -922,10 +921,8 @@ void CRenderer::DoRenderQueue()
 			HandleRenderMessage(renderMessage, drawCalls);
 			SAFE_DELETE(renderMessage);
 		}
-		myCheckImortantQueue = false;
-	}
-
-
+	
+		
 	for (CSynchronizer<SRenderMessage*>::size_type i = 0; i < !mySynchronizer; ++i)
 	{
 		SRenderMessage* renderMessage = mySynchronizer[i];

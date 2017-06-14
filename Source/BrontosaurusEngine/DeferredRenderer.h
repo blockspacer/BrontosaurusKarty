@@ -74,6 +74,7 @@ private:
 	CU::GrowingArray<SRenderMessage*> myLightMessages;
 	CU::GrowingArray<int> myBatchedModelIds;
 	CU::GrowingArray<SRenderMessage*> myDecalMessages;
+	CU::GrowingArray<SRender3DSpriteMessage*> my3DSprites;
 
 	CLightModel* myPointLightModel;
 	CLightModel* mySpotLightModel;
@@ -111,7 +112,7 @@ private:
 		eEmissive
 	} myRenderMode;
 	CU::InputWrapper* myInputWrapper;
-	CU::GrowingArray<SRender3DSpriteMessage*> my3DSprites;
+	
 	void HandleInput();
 #endif 
 };

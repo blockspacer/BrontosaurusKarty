@@ -53,6 +53,7 @@ public:
 	const CU::Vector3f& GetVelocity() const;
 
 
+	float GetWeight() const;
 	bool Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData) override;
 	bool Drift();
 	bool IsFutureGrounded(const float aDistance);
@@ -62,6 +63,7 @@ public:
 
 	inline float GetMaxSpeed() const;
 	inline float GetMaxSpeed2() const;
+	inline float GetMaxSpeedWithModifiers() const;
 	inline float GetMaxAcceleration() const;
 	inline float GetAcceleratiot();
 	inline bool GetIsControlledByAI() const;
@@ -70,6 +72,7 @@ private:
 	
 	void UpdateMovement(const float aDeltaTime);
 
+	void DoRepulsion(float aBounceProportion, const float aBounceEffect, const CU::Vector3f& aDir);
 	void DoCornerTest(unsigned aCornerIndex, const CU::Matrix33f& aRotationMatrix, const CU::Vector3f& aPosition, const float aHalfWidth, const float aLength);
 	void CheckWallKartCollision(const float aDetltaTime);
 	void DoPhysics(const float aDeltaTime);
@@ -198,6 +201,10 @@ float CKartControllerComponent::GetMaxSpeed2() const
 	return maxSpeed * maxSpeed;
 }
 
+inline float CKartControllerComponent::GetMaxSpeedWithModifiers() const
+{
+	return GetMaxSpeed() * myMaxSpeedModifier;
+}
 float CKartControllerComponent::GetMaxAcceleration() const
 {
 	return myMaxAcceleration;

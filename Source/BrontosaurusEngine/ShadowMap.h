@@ -2,6 +2,8 @@
 #include "RenderCamera.h"
 #include "..\CommonUtilities\AABB.h"
 #include "ShadowBuffers.h"
+#include <condition_variable>
+#include <mutex>
 
 class CModelInstance;
 using InstanceID = unsigned int;
@@ -24,6 +26,7 @@ public:
 
 
 	inline bool GetIfFinishedBake();
+	void WaitForShadow();
 
 private:
 	inline void FinishedBake();
@@ -35,7 +38,10 @@ private:
 	CU::AABB myBoundingBox;
 
 	SBakedShadowBuffer myData;
-	volatile bool myHasBaked;
+	std::atomic_bool myHasBaked;
+
+	std::condition_variable myShadowWait;
+	std::mutex myShadowMutex;
 };
 
 inline void CShadowMap::SetPCFPassCount(const int aPCFPassCount)
@@ -56,4 +62,5 @@ inline bool CShadowMap::GetIfFinishedBake()
 inline void CShadowMap::FinishedBake()
 {
 	myHasBaked = true;
+	myShadowWait.notify_all();
 }

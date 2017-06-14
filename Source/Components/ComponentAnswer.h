@@ -56,6 +56,9 @@ enum class eComponentQuestionType
 	eGetFinishTimeMinutes,
 	eGetFinishTimeSeconds,
 	eGetFinishTimeHundredthsSeconds,
+	eGetMaxSpeed,
+
+	eGetKartWeight,
 	eLength,
 };
 struct SComponentQuestionData

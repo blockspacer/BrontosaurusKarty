@@ -121,6 +121,11 @@ const std::string& CModelManager::GetFilePath(const ModelId aModelID) const
 	return NullString;
 }
 
+void CModelManager::Optimize()
+{
+	myModelList.Optimize();
+}
+
 void CModelManager::LoadAnimations(const std::string& aPath, const ModelId aModelId)
 {
 	static const std::string Directory("Models/Animations/");
