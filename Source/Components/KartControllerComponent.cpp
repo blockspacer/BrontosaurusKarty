@@ -650,10 +650,15 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 	}
 	case eComponentMessageType::eSetBoost:
 	{
+		DL_PRINT("boost %f", aMessageData.myBoostData->maxSpeedBoost);
 		if (aMessageData.myBoostData->maxSpeedBoost > 0)
 		{
 			myIsBoosting = true;
 			CParticleEmitterManager::GetInstance().Activate(myBoostEmmiterhandle);
+			SComponentMessageData sound;
+			sound.myString = "PlayBoost";
+			GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
+			
 		}
 		else
 		{
@@ -667,6 +672,12 @@ void CKartControllerComponent::Receive(const eComponentMessageType aMessageType,
 				MoveFoward();
 			}
 			CParticleEmitterManager::GetInstance().Deactivate(myBoostEmmiterhandle);
+			SComponentMessageData sound;
+			sound.myString = "StopBoost";
+			GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
+			SComponentMessageData sound2;
+			sound2.myString = "PlayBoostEnd";
+			GetParent()->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound2);
 		}
 
 		myMaxSpeedModifier = 1.0f + aMessageData.myBoostData->maxSpeedBoost;
