@@ -556,18 +556,6 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 				participant.myInputDevice = SParticipant::eInputDevice::eKeyboard;
 			}
 			break;
-		case CU::eKeys::UP:
-		{
-			bool found = false;
-			for (unsigned int i = 0; i < myPlayers.Size(); ++i)
-			{
-				if (myPlayers[i].myInputDevice == SParticipant::eInputDevice::eKeyboard)
-				{
-					myPlayers[i].mySelectedCharacter = SParticipant::eCharacter::eVanBrat;
-				}
-			}
-		}
-		break;
 		case CU::eKeys::D:
 		case CU::eKeys::RIGHT:
 		{
@@ -594,7 +582,7 @@ CU::eInputReturn CSplitScreenSelection::RecieveInput(const CU::SInputMessage & a
 		}
 		break;
 		case CU::eKeys::RETURN:
-			if (myPlayers.Size() >= 1)
+			if (myRenderAllReady == true)
 			{
 				myMenuManager.ourParticipants = myPlayers;
 				myStateStack.SwapState(new CMenuState(myStateStack, "Json/Menu/ControllerLevelSelect.json"));
