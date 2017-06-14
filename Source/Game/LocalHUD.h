@@ -13,6 +13,7 @@ public:
 
 	void LoadHUD() override;
 	void Render() override;
+	void Update(const float aDeltatTime);
 
 private:
 	void LoadLapCounter(const CU::CJsonValue& aJsonValue);
@@ -51,6 +52,7 @@ private:
 
 	CGameObject* myPlayer;
 
+	float myIsDangerVisibleCountdown;
 	unsigned short myAmountOfPlayers;
 	unsigned char myLapAdjusterCheat;
 	unsigned char myPlayerID;
