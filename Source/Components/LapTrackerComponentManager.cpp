@@ -270,7 +270,7 @@ void CLapTrackerComponentManager::AddEveryoneToVictoryList()
 		myWinnerPlacements[i]->AskComponents(eComponentQuestionType::eGetCharacterInfo, qData);
 
 		data.character = qData.myCharacterInfo->characterType;
-		data.isPlayer = !qData.myCharacterInfo->isAI;
+		data.isPlayer = qData.myCharacterInfo->isAI;
 		data.placement = i+1;
 
 		SComponentQuestionData timeQuestionData;

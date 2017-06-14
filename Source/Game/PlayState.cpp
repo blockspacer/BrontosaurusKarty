@@ -396,6 +396,7 @@ void CPlayState::Init()
 		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eBlueShellWarning);
 		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eRedShellWarning);
 		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eCharPressed);
+		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eRaceOver);
 	}
 
 	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::eCharPressed);
@@ -860,7 +861,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	//playerObject->AddComponent(playerColliderComponent);
 	playerObject->AddComponent(playerTriggerColliderComponent);
 	playerObject->AddComponent(rigidComponent);
-	CComponent* characterInfoComponent = new CCharacterInfoComponent(aParticipant.mySelectedCharacter, false, aCurrentPlayer);
+	CComponent* characterInfoComponent = new CCharacterInfoComponent(aParticipant.mySelectedCharacter, true, aCurrentPlayer);
 	CComponentManager::GetInstance().RegisterComponent(characterInfoComponent);
 	playerObject->AddComponent(characterInfoComponent);
 
@@ -903,17 +904,9 @@ void CPlayState::CreateAI()
 	intermediary->AddComponent(secondPlayerObject);
 
 	//Create player number object
-	CGameObject* playerNumber = myGameObjectManager->CreateGameObject();
-	C3DSpriteComponent* numberModel = new C3DSpriteComponent(*myScene, "Sprites/GUI/playerMarker.dds", CU::Vector2f::One, CU::Vector2f(0.5f, 0.5f),
-		CU::Vector4f(0.f, 0.f, 1.f, 1.f), DEFAULT);
-	CComponentManager::GetInstance().RegisterComponent(numberModel);
-	playerNumber->AddComponent(numberModel);
-	playerNumber->GetLocalTransform().SetPosition({ 0.f,2.f,0.f });
-
-
+	
 	CGameObject* playerObject = myGameObjectManager->CreateGameObject();
 	playerObject->AddComponent(intermediary);
-	playerObject->AddComponent(playerNumber);
 
 	//
 	// decal
@@ -996,7 +989,7 @@ void CPlayState::CreateAI()
 	playerObject->AddComponent(playerTriggerColliderComponent);
 	playerObject->AddComponent(rigidComponent);
 
-	CComponent* characterInfoComnponent = new CCharacterInfoComponent(static_cast<SParticipant::eCharacter>(i), true, 200);
+	CComponent* characterInfoComnponent = new CCharacterInfoComponent(static_cast<SParticipant::eCharacter>(i), false, 200);
 	CComponentManager::GetInstance().RegisterComponent(characterInfoComnponent);
 	playerObject->AddComponent(characterInfoComnponent);
 
