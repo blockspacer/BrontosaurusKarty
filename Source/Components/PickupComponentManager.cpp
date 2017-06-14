@@ -69,7 +69,7 @@ void CPickupComponentManager::AddDecalsToItemsboxes(CScene& aScene, CGameObjectM
 		decal->SetDecalIndex(6);
 		
 		CGameObject* decalHolder = gameObjectManager->CreateGameObject();
-		decalHolder->GetLocalTransform().myPosition.Set(0.0f, -2.f, 0.0f);
+		decalHolder->GetLocalTransform().myPosition.Set(0.0f, -1.f, 0.0f);
 		decalHolder->GetLocalTransform().SetScale({ 3.0f, 4.f, 3.f });
 		decalHolder->GetLocalTransform().RotateAroundAxis(3.141592f, CU::Axees::Y);
 		decalHolder->AddComponent(decal);
