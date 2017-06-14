@@ -24,6 +24,7 @@
 #include "../Audio/AudioInterface.h"
 #include "../BrontosaurusEngine/Scene.h"
 #include "../BrontosaurusEngine/DecalInstance.h"
+#include "EInputMessage.h"
 
 
 CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent, const short aControllerIndex, const short aCharacterIndex)
@@ -763,7 +764,6 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 		forwardVector = localSpceNormalXForward.Cross(localSpaceNormal);
 	}
 
-	const float speed = forwardVector.Dot(myVelocity);
 	const float dir = myVelocity.Dot(forwardVector);
 
 	float way = 1.f;
@@ -773,7 +773,7 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 	}
 
 	const float onGroundModifier = (myCanAccelerate == true ? 1.f : 0.f);
-	const float gripOverWeight = (myGrip / myWeight);
+
 	myVelocity -= myVelocity * CU::Vector3f(40.f, 1.f, 1.f) * myGrip * aDeltaTime * onGroundModifier;
 
 	if (myHasGottenHit == false)
@@ -864,7 +864,7 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 void CKartControllerComponent::DoRepulsion(float aBounceProportion, const float aBounceEffect, const CU::Vector3f& aDir)
 {
 	myVelocity *= 0.75f;
-	const float repulsion = CLAMP(aBounceEffect * aBounceProportion, 0.f, GetMaxSpeed() * 4.f * aBounceProportion);
+	const float repulsion = CLAMP(aBounceEffect * aBounceProportion, 0.f, GetMaxSpeed() * 4.f);
 	myVelocity += repulsion * aDir;
 }
 
@@ -929,7 +929,7 @@ void CKartControllerComponent::DoCornerTest(unsigned aCornerIndex, const CU::Mat
 
 					if(enemyKartController != nullptr)
 					{
-						static const float extraMove = 1.05f;
+						static const float extraMove = 1.1f;
 						const CU::Vector3f rawMoveDir = (cornerPos - raycastHitData.position) ;
 						const CU::Vector3f moveDir(rawMoveDir.x, 0.f, rawMoveDir.z);
 
@@ -942,16 +942,34 @@ void CKartControllerComponent::DoCornerTest(unsigned aCornerIndex, const CU::Mat
 						const CU::Vector3f enemyDirNorm = enemyDir.GetNormalized();
 
 						GetParent()->Move(ownDir /** (testDist - raycastHitData.distance )*/+ ownDirNorm * extraMove);
-					
 						colliderComponent->GetParent()->Move(-enemyDir /** (testDist - raycastHitData.distance)*/ + enemyDirNorm * extraMove);
+
 
 						const float enemyWeight = enemyKartController->GetWeight();
 
 						const float ownProportion = enemyWeight / GetWeight();
 						const float enemyProportion = GetWeight() / enemyWeight;
+
+						const float ownSpeed = abs(myVelocity.z);
+						const float enemySpeed = abs(enemyKartController->GetVelocity().z);
 						
-						DoRepulsion(ownProportion, bounceEffect, ownDirNorm);
-						enemyKartController->DoRepulsion(enemyProportion, bounceEffect, -enemyDirNorm);
+						const bool imQuicker = ownSpeed > enemySpeed;
+
+						const CU::Vector3f forward = GetParent()->GetToWorldTransform().myForwardVector;
+						const CU::Vector3f rightVector = GetParent()->GetToWorldTransform().myRightVector;
+						const CU::Vector3f myPosition = GetParent()->GetWorldPosition();
+						const CU::Vector3f enemyPosition = enemyKartController->GetParent()->GetWorldPosition();
+						const CU::Vector3f toEnemy = enemyPosition - myPosition;
+
+						const bool iAmBehind = toEnemy.Dot(forward) < 0.f;
+						const bool amOnLeft = toEnemy.Dot(rightVector);
+
+						const CU::Vector3f ownPush = (amOnLeft ? -1.f : 1.f) * CU::Vector3f::UnitX;
+
+						const float speedDif = abs(ownSpeed - enemySpeed);
+
+						DoRepulsion(ownProportion * speedDif, bounceEffect, ownPush);
+						enemyKartController->DoRepulsion(enemyProportion * speedDif, bounceEffect, -ownPush);
 					}
 				}
 			}
