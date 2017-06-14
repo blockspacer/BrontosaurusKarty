@@ -987,7 +987,7 @@ void CPlayState::CreateAI()
 	playerObject->AddComponent(playerTriggerColliderComponent);
 	playerObject->AddComponent(rigidComponent);
 
-	CComponent* characterInfoComnponent = new CCharacterInfoComponent(SParticipant::eCharacter::eVanBrat, true, 200);
+	CComponent* characterInfoComnponent = new CCharacterInfoComponent(static_cast<SParticipant::eCharacter>(i), true, 200);
 	CComponentManager::GetInstance().RegisterComponent(characterInfoComnponent);
 	playerObject->AddComponent(characterInfoComnponent);
 
