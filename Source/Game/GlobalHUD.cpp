@@ -121,20 +121,21 @@ void CGlobalHUD::Render()
 					break;
 				}
 				
+				// TODO fixa detta
 				myPortraitSprite->SetColor(FULL_COL);
 				if (myWinners[i].isPlayer == true)
 				{
 					if (myWinners[i].inputDevice = 0)
-						myPortraitSprite->SetColor(PALE_YELLOW);
+						myPortraitSprite->SetColor(myPlayer1Color);
 					
 					if (myWinners[i].inputDevice = 1)
-						myPortraitSprite->SetColor(PALE_GREEN);
+						myPortraitSprite->SetColor(myPlayer2Color);
 					
 					if (myWinners[i].inputDevice = 2)
-						myPortraitSprite->SetColor(PALE_PINK);
+						myPortraitSprite->SetColor(myPlayer3Color);
 					
 					if (myWinners[i].inputDevice = 3)
-						myPortraitSprite->SetColor(PALE_BLUE);
+						myPortraitSprite->SetColor(myPlayer4Color);
 
 				}
 
