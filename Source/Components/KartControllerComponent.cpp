@@ -105,6 +105,8 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 	mySlowMovment = CParticleEmitterManager::GetInstance().GetEmitterInstance("SlowSmoke");
 	myGrassEmmiter1 = CParticleEmitterManager::GetInstance().GetEmitterInstance("Grass");
 	myGrassEmmiter2 = CParticleEmitterManager::GetInstance().GetEmitterInstance("Grass");
+	myWater = CParticleEmitterManager::GetInstance().GetEmitterInstance("Water");
+	myWater2 = CParticleEmitterManager::GetInstance().GetEmitterInstance("Water");
 
 	myPreRaceBoostRate = 0.0f;
 	myPreRaceBoostValue = 0.0f;
@@ -469,6 +471,7 @@ void CKartControllerComponent::Update(const float aDeltaTime)
 	myCanAccelerate = true;
 	DoPhysics(aDeltaTime);
 	CheckWallKartCollision(aDeltaTime);
+	IsOnWater(aDeltaTime);
 
 	messageData.myFloat = aDeltaTime;
 	GetParent()->NotifyComponents(eComponentMessageType::eUpdate, messageData);
@@ -1091,6 +1094,50 @@ void CKartControllerComponent::DoPhysics(const float aDeltaTime)
 	if (myCanAccelerate == false)
 	{
 		myVelocity += downAccl * (friction / (myCanAccelerate == true ? myGrip / myWeight : 1.f)) *gravity * aDeltaTime;
+	}
+}
+
+void CKartControllerComponent::IsOnWater(const float aDeltaTime)
+{
+	const CU::Matrix44f transformation = GetParent()->GetToWorldTransform();
+	const CU::Vector3f down = -CU::Vector3f::UnitY;
+	const CU::Vector3f upMove = CU::Vector3f::UnitY;
+	const float upMoveLength = upMove.Length();
+	const float upDist = upDistConst + upMoveLength;
+	const float onGroundDist = upDistConst * 2.f + upMoveLength;
+	const float controlDist = upDistConst * 100.f + upMoveLength;
+	const CU::Vector3f pos = transformation.GetPosition();
+
+	//Update fall speed per wheel
+
+	CU::Vector3f examineVector = pos;
+
+	Physics::SRaycastHitData raycastHitData = myPhysicsScene->Raycast(examineVector + upMove, down, testLength,
+		static_cast<Physics::ECollisionLayer>(Physics::eGround | Physics::eWater));
+
+	if (raycastHitData.hit == true && raycastHitData.collisionLayer == Physics::eWater)
+	{
+
+		CParticleEmitterManager::GetInstance().Activate(myWater);
+		CParticleEmitterManager::GetInstance().Activate(myWater2);
+
+		CU::Matrix44f transform = GetParent()->GetToWorldTransform();
+
+		transform.Move(CU::Vector3f(-0.45f, 0, 0));
+
+		CParticleEmitterManager::GetInstance().SetPosition(myWater, transform.GetPosition());
+
+		transform = GetParent()->GetToWorldTransform();
+
+		transform.Move(CU::Vector3f(0.5f, 0, 0));
+
+		CParticleEmitterManager::GetInstance().SetPosition(myWater2, transform.GetPosition());
+
+	}
+	else
+	{
+		CParticleEmitterManager::GetInstance().Deactivate(myWater);
+		CParticleEmitterManager::GetInstance().Deactivate(myWater2);
 	}
 }
 

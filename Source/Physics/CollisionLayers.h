@@ -7,7 +7,10 @@ namespace Physics
 	{
 		eNone = 0,
 		eDefault = 1 << 0,
+
 		// 1 - 7 unity reserved idk
+		//Unity water
+		eWater = 1 << 4,
 		eKart = 1 << 8,
 		eItemBox = 1 << 9,
 		eBoostpad = 1 << 10,
@@ -15,7 +18,7 @@ namespace Physics
 		eHazzard = 1 << 12,
 		eWall = 1 << 13,
 		eKill = 1 << 14,
-		eWater = 1 << 15,
+		
 
 		eEverything = CollideEverything,
 	};
@@ -23,7 +26,7 @@ namespace Physics
 
 	inline ECollisionLayer GetLayerFromUnity(const unsigned int aLayer)
 	{
-		assert(aLayer >= 0 && 1 << aLayer <= eWater && "Collider layer out of range.");
+		assert(aLayer >= 0 && 1 << aLayer <= eKill && "Collider layer out of range.");
 		return static_cast<ECollisionLayer>(1 << aLayer);
 	}
 

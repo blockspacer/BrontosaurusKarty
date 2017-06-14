@@ -77,6 +77,7 @@ private:
 	void DoCornerTest(unsigned aCornerIndex, const CU::Matrix33f& aRotationMatrix, const CU::Vector3f& aPosition, const float aHalfWidth, const float aLength);
 	void CheckWallKartCollision(const float aDetltaTime);
 	void DoPhysics(const float aDeltaTime);
+	void IsOnWater(const float aDeltaTime);
 
 	enum class AxisPos
 	{
@@ -149,6 +150,8 @@ private:
 	int mySlowMovment;
 	int myGrassEmmiter1;
 	int myGrassEmmiter2;
+	int myWater;
+	int myWater2;
 
 	short myControllerHandle;
 
