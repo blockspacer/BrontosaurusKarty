@@ -93,7 +93,7 @@ void CRedShellBehaviourComponent::Update(const float aDeltaTime)
 	//toClosestPointDirectionNormal.Normalize();
 	//toClosestPointDirectionNormal = splineNormal;
 	//closestPoint = currentSpline->myPosition;
-	CU::Vector3f closestPoint3D(closestPoint.x, 0.f, closestPoint.y);
+	CU::Vector3f closestPoint3D(closestPoint.x, GetParent()->GetWorldPosition().y, closestPoint.y);
 
 	myKartManager->GetClosestSpinesDirection(GetParent()->GetWorldPosition());
 
@@ -137,7 +137,7 @@ void CRedShellBehaviourComponent::Update(const float aDeltaTime)
 				}
 			}
 		}
-		if (i == myKartObjects->Size())
+		if (i == myKartObjects->Size()-1 && myLastTarget != nullptr)
 		{
 			SComponentMessageData sound;
 			sound.myString = "StopWarning";
