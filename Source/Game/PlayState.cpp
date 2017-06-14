@@ -632,49 +632,36 @@ void CPlayState::PostPostmasterEvent(short aGamepadIndex,const Postmaster::Messa
 
 const CU::Vector4f CPlayState::GetPlayerColor(const int aInputDevice)
 {
+	CU::CJsonValue jsonDoc;
+	jsonDoc.Parse("Json/HUD/HUDGlobal.json");
+	CU::CJsonValue minimapValue = jsonDoc.at("minimap");
 	CU::Vector4f color;
 	switch (aInputDevice)
 	{
 	case 0:
-		if(myGlobalHUD != nullptr)
-		{
-			color = myGlobalHUD->GetPlayer1Color();
-		}
-		else
-		{
-			color = CU::Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
-		}
+	{
+		CU::CJsonValue jsonTimeTextColor = minimapValue.at("player1Color");
+		color = CU::Vector4f(jsonTimeTextColor.at("r").GetFloat(), jsonTimeTextColor.at("g").GetFloat(), jsonTimeTextColor.at("b").GetFloat(), jsonTimeTextColor.at("a").GetFloat());
 		break;
+	}
 	case 1:
-		if (myGlobalHUD != nullptr)
-		{
-			color = myGlobalHUD->GetPlayer2Color();
-		}
-		else
-		{
-			color = CU::Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
-		}
+	{
+		CU::CJsonValue jsonTimeTextColor = minimapValue.at("player2Color");
+		color = CU::Vector4f(jsonTimeTextColor.at("r").GetFloat(), jsonTimeTextColor.at("g").GetFloat(), jsonTimeTextColor.at("b").GetFloat(), jsonTimeTextColor.at("a").GetFloat());
 		break;
+	}
 	case 2:
-		if (myGlobalHUD != nullptr)
-		{
-			color = myGlobalHUD->GetPlayer3Color();
-		}
-		else
-		{
-			color = CU::Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
-		}
+	{
+		CU::CJsonValue jsonTimeTextColor = minimapValue.at("player3Color");
+		color = CU::Vector4f(jsonTimeTextColor.at("r").GetFloat(), jsonTimeTextColor.at("g").GetFloat(), jsonTimeTextColor.at("b").GetFloat(), jsonTimeTextColor.at("a").GetFloat());
 		break;
+	}
 	case 3:
-		if (myGlobalHUD != nullptr)
-		{
-			color = myGlobalHUD->GetPlayer4Color();
-		}
-		else
-		{
-			color = CU::Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
-		}
+	{
+		CU::CJsonValue jsonTimeTextColor = minimapValue.at("player4Color");
+		color = CU::Vector4f(jsonTimeTextColor.at("r").GetFloat(), jsonTimeTextColor.at("g").GetFloat(), jsonTimeTextColor.at("b").GetFloat(), jsonTimeTextColor.at("a").GetFloat());
 		break;
+	}
 	default:
 		color = DEFAULT;
 		// Also make mark a bit smaller.
