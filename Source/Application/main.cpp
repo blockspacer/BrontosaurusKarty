@@ -156,9 +156,7 @@ unsigned int DebugDrawerFlags()
 
 void WWiseErrorCallback(const char* anError)
 {
-	std::string errorText = "WWise error: ";
-	errorText += anError;
-	DL_ASSERT(errorText.c_str());
+	DL_ASSERT("WWise error: %s", anError);
 }
 
 void InitAudio()
