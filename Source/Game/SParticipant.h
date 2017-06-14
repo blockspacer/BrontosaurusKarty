@@ -29,12 +29,12 @@ struct SParticipant
 	};
 	enum class eCharacter
 	{
-		eCat,
 		eVanBrat,
-		eGrandMa,
-		eCat2,
 		eVanBrat2,
+		eGrandMa,
 		eGrandMa2,
+		eCat,
+		eCat2,
 		eLength,
 	};
 	eInputDevice myInputDevice;
