@@ -17,9 +17,9 @@ CItemWeaponBehaviourComponent::CItemWeaponBehaviourComponent()
 	CU::CJsonValue levelsArray = boostList.at("Items");
 	CU::CJsonValue Item = levelsArray.at("GreenShell");
 
-	Speed = Item.at("MaxSpeed").GetFloat();
+	mySpeed = Item.at("MaxSpeed").GetFloat();
 
-	myVelocity = CU::Vector3f::UnitZ*	Speed;
+	myVelocity = CU::Vector3f::UnitZ * mySpeed;
 	myWeight = 1.5f;
 	
 }
@@ -37,7 +37,7 @@ void CItemWeaponBehaviourComponent::Init(Physics::CPhysicsScene * aPhysicsScene)
 
 void CItemWeaponBehaviourComponent::SetToNoSpeed()
 {
-	Speed = 0;
+	mySpeed = 0;
 	myVelocity = CU::Vector3f::Zero;
 }
 
@@ -144,8 +144,19 @@ void CItemWeaponBehaviourComponent::Receive(const eComponentMessageType aMessage
 	{
 
 		myIsActive = true;
-		myVelocity = CU::Vector3f::UnitZ*Speed;
-
+		float velocitiesSpeed = mySpeed;
+		if(mySpeed > 0.0f)
+		{
+			SComponentQuestionData speedQuestionData;
+			if (aMessageData.myComponent->GetParent()->AskComponents(eComponentQuestionType::eGetMaxSpeed, speedQuestionData) == true)
+			{
+				if (velocitiesSpeed < speedQuestionData.myFloat)
+				{
+					velocitiesSpeed = speedQuestionData.myFloat + 5;
+				}
+			}
+		}
+		myVelocity = CU::Vector3f::UnitZ * velocitiesSpeed;
 		break;
 	}
 

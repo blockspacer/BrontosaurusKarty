@@ -30,7 +30,7 @@ private:
 
 	CU::Vector3f myVelocity;
 
-	float Speed;
+	float mySpeed;
 
 	float myGrip;
 	float myWeight;
