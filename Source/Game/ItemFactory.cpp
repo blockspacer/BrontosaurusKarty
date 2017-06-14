@@ -800,7 +800,7 @@ void CItemFactory::ReleaseItem(CComponent * userComponent, CU::Vector2f aInput)
 			//CU::Vector3f forward = userComponent->GetParent()->GetToWorldTransform().myForwardVector;
 			//forward  *=3;
 
-			if (aInput.y < 0)
+			if (aInput.y < -0.6f)
 			{
 				myHeldGreenShells[i].item->GetLocalTransform().RotateAroundAxis(3.14f, CU::Axees::Y);
 			}
