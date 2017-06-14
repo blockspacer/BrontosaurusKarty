@@ -226,6 +226,12 @@ void C2DGUIRenderer::RenderWholeGuiToPackage(CRenderPackage& aTargetPackage, CFu
 
 void C2DGUIRenderer::DoRenderQueues(CRenderer & aRenderer, int & drawCallsCount)
 {
+	SChangeStatesMessage msg;
+	msg.myBlendState = eBlendState::eAlphaBlend;
+	msg.myDepthStencilState = eDepthStencilState::eDisableDepth;
+	msg.myRasterizerState = eRasterizerState::eNoCulling;
+	msg.mySamplerState = eSamplerState::eClamp;
+	aRenderer.SetStates(&msg);
 	for (unsigned char i = 0; i < myRenderQueus.Size(); ++i)
 	{
 		if (myRenderQueus[i].Size() == 0)

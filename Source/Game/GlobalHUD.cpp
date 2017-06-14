@@ -52,9 +52,9 @@ void CGlobalHUD::LoadHUD()
 	CU::CJsonValue jsonDoc;
 	jsonDoc.Parse("Json/HUD/HUDGlobal.json");
 
-	LoadMiniMap(jsonDoc.at("minimap"));
+	LoadMinimap(jsonDoc.at("minimap"));
 	LoadScoreboard(jsonDoc.at("scoreboard"));
-	LoadCountDown(jsonDoc.at("countdown"));
+	LoadCountdown(jsonDoc.at("countdown"));
 }
 
 void CGlobalHUD::Update(const float aDeltaTime)
@@ -227,7 +227,7 @@ void CGlobalHUD::Render()
 	}
 }
 
-void CGlobalHUD::StartCountDown()
+void CGlobalHUD::StartCountdown()
 {
 
 	auto countdownLambda = [this]() {
@@ -237,8 +237,9 @@ void CGlobalHUD::StartCountDown()
 		unsigned char startCountdownTime = 0;
 		float floatTime = 0.f;
 
+		myCountdownSprite->SetAlpha(0);
 
-		while (floatTime <= 4.5f)
+		while (floatTime <= 4.8f)
 		{
 			timerManager.UpdateTimers();
 			floatTime = timerManager.GetTimer(timer).GetLifeTime().GetSeconds();
@@ -246,8 +247,7 @@ void CGlobalHUD::StartCountDown()
 			if ((unsigned char)floatTime > startCountdownTime)
 			{
 				startCountdownTime = std::floor(floatTime);
-				if (startCountdownTime == 0)		myCountdownSprite->SetAlpha(0);
-				else if (startCountdownTime == 1) { myCountdownSprite->SetRect({ 0.f,0.75f,1.f,1.00f }); myCountdownSprite->SetAlpha(1); }
+				if (startCountdownTime == 1) { myCountdownSprite->SetRect({ 0.f,0.75f,1.f,1.00f }); myCountdownSprite->SetAlpha(1); }
 				else if (startCountdownTime == 2) 	myCountdownSprite->SetRect({ 0.f,0.50f,1.f,0.75f });
 				else if (startCountdownTime == 3) 	myCountdownSprite->SetRect({ 0.f,0.25f,1.f,0.50f });
 				else if (startCountdownTime == 4)
@@ -267,8 +267,8 @@ void CGlobalHUD::StartCountDown()
 	{
 		CU::TimerManager timerManager;
 		TimerHandle timer = timerManager.CreateTimer();
-
-		while (timerManager.GetTimer(timer).GetLifeTime().GetSeconds() < .05f)
+		
+		while (timerManager.GetTimer(timer).GetLifeTime().GetSeconds() < .08f)
 		{
 			timerManager.UpdateTimers(); // för att komma runt att trippelbuffringen slänger bort meddelanden.
 			myCountdownSprite->SetAlpha(0);
@@ -276,13 +276,18 @@ void CGlobalHUD::StartCountDown()
 
 		myCountdownElement.myShouldRender = false;
 		myMinimapElement.myShouldRender = true;
+
+		//SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"countdown", myCountdownElement.myGUIElement, myCountdownElement.myPixelSize);
+		//myCountdownSprite->SetAlpha(0);
+		//RENDERER.AddRenderMessage(guiElement, true);
+
 	};
 
 	work.SetFinishedCallback(callback);
 	CU::ThreadPool::GetInstance()->AddWork(work);
 }
 
-void CGlobalHUD::LoadCountDown(const CU::CJsonValue & aJsonValue)
+void CGlobalHUD::LoadCountdown(const CU::CJsonValue & aJsonValue)
 {
 	CU::CJsonValue jsonElementData = aJsonValue.at("elementData");
 	myCountdownElement = LoadHUDElement(jsonElementData);
@@ -325,7 +330,7 @@ void CGlobalHUD::LoadScoreboard(const CU::CJsonValue& aJsonValue)
 	myTimeText->SetText(L"");
 }
 
-void CGlobalHUD::LoadMiniMap(const CU::CJsonValue& aJsonValue)
+void CGlobalHUD::LoadMinimap(const CU::CJsonValue& aJsonValue)
 {
 	CU::CJsonValue jsonElementData;
 
@@ -360,14 +365,13 @@ void CGlobalHUD::DisableRedundantGUI()
 	{
 		CU::TimerManager timerManager;
 		TimerHandle timer = timerManager.CreateTimer();
-
+		
 		while (timerManager.GetTimer(timer).GetLifeTime().GetSeconds() < .05f)
 		{
 			timerManager.UpdateTimers();
 			//myLapCounterElement.mySprite->SetAlpha(0);
 			
 		}
-
 		//myLapCounterElement.myShouldRender = false;
 	};
 

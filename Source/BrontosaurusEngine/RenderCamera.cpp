@@ -8,7 +8,7 @@
 #include "GeometryBuffer.h"
 #include "EModelBluePrint.h"
 
-CRenderCamera::CRenderCamera(const bool aDeferred /*= true*/)
+CRenderCamera::CRenderCamera(int aPlayerIndex, const bool aDeferred /*= true*/) : myPlayerIndex(aPlayerIndex)
 {
 	myRenderQueue.Init(32);
 	myIsShadowCamera = false;
@@ -104,6 +104,7 @@ void CRenderCamera::Render(bool aImortant /*= false*/)
 {
 	SRenderCameraQueueMessage * camqueueMsg = new SRenderCameraQueueMessage();
 	camqueueMsg->myRenderCamera = *this;
+	camqueueMsg->myOwnerIndex = myPlayerIndex;
 	RENDERER.AddRenderMessage(camqueueMsg, aImortant);
 	myRenderQueue.RemoveAll();
 }

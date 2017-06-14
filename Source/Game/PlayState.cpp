@@ -104,6 +104,7 @@
 #include "MenuState.h"
 #include "C3DSpriteComponent.h"
 #include "CameraTilter.h"
+#include "SplitScreenSelection.h"
 
 CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	: State(aStateStack, eInputMessengerType::ePlayState, 1)
@@ -317,9 +318,10 @@ void CPlayState::Load()
 	}
 	
 	myScene->InitPlayerCameras(myPlayerCount);
+	int currentPlayer = 0;
 	for (int i = 0; i < myPlayerCount; ++i)
 	{
-		CreatePlayer(myScene->GetPlayerCamera(i).GetCamera(), myPlayers[i], myPlayerCount);
+		CreatePlayer(myScene->GetPlayerCamera(i).GetCamera(), myPlayers[i], myPlayerCount, currentPlayer++);
 	}
 
 	for (int i = 0; i < 8 - myPlayerCount; ++i)
@@ -503,7 +505,7 @@ void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
 
 		Audio::CAudioInterface::GetInstance()->PostEvent(song);
 	}
-	myGlobalHUD->StartCountDown();
+	myGlobalHUD->StartCountdown();
 	//InitiateRace();
 
 }
@@ -625,27 +627,27 @@ void CPlayState::PostPostmasterEvent(short aGamepadIndex,const Postmaster::Messa
 	POSTMASTER.Broadcast(new Postmaster::Message::CControllerInputMessage(aGamepadIndex,aEventData));
 }
 
-const CU::Vector4f CPlayState::GetPlayerColor(const SParticipant::eInputDevice aInputDevice)
+const CU::Vector4f CPlayState::GetPlayerColor(const int aInputDevice)
 {
 	CU::Vector4f color;
 	switch (aInputDevice)
 	{
-	case SParticipant::eInputDevice::eController1:
+	case 0:
 
 		color = YELLOW;
 		
 		break;
-	case SParticipant::eInputDevice::eController2:
+	case 1:
 
 		color = GREEN;
 		
 		break;
-	case SParticipant::eInputDevice::eController3:
+	case 2:
 
 		color = PINK;
 		
 		break;
-	case SParticipant::eInputDevice::eController4:
+	case 3:
 
 		color = BLUE;
 		
@@ -659,7 +661,7 @@ const CU::Vector4f CPlayState::GetPlayerColor(const SParticipant::eInputDevice a
 	return color;
 }
 
-void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticipant, unsigned int aPlayerCount)
+void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticipant, unsigned int aPlayerCount, int aCurrentPlayer)
 {
 	//Create sub sub player object
 	CU::CJsonValue playerJson;
@@ -732,7 +734,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	//Create player number object
 	CGameObject* playerNumber = myGameObjectManager->CreateGameObject();
 	C3DSpriteComponent* numberModel = new C3DSpriteComponent(*myScene, "Sprites/GUI/playerMarker.dds", CU::Vector2f::One * 5.f, CU::Vector2f(0.5f,0.5f),
-		CU::Vector4f(0.f,0.f,1.f,1.f), GetPlayerColor(aParticipant.myInputDevice));
+		CU::Vector4f(0.f,0.f,1.f,1.f), GetPlayerColor(aCurrentPlayer), aCurrentPlayer);
 	CComponentManager::GetInstance().RegisterComponent(numberModel);
 	playerNumber->AddComponent(numberModel);
 	playerNumber->GetLocalTransform().SetPosition({ 0.f,1.5f,0.f });
@@ -977,7 +979,7 @@ eMessageReturn CPlayState::DoEvent(const Postmaster::Message::CControllerInputMe
 	if (myGlobalHUD != nullptr && myGlobalHUD->GetRaceOver() == true && data.eventType == Postmaster::Message::EventType::ButtonChanged &&
 		data.data.boolValue == true && data.buttonIndex == Postmaster::Message::ButtonIndex::B)
 	{
-		myStateStack.Pop();
+		myStateStack.SwapState(new CSplitScreenSelection(myStateStack));
 	}
 	else if (myGlobalHUD != nullptr && myGlobalHUD->GetRaceOver() == true && data.eventType == Postmaster::Message::EventType::ButtonChanged &&
 		data.data.boolValue == true && data.buttonIndex == Postmaster::Message::ButtonIndex::X)
