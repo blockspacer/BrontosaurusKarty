@@ -384,7 +384,11 @@ void CMenuState::MenuLoad(const std::string& aFile)
 {
 	CU::CJsonValue root(aFile);
 
-	myManager.SetMousePointer(new CSpriteInstance(root.at("cursor").GetString().c_str()));
+	myManager.SetMousePointer(nullptr);
+	if (root.HasKey("hasCursor") && root.at("hasCursor").GetBool())
+	{
+		myManager.SetMousePointer(new CSpriteInstance(root.at("cursor").GetString().c_str()));
+	}
 	const std::string &folderPath = root.at("folder").GetString();
 	myShowStateBelow = root.at("letThroughRender").GetBool();
 
