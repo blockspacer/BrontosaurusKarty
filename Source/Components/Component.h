@@ -61,8 +61,10 @@ enum class eComponentType : unsigned char
 	eHealthPickupComponent,
 	eWeaponPickupComponent,
 	eVertexStream,
-	eLapTracker,
+	eLapTracker, 
+	eKartController,
 	eNone,
+	
 };
 
 class CComponent

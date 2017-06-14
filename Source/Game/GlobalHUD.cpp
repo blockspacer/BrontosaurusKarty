@@ -24,12 +24,22 @@
 #include "..\Components\KartControllerComponentManager.h"
 #include "..\Components\TimeTrackerComponentManager.h"
 
-#define DEFAULT	{0.3f, 0.3f, 0.3f, 1.0f}
-#define YELLOW	{1.0f, 1.0f, 0.0f, 1.0f}
-#define GREEN	{0.0f, 1.0f, 0.0f, 1.0f}
-#define PINK	{1.0f, 0.0f, 1.0f, 1.0f}
-#define BLUE	{0.0f, 0.0f, 1.0f, 1.0f}
+#include "ComponentAnswer.h"
+#include "CharacterInfoComponent.h"
 
+#define ZERO_COL		{0.0f, 0.0f, 0.0f, 1.0f}
+#define FULL_COL		{1.0f, 1.0f, 1.0f, 1.0f}
+#define DEFAULT			{0.3f, 0.3f, 0.3f, 1.0f}
+
+#define YELLOW			{1.0f, 1.0f, 0.0f, 1.0f}
+#define GREEN			{0.0f, 1.0f, 0.0f, 1.0f}
+#define PINK			{1.0f, 0.0f, 1.0f, 1.0f}
+#define BLUE			{0.0f, 0.0f, 1.0f, 1.0f}
+
+#define PALE_YELLOW		{9.0f, 9.0f, 4.0f, 1.0f}
+#define PALE_GREEN		{0.0f, 8.0f, 0.0f, 1.0f}
+#define PALE_PINK		{8.0f, 0.0f, 8.0f, 1.0f}
+#define PALE_BLUE		{0.0f, 0.0f, 8.0f, 1.0f}
 
 CGlobalHUD::CGlobalHUD(int aLevelIndex):myNrOfPlayers(0), myPortraitSprite(nullptr), myMinimapPosIndicator(nullptr), myRaceOver(false), myTimeText(nullptr), myLevelIndex(aLevelIndex)
 {
@@ -106,16 +116,48 @@ void CGlobalHUD::Render()
 				case SParticipant::eCharacter::eGrandMa:
 					myPortraitSprite->SetRect({ 0.f, 0.750f, 1.f, 0.875f });
 					break;
+				case SParticipant::eCharacter::eVanBrat2:
+					myPortraitSprite->SetRect({ 0.f, 0.625f, 1.f, 0.750f });
+					break;
+				case SParticipant::eCharacter::eGrandMa2:
+					myPortraitSprite->SetRect({ 0.f, 0.500f, 1.f, 0.625f });
+					break;
+				case SParticipant::eCharacter::eCat:
+					myPortraitSprite->SetRect({ 0.f, 0.375f, 1.f, 0.500f });
+					break;
+				case SParticipant::eCharacter::eCat2:
+					myPortraitSprite->SetRect({ 0.f, 0.250f, 1.f, 0.375f });
+					break;
 				default:
 					myPortraitSprite->SetRect({ 0.f, 0.750f, 1.f, 0.875f });
 					break;
 				}
+				
+				// TODO fixa detta
+				myPortraitSprite->SetColor(FULL_COL);
+				if (myWinners[i].isPlayer == true)
+				{
+					if (myWinners[i].inputDevice = 0)
+						myPortraitSprite->SetColor(myPlayer1Color);
+					
+					if (myWinners[i].inputDevice = 1)
+						myPortraitSprite->SetColor(myPlayer2Color);
+					
+					if (myWinners[i].inputDevice = 2)
+						myPortraitSprite->SetColor(myPlayer3Color);
+					
+					if (myWinners[i].inputDevice = 3)
+						myPortraitSprite->SetColor(myPlayer4Color);
+
+				}
+
 
 				CU::Vector2f lastPortraitPos = myPortraitSprite->GetPosition();
 				CU::Vector2f newPortraitPos = { lastPortraitPos.x, lastPortraitPos.y + yOffset };
 
 				myPortraitSprite->RenderToGUI(L"scoreboard");
 				myPortraitSprite->SetPosition(newPortraitPos);
+
 				myTimeText->SetPosition(newPortraitPos + myTimeTextOffset);
 				int timePassedSum = myWinners[i].minutesPassed + myWinners[i].secondsPassed + myWinners[i].hundredthsSecondsPassed;
 				if(timePassedSum > 0)

@@ -53,6 +53,7 @@ public:
 	const CU::Vector3f& GetVelocity() const;
 
 
+	float GetWeight() const;
 	bool Answer(const eComponentQuestionType aQuestionType, SComponentQuestionData& aQuestionData) override;
 	bool Drift();
 	bool IsFutureGrounded(const float aDistance);
@@ -71,6 +72,7 @@ private:
 	
 	void UpdateMovement(const float aDeltaTime);
 
+	void DoRepulsion(float aBounceProportion, const float aBounceEffect, const CU::Vector3f& aDir);
 	void DoCornerTest(unsigned aCornerIndex, const CU::Matrix33f& aRotationMatrix, const CU::Vector3f& aPosition, const float aHalfWidth, const float aLength);
 	void CheckWallKartCollision(const float aDetltaTime);
 	void DoPhysics(const float aDeltaTime);

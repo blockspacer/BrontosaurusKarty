@@ -282,6 +282,7 @@ void CLapTrackerComponentManager::AddEveryoneToVictoryList()
 		myWinnerPlacements[i]->AskComponents(eComponentQuestionType::eGetFinishTimeHundredthsSeconds, timeQuestionData);
 		data.hundredthsSecondsPassed = timeQuestionData.myInt; //how to fix time?
 
+		data.inputDevice = qData.myCharacterInfo->inputDevice;
 
 		myPlacementData[i] = data;
 	}
