@@ -13,6 +13,7 @@ CRaceOverMessage::CRaceOverMessage(CU::StaticArray<SPlacementData, 8>& aWinnerPl
 		myWinners[i].minutesPassed = aWinnerPlacementList[i].minutesPassed;
 		myWinners[i].secondsPassed = aWinnerPlacementList[i].secondsPassed;
 		myWinners[i].hundredthsSecondsPassed = aWinnerPlacementList[i].hundredthsSecondsPassed;
+		myWinners[i].inputDevice = aWinnerPlacementList[i].inputDevice;
 	}
 }
 

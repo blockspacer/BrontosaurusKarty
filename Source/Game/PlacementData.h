@@ -9,5 +9,5 @@ struct SPlacementData
 	int secondsPassed;
 	int hundredthsSecondsPassed;
 	bool isPlayer;
-	unsigned char inputDevice;
+	unsigned short inputDevice;
 };

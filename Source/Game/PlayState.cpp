@@ -396,6 +396,7 @@ void CPlayState::Init()
 		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eBlueShellWarning);
 		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eRedShellWarning);
 		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eCharPressed);
+		POSTMASTER.Subscribe(myLocalHUDs[i], eMessageType::eRaceOver);
 	}
 
 	POSTMASTER.Subscribe(myGlobalHUD, eMessageType::eCharPressed);
@@ -414,6 +415,9 @@ void CPlayState::Init()
 	myGameObjectManager->SendObjectsDoneMessage();
 	myKartControllerComponentManager->Init();
 	CLapTrackerComponentManager::GetInstance()->Init();
+
+
+	myGlobalHUD->StartCountdown();
 }
 
 eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
@@ -509,7 +513,6 @@ void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
 
 		Audio::CAudioInterface::GetInstance()->PostEvent(song);
 	}
-	myGlobalHUD->StartCountdown();
 	//InitiateRace();
 
 }
@@ -522,9 +525,10 @@ void CPlayState::OnExit(const bool /*aLetThroughRender*/)
 
 CU::eInputReturn CPlayState::RecieveInput(const CU::SInputMessage& aInputMessage)
 {
-	if (aInputMessage.myType == CU::eInputType::eKeyboardPressed && aInputMessage.myKey == CU::eKeys::ESCAPE)
+	if ((aInputMessage.myType == CU::eInputType::eKeyboardPressed && aInputMessage.myKey == CU::eKeys::ESCAPE) ||
+		(aInputMessage.myType == CU::eInputType::eGamePadButtonPressed && aInputMessage.myGamePad == CU::GAMEPAD::START))
 	{
-		myStateStack.PushState(new CMenuState(myStateStack, "Json/Menu/PauseMenu.json", this));
+		myStateStack.PushState(new CMenuState(myStateStack, "Json/Menu/PauseMenu.json", this, myLevelIndex));
 		return CU::eInputReturn::eKeepSecret;
 	}
 	switch(aInputMessage.myType)
@@ -857,7 +861,7 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	//playerObject->AddComponent(playerColliderComponent);
 	playerObject->AddComponent(playerTriggerColliderComponent);
 	playerObject->AddComponent(rigidComponent);
-	CComponent* characterInfoComponent = new CCharacterInfoComponent(aParticipant.mySelectedCharacter, false, aCurrentPlayer);
+	CComponent* characterInfoComponent = new CCharacterInfoComponent(aParticipant.mySelectedCharacter, true, aCurrentPlayer);
 	CComponentManager::GetInstance().RegisterComponent(characterInfoComponent);
 	playerObject->AddComponent(characterInfoComponent);
 
@@ -985,7 +989,7 @@ void CPlayState::CreateAI()
 	playerObject->AddComponent(playerTriggerColliderComponent);
 	playerObject->AddComponent(rigidComponent);
 
-	CComponent* characterInfoComnponent = new CCharacterInfoComponent(static_cast<SParticipant::eCharacter>(i), true, 200);
+	CComponent* characterInfoComnponent = new CCharacterInfoComponent(static_cast<SParticipant::eCharacter>(i), false, 200);
 	CComponentManager::GetInstance().RegisterComponent(characterInfoComnponent);
 	playerObject->AddComponent(characterInfoComnponent);
 

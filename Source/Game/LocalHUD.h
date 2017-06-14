@@ -26,6 +26,7 @@ private:
 	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
 	eMessageReturn DoEvent(const CBlueShellWarningMessage& aMessage) override;
 	eMessageReturn DoEvent(const CRedShellWarningMessage& aMessage) override;
+	eMessageReturn DoEvent(const CRaceOverMessage& aMessage) override;
 
 private:
 	SHUDElement myLapCounterElement;
@@ -53,4 +54,6 @@ private:
 	unsigned short myAmountOfPlayers;
 	unsigned char myLapAdjusterCheat;
 	unsigned char myPlayerID;
+
+	bool myShouldRenderLocalHUD;
 };
