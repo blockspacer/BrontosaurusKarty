@@ -28,7 +28,7 @@ CRedShellBehaviourComponent::CRedShellBehaviourComponent()
 	myUserPlacement = 8;
 	myIsActive = false;
 	myPlayingWarning = false;
-	myIsStuckCountdown = 2.0f;
+	myIsStuckCountdown = 5.0f;
 }
 
 
@@ -122,7 +122,7 @@ void CRedShellBehaviourComponent::Update(const float aDeltaTime)
 						sound.myString = "StopWarning";
 						myLastTarget->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
 						myPlayingWarning = false;
-						myIsStuckCountdown = 2.0f;
+						myIsStuckCountdown = 5.0f;
 					}
 					else if (myLastTarget == myKartObjects->At(i))
 					{
@@ -130,8 +130,8 @@ void CRedShellBehaviourComponent::Update(const float aDeltaTime)
 
 						if(myIsStuckCountdown <= 0.0f)
 						{
-							myIsStuckCountdown = 2.0f;
-							newRotation.GetPosition().y += 5.0f;
+							myIsStuckCountdown = 5.0f;
+							newRotation.GetPosition().y += 1500.0f;
 						}
 					}
 
@@ -233,7 +233,7 @@ void CRedShellBehaviourComponent::Receive(const eComponentMessageType aMessageTy
 	}
 	case eComponentMessageType::eReInitRedShell:
 	{
-		myIsStuckCountdown = 2.0f;
+		myIsStuckCountdown = 5.0f;
 		float velocitiesSpeed = mySpeed;
 		SComponentQuestionData speedQuestionData;
 		if(aMessageData.myComponent->GetParent()->AskComponents(eComponentQuestionType::eGetMaxSpeed, speedQuestionData) == true)
