@@ -39,6 +39,8 @@ CLocalHUD::CLocalHUD(unsigned char aPlayerID, unsigned short aAmountOfPlayers)
 
 	myLapAdjusterCheat = 0;
 
+	myIsDangerVisibleCountdown = 0.0f;
+
 	float offsetX = 0.5f;
 	float offsetY = 0.5f;
 
@@ -135,6 +137,23 @@ void CLocalHUD::LoadHUD()
 	LoadItemGui(jsonPlayerObject.at("itemGui"));
 	LoadDangerGui(jsonPlayerObject.at("dangerGui"));
 	
+}
+
+void CLocalHUD::Update(const float aDeltatTime)
+{
+	if(myDangerGuiElement.myShouldRender == true)
+	{
+		myIsDangerVisibleCountdown += aDeltatTime;
+
+		if(myIsDangerVisibleCountdown > 0.5f)
+		{
+			myDangerGuiElement.myShouldRender = false;
+			if (myIsDangerVisibleCountdown > 1.0f)
+			{
+				myIsDangerVisibleCountdown = 0.0f;
+			}
+		}
+	}
 }
 
 void CLocalHUD::Render()

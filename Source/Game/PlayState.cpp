@@ -476,6 +476,12 @@ eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
 
 	myGlobalHUD->Update(aDeltaTime.GetSeconds());
 
+
+	for (int i = 0; i < myPlayerCount; ++i)
+	{
+		myLocalHUDs[i]->Update(aDeltaTime.GetSeconds());
+	}
+
 	return myStatus;
 }
 
