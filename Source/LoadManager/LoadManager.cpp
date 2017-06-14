@@ -80,6 +80,7 @@ void LoadManager::RegisterFunctions()
 	loader.RegisterComponentLoadFunction("EnvironmentSettings", LoadEnvironmentSettings);
 	loader.RegisterComponentLoadFunction("Decal", LoadDecal);
 	loader.RegisterComponentLoadFunction("SailInCircles", LoadSailInCircles);
+	loader.RegisterComponentLoadFunction("Snurr", LoadSnurr);
 	//loader.RegisterComponentLoadFunction("CircleCollider", LoadCircleCollider);
 	//loader.RegisterComponentLoadFunction("SoundComponent", LoadSoundComponent);
 	//loader.RegisterComponentLoadFunction("FireComponent", LoadFireComponent);
