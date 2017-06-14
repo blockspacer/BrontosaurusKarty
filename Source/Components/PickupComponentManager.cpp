@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "PickupComponentManager.h"
 #include "WeaponCratePickupComponent.h"
+#include "DecalComponent.h"
+#include "GameObjectManager.h"
 
 CPickupComponentManager* CPickupComponentManager::ourInstance = nullptr;
 
@@ -57,6 +59,24 @@ void CPickupComponentManager::Update(const float aDeltaTime)
 }
 
 
+
+void CPickupComponentManager::AddDecalsToItemsboxes(CScene& aScene, CGameObjectManager* gameObjectManager)
+{
+	for (std::pair<const int, IPickupComponent*> comp : myWeaponCrates)
+	{
+		CDecalComponent* decal = new CDecalComponent(aScene);
+		CComponentManager::GetInstance().RegisterComponent(decal);
+		decal->SetDecalIndex(6);
+		
+		CGameObject* decalHolder = gameObjectManager->CreateGameObject();
+		decalHolder->GetLocalTransform().myPosition.Set(0.0f, -2.f, 0.0f);
+		decalHolder->GetLocalTransform().SetScale({ 3.0f, 4.f, 3.f });
+		decalHolder->GetLocalTransform().RotateAroundAxis(3.141592f, CU::Axees::Y);
+		decalHolder->AddComponent(decal);
+
+		comp.second->GetParent()->AddComponent(decalHolder);
+	}
+}
 
 CPickupComponentManager::CPickupComponentManager()
 {

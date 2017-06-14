@@ -25,6 +25,9 @@ void CDecalComponent::Receive(const eComponentMessageType aMessageType, const SC
 
 	switch (aMessageType)
 	{
+	case eComponentMessageType::eSetVisibility:
+		decal->SetActive(aMessageData.myBool);
+		break;
 	case eComponentMessageType::eActivate:
 		decal->SetActive(true);
 		break;

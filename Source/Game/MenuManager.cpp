@@ -164,7 +164,10 @@ void CMenuManager::SetMousePointer(CSpriteInstance* aMousePointer)
 {
 	delete myPointerSprite;
 	myPointerSprite = aMousePointer;
-	myPointerSprite->SetPosition(ourMousePosition);
+	if (myPointerSprite)
+	{
+		myPointerSprite->SetPosition(ourMousePosition);
+	}
 }
 
 void CMenuManager::Update(const CU::Time& aDeltaTime)
@@ -175,17 +178,20 @@ void CMenuManager::Update(const CU::Time& aDeltaTime)
 		CU::Vector2f lowerRight;
 		CU::Vector2f upperLeft;
 
-		/*if (myClickAreas.At(i).mySpriteID >= 0)
+		if (myClickAreas.At(i).mySpriteID >= 0)
 		{
 			CSpriteInstance* currentSprite = mySpriteInstances[myClickAreas[i].mySpriteID].mySprites[0];
-			lowerRight = currentSprite->GetPosition() + currentSprite->GetSize() * myClickAreas[i].myRect.zw - currentSprite->GetPivot() * currentSprite->GetSize();
-			upperLeft = currentSprite->GetPosition() + currentSprite->GetSize() * myClickAreas[i].myRect.xy - currentSprite->GetPivot() * currentSprite->GetSize();
+			if (currentSprite)
+			{
+				lowerRight = currentSprite->GetPosition() + currentSprite->GetSize() * myClickAreas[i].myRect.zw - currentSprite->GetPivot() * currentSprite->GetSize();
+				upperLeft = currentSprite->GetPosition() + currentSprite->GetSize() * myClickAreas[i].myRect.xy - currentSprite->GetPivot() * currentSprite->GetSize();
+			}
 		}
 		else
 		{
 			upperLeft = myClickAreas[i].myRect.xy;
 			lowerRight = myClickAreas[i].myRect.zw;
-		}*/
+		}
 
 		if (ourMousePosition.x > upperLeft.x && ourMousePosition.y > upperLeft.y && ourMousePosition.x < lowerRight.x && ourMousePosition.y < lowerRight.y)
 		{
@@ -290,7 +296,7 @@ void CMenuManager::Render()
 
 		if (myPointerSprite != nullptr)
 		{
-			//myPointerSprite->RenderToGUI(L"__Menu");
+			myPointerSprite->RenderToGUI(L"__Menu");
 		}
 	}
 
