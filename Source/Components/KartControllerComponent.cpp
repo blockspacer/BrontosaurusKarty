@@ -930,7 +930,7 @@ void CKartControllerComponent::DoCornerTest(unsigned aCornerIndex, const CU::Mat
 
 					if(enemyKartController != nullptr)
 					{
-						static const float extraMove = 1.1f;
+						static const float extraMove = .1f;
 						const CU::Vector3f rawMoveDir = (cornerPos - raycastHitData.position) ;
 						const CU::Vector3f moveDir(rawMoveDir.x, 0.f, rawMoveDir.z);
 
