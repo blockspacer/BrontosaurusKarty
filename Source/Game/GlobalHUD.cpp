@@ -24,6 +24,8 @@
 #include "..\Components\KartControllerComponentManager.h"
 #include "..\Components\TimeTrackerComponentManager.h"
 
+#include "../Audio/AudioInterface.h"
+
 #include "ComponentAnswer.h"
 #include "CharacterInfoComponent.h"
 
@@ -301,6 +303,8 @@ void CGlobalHUD::StartCountdown()
 		float floatTime = 0.f;
 
 		myCountdownSprite->SetAlpha(0);
+
+		Audio::CAudioInterface::GetInstance()->PostEvent("PlayStartCountDown");
 
 		while (floatTime <= 4.8f)
 		{
