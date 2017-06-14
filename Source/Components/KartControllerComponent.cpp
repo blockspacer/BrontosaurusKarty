@@ -865,7 +865,7 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 void CKartControllerComponent::DoRepulsion(float aBounceProportion, const float aBounceEffect, const CU::Vector3f& aDir)
 {
 	myVelocity *= 0.75f;
-	const float repulsion = CLAMP(aBounceEffect * aBounceProportion, 0.f, GetMaxSpeed() * 4.f);
+	const float repulsion = CLAMP(aBounceEffect * aBounceProportion, 0.f, GetMaxSpeed() * 2.f);
 	myVelocity += repulsion * aDir;
 }
 
