@@ -13,6 +13,7 @@ public:
 
 	void LoadHUD() override;
 	void Render() override;
+	void Update(const float aDeltatTime);
 
 private:
 	void LoadLapCounter(const CU::CJsonValue& aJsonValue);
@@ -26,6 +27,7 @@ private:
 	eMessageReturn DoEvent(const KeyCharPressed& aMessage) override;
 	eMessageReturn DoEvent(const CBlueShellWarningMessage& aMessage) override;
 	eMessageReturn DoEvent(const CRedShellWarningMessage& aMessage) override;
+	eMessageReturn DoEvent(const CRaceOverMessage& aMessage) override;
 
 private:
 	SHUDElement myLapCounterElement;
@@ -50,7 +52,10 @@ private:
 
 	CGameObject* myPlayer;
 
+	float myIsDangerVisibleCountdown;
 	unsigned short myAmountOfPlayers;
 	unsigned char myLapAdjusterCheat;
 	unsigned char myPlayerID;
+
+	bool myShouldRenderLocalHUD;
 };

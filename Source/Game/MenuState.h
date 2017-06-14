@@ -30,7 +30,7 @@ class CMenuState :public State, Postmaster::ISubscriber
 {
 public:
 
-	CMenuState(StateStack& aStateStack, std::string aFile, State* aStateToMaybePop = nullptr);
+	CMenuState(StateStack& aStateStack, std::string aFile, State* aStateToMaybePop = nullptr, const int aLevelIndex = 0);
 	~CMenuState();
 
 	void Init() override;
@@ -66,6 +66,7 @@ private:
 
 	bool PushSelectedLevel(const std::string aSelector);
 	bool PopPoppableState();
+	bool RestartLevel();
 
 	static const std::map<CU::eKeys, CU::GAMEPAD> ourKeyboardToGamePadMap;
 
@@ -95,6 +96,8 @@ private:
 
 	CU::GrowingArray<std::string, char> mySelectorNames;
 	CU::GrowingArray<SSelector, char> mySelectors;
+	
+	int myLevelIndex;
 };
 
 inline bool CMenuState::GetLetThroughRender() const

@@ -10,5 +10,7 @@ int LoadEnvironmentSettings(KLoader::SLoadedComponentData someData);
 int LoadDecal(KLoader::SLoadedComponentData someData);
 
 int LoadSailInCircles(KLoader::SLoadedComponentData someData);
+int LoadSnurr(KLoader::SLoadedComponentData someData);
+
 
 

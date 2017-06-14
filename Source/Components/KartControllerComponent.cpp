@@ -116,8 +116,22 @@ CKartControllerComponent::CKartControllerComponent(CKartControllerComponentManag
 
 }
 
+void CKartControllerComponent::ReleaseParticleSystem(int aBoostEmmiterhandle)
+{
+	CParticleEmitterManager::GetInstance().Deactivate(aBoostEmmiterhandle);
+	CParticleEmitterManager::GetInstance().Release(aBoostEmmiterhandle);
+}
+
 CKartControllerComponent::~CKartControllerComponent()
 {
+	ReleaseParticleSystem(myBoostEmmiterhandle);
+	ReleaseParticleSystem(myGotHitEmmiterhandle);
+	ReleaseParticleSystem(myStarEmmiterhandle1);
+	ReleaseParticleSystem(myStarEmmiterhandle2);
+	ReleaseParticleSystem(mySlowMovment);
+	ReleaseParticleSystem(myGrassEmmiter1);
+	ReleaseParticleSystem(myGrassEmmiter2);
+
 }
 
 void CKartControllerComponent::Turn(float aDirectionX)
@@ -850,7 +864,7 @@ void CKartControllerComponent::UpdateMovement(const float aDeltaTime)
 void CKartControllerComponent::DoRepulsion(float aBounceProportion, const float aBounceEffect, const CU::Vector3f& aDir)
 {
 	myVelocity *= 0.75f;
-	const float repulsion = CLAMP(aBounceEffect * aBounceProportion, 0.f, GetMaxSpeed() * 2.f * aBounceProportion);
+	const float repulsion = CLAMP(aBounceEffect * aBounceProportion, 0.f, GetMaxSpeed() * 4.f * aBounceProportion);
 	myVelocity += repulsion * aDir;
 }
 
@@ -881,9 +895,9 @@ void CKartControllerComponent::DoCornerTest(unsigned aCornerIndex, const CU::Mat
 
 		if (raycastHitData.hit == true)
 		{
-			static const float bounceEffect = 2.5f;
+			static const float bounceEffect = 10.f;
 			const CU::Matrix33f rot = GetParent()->GetToWorldTransform().GetRotation().GetInverted();
-			const CU::Vector3f pos = aPosition;
+
 			const CU::Vector3f dir = raycastHitData.normal * rot;//(pos - raycastHitData.position).Normalize() * rot;
 			if (raycastHitData.collisionLayer == Physics::eWall)
 			{
@@ -901,34 +915,44 @@ void CKartControllerComponent::DoCornerTest(unsigned aCornerIndex, const CU::Mat
 				}
 				else
 				{
-					GetParent()->Move(dir * (raycastHitData.distance - testDist) * -1.f);
-					colliderComponent->GetParent()->Move(dir * (raycastHitData.distance - testDist) * 1.f);
 					CKartControllerComponent* enemyKartController = nullptr;
-					for(int i = 0; i < colliderComponent->GetParent()->GetComponents().Size(); ++i)
+					for (int i = 0; i < colliderComponent->GetParent()->GetComponents().Size(); ++i)
 					{
-						if(colliderComponent->GetParent()->GetComponents()[i]->GetType() == eComponentType::eKartController)
+						if (colliderComponent->GetParent()->GetComponents()[i]->GetType() == eComponentType::eKartController)
 						{
 							enemyKartController = static_cast<CKartControllerComponent*>(colliderComponent->GetParent()->GetComponents()[i]);
 							break;
 						}
 					}
+					
+					
 
 					if(enemyKartController != nullptr)
 					{
+						static const float extraMove = 1.05f;
+						const CU::Vector3f rawMoveDir = (cornerPos - raycastHitData.position) ;
+						const CU::Vector3f moveDir(rawMoveDir.x, 0.f, rawMoveDir.z);
+
+						const CU::Matrix33f ownRotInv = GetParent()->GetToWorldTransform().GetRotation().GetInverted();
+						const CU::Matrix33f enemyRotInv = enemyKartController->GetParent()->GetToWorldTransform().GetRotation().GetInverted();
+
+						const CU::Vector3f ownDir = moveDir * ownRotInv;
+						const CU::Vector3f ownDirNorm = ownDir.GetNormalized();
+						const CU::Vector3f enemyDir = moveDir * enemyRotInv;
+						const CU::Vector3f enemyDirNorm = enemyDir.GetNormalized();
+
+						GetParent()->Move(ownDir /** (testDist - raycastHitData.distance )*/+ ownDirNorm * extraMove);
+					
+						colliderComponent->GetParent()->Move(-enemyDir /** (testDist - raycastHitData.distance)*/ + enemyDirNorm * extraMove);
+
 						const float enemyWeight = enemyKartController->GetWeight();
 
-						
-
-						
 						const float ownProportion = enemyWeight / GetWeight();
 						const float enemyProportion = GetWeight() / enemyWeight;
 						
-
-						DoRepulsion(ownProportion, bounceEffect, dir);
-						enemyKartController->DoRepulsion(enemyProportion, bounceEffect, -dir);
+						DoRepulsion(ownProportion, bounceEffect, ownDirNorm);
+						enemyKartController->DoRepulsion(enemyProportion, bounceEffect, -enemyDirNorm);
 					}
-					
-					
 				}
 			}
 		}

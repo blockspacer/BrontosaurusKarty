@@ -7,7 +7,8 @@ CSailInCirclesManager* CSailInCirclesManager::ourInstance = nullptr;
 CSailInCirclesManager::CSailInCirclesManager()
 {
 	myTimer = 0.0f;
-	mySailInCirclesComponent.Init(8);
+	mySailInCirclesComponent.Init(16);
+	mySnurrComponent.Init(16);
 }
 
 CSailInCirclesManager::~CSailInCirclesManager()
@@ -38,9 +39,21 @@ CSailInCirclesComponent* CSailInCirclesManager::CreateComponent(const float aRPM
 	return mySailInCirclesComponent.GetLast();
 }
 
+CSnurrComponent* CSailInCirclesManager::CreateSnurrComponent(const CU::Vector3f & aRotationsVector)
+{
+	mySnurrComponent.Add(new CSnurrComponent(aRotationsVector));
+	CComponentManager::GetInstance().RegisterComponent(mySnurrComponent.GetLast());
+	return mySnurrComponent.GetLast();
+}
+
 void CSailInCirclesManager::Update(const float aDeltaTime)
 {
 	myTimer += aDeltaTime;
+
+	for (CSnurrComponent* component : mySnurrComponent)
+	{
+		component->Update(aDeltaTime);
+	}
 
 	for (CSailInCirclesComponent* component : mySailInCirclesComponent)
 	{

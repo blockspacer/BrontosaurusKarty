@@ -137,17 +137,23 @@ void CGlobalHUD::Render()
 				myPortraitSprite->SetColor(FULL_COL);
 				if (myWinners[i].isPlayer == true)
 				{
-					if (myWinners[i].inputDevice = 0)
+					unsigned char index = myWinners[i].inputDevice;
+					if (myWinners[i].inputDevice == 0)
+					{
 						myPortraitSprite->SetColor(myPlayer1Color);
-					
-					if (myWinners[i].inputDevice = 1)
+					}
+					else if (myWinners[i].inputDevice == 1)
+					{
 						myPortraitSprite->SetColor(myPlayer2Color);
-					
-					if (myWinners[i].inputDevice = 2)
+					}
+					else if (myWinners[i].inputDevice == 2)
+					{
 						myPortraitSprite->SetColor(myPlayer3Color);
-					
-					if (myWinners[i].inputDevice = 3)
+					}
+					else if (myWinners[i].inputDevice == 3)
+					{
 						myPortraitSprite->SetColor(myPlayer4Color);
+					}
 
 				}
 
@@ -463,6 +469,7 @@ eMessageReturn CGlobalHUD::DoEvent(const CRaceOverMessage & aMessage)
 		myWinners[i].minutesPassed = aMessage.GetWinners()[i].minutesPassed;
 		myWinners[i].secondsPassed = aMessage.GetWinners()[i].secondsPassed;
 		myWinners[i].hundredthsSecondsPassed = aMessage.GetWinners()[i].hundredthsSecondsPassed;
+		myWinners[i].inputDevice = aMessage.GetWinners()[i].inputDevice;
 	}
 
 	PresentScoreboard();

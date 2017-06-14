@@ -66,7 +66,7 @@ const CModelManager::ModelId CModelManager::LoadModel(const std::string& aModelP
 
 		LoadAnimations(aModelPath, newModelID);
 	}
-	DL_PRINT("model count: %d", (int)myModelList.Size());
+
 	myModelList[myModels[aModelPath]].AddRef();
 	return myModels[aModelPath];
 }

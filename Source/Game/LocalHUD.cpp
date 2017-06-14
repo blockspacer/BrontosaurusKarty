@@ -39,6 +39,8 @@ CLocalHUD::CLocalHUD(unsigned char aPlayerID, unsigned short aAmountOfPlayers)
 
 	myLapAdjusterCheat = 0;
 
+	myIsDangerVisibleCountdown = 0.0f;
+
 	float offsetX = 0.5f;
 	float offsetY = 0.5f;
 
@@ -62,6 +64,8 @@ CLocalHUD::CLocalHUD(unsigned char aPlayerID, unsigned short aAmountOfPlayers)
 		myCameraOffset.x = offsetX;
 		myCameraOffset.y = offsetY;
 	}
+
+	myShouldRenderLocalHUD = true;
 }
 
 CLocalHUD::~CLocalHUD()
@@ -135,10 +139,28 @@ void CLocalHUD::LoadHUD()
 	
 }
 
+void CLocalHUD::Update(const float aDeltatTime)
+{
+	if(myDangerGuiElement.myShouldRender == true)
+	{
+		myIsDangerVisibleCountdown += aDeltatTime;
+
+		if(myIsDangerVisibleCountdown > 0.5f)
+		{
+			myDangerGuiElement.myShouldRender = false;
+			if (myIsDangerVisibleCountdown > 1.0f)
+			{
+				myIsDangerVisibleCountdown = 0.0f;
+			}
+		}
+	}
+}
+
 void CLocalHUD::Render()
 {
 	unsigned char currentLap = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerLapIndex(myPlayer) + myLapAdjusterCheat;
 	unsigned char currentPlacement = CLapTrackerComponentManager::GetInstance()->GetSpecificRacerPlacement(myPlayer);
+
 
 	if (myLapCounterElement.myShouldRender == true)
 	{
@@ -150,6 +172,10 @@ void CLocalHUD::Render()
 		else if(currentLap == 3)
 			myLapCounterElement.mySprite->SetRect({ 0.f, 0.f, 1.f, 0.25f });
 
+		if (myShouldRenderLocalHUD == false)
+		{
+			myLapCounterElement.mySprite = myNullSprite;
+		}
 
 		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"lapCounter" + myPlayerID, myLapCounterElement.myGUIElement, myLapCounterElement.myPixelSize);
 
@@ -165,6 +191,11 @@ void CLocalHUD::Render()
 		float placementRektValue2 = (1.0f + (1.0f / 8.0f)) - (1.0f / 8.0f) * currentPlacement;
 
 		myPlacementElement.mySprite->SetRect(CU::Vector4f(0.0f, placementRektValue1, 1.7f, placementRektValue2));
+
+		if (myShouldRenderLocalHUD == false)
+		{
+			myPlacementElement.mySprite = myNullSprite;
+		}
 
 		SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"placement" + myPlayerID, myPlacementElement.myGUIElement, myPlacementElement.myPixelSize);
 
@@ -183,6 +214,11 @@ void CLocalHUD::Render()
 			myLapCounterElement.mySprite = myNullSprite;
 			myPlacementElement.mySprite = myNullSprite;
 
+			if (myShouldRenderLocalHUD == false)
+			{
+				myFinishTextElement.mySprite = myNullSprite;
+			}
+
 			SCreateOrClearGuiElement* guiElement = new SCreateOrClearGuiElement(L"finishText" + myPlayerID, myFinishTextElement.myGUIElement, myFinishTextElement.myPixelSize);
 
 			RENDERER.AddRenderMessage(guiElement);
@@ -192,6 +228,10 @@ void CLocalHUD::Render()
 		}
 	}
 	if (myDangerGuiElement.myShouldRender == false)
+	{
+		myDangerGuiElement.mySprite = myNullSprite;
+	}
+	if (myShouldRenderLocalHUD == false)
 	{
 		myDangerGuiElement.mySprite = myNullSprite;
 	}
@@ -259,6 +299,11 @@ void CLocalHUD::Render()
 			}
 		}
 		else
+		{
+			myItemGuiElement.mySprite = myNullSprite;
+		}
+
+		if (myShouldRenderLocalHUD == false)
 		{
 			myItemGuiElement.mySprite = myNullSprite;
 		}
@@ -394,5 +439,11 @@ eMessageReturn CLocalHUD::DoEvent(const CRedShellWarningMessage& aMessage)
 		myDangerGuiElement.mySprite = myRedShellDangerSprite;
 		myDangerGuiElement.myShouldRender = true;
 	}
+	return eMessageReturn::eContinue;
+}
+
+eMessageReturn CLocalHUD::DoEvent(const CRaceOverMessage& aMessage)
+{
+	myShouldRenderLocalHUD = false;
 	return eMessageReturn::eContinue;
 }

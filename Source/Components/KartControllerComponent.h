@@ -24,6 +24,7 @@ class CKartControllerComponent : public CComponent
 {
 public:
 	CKartControllerComponent(CKartControllerComponentManager* aManager, CModelComponent& aModelComponent, const short aControllerIndex = -1, const short aCharacterIndex = 0);
+	void ReleaseParticleSystem(int aBoostEmmiterhandle);
 	~CKartControllerComponent();
 
 	void Turn(float aDirectionX);
