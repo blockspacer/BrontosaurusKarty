@@ -133,9 +133,16 @@ void CRedShellBehaviourComponent::Update(const float aDeltaTime)
 					}
 
 					myLastTarget = myKartObjects->At(i);
-
+					break;
 				}
 			}
+		}
+		if (i == myKartObjects->Size())
+		{
+			SComponentMessageData sound;
+			sound.myString = "StopWarning";
+			myLastTarget->NotifyOnlyComponents(eComponentMessageType::ePlaySound, sound);
+			myPlayingWarning = false;
 		}
 	}
 

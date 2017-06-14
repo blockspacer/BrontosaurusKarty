@@ -25,6 +25,12 @@ void CDecalComponent::Receive(const eComponentMessageType aMessageType, const SC
 
 	switch (aMessageType)
 	{
+	case eComponentMessageType::eActivate:
+		decal->SetActive(true);
+		break;
+	case eComponentMessageType::eDeactivate:
+		decal->SetActive(false);
+		break;
 	case eComponentMessageType::eObjectDone:
 		//decal->SetSize(1.f, 10.f, 10.f);
 	case eComponentMessageType::eMoving:
