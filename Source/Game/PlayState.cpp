@@ -415,6 +415,9 @@ void CPlayState::Init()
 	myGameObjectManager->SendObjectsDoneMessage();
 	myKartControllerComponentManager->Init();
 	CLapTrackerComponentManager::GetInstance()->Init();
+
+
+	myGlobalHUD->StartCountdown();
 }
 
 eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
@@ -516,7 +519,6 @@ void CPlayState::OnEnter(const bool /*aLetThroughRender*/)
 
 		Audio::CAudioInterface::GetInstance()->PostEvent(song);
 	}
-	myGlobalHUD->StartCountdown();
 	//InitiateRace();
 
 }
@@ -529,9 +531,10 @@ void CPlayState::OnExit(const bool /*aLetThroughRender*/)
 
 CU::eInputReturn CPlayState::RecieveInput(const CU::SInputMessage& aInputMessage)
 {
-	if (aInputMessage.myType == CU::eInputType::eKeyboardPressed && aInputMessage.myKey == CU::eKeys::ESCAPE)
+	if ((aInputMessage.myType == CU::eInputType::eKeyboardPressed && aInputMessage.myKey == CU::eKeys::ESCAPE) ||
+		(aInputMessage.myType == CU::eInputType::eGamePadButtonPressed && aInputMessage.myGamePad == CU::GAMEPAD::START))
 	{
-		myStateStack.PushState(new CMenuState(myStateStack, "Json/Menu/PauseMenu.json", this));
+		myStateStack.PushState(new CMenuState(myStateStack, "Json/Menu/PauseMenu.json", this, myLevelIndex));
 		return CU::eInputReturn::eKeepSecret;
 	}
 	switch(aInputMessage.myType)
