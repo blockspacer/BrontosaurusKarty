@@ -675,19 +675,18 @@ void CPlayState::CreatePlayer(CU::Camera& aCamera, const SParticipant& aParticip
 	playerModel->SetIsShadowCasting(false);
 
 
-
+	//
 	// Lights
 	//
 
-
-	CComponent* headLight1 = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({ 1.f, 1.0f, 0.7f }, 2.f, 10.f, 3.141592f / 16.f);
+	CComponent* headLight1 = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({ 1.f, 1.0f, 0.7f }, 3.f, 10.f, 3.141592f / 16.f);
 	CGameObject* headLightObject1 = myGameObjectManager->CreateGameObject();
 	headLightObject1->GetLocalTransform().myPosition.Set(-0.35f, 0.7f, 0.75f);
 	headLightObject1->GetLocalTransform().RotateAroundAxis(-3.141592f / 32.f, CU::Axees::X);
 	headLightObject1->AddComponent(headLight1);
 
 
-	CComponent* headLight2 = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({ 1.f, 1.0f, 0.5f }, 3.f, 10.f, 3.141592f / 16.f);
+	CComponent* headLight2 = CLightComponentManager::GetInstance().CreateAndRegisterSpotLightComponent({ 1.f, 1.0f, 0.7f }, 3.f, 10.f, 3.141592f / 16.f);
 	CGameObject* headLightObject2 = myGameObjectManager->CreateGameObject();
 	headLightObject2->GetLocalTransform().myPosition.Set(0.35f, 0.7f, 0.75f);
 	headLightObject2->GetLocalTransform().RotateAroundAxis(-3.141592f / 32.f, CU::Axees::X);
