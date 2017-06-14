@@ -284,8 +284,8 @@ void CGlobalHUD::Render()
 void CGlobalHUD::StartCountdown()
 {
 
-	auto countdownLambda = [this]() {
-
+	auto countdownLambda = [this]()
+	{
 		CU::TimerManager timerManager;
 		TimerHandle timer = timerManager.CreateTimer();
 		unsigned char startCountdownTime = 0;
