@@ -86,7 +86,7 @@ void CXboxController::GamePadPressedKey(const CU::SInputMessage & aInputMessage)
 
 	switch (aInputMessage.myGamePad)
 	{
-#ifdef DEBUG
+#ifdef _DEBUG
 	case CU::GAMEPAD::DPAD_DOWN:
 	{
 		SComponentMessageData data;

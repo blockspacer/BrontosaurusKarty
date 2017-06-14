@@ -486,7 +486,7 @@ void CGlobalHUD::ToMainMenu(const std::function<void(void)>& aCallback)
 // debugging
 eMessageReturn CGlobalHUD::DoEvent(const KeyCharPressed & aMessage)
 {
-#ifdef DEBUG
+#ifdef _DEBUG
 	if (aMessage.GetKey() == 'p')
 		PresentScoreboard();
 	if (aMessage.GetKey() == 'c' && myRaceOver == true)

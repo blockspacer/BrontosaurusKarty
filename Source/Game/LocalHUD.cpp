@@ -410,7 +410,7 @@ void CLocalHUD::DisableRedundantGUI()
 eMessageReturn CLocalHUD::DoEvent(const KeyCharPressed& aMessage)
 {
 
-#ifdef DEBUG
+#ifdef _DEBUG
 
 	if (aMessage.GetKey() == 'p')
 		myLapAdjusterCheat += 1;
