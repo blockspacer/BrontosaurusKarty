@@ -293,7 +293,7 @@ void CGlobalHUD::Render()
 	}
 }
 
-void CGlobalHUD::StartCountdown()
+void CGlobalHUD::StartCountdown(const std::function<void()>& aCanGoToMenuCallback)
 {
 	SComponentMessageData msg;
 	msg.myString = "PlayEngineStart";
@@ -347,7 +347,7 @@ void CGlobalHUD::StartCountdown()
 	CU::Work work(countdownLambda);
 	work.SetName("Countdown thread");
 
-	std::function<void(void)> callback = [this]()
+	std::function<void(void)> callback = [this, aCanGoToMenuCallback]()
 	{
 		CU::TimerManager timerManager;
 		TimerHandle timer = timerManager.CreateTimer();
@@ -361,7 +361,7 @@ void CGlobalHUD::StartCountdown()
 		myCountdownElement.myShouldRender = false;
 		myMinimapElement.myShouldRender = true;
 
-
+		aCanGoToMenuCallback();
 	};
 
 	work.SetFinishedCallback(callback);

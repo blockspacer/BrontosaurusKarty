@@ -24,7 +24,7 @@ public:
 	void Update(const float aDeltaTime);
 	bool GetRaceOver() const { return myRaceOver; }
 
-	void StartCountdown();
+	void StartCountdown(const std::function<void()>& aCanGoToMenuCallback);
 
 	inline const CU::Vector4f& GetPlayer1Color() const;
 	inline const CU::Vector4f& GetPlayer2Color() const;

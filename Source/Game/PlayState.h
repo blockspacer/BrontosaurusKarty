@@ -131,6 +131,7 @@ private:
 	int myPlayerCount;
 	int myLevelIndex;
 	std::atomic_bool myIsLoaded;
+	std::atomic_bool myCanPause;
 	int myLevelsCount;
 };
 

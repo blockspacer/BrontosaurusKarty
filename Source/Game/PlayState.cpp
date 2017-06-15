@@ -133,6 +133,7 @@ CPlayState::CPlayState(StateStack & aStateStack, const int aLevelIndex)
 	, myPlayerCount(1)
 	, myLevelIndex(aLevelIndex)
 	, myIsLoaded(false)
+	, myCanPause(false)
 	//, myCountdownShouldRender(false)
 	, myIsCountingDown(true)
 {
@@ -423,7 +424,7 @@ void CPlayState::Init()
 	CLapTrackerComponentManager::GetInstance()->Init();
 
 
-	myGlobalHUD->StartCountdown();
+	myGlobalHUD->StartCountdown([this]() { myCanPause = true; });
 }
 
 eStateStatus CPlayState::Update(const CU::Time& aDeltaTime)
@@ -537,12 +538,16 @@ void CPlayState::OnExit(const bool /*aLetThroughRender*/)
 
 CU::eInputReturn CPlayState::RecieveInput(const CU::SInputMessage& aInputMessage)
 {
-	if ((aInputMessage.myType == CU::eInputType::eKeyboardPressed && aInputMessage.myKey == CU::eKeys::ESCAPE) ||
-		(aInputMessage.myType == CU::eInputType::eGamePadButtonPressed && aInputMessage.myGamePad == CU::GAMEPAD::START))
+	if (myCanPause)
 	{
-		myStateStack.PushState(new CMenuState(myStateStack, "Json/Menu/PauseMenu.json", this, myLevelIndex));
-		return CU::eInputReturn::eKeepSecret;
+		if ((aInputMessage.myType == CU::eInputType::eKeyboardPressed && aInputMessage.myKey == CU::eKeys::ESCAPE) ||
+			(aInputMessage.myType == CU::eInputType::eGamePadButtonPressed && aInputMessage.myGamePad == CU::GAMEPAD::START))
+		{
+			myStateStack.PushState(new CMenuState(myStateStack, "Json/Menu/PauseMenu.json", this, myLevelIndex));
+			return CU::eInputReturn::eKeepSecret;
+		}
 	}
+
 	switch(aInputMessage.myType)
 	{
 	case CU::eInputType::eKeyboardPressed:
