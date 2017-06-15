@@ -16,10 +16,9 @@ void CParticleEmitterManager::ClearActiveEmitters()
 	for (int i = myInstances.Size() - 1; i >= 0 ; --i)
 	{
 		Deactivate(myInstances[i]->GetInstanceID());
-		while (myInstances[i]->HasReferences())
-		{
-			Release(myInstances[i]->GetInstanceID());
-		}
+	
+		myInstances[i]->ClearRefs();
+		
 		
 		ReleaseInternal(myInstances[i]->GetInstanceID());
 	}

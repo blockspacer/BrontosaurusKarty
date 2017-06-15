@@ -41,6 +41,7 @@ public:
 	void SetTransformation(const CU::Matrix44f& aMatrix44);
 	void AddRef();
 	void Release();
+	void ClearRefs();
 	bool ShouldKeep() const;
 	bool HasReferences() const;
 private:

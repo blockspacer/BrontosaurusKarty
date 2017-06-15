@@ -142,6 +142,11 @@ void CParticleEmitterInstance::Release()
 	--myRefs;
 }
 
+void CParticleEmitterInstance::ClearRefs()
+{
+	myRefs = 0;
+}
+
 bool CParticleEmitterInstance::ShouldKeep() const
 {
 	return myRefs > 0 || myIsActive == true || IsDone() == false;
