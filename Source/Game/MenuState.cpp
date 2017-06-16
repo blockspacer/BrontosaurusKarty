@@ -170,6 +170,7 @@ void CMenuState::OnEnter(const bool aLetThroughRender)
 {
 
 	myManager.UpdateMousePosition(myManager.GetMopusePosition());
+	Audio::CAudioInterface::GetInstance()->PostEvent("StopAll");
 	Audio::CAudioInterface::GetInstance()->PostEvent("PlayMenu");
 	//Audio::CAudioInterface::GetInstance()->LoadBank("Audio/KartSounds.bnk");
 	//Postmaster::Threaded::CPostmaster::GetInstance().Subscribe(this, eMessageType::eCharPressed);

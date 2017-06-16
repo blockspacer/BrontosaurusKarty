@@ -10,6 +10,7 @@
 #include "LoadState.h"
 #include "CommonUtilities.h"
 #include "MenuState.h"
+#include "../Audio/AudioInterface.h"
 
 CSplitScreenSelection::CSplitScreenSelection(StateStack& aStateStack) : State(aStateStack, eInputMessengerType::eSplitScreenSelectionMenu, 1), myIsInFocus(false)
 {
@@ -203,6 +204,8 @@ void CSplitScreenSelection::Render()
 
 void CSplitScreenSelection::OnEnter(const bool aLetThroughRender)
 {
+	Audio::CAudioInterface::GetInstance()->PostEvent("StopAll");
+	Audio::CAudioInterface::GetInstance()->PostEvent("PlayMenu");
 	myMenuManager.UpdateMousePosition(myMenuManager.GetMopusePosition());
 	myIsInFocus = true;
 }
